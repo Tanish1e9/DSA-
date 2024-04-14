@@ -1,0 +1,28 @@
+LC link: https://leetcode.com/problems/combination-sum-iv/
+
+class Solution {
+public:
+    int f(auto&nums,int t,auto &memo){
+        if(t==0) return 1;
+        if(memo[t]!=-1) return memo[t];
+        int ans=0;
+        for(int i=0;i<nums.size();i++){
+            if(t>=nums[i]) ans+=f(nums,t-nums[i],memo);
+        }
+        return memo[t]=ans;
+    }
+    int combinationSum4(vector<int>& nums, int target) {
+        // vector<int> memo(target+1,-1);
+        // return f(nums,target,memo);
+        vector<long> memo(target+1,0);
+        memo[0]=1;
+        for(int t=1;t<=target;t++){
+            int ans=0;
+            for(int i=0;i<nums.size();i++){
+                if(t>=nums[i]) ans+= memo[t-nums[i]];
+            }
+            memo[t]=ans;
+        }
+        return memo[target];
+    }
+};

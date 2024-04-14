@@ -1,0 +1,28 @@
+Leetcode Link: https://leetcode.com/problems/combination-sum/  
+
+class Solution {
+public:
+    vector<vector<int>> ans;
+    void f(int i,auto &candidates,auto&temp,int target){
+        if(target==0) {ans.push_back(temp);return ;}
+        if(i>=candidates.size()) return ;
+        for(int j=i;j<candidates.size();j++){
+            if(candidates[j]<=target){
+                temp.push_back(candidates[j]);
+                f(j,candidates,temp,target-candidates[j]);
+                temp.pop_back();
+            }
+        }
+        // if(target>=candidates[i]){
+        //     temp.push_back(candidates[i]);
+        //     f(i,candidates,temp,target-candidates[i]);
+        //     temp.pop_back();
+        // }
+        // f(i+1,candidates,temp,target);
+    }
+    vector<vector<int>> combinationSum(vector<int>& candidates, int target) {
+        vector<int>temp;
+        f(0,candidates,temp,target);
+        return ans;
+    }
+};

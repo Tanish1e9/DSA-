@@ -1,0 +1,41 @@
+LC link : https://leetcode.com/problems/permutations-ii/
+
+class Solution {
+public:
+    vector<vector<int>> ans;
+    // void f(auto &nums,auto &temp,auto &visited){
+    //     if(temp.size()==nums.size()){
+    //         ans.push_back(temp);
+    //         return;
+    //     }
+    //     for(int j=0;j<nums.size();j++){
+    //         if(j!=0 && nums[j]==nums[j-1] && !visited[j-1]) continue;
+      // dekh yaha pe na ek level pe 2 same unvisited elements h to unme se kisi ek ko lena h accross different levels agar elements same ho to chalega aur ye pata chalta
+      // hai !visited[j-1] se agar alag level me hoga to visited[j-1] true hoga else nhi 
+    //         if(visited[j]) continue;
+    //         temp.push_back(nums[j]);
+    //         visited[j]=1;
+    //         f(nums,temp,visited);
+    //         temp.pop_back();
+    //         visited[j]=0;
+    //     }
+    // }
+    void f(int i,auto&nums){
+        if(i>=nums.size()){ans.push_back(nums);return;}
+        for(int j=i;j<nums.size();j++){
+            // if(j!=i && nums[j]==nums[i]) continue;
+            if(find(nums.begin()+i,nums.begin()+j,nums[j])!=nums.begin()+j) continue;
+            swap(nums[j],nums[i]);
+            f(i+1,nums);
+            swap(nums[j],nums[i]);
+        }
+    }
+    vector<vector<int>> permuteUnique(vector<int>& nums) {
+        vector<int> temp;
+        // sort(nums.begin(),nums.end());
+        // vector<int> visited(nums.size(),0);
+        // f(nums,temp,visited);
+        f(0,nums);
+        return ans;
+    }
+};

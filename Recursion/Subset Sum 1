@@ -1,0 +1,21 @@
+GFG link: https://www.geeksforgeeks.org/problems/subset-sums2234/1
+
+class Solution {
+  public:
+    void f(int i,vector<int>&arr,vector<int>&ans,int n,int sum){
+        ans.push_back(sum);
+        if(i>=arr.size()){
+            return;
+        }
+        for(int j=i;j<arr.size();j++){
+            f(j+1,arr,ans,n,sum+arr[j]);
+        }
+        //   f(i+1,arr,ans,n,sum+arr[i]);
+        //   f(i+1,arr,ans,n,sum);
+    }
+    vector<int> subsetSums(vector<int> arr, int n) {
+        vector<int> ans;
+        int sum=0;
+        f(0,arr,ans,n,sum);
+        return ans;
+    }

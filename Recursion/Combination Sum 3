@@ -1,0 +1,28 @@
+Leetcode Link: https://leetcode.com/problems/combination-sum-iii/
+
+class Solution {
+public:
+    vector<vector<int>>ans;
+    void f(int i,auto&temp,int n,int k){
+        if(n==0 && temp.size()==k) {ans.push_back(temp);return;}
+        if(temp.size()>k) return ;
+        if(i>=10) return;
+        // for(int j=i;j<10;j++){
+        //     if(n<j) break;
+        //     temp.push_back(j);
+        //     f(j+1,temp,n-j,k);
+        //     temp.pop_back();
+        // }
+        if(n>=i){
+            temp.push_back(i);
+            f(i+1,temp,n-i,k);
+            temp.pop_back();
+        }
+        f(i+1,temp,n,k);
+    }
+    vector<vector<int>> combinationSum3(int k, int n) {
+        vector<int>temp;
+        f(1,temp,n,k);
+        return ans; 
+    }
+};

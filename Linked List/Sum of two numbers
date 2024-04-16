@@ -58,3 +58,30 @@ Node *addTwoNumbers(Node *num1, Node *num2)
     }
     return head;
 }
+
+// Below is another implementation (short and precise)
+Node *addTwoNumbers(Node *num1, Node *num2)
+{
+    Node*head=new Node(-1);
+    int c=0;
+    Node*cur1=num1;
+    Node*cur2=num2;
+    Node*cur=head;
+    while(cur1 || cur2){
+        Node*temp = new Node(c);
+        if(cur1) temp->data+=cur1->data;
+        if(cur2) temp->data+=cur2->data;
+        c=temp->data/10;
+        temp->data%=10;
+        cur->next=temp;
+        cur=temp;
+        if(cur1)cur1=cur1->next;
+        if(cur2)cur2=cur2->next;
+    }
+    if(c!=0){
+        Node*temp=new Node(c);
+        cur->next=temp;
+    }
+    return head->next;
+}
+

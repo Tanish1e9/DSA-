@@ -1,0 +1,60 @@
+Code Studio link: https://www.naukri.com/code360/problems/add-two-numbers_1170520?leftPanelTabValue=SUBMISSION
+
+/**
+ * Definition of linked list:
+ *
+ * class Node {
+ * public:
+ *      int data;
+ *      Node *next;
+ *      Node() {
+ *          this->data = 0;
+ *          this->next = NULL;
+ *      }
+ *      Node(int data) {
+ *          this->data = data;
+ *          this->next = NULL;
+ *      }
+ *      Node (int data, Node *next) {
+ *          this->data = data;
+ *          this->next = next;
+ *      }
+ * };
+ *
+ *************************************************************************/
+
+Node *addTwoNumbers(Node *num1, Node *num2)
+{
+    Node*head=new Node((num1->data+num2->data)%10);
+    int c=(num1->data+num2->data)/10;
+    Node*cur1=num1->next;
+    Node*cur2=num2->next;
+    Node*cur=head;
+    while(cur1&&cur2){
+        Node*temp=new Node((cur1->data+cur2->data+c)%10);
+        c=(cur1->data+cur2->data+c)/10;
+        cur->next=temp;
+        cur=temp;
+        cur1=cur1->next;
+        cur2=cur2->next;
+    }
+    while(cur1){
+        Node*temp=new Node((cur1->data+c)%10);
+        c=(cur1->data+c)/10;
+        cur->next=temp;
+        cur=temp;
+        cur1=cur1->next;
+    }
+    while(cur2){
+        Node*temp=new Node((cur2->data+c)%10);
+        c=(cur2->data+c)/10;
+        cur->next=temp;
+        cur=temp;
+        cur2=cur2->next;
+    }
+    if(c!=0){
+        Node*temp=new Node(c);
+        cur->next=temp;
+    }
+    return head;
+}

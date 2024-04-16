@@ -16,22 +16,41 @@
 
 *****************************************************************/
 
+// Node *deleteNode(Node *head, int pos){
+// 	if(!head) return NULL;
+// 	if(pos==0){
+// 		Node*temp=head->next;
+// 		delete head;
+// 		return temp;
+// 	}
+// 	Node*curr=head;
+// 	int c=0;
+// 	while(curr && c<pos-1){
+// 		curr=curr->next;
+// 		c++;
+// 	}
+//     if(c!=pos-1 || !curr || !(curr->next)) return head;
+// 	Node*temp=curr->next;
+// 	curr->next=curr->next->next;
+// 	delete temp;
+// 	return head;
+// }
+
 Node *deleteNode(Node *head, int pos){
 	if(!head) return NULL;
-	if(pos==0){
+	if(head->data==pos){
 		Node*temp=head->next;
 		delete head;
 		return temp;
 	}
 	Node*curr=head;
-	int c=0;
-	while(curr && c<pos-1){
+	while(curr->next && curr->next->data!=pos){
 		curr=curr->next;
-		c++;
 	}
-    if(c!=pos-1 || !curr || !(curr->next)) return head;
+    if(!(curr->next)) return head;
 	Node*temp=curr->next;
 	curr->next=curr->next->next;
 	delete temp;
 	return head;
 }
+

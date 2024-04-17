@@ -1,0 +1,57 @@
+LC Link: https://leetcode.com/problems/remove-nth-node-from-end-of-list/
+/**
+ * Definition for singly-linked list.
+ * struct ListNode {
+ *     int val;
+ *     ListNode *next;
+ *     ListNode() : val(0), next(nullptr) {}
+ *     ListNode(int x) : val(x), next(nullptr) {}
+ *     ListNode(int x, ListNode *next) : val(x), next(next) {}
+ * };
+ */
+class Solution {
+public:
+    // Brute Force two traversals
+    // ListNode* removeNthFromEnd(ListNode* head, int n) {
+    //     int len=0;
+    //     ListNode*cur=head;
+    //     while(cur){cur=cur->next;len++;}
+    //     int pos=len-n+1;
+    //     if(pos<=0) return head;
+    //     cur=head;
+    //     if(pos==1){
+    //         ListNode*temp=head->next;
+    //         delete head;
+    //         return temp;
+    //     }
+    //     while(cur && pos>2){
+    //         cur=cur->next;
+    //         pos--;
+    //     }
+    //     ListNode*tobe=cur->next;
+    //     cur->next=cur->next->next;
+    //     delete tobe;
+    //     return head;
+    //     // I used the fact that 1<=n<=sz else you can add checks
+    // }
+    ListNode* removeNthFromEnd(ListNode* head, int n) {
+        ListNode*fast=head;
+        for(int i=0;i<n && fast;i++){
+            fast=fast->next;
+        }
+        if(!fast){
+            ListNode*temp=head->next;
+            delete head;
+            return temp;
+        }
+        ListNode*slow=head;
+        while(fast->next){
+            slow=slow->next;
+            fast=fast->next;
+        }
+        ListNode*tobe=slow->next;
+        slow->next=tobe->next;
+        delete tobe;
+        return head;
+    }
+};

@@ -1,0 +1,29 @@
+Code Studio Link: https://www.naukri.com/code360/problems/check-if-linked-list-is-palindrome_985248?leftPanelTabValue=SUBMISSION
+
+Node*reverse(Node*head){
+    if(head==NULL || head->next==NULL) return head;
+    Node*newHead=reverse(head->next);
+    head->next->next=head;
+    head->next=0;
+    return newHead;
+}
+bool isPalindrome(Node *head) {
+    Node *fast = head, *slow = head;
+    while (fast && fast->next){
+            fast=fast->next->next;
+            slow=slow->next;
+    }
+    Node*newHead=reverse(slow);
+    Node*cur=head;
+    Node*temp=newHead;
+    while(temp!=NULL){
+        if(cur->data!=temp->data){
+            reverse(newHead);
+            return false;
+        }
+        temp=temp->next;
+        cur=cur->next;
+    }
+    reverse(newHead);
+    return true;
+}

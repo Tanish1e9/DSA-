@@ -1,0 +1,49 @@
+Code Studio Link: https://www.naukri.com/code360/problems/add-one-to-a-number-represented-as-linked-list_920557?leftPanelTabValue=SUBMISSION
+
+/**
+ * Definition of linked list:
+ *
+ * class Node {
+ * public:
+ *      int data;
+ *      Node *next;
+ *      Node() {
+ *          this->data = 0;
+ *          this->next = NULL;
+ *      }
+ *      Node(int data) {
+ *          this->data = data;
+ *          this->next = NULL;
+ *      }
+ *      Node (int data, Node *next) {
+ *          this->data = data;
+ *          this->next = next;
+ *      }
+ * };
+ *
+ *************************************************************************/
+Node*reverse(Node*head){
+    if(!head || !(head->next)) return head;
+    Node*newHead=reverse(head->next);
+    head->next->next=head;
+    head->next=0;
+    return newHead;
+}
+Node *addOne(Node *head)
+{
+    Node*newHead=reverse(head);
+    Node*cur=newHead;
+    int c=1;
+    while(cur){
+        cur->data+=c;
+        c=cur->data/10;
+        cur->data=cur->data%10;
+        if(c==0) break;
+        cur=cur->next;
+    }
+    if(c!=0){
+        Node*newNode=new Node(c);
+        head->next=newNode;
+    }
+    return  reverse(newHead);
+}

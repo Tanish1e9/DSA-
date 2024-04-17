@@ -1,0 +1,38 @@
+Code Studio Link: https://www.naukri.com/code360/problems/-intersection-of-two-linked-lists_630457?leftPanelTabValue=SUBMISSION
+
+// Better O(n1+2n2)  n2>n1
+// int length(Node*head){
+//     int ans=0;
+//     while(head){
+//         head=head->next;
+//         ans++;
+//     }
+//     return ans;
+// }
+// Node *findIntersection(Node *head1, Node *head2) {
+//     int c1=length(head1);
+//     int c2=length(head2);
+//     for(int i=0;i<abs(c1-c2);i++){
+//         if(c1>c2) head1=head1->next;
+//         else head2=head2->next;
+//     }
+//     while(head1!=head2){
+//         head1=head1->next;
+//         head2=head2->next;
+//     }
+//     return head1;
+// }
+
+//Optimal O()
+
+Node*findIntersection(Node*head1,Node*head2){
+    Node*t1=head1,*t2=head2;
+    while(t1!=t2){
+        if(t1->next==0 && t2->next==0) return 0;
+        if(t1->next)t1=t1->next;
+        else t1=head2;
+        if(t2->next)t2=t2->next;
+        else t2=head1;
+    }
+    return t1;
+}

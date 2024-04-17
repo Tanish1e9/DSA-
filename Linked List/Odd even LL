@@ -1,0 +1,58 @@
+Code Studio Link:https://www.naukri.com/code360/problems/rearrange-odd-and-even-places_920379?leftPanelTabValue=SUBMISSION
+
+/****************************************************************
+Following is the Linked list node structure already written
+
+class Node
+{
+public:
+    int data;
+    Node* next;
+    Node(int data)
+    { 
+        this->data = data;
+        next = NULL;
+    }
+};
+*****************************************************************/
+
+// Brute Force
+// Node* oddEvenList(Node* head){
+//     if(head==NULL || head->next==NULL) return head;
+// 	vector<int> v;
+//     Node*odd=head;
+//     Node*even=head->next;
+//     while(odd && odd->next){
+//         v.push_back(odd->data);
+//         odd=odd->next->next;
+//     }
+//     if(odd)v.push_back(odd->data);
+//     while(even && even->next){
+//         v.push_back(even->data);
+//         even=even->next->next;
+//     }
+//     if(even)v.push_back(even->data);
+//     Node*cur=head;
+//     int i=0;
+//     while(cur){
+//         cur->data=v[i++];
+//         cur=cur->next;
+//     }
+//     return head;
+// }
+// Optimal
+Node* oddEvenList(Node* head){
+    if(head->next==NULL) return head;
+	Node*odd=head;
+    Node*even=head->next;
+    Node*even_head=even;
+    // head itself acts as the odd_head if needed
+    while(even && even->next){
+        odd->next=even->next;
+        even->next=odd->next->next;
+        odd=odd->next;
+        even=even->next;
+    }
+    odd->next=even_head;
+    return head;
+}

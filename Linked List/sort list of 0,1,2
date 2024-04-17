@@ -1,0 +1,88 @@
+Code Studio link:https://www.naukri.com/code360/problems/sort-linked-list-of-0s-1s-2s_1071937?leftPanelTabValue=SUBMISSION
+GFG link:https://www.geeksforgeeks.org/problems/given-a-linked-list-of-0s-1s-and-2s-sort-it/1
+
+/*
+Following is the class structure of the Node class:
+
+class Node
+{
+public:
+    int data;
+    Node *next;
+    Node()
+    {
+        this->data = 0;
+        next = NULL;
+    }
+    Node(int data)
+    {
+        this->data = data; 
+        this->next = NULL;
+    }
+    Node(int data, Node* next)
+    {
+        this->data = data;
+        this->next = next;
+    }
+};
+*/
+// Brute force simply counts store karake data change kr dia end me TC:O(2n), SC=O(1)
+// Node* sortList(Node *head){
+//     int count0=0,count1=0,count2=0;
+//     Node*cur=head;
+//     while(cur){
+//         if(cur->data==0) count0++;
+//         else if(cur->data==1) count1++;
+//         else count2++;
+//         cur=cur->next;
+//     }
+//     cur=head;
+//     while(cur && count0){
+//         cur->data=0;
+//         cur=cur->next;
+//         count0--;
+//     }
+//     while(cur && count1){
+//         cur->data=1;
+//         cur=cur->next;
+//         count1--;
+//     }
+//     while(cur && count2){
+//         cur->data=2;
+//         cur=cur->next;
+//         count2--;
+//     }
+//     return head;
+// }
+
+//Optimal 
+void insertandinc(Node*&head,Node*&ptr,Node*cur){
+    if(!head){
+        head=ptr=cur;
+        return;
+    }
+    ptr->next=cur;
+    ptr=cur;
+}
+Node* sortList(Node *head){
+    if(head==NULL || head->next==NULL) return head;
+    Node *zero_head,*zero,*two_head,*two,*one_head,*one;
+    one_head=one=two_head=two=zero_head=zero=NULL;
+    Node*cur=head;
+    while(cur){
+        if(cur->data==0) insertandinc(zero_head,zero,cur);
+        else if(cur->data==1)insertandinc(one_head,one,cur);
+        else insertandinc(two_head,two,cur);
+        cur=cur->next;
+    }
+    if(two) two->next=NULL;
+    if(zero && one_head) zero->next=one_head;
+    else if(zero && !one_head) zero->next=two_head;
+
+    if(one) one->next=two_head;
+    if(!zero_head){
+        if(!one_head) return two_head;
+        return one_head;
+    }
+    return zero_head;
+}

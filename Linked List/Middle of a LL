@@ -1,24 +1,56 @@
 LC link: https://leetcode.com/problems/middle-of-the-linked-list/
+Code Studio Link: https://www.naukri.com/code360/problems/middle-of-linked-list_973250?leftPanelTabValue=SUBMISSION
+/*
+Following is the class structure of the Node class:
 
-/**
- * Definition for singly-linked list.
- * struct ListNode {
- *     int val;
- *     ListNode *next;
- *     ListNode() : val(0), next(nullptr) {}
- *     ListNode(int x) : val(x), next(nullptr) {}
- *     ListNode(int x, ListNode *next) : val(x), next(next) {}
- * };
- */
-class Solution {
+class Node
+{
 public:
-    ListNode* middleNode(ListNode* head) {
-        ListNode*fast=head;
-        ListNode*slow=head;
-        while(fast && fast->next){
-            fast=fast->next->next;
-            slow=slow->next;
-        }
-        return slow;
+    int data;
+    Node *next;
+    Node()
+    {
+        this->data = 0;
+        next = NULL;
+    }
+    Node(int data)
+    {
+        this->data = data; 
+        this->next = NULL;
+    }
+    Node(int data, Node* next)
+    {
+        this->data = data;
+        this->next = next;
     }
 };
+*/
+
+// Brute O(N+N/2). O(1)
+// Node *findMiddle(Node *head) {
+//     int len=0;
+//     Node*cur=head;
+//     while(cur){
+//         cur=cur->next;
+//         len++;
+//     }
+//     cur=head;
+//     int c=0;
+//     while(c!=len/2){
+//         c++;
+//         cur=cur->next;
+//     }
+//     return cur;
+// }
+
+// Optimal
+Node*findMiddle(Node*head){
+    Node*fast=head;
+    Node*slow=head;
+    while(fast && fast->next){
+        slow=slow->next;
+        fast=fast->next->next;
+    }
+    return slow;
+}
+

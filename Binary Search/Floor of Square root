@@ -1,0 +1,15 @@
+Code Studio : https://www.naukri.com/code360/problems/square-root-integral_893351?leftPanelTab=0%3Futm_source%3Dstriver&leftPanelTabValue=SUBMISSION
+// observe how I handled overflow case
+int bin(int n){
+    int l=1;
+    int r=n;
+    while(l<=r){
+        int mid=l+(r-l)/2;
+        if(mid<=n/mid) l=mid+1;
+        else r=mid-1;
+    }
+    return r;
+}
+int floorSqrt(int n){
+    return bin(n);
+}

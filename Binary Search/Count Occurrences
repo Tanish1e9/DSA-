@@ -1,0 +1,9 @@
+Code Studio Link: https://www.naukri.com/code360/problems/occurrence-of-x-in-a-sorted-array_630456?leftPanelTabValue=SUBMISSION
+
+#include <algorithm>
+int count(vector<int>& arr, int n, int x) {
+	int lb=lower_bound(arr.begin(),arr.end(),x)-arr.begin();
+	int ub=upper_bound(arr.begin(),arr.end(),x)-arr.begin();
+	if(lb>=arr.size() || arr[lb]!=x) return 0;
+	return ub-lb;
+}

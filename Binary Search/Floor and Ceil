@@ -1,0 +1,10 @@
+Code Studio Link: https://www.naukri.com/code360/problems/ceiling-in-a-sorted-array_1825401?leftPanelTabValue=PROBLEM
+
+#include <bits/stdc++.h>
+pair<int, int> getFloorAndCeil(vector<int> &a, int n, int x) {
+	int ub=upper_bound(a.begin(),a.end(),x)-a.begin()-1;
+	int lb=lower_bound(a.begin(),a.end(),x)-a.begin();
+	lb= (lb<a.size())?a[lb]:-1;
+	ub= (ub<a.size())?a[ub]:-1;
+	return {ub,lb};
+}

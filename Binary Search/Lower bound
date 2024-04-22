@@ -1,0 +1,15 @@
+Code Studio link: https://www.naukri.com/code360/problems/lower-bound_8165382?leftPanelTabValue=SUBMISSION
+
+int bin(vector<int>&arr,int x){
+	int l=0;
+	int r=arr.size()-1;
+	while(l<=r){
+		int mid= l+(r-l)/2;
+		if(arr[mid]>=x) r=mid-1;
+		else l=mid+1;
+	}
+	return l;
+}
+int lowerBound(vector<int> arr, int n, int x) {
+	return bin(arr,x);
+}

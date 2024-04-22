@@ -9,6 +9,18 @@ public:
             int mid=l+(r-l)/2;
             if(nums[mid]==target) return mid;
 
+            // Dekh yaha equality sign lagana jroori hai because let's take all the cases:-
+            // Case1: nums[mid] == nums[r] != nums[l] dekh iss case me mid right of pivot me hi hoga i.e mid se r tk har element equal because socho agar mid left side of pivot pe hua 
+            // to nums[mid]>=nums[l]>=nums[r] ka restriction lag jayega and nums[l] se nums[mid] tk bhi equal hona pad jayega
+            // To isi case me agar equality ni lagaye to else me chala jayega but left half is not sorted hence galat hoga ye
+
+            // Case2: nums[mid] == nums[l] != nums[r] dekh isme mid left side of pivot pe hoga such that l se lekar mid tk har element equal because agar right side pe hua to nums[mid]<=nums[r]<=nums[l]
+            // to mid aur l barabar hone k kaaran r will be sandwiched in between
+            // Ye case me bhi equality sahi kaam krega because nums[mid]>nums[r] hoga yaha pe to else me chala jayega jo ki sahi h
+
+            // Case3: nums[l]==nums[mid]==nums[r]
+            // yaha par hi hmlog ko ye search space trim down krna padega kuch iss tarah
+
             if(nums[mid]==nums[l] && nums[r]==nums[mid]) {l++;r--;continue;}
 
             if(nums[mid]<=nums[r]){

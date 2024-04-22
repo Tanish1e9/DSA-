@@ -1,0 +1,25 @@
+LC link: https://leetcode.com/problems/find-the-smallest-divisor-given-a-threshold/description/
+
+class Solution {
+public:
+    bool f(vector<int>&nums,int divi,int threshold){
+        long ans=0;
+        for(int i=0;i<nums.size();i++){
+            ans+=ceil(double(nums[i])/divi);
+        }
+        return ans<=threshold;
+    }
+    int bin(vector<int>&nums,int threshold){
+        int l=1;
+        int r=*max_element(nums.begin(),nums.end());
+        while(l<=r){
+            int mid=l+(r-l)/2;
+            if(f(nums,mid,threshold)) r=mid-1;
+            else l=mid+1;
+        }
+        return l;
+    }
+    int smallestDivisor(vector<int>& nums, int threshold) {
+        return bin(nums,threshold);
+    }
+};

@@ -1,0 +1,32 @@
+LC link: https://leetcode.com/problems/koko-eating-bananas/description/
+
+class Solution {
+public:
+    bool f(int mid,int h,vector<int>&piles){
+        long ans=0;
+        for(int i=0;i<piles.size();i++){
+            // dekho ceil lene ke teen tareeke also yaha float likhne se sahi ni ayega precision issues islie double likhna
+            ans+=ceil(piles[i]/double(mid));
+
+            // ans+=(piles[i]+mid-1)/mid;
+            
+            // ans+=piles[i]/mid;
+            // if(piles[i]%mid!=0) ans+=1;
+        }
+        if(ans<=h) return true;
+        return false;
+    }
+    int bin(vector<int>&piles,int h){
+        int l=1;
+        int r=*max_element(piles.begin(),piles.end());
+        while(l<=r){
+            int mid=l+(r-l)/2;
+            if(f(mid,h,piles)) r=mid-1;
+            else l=mid+1;
+        }
+        return l;
+    }
+    int minEatingSpeed(vector<int>& piles, int h) {
+        return bin(piles,h);
+    }
+};

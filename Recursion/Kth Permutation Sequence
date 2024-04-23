@@ -1,0 +1,23 @@
+LC link: https://leetcode.com/problems/permutation-sequence/
+
+class Solution {
+public:
+    string getPermutation(int n, int k) {
+        vector<int> nums={1};
+        int fact=1;
+        for(int i=2;i<=n;i++){
+            nums.push_back(i);
+            fact*=i-1;
+        }
+        k--;
+        string ans;
+        while(!nums.empty()){
+            int q=k/fact;
+            ans=ans+char(nums[q]+'0');
+            nums.erase(nums.begin()+q);
+            k=k%fact;
+            if(nums.size()!=0)fact/=nums.size();
+        }
+        return ans;
+    }
+};

@@ -1,0 +1,30 @@
+Code Studio Link: https://www.naukri.com/code360/problems/aggressive-cows_1082559?leftPanelTabValue=SUBMISSION
+
+bool f(vector<int>&stalls,int mid,int k){
+    int last=0;
+    int c=1;
+    for(int i=1;i<stalls.size();i++){
+        if(stalls[i]-stalls[last]>=mid){
+            last=i;
+            c++;
+        }
+    }
+    return c>=k;
+}
+int bin(vector<int>&stalls,int k){
+    int l=1e9;
+    for(int i=0;i<-1+stalls.size();i++){
+        l=min(l,stalls[i+1]-stalls[i]);
+    }
+    int r=stalls.back()-stalls.front();
+    while(l<=r){
+        int mid=l+(r-l)/2;
+        if(f(stalls,mid,k)) l=mid+1;
+        else r=mid-1;
+    }
+    return r;
+}
+int aggressiveCows(vector<int> &stalls, int k){
+    sort(stalls.begin(),stalls.end());
+    return bin(stalls,k);
+}

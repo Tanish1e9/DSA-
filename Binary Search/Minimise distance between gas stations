@@ -1,0 +1,50 @@
+Code Studio link: https://www.naukri.com/code360/problems/minimise-max-distance_7541449?leftPanelTabValue=SUBMISSION
+GFG link: https://www.geeksforgeeks.org/problems/minimize-max-distance-to-gas-station/1
+
+#include <bits/stdc++.h>
+// double minimiseMaxDistance(vector<int> &arr, int k){
+// 	priority_queue<pair<double,int>> pq;
+// 	vector<int>segments;
+// 	for(int i=0;i<arr.size()-1;i++){
+// 		segments.push_back(1);
+// 		pq.push({arr[i+1]-arr[i],i});
+// 	}
+// 	for(int i=0;i<k;i++){
+// 		pair<double,int> p=pq.top();
+// 		pq.pop();
+//		int idx=p.second;
+// 		segments[idx]++;
+//		double newDist=(arr[idx+1]-arr[idx])/double(segments[idx]);
+// 		pq.push({newDist,idx});
+// 	}
+// 	return pq.top().first;
+// }
+// Above is a O(klogn + nlogn),O(2n-1)  solution
+// Below is O(N+ N*log(cons_distance)),O(1)
+bool f(double mid,vector<int>&arr,int k){
+	int c=0;
+	for(int i=0;i<arr.size()-1;i++){
+		int dist=arr[i+1]-arr[i];
+		int stat= dist/mid;
+		if(stat*mid==dist) stat--;        // dekh ye wala line na gfg pe problem kr rha h idk why
+		c+=stat;
+	}
+	return c<=k;
+}
+double max(double a,double b){
+	return (a>b)?a:b;
+}
+double minimiseMaxDistance(vector<int> &arr, int k){
+	double low=0;
+	double high=-1e9;
+	for(int i=0;i<arr.size()-1;i++){
+		high=max(high,arr[i+1]-arr[i]);
+	}
+	while(high-low>1e-6){
+		double mid= (low+high)/2;
+		if(f(mid,arr,k)) high=mid;
+		else low=mid;
+	}
+	return high;
+}
+

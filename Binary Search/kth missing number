@@ -22,15 +22,10 @@ public:
     }
     int findKthPositive(vector<int>& arr, int k) {
         // return bin(arr,k);   
-        int j=0;
-        int i=0;
-        for(int c=0;c<k;c++){
-            i++;
-            if(j<arr.size() && i==arr[j]){
-                k++;
-                j++;
-            }
+        for(int i=0;i<arr.size();i++){
+            if(arr[i]<=k) k++;
+            // jo bhi <=k hai wo apna ek space occupy krenge
         }
-        return i;
+        return k;
     }
 };

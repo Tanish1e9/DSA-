@@ -1,0 +1,59 @@
+LC link: https://leetcode.com/problems/median-of-two-sorted-arrays/
+
+class Solution {
+public:
+    int helper(int p,int q,int r,int s,vector<int>&arr1,vector<int>&arr2,int k){
+        if(q-p==0) return arr2[r+k-1];
+        if(s-r==0) return arr1[p+k-1];
+        if(k==1) return min(arr1[p],arr2[r]);
+        int mid1=(q-p)/2;
+        int mid2=(s-r)/2;
+        if(mid1==0){
+            if(arr1[p]<arr2[r+k-2]) return arr2[r+k-2];
+            else if(arr1[p]<arr2[r+k-1]) return arr1[p];
+            else return arr2[r+k-1];
+        }
+        if(mid2==0){
+            if(arr2[r]<arr1[p+k-2]) return arr1[p+k-2];
+            else if(arr2[r]<arr1[p+k-1]) return arr2[r];
+            else return arr1[p+k-1];
+        }
+        if(mid1+mid2<k){
+            if(arr1[p+mid1]<arr2[r+mid2]) return helper(p+mid1,q,r,s,arr1,arr2,k-mid1);
+            else return helper(p,q,r+mid2,s,arr1,arr2,k-mid2);
+        }
+        else{
+            if(arr1[p+mid1]<arr2[r+mid2]) return helper(p,q,r,r+mid2,arr1,arr2,k);
+            else return helper(p,p+mid1,r,s,arr1,arr2,k);
+        }
+        return -1;
+    }
+    double findMedianSortedArrays(vector<int>& nums1, vector<int>& nums2) {
+        int m=nums1.size();
+        int n=nums2.size();
+        if(m==1 && n==1) return (nums1[0]+nums2[0])/2.0;
+        // if(m>n) return findMedianSortedArrays(nums2,nums1);
+        // int k=(m+n+1)/2;
+        // int l=0;
+        // int r=m;
+        // while(l<=r){
+        //     int mid=l+(r-l)/2;
+        //     if(k-mid>n){l=mid+1;continue;} 
+        //     if(k-mid<0){r=mid-1;continue;}
+            
+        //     int l1=(mid>=1 && mid-1<m)?nums1[mid-1]:INT_MIN;
+        //     int l2=(k-mid-1<n && k-mid>=1)?nums2[k-mid-1]:INT_MIN;
+        //     int r1=(mid<m)?nums1[mid]:INT_MAX;
+        //     int r2=(k-mid<n)?nums2[k-mid]:INT_MAX;
+        //     if(max(l1,l2)<=min(r1,r2)){
+        //         if((m+n)%2==1) return max(l1,l2);
+        //         else return (max(l1,l2)+min(r1,r2))/2.0;
+        //     }
+        //     else if(l1<r2) l=mid+1;
+        //     else r=mid-1;
+        // }
+        // return -1;
+        if((m+n)%2==1) return helper(0,m,0,n,nums1,nums2,(m+n+1)/2);
+        else return (helper(0,m,0,n,nums1,nums2,(m+n+1)/2)+helper(0,m,0,n,nums1,nums2,(m+n+2)/2))/2.0;
+    }
+};

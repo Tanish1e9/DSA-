@@ -46,5 +46,7 @@ double minimiseMaxDistance(vector<int> &arr, int k){
 		else low=mid;
 	}
 	return high;
+	// dekh yaha suppose kr high pahuch gya lowest distance  pe aur low kuch peeche h ab low aage badhta jayega 
+	// and high ko touch krne se pehle se loop break ho jayega hence high is the answer
 }
 

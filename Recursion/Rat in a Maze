@@ -1,0 +1,34 @@
+GFG link: https://www.geeksforgeeks.org/problems/rat-in-a-maze-problem/1
+
+class Solution{
+    public:
+    vector<string> ans;
+    void f(int i,int j,vector<vector<int>>&m,int n,string &temp){
+        if(i>=n || j>=n) return;
+        if(i<0 || j<0) return;
+        if(m[i][j]==0) return;
+        if(i==n-1 && j==n-1){
+            ans.push_back(temp);
+            return;
+        }
+        
+        string tot="DLRU";
+        int dx[]={0,-1,1,0};
+        int dy[]={1,0,0,-1};
+        for(int k=0;k<tot.size();k++){
+            m[i][j]=0;
+            temp.push_back(tot[k]);
+            f(i+dy[k],j+dx[k],m,n,temp);
+            temp.pop_back();
+            m[i][j]=1;
+        }
+        
+    }
+    vector<string> findPath(vector<vector<int>> &m, int n) {
+        // Your code goes here
+        string temp;
+        f(0,0,m,n,temp);
+        // sort(ans.begin(),ans.end());
+        return ans;
+    }
+};

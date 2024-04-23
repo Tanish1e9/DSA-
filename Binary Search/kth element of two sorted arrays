@@ -25,6 +25,8 @@ Code Studio link: https://www.naukri.com/code360/problems/k-th-element-of-2-sort
 //     return -1;
 // }
 int helper(int p,int q,int r,int s,vector<int>&arr1,vector<int>&arr2,int k){
+    if(q-p==0) return arr2[r+k-1];
+    if(s-r==0) return arr1[p+k-1];
     if(k==1) return min(arr1[p],arr2[r]);
     int mid1=(q-p)/2;
     int mid2=(s-r)/2;

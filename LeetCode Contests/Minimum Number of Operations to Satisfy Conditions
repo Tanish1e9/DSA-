@@ -1,0 +1,25 @@
+LC link: https://leetcode.com/problems/minimum-number-of-operations-to-satisfy-conditions/
+
+class Solution {
+public:
+    int f(int i,int m,vector<vector<int>>&memo,auto &dp,int d){
+        if(i>=memo.size()) return 0;
+        if(dp[i][d]!=-1) return dp[i][d];
+        int ans=INT_MAX;
+        for(int x=0;x<=9;x++){
+            if(x==d) continue;
+            ans=min(ans,m-memo[i][x]+f(i+1,m,memo,dp,x));
+        }
+        return dp[i][d]=ans;
+    }
+    int minimumOperations(vector<vector<int>>& grid) {
+        vector<vector<int>> memo(grid[0].size(),vector<int>(10,0));
+        vector<vector<int>> dp(grid[0].size(),vector<int>(11,-1));
+        for(int i=0;i<grid.size();i++){
+            for(int j=0;j<grid[0].size();j++){
+                memo[j][grid[i][j]]++;
+            }
+        }
+        return f(0,grid.size(),memo,dp,10);
+    }
+};

@@ -1,0 +1,24 @@
+GFG link: https://www.geeksforgeeks.org/problems/find-length-of-loop/1?itm_source=geeksforgeeks&itm_medium=article&itm_campaign=bottom_sticky_on_article
+
+int length(Node*slow,Node*fast){
+    int ans=1;
+    slow=slow->next;
+    while(slow!=fast){
+        slow=slow->next;
+        ans++;
+    }
+    return ans;
+}
+int countNodesinLoop(struct Node *head)
+{
+    Node*fast=head;
+    Node*slow=head;
+    while(fast && fast->next){
+        slow=slow->next;
+        fast=fast->next->next;
+        if(slow==fast) return length(slow,fast);
+    }
+    return 0;
+}
+// Brute force me to simply har ek node k sath ek counter jaisa store krte rhna and fir jaha first visited node dikh jaye jo uss waqt
+// ka current counter chal rha hoga minus the stored counter is your answer

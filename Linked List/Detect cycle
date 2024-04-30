@@ -1,0 +1,27 @@
+LC link : https://leetcode.com/problems/linked-list-cycle/submissions/1245979193/
+
+bool detectCycle(Node *head){
+	// Node* cur=head;
+    // while(cur){
+    //     if(cur->data==-1) return true;
+    //     cur->data=-1;
+    //     cur=cur->next;
+    // }
+    // return false;
+    Node*fast=head;
+    Node*slow=head;
+    while(fast && fast->next){
+        slow=slow->next;
+        fast=fast->next->next;
+        if(slow==fast) return true;
+    }
+    return false;
+
+    // Dekh brute force to simple hoga ki map me har ek node store krte jao and traverse krte jao LL ko 
+    // agar koi visited node aa gya then cycle h else nhi h
+
+    // slow and fast ka concept ye h na dekh jaise hi loop me fasenge dono fast will be moving
+    // towards slow and slow will be moving away but their fast to slow distamce will be decreasing by 1
+    // Hence they will always collide
+    // Aur loop ke case me kabhi null nodes nhi hoga to agar kahi bhi null aa gya then breakout and return false
+}

@@ -1,0 +1,19 @@
+LeetCode link: https://leetcode.com/problems/linked-list-cycle-ii/
+
+ListNode*func(ListNode*slow,ListNode*fast,ListNode*head){
+      slow=head;
+      while(slow!=fast){
+          slow=slow->next;
+          fast=fast->next;
+      }
+      return slow;
+  }
+  ListNode *detectCycle(ListNode *head) {
+      ListNode*slow=head,*fast=head;
+      while(fast && fast->next){
+          fast=fast->next->next;
+          slow=slow->next;
+          if(slow==fast) return func(slow,fast,head);
+      }
+      return NULL;
+  }

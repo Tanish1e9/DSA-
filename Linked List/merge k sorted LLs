@@ -1,0 +1,77 @@
+Lc link: https://leetcode.com/problems/merge-k-sorted-lists/
+
+class Solution {
+public:
+    ListNode*merge(ListNode*a,ListNode*b){
+        if(a==NULL) return b;
+        if(b==NULL) return a;
+        ListNode*dummy=new ListNode(-1);
+        ListNode*prev=dummy;
+        ListNode*t1=a,*t2=b;
+        while(t1 && t2){
+            if(t1->val<t2->val){
+                prev->next=t1;
+                prev=prev->next;
+                t1=t1->next;
+            }
+            else{
+                prev->next=t2;
+                prev=prev->next;
+                t2=t2->next;
+            }
+        }
+        if(t1) prev->next=t1;
+        else prev->next=t2;
+
+        prev=dummy->next;
+        delete dummy;
+        return prev;
+    }
+    ListNode* mergeKLists(vector<ListNode*>& lists) {
+        typedef pair<int,ListNode*> p;
+        int k=lists.size();
+        ListNode*dummy=new ListNode(-1);
+        ListNode*prev=dummy;
+
+        // M1:- O(k*k*n),O(1)
+        // while(1){
+        //     bool flag=false;
+        //     ListNode*mini=NULL;
+        //     int mini_val=INT_MAX;
+        //     int mini_idx=-1;
+        //     for(int i=0;i<k;i++){
+        //         if(lists[i] && lists[i]->val<mini_val){
+        //             mini=lists[i];
+        //             mini_val=lists[i]->val;
+        //             mini_idx=i;
+        //             flag=true;
+        //         }
+        //     }
+        //     if(!flag) break;
+        //     prev->next=mini;
+        //     prev=mini;
+        //     lists[mini_idx]=lists[mini_idx]->next;
+        // }
+
+        // M2:- O((n1+n2)+(n1+n2+n3)+(n1+n2+n3+n4)+...),O(1) = O(n*k*k),O(1) // Better
+        // ListNode*head=NULL;
+        // for(int i=0;i<k;i++){
+        //     head=merge(head,lists[i]);
+        // }
+        // return head;
+
+        // M3:- O(klogk+mlogk),O(k)    m=n*k    // Most Optimal
+        priority_queue<p,vector<p>,greater<p>>pq;
+        for(int i=0;i<k;i++){
+            if(lists[i]) pq.push({lists[i]->val,lists[i]});
+        }
+        while(!pq.empty()){
+            auto f=pq.top();
+            pq.pop();
+            prev->next=f.second;
+            prev=prev->next;
+            ListNode*temp=f.second->next;
+            if(temp) pq.push({temp->val,temp});
+        }
+    }
+};

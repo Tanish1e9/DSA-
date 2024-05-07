@@ -1,13 +1,13 @@
-CodeStudio Link: https://www.naukri.com/code360/problems/merge-two-sorted-linked-lists_800332?leftPanelTabValue=SUBMISSION
+LC Link: https://leetcode.com/problems/merge-two-sorted-lists/
 
-Node<int>* sortTwoLists(Node<int>* first, Node<int>* second)
-{
-    if(first==NULL && second==NULL)return NULL;
-    Node<int>*t1=first,*t2=second;
-    Node<int>*dummy=new Node<int>(-1);
-    Node<int>*prev=dummy;
+ListNode* mergeTwoLists(ListNode* list1, ListNode* list2) {
+    // if(list1==NULL) return list2;
+    // if(list2==NULL) return list1;
+    ListNode*dummy=new ListNode(-1);
+    ListNode*prev=dummy;
+    ListNode*t1=list1,*t2=list2;
     while(t1 && t2){
-        if(t1->data<t2->data){
+        if(t1->val<t2->val){
             prev->next=t1;
             prev=t1;
             t1=t1->next;
@@ -18,9 +18,9 @@ Node<int>* sortTwoLists(Node<int>* first, Node<int>* second)
             t2=t2->next;
         }
     }
-    if(t2) prev->next=t2;
     if(t1) prev->next=t1;
-    Node<int>*ans=dummy->next;
-    free(dummy);
-    return ans;
+    else prev->next=t2;
+    prev=dummy->next;
+    delete dummy;
+    return prev;
 }

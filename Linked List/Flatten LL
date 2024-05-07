@@ -1,0 +1,24 @@
+GFG link: https://www.geeksforgeeks.org/problems/flattening-a-linked-list/1
+
+// Same as merge k sorted LLs wala sab kuch
+Node *flatten(Node *head)
+{
+    typedef pair<int,Node*> p;
+	priority_queue<p,vector<p>,greater<p>> pq;
+	Node*temp=head;
+	while(temp){
+		pq.push({temp->data,temp});
+		temp=temp->next;
+	}
+	Node*dummy=new Node(-1);
+	Node*prev=dummy;
+	while(!pq.empty()){
+		p curr=pq.top();
+		pq.pop();
+		prev->bottom=curr.second;
+		prev=prev->bottom;
+		Node*x=curr.second->bottom;
+		if(x) pq.push({x->data,x});
+	}
+	return dummy->bottom;
+}

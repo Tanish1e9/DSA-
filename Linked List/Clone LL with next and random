@@ -50,7 +50,7 @@ public:
         while(temp){
             Node*tobe=temp->next;
             if(tobe)temp->next=tobe->next;
-            else temp->next=NULL;
+            // else temp->next=NULL;        // This line is redundant
             temp=tobe;
         }
         return ans;

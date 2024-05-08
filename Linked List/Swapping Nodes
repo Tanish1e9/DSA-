@@ -1,0 +1,37 @@
+CodeStudio Link: https://classroom.codingninjas.com/app/classroom/me/26851/content/702380/offering/11516810/problem/326?leftPanelTabValue=SUBMISSION
+
+Node *swapNodes(Node *head, int i, int j)
+{
+	if(i==j) return head;
+	if(head==NULL || head->next==NULL) return head;
+	// if(i>j) return swapNodes(head, j, i);
+
+	Node*ans=head;
+	Node*temp=head,*prev=NULL;
+	Node*a,*a_prev,*b,*b_prev;
+	a=a_prev=b=b_prev=0;
+	int c=0;
+	while(temp){
+		if(c==i){
+			a_prev=prev;
+			a=temp;
+		}
+		else if(c==j){
+			b_prev=prev;
+			b=temp;
+		}
+		c++;
+		prev=temp;
+		temp=temp->next;
+	}
+	if(a_prev) a_prev->next=b;
+	else ans=b;
+	if(b_prev) b_prev->next=a;
+	else ans=a;
+
+	Node*t=a->next;
+	a->next=b->next;
+	b->next=t;
+	
+	return ans;
+}

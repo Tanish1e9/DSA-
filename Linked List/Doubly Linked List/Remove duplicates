@@ -1,0 +1,26 @@
+GFG link: https://www.geeksforgeeks.org/problems/remove-duplicates-from-a-sorted-doubly-linked-list/1
+
+class Solution
+{
+public:
+
+    Node * removeDuplicates(struct Node *head)
+    {
+        if(head->next==NULL) return head;
+        Node*temp=head->next;
+        Node*prev=head;
+        while(temp){
+            if(temp->data==prev->data){
+                prev->next=temp->next;
+                if(temp->next)temp->next->prev=prev;
+                delete temp;
+                temp=prev->next;
+            }
+            else {
+                prev=temp;
+                temp=temp->next;
+            }
+        }
+        return head;
+    }
+};

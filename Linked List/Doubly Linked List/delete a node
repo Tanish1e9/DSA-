@@ -1,0 +1,26 @@
+GFG link: https://www.geeksforgeeks.org/problems/delete-node-in-doubly-linked-list/1
+
+class Solution
+{
+    public:
+    Node* deleteNode(Node *head, int x)
+    {
+      x--;
+      if(x==0){
+          Node*ans=head->next;
+          delete head;
+          return ans;
+      }
+      int c=1;
+      Node*temp=head;
+      while(c<x){
+          temp=temp->next;
+          c++;
+      }
+      Node*tobe=temp->next;
+      temp->next=tobe->next;
+      if(tobe)tobe->prev=temp;
+      delete tobe;
+      return head;
+    }
+};

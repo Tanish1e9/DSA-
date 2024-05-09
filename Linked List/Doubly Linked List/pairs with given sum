@@ -1,0 +1,25 @@
+GFG link: https://www.geeksforgeeks.org/problems/find-pairs-with-given-sum-in-doubly-linked-list/1
+
+class Solution
+{
+public:
+    vector<pair<int, int>> findPairsWithGivenSum(Node *head, int target)
+    {
+        vector<pair<int, int>> ans;
+        Node* front=head;
+        Node* tail=head;
+        while(tail->next) tail=tail->next;
+        
+        while(front!=tail && front->prev!=tail){
+            int x=front->data+tail->data;
+            if(x==target){
+                ans.push_back({front->data,tail->data});
+                front=front->next;
+                tail=tail->prev;
+            }
+            else if(x<target) front=front->next;
+            else tail=tail->prev;
+        }
+        return ans;
+    }
+};

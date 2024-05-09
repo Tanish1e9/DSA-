@@ -1,0 +1,54 @@
+GFG link: https://www.geeksforgeeks.org/problems/design-browser-history/1
+
+class Node{
+    public:
+    string data;
+    Node*next;
+    Node*prev;
+    Node(string &dat){
+        data=dat;
+        next=NULL;
+        prev=NULL;
+    }
+};
+void freell(Node*head){
+    while(head){
+        Node*temp=head->next;
+        delete head;
+        head=temp;
+    }
+}
+class BrowserHistory {
+public:
+     // constructor to initialize object with homepage
+    Node* head;
+    Node* curr;
+    BrowserHistory(string homepage) {
+        head=new Node(homepage);
+        curr=head;
+    }
+    
+    // visit current url
+    void visit(string url) {
+        freell(curr->next);
+        curr->next=new Node(url);
+        curr->next->prev=curr;
+        curr=curr->next;
+    }
+    
+    // 'steps' move backward in history and return current page
+    string back(int steps) {
+        while(steps-- && curr->prev){
+            curr=curr->prev;
+        }
+        return curr->data;
+    }
+    
+    // 'steps' move forward and return current page
+    string forward(int steps) {
+        while(steps-- && curr->next){
+            curr=curr->next;
+        }
+        return curr->data;
+    }
+};

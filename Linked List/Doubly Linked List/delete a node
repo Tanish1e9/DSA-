@@ -9,6 +9,7 @@ class Solution
       if(x==0){
           Node*ans=head->next;
           delete head;
+          ans->prev=NULL;
           return ans;
       }
       int c=1;

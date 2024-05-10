@@ -1,0 +1,26 @@
+LC link: https://leetcode.com/problems/balanced-binary-tree/
+
+
+// yaha par recursive maxDepth bhi use kr skte the basically height wala code reuse kie h
+    int maxDepth(TreeNode* root) {
+        if(root==0) return 0;
+        queue<TreeNode*> q;
+        q.push(root);
+        int ans=0;
+        while(!q.empty()){
+            int nodes_cur_level=q.size();
+            while(nodes_cur_level--){
+                TreeNode*curr=q.front();
+                q.pop();
+                if(curr->left) q.push(curr->left);
+                if(curr->right) q.push(curr->right);
+            }
+            ans++;
+        }
+        return ans;
+    }
+    bool isBalanced(TreeNode* root) {
+        if(root==0) return true;
+        if(abs(maxDepth(root->left)-maxDepth(root->right))>1) return false;
+        return isBalanced(root->left) && isBalanced(root->right);
+    }

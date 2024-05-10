@@ -1,6 +1,6 @@
 LC link: https://leetcode.com/problems/binary-tree-postorder-traversal/description/
 
-
+// Recursive
     void post(TreeNode*root,vector<int>&ans){
         if(root==NULL) return;
         post(root->left,ans);
@@ -12,3 +12,63 @@ LC link: https://leetcode.com/problems/binary-tree-postorder-traversal/descripti
         post(root,ans);
         return ans;
     }
+
+// Iterative 2 stack
+
+class Solution {
+public:
+    vector<int> postorderTraversal(TreeNode* root) {
+        if(root==0) return {};
+        vector<int> ans;
+        stack<TreeNode*> s1,s2;
+        s1.push(root);
+        while(!s1.empty()){
+            TreeNode*curr=s1.top();
+            s1.pop();
+            s2.push(curr);
+            if(curr->left)s1.push(curr->left);
+            if(curr->right)s1.push(curr->right);
+        }
+        while(!s2.empty()){
+            ans.push_back(s2.top()->val);
+            s2.pop();
+        }
+        return ans;
+    }
+};
+
+
+// Iterative 1 stack
+
+// Wahi intuition h recursive wala imagine kro pehle jitna left ja skte jate jao then right jake fir left jaate jao
+// Jaha leaf node aaya value print and if you are your parent's right child then unka bhi value print and back 
+class Solution {
+public:
+    vector<int> postorderTraversal(TreeNode* root) {
+        if(root==0) return {};
+        vector<int> ans;
+        stack<TreeNode*> s;
+        TreeNode*curr=root;
+        while(!s.empty() || curr){
+            if(curr){
+                s.push(curr);
+                curr=curr->left;
+            }
+            else{
+                TreeNode* temp=s.top()->right;
+                if(temp) curr=temp;
+                else{
+                    temp=s.top();
+                    ans.push_back(temp->val);
+                    s.pop();
+                    while(!s.empty() && s.top()->right==temp){
+                        temp=s.top();
+                        ans.push_back(temp->val);
+                        s.pop();
+                    }
+                }
+            }
+        }
+        return ans;
+    }
+};

@@ -1,6 +1,23 @@
 Code Studio link: https://www.naukri.com/code360/problems/tree-traversal_981269?leftPanelTabValue=SUBMISSION
 
+// Recursive
+void trav(TreeNode*root,vector<vector<int>>&ans){
+    if(root==0) return;
 
+    ans[1].push_back(root->data);           // pre me daal do
+    trav(root->left,ans);
+    ans[0].push_back(root->data);           // left wala hoke aya to inorder me daal die
+    trav(root->right,ans);
+    ans[2].push_back(root->data);           // left right dono ho gya to postorder me daal die
+}
+vector<vector<int>> getTreeTraversal(TreeNode *root){
+    vector<vector<int>> ans(3);
+    trav(root,ans);
+    return ans;    
+}
+
+
+// Iterative
 // TC is O(3N) and SC is O(3N)
 vector<vector<int>> getTreeTraversal(TreeNode *root){
     vector<vector<int>> ans(3);

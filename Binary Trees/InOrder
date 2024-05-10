@@ -1,6 +1,6 @@
 LC link: https://leetcode.com/problems/binary-tree-inorder-traversal/description/
 
-
+// Recursive
     void in(TreeNode*root,vector<int>&ans){
         if(root==NULL) return;
         in(root->left,ans);
@@ -12,3 +12,38 @@ LC link: https://leetcode.com/problems/binary-tree-inorder-traversal/description
         in(root,ans);
         return ans;
     }
+
+// Iterative
+class Solution {
+public:
+    vector<int> inorderTraversal(TreeNode* root) {
+        if(root==NULL) return {};
+        vector<int> ans;
+        stack<TreeNode*> s;
+        // s.push(root);
+        // bool flag=true;
+        // while(!s.empty()){
+        //     while(s.top()->left && flag) s.push(s.top()->left);
+        //     TreeNode*curr=s.top();
+        //     s.pop();
+        //     ans.push_back(curr->val);
+        //     if(curr->right){ 
+        //         s.push(curr->right);
+        //         flag=true;
+        //     }
+        //     else flag=false;
+        // }
+        TreeNode*curr=root;
+        while(1){
+            while(curr){ 
+                s.push(curr);
+                curr=curr->left;
+            }
+            if(s.empty()) break;
+            ans.push_back(s.top()->val);
+            curr=s.top()->right;
+            s.pop();
+        }
+        return ans;
+    }
+};

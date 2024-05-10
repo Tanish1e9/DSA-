@@ -30,11 +30,13 @@ SC: O(N)+O(height)        height wala is A.S.S (Auxiliary Stack space) and N is 
 // Optimal Approach O(N),O(height)
 
 // integrate kr dia height wale code me hi balanced h ya nhi
-int maxDepth(TreeNode*root){
+    int maxDepth(TreeNode*root){
         if(root==0) return 0;
         int lh=maxDepth(root->left);
+        if(lh<0) return -1;
         int rh=maxDepth(root->right);
-        if(lh<0 || rh<0) return -1;
+        if(rh<0) return -1;
+        
         if(abs(lh-rh)>1) return -1;
         return max(lh,rh)+1;
     }

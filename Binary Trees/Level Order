@@ -1,0 +1,25 @@
+LC link: https://leetcode.com/problems/binary-tree-level-order-traversal/
+
+TC:- O(n)    SC:- O(max nodes in a level)
+class Solution {
+public:
+    vector<vector<int>> levelOrder(TreeNode* root) {
+        if(root==NULL) return {};
+        vector<vector<int>> ans;
+        queue<TreeNode*> q;
+        q.push(root);
+        while(!q.empty()){
+            int nodes_cur_level=q.size();
+            vector<int> temp;
+            while(nodes_cur_level--){
+                TreeNode*curr=q.front();
+                q.pop();
+                temp.push_back(curr->val);
+                if(curr->left) q.push(curr->left);
+                if(curr->right) q.push(curr->right);
+            }
+            ans.push_back(temp);
+        }
+        return ans;
+    }
+};

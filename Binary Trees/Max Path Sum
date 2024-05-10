@@ -1,5 +1,11 @@
 LC link: https://leetcode.com/problems/binary-tree-maximum-path-sum/
 
+
+// Dekh iska yahi intuition hai ki like mereko left tree k node k through straight path chahye bilkul 
+// Kyunki agar left root se connected nhi hoga to current root k through kaise le ja paoge 
+// Aur negative ho to unko mat lena but root->val to lena hi hoga because upar wale level me 0 ho hi ja rha h contribution uss path ka because negative aa jayega agar 
+// root->val left hua iss level me to 
+// but since single negative root me negative report krna h islie lie h
     int ans=INT_MIN;
     int helper(TreeNode*root){
         if(root==0) return 0;

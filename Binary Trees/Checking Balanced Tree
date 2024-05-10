@@ -1,6 +1,7 @@
 LC link: https://leetcode.com/problems/balanced-binary-tree/
 
-
+TC: O(2N)     N for traversal and N for height finding
+SC: O(N)+O(height)        height wala is A.S.S (Auxiliary Stack space) and N is for queue in height finding
 // yaha par recursive maxDepth bhi use kr skte the basically height wala code reuse kie h
     int maxDepth(TreeNode* root) {
         if(root==0) return 0;

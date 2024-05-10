@@ -1,0 +1,19 @@
+LC link: https://leetcode.com/problems/diameter-of-binary-tree/
+
+//Dekh ye sab me har node pe traverse krke alag se height nikalne ka dimag me aata h but wo O(n2) ho jata
+// height nikalte waqt already har node ka left and right height nikal hi rhe hote h to wahi pe merge kr do diameter k code ko
+
+    int ans=-1;
+    int height(auto root){
+        if(root==0) return 0;
+        int lh=height(root->left);
+        int rh=height(root->right);
+
+        ans=max(ans,lh+rh);
+        return max(lh,rh)+1;
+    }
+    int diameterOfBinaryTree(TreeNode* root) {
+        if(root==0) return 0;
+        height(root);
+        return ans;
+    }

@@ -1,0 +1,26 @@
+LC link: https://leetcode.com/problems/minimum-substring-partition-of-equal-character-frequency/
+
+  bool check(auto &mymap){
+        int x=-1;
+        for(auto it:mymap){
+            if(it==0) continue;
+            if(x==-1) x=it;
+            else if(it!=x) return false;
+        }
+        return true;
+    }
+    int f(int i,string&s,auto &memo){
+        if(i>=s.size()) return 0;
+        if(memo[i]!=-1) return memo[i];
+        vector<int> mymap(26,0);
+        int ans=1e9;
+        for(int j=i;j<s.size();j++){
+            mymap[s[j]-'a']++;
+            if(check(mymap)) ans=min(ans,f(j+1,s,memo)+1);
+        }
+        return memo[i]=ans;
+    }
+    int minimumSubstringsInPartition(string s) {
+        vector<int> memo(s.size(),-1);
+        return f(0,s,memo);
+    }

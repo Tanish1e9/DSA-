@@ -10,16 +10,19 @@ public:
         bool flag=false;
         while(!q.empty()){
             int nodes_cur_level=q.size();
-            vector<int> temp;
+            vector<int> temp(nodes_cur_level);
             while(nodes_cur_level--){
                 TreeNode*curr=q.front();
                 q.pop();
-                temp.push_back(curr->val);
+
+                // Basically baad me reverse krne se achha h pehle se hi uss order me daalte jaye based on flag
+                if(flag) temp[nodes_cur_level]=curr->val;
+                else temp[temp.size()-1-nodes_cur_level]=curr->val;
+
                 if(curr->left) q.push(curr->left);
                 if(curr->right) q.push(curr->right);
             }
-            if(flag)
-                reverse(temp.begin(),temp.end());
+            
             ans.push_back(temp);
             flag=!flag;
         }

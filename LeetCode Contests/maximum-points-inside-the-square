@@ -1,0 +1,33 @@
+LC link: https://leetcode.com/problems/maximum-points-inside-the-square/
+
+int maxPointsInsideSquare(vector<vector<int>>& points, string s) {
+        vector<pair<int,int>> mymap(26,{-1,-1});
+        int ans=INT_MAX;
+        for(int i=0;i<points.size();i++){
+            int side_length = max(abs(points[i][0]),abs(points[i][1]));
+            if(mymap[s[i]-'a'].first!=-1){
+                int current_min=mymap[s[i]-'a'].first;
+                int current_smin=mymap[s[i]-'a'].second;
+                
+                if(side_length <= current_min){
+                    current_smin=current_min;
+                    current_min= side_length;
+                }
+                else if(side_length < current_smin){
+                    current_smin= side_length;
+                }
+                mymap[s[i]-'a'].first=current_min;
+                mymap[s[i]-'a'].second=current_smin;
+                ans=min(current_smin-1,ans);
+            }
+            else{
+                mymap[s[i]-'a']={side_length,INT_MAX};
+            }
+        }
+        
+        int count=0;
+        for(int i=0;i<points.size();i++){
+            if(abs(points[i][0]) <= ans && abs(points[i][1])<=ans) count++;
+        }
+        return count;
+    }

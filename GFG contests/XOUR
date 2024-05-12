@@ -1,3 +1,4 @@
+weekly 154
 question is find no of ordered pairs(a,b) such that a|b=a^b and 0<=a,b<2^x
 
 // intuition is simple for a particular a jo jo bits a ki set h un bits pe unset rakho baaki bits set kro chahe unset unka a|b=a^b

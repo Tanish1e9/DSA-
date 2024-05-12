@@ -1,0 +1,10 @@
+Weekly 154
+Question is there are houses given . their positions in an x array
+we have to set up a grocery store such that sum of absolute differences of grocery store and all the houses is minimum
+Recall that such a point is median !!! # DAI yad kro 
+
+
+int minimumDis(int n, vector<int> x) {
+        sort(x.begin(),x.end());
+        return x[(n-1)/2];
+    }

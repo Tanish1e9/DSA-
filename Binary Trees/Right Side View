@@ -2,6 +2,21 @@ LC link: https://leetcode.com/problems/binary-tree-right-side-view/description/
 
 take last element of every level or first depending on right or left side view
 
+// Recursive
+void pre(TreeNode*root,int level,vector<int>&ans){
+        if(root==0) return;
+        if(level==ans.size()) ans.push_back(root->val);
+        pre(root->right,level+1,ans);
+        pre(root->left,level+1,ans);
+}
+vector<int> rightSideView(TreeNode* root) {
+        if(root==0) return {};
+        vector<int> ans;
+        pre(root,0,ans);
+        return ans;
+}
+
+// Iterative
 vector<int> rightSideView(TreeNode* root) {
         if(root==0) return {};
         queue<TreeNode*>q;

@@ -1,5 +1,6 @@
 LC link: https://leetcode.com/problems/symmetric-tree/
 
+// Dekh identical trees me left se left and right se right compare hua tha yaha bas swapped h
     bool isidentical(TreeNode*r1,TreeNode*r2){
         if(r1==0 && r2==0) return true;
         if(r1==0 || r2==0) return false;

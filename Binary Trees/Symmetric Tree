@@ -1,0 +1,12 @@
+LC link: https://leetcode.com/problems/symmetric-tree/
+
+    bool isidentical(TreeNode*r1,TreeNode*r2){
+        if(r1==0 && r2==0) return true;
+        if(r1==0 || r2==0) return false;
+        if(r1->val!=r2->val) return false;
+        return isidentical(r1->left,r2->right) && isidentical(r1->right,r2->left);
+    }
+    bool isSymmetric(TreeNode* root) {
+        if(root==0)return true;
+        return isidentical(root->left,root->right);
+    }

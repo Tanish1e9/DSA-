@@ -1,0 +1,45 @@
+class Solution {
+public:
+    // int fill(int i,int j,vector<vector<int>>&grid,vector<vector<int>>&memo){
+    //     int m=grid.size();
+    //     int n=grid[0].size();
+    //     if(i>=m || j>=n) return -1;
+    //     if(i==m-1 && j==n-1) {
+    //         return memo[i][j]=grid[i][j];
+    //     }
+    //     if(memo[i][j]!=-1)return memo[i][j];
+    //     int ans=-1e9;
+    //     if(i+1 < m) ans=max(ans,grid[i+1][j]);
+    //     if(j+1 < n) ans=max(ans,grid[i][j+1]);
+    //     ans=max(ans,fill(i+1,j,grid,memo));
+    //     ans=max(ans,fill(i,j+1,grid,memo));
+    //     return memo[i][j]=ans;
+    // }
+    int maxScore(vector<vector<int>>& grid) {
+        int m=grid.size();
+        int n=grid[0].size();
+        vector<vector<int>> memo(m+1,vector<int>(n+1,-1));
+        // fill(0,0,grid,memo);
+        int ans=-1e9;
+        for(int i=m-1;i>=0;i--){
+            for(int j=n-1;j>=0;j--){
+                if(i==m-1 && j==n-1) memo[i][j]=grid[i][j];
+                else{
+                    memo[i][j]=max({memo[i][j],memo[i][j+1],memo[i+1][j]});
+                    if(i+1 < m) memo[i][j]=max(memo[i][j],grid[i+1][j]);
+                    if(j+1 < n) memo[i][j]=max(memo[i][j],grid[i][j+1]);
+                    ans=max(ans,memo[i][j]-grid[i][j]);
+                }
+            }
+        }
+        return ans;
+    }
+
+    // Dekh intuition yehi tha ki pehle to ye realise kr ki i,j se wo i+k,j+l pe ja skta for any k,l 
+    // Ek series me jaana is equivalent to ek bar me jump kr jana
+    // So for any i,j I find the maximum value in (i,j to m-1,n-1) block except i,j  and I will jump there
+    // For that I wrote a recursive fill function that will populate the memo array accordingly  
+    // And then you can traverse through the grid you have the max values to jump to so calculate the answer
+    // In order to interatively do it is also simple just realsie that we will move from bottom right to top left 
+    // memo[i][j] denotes the maximum value position we can jump to from i,j , i.e., the maximum element in the "lower block"  
+};

@@ -1,0 +1,9 @@
+Weekly 154
+
+Given was some orderings that certain horses should appear before certain horses and we had to return the complete ordering of the horses that respects them
+If there are multiple possible return lexicographically smallest
+
+In such questions think of Topo Sort. 
+but In DFS wala topo sort we cant control lexicographically ordering
+so we use kahn's but with priority queue
+

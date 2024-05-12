@@ -1,0 +1,24 @@
+question is find no of ordered pairs(a,b) such that a|b=a^b and 0<=a,b<2^x
+
+// intuition is simple for a particular a jo jo bits a ki set h un bits pe unset rakho baaki bits set kro chahe unset unka a|b=a^b
+// to for any a there are 2^(x-setbits(a)) numbers possible 
+// So sigma from r=0 to r=x  2^(x-r)xcr  = 3^x
+// xcr numbers have r bits set so they have 2^(x-r) numbers possible and thus the summation
+    int pow(int x){
+        long ans=1;
+        long base=3;
+        while(x>0){
+            if(x%2==0){
+                base=(base*base)%int(1e9+7);
+                x=x/2;
+            }
+            else{
+                ans=(ans*base)%int(1e9+7);
+                x=x-1;
+            }
+        }
+        return ans%int(1e9+7);
+    }
+    int xorGame(int x) {
+        return pow(x);
+    }

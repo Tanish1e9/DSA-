@@ -1,0 +1,31 @@
+LC link: https://leetcode.com/problems/vertical-order-traversal-of-a-binary-tree/description/
+
+    vector<vector<int>> verticalTraversal(TreeNode* root) {
+        if(root==0) return {};
+        map<int,map<int,multiset<int>>> mymap;
+        // multiset is for storing non unique elements in sorted order
+        // first int for column second int for level
+        queue<pair<TreeNode*,int>> q;
+        q.push({root,0});
+        int level=0;
+        while(!q.empty()){
+            int curr_size=q.size();
+            level++;
+            while(curr_size--){
+                pair<TreeNode*,int> curr=q.front();
+                q.pop();
+                mymap[curr.second][level].insert(curr.first->val);
+                if(curr.first->left) q.push({curr.first->left,curr.second-1});
+                if(curr.first->right) q.push({curr.first->right,curr.second+1});
+            }
+        }
+        vector<vector<int>> ans;
+        for(auto it:mymap){
+            vector<int> temp;
+            for(auto x:it.second){
+                temp.insert(temp.end(),x.second.begin(),x.second.end());
+            }
+            ans.push_back(temp);
+        }
+        return ans;
+    }

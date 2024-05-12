@@ -1,6 +1,8 @@
 LC link: https://leetcode.com/problems/symmetric-tree/
 
 // Dekh identical trees me left se left and right se right compare hua tha yaha bas swapped h
+// Dekh ye bhi soch skte ki bas left and right swap krke koi bhi traversal kra jaye root->left and root->right pe and
+// wo same to symmetric else not ye thik h bas ek edge case jab nodes ka data duplicate ho jaye na tab wrong ho jayega
     bool isidentical(TreeNode*r1,TreeNode*r2){
         if(r1==0 && r2==0) return true;
         if(r1==0 || r2==0) return false;

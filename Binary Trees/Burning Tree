@@ -1,0 +1,67 @@
+GFG link: https://www.geeksforgeeks.org/problems/burning-tree/1
+
+// very similar to nodes at distance k from target node 
+// Radial Traversal ka sawaal h
+
+    Node*find_node(Node*root,int target){                  // Target Node ko find krne k lie alag function ka as such jroorat ni tha markparents wale me kr skte the but still
+        if(root==0) return 0;
+        if(root->data==target) return root;
+        Node*left=find_node(root->left,target);
+        Node*right=find_node(root->right,target);
+        if(left) return left;
+        return right;
+    }
+    void markparents(Node* root,map<Node*,Node*>&parents){
+        queue<Node*> q;
+        q.push(root);
+        parents[root]=NULL;
+        while(!q.empty()){
+            int curr_size=q.size();
+            while(curr_size--){
+                Node*curr=q.front();
+                q.pop();
+                if(curr->left){
+                    q.push(curr->left);
+                    parents[curr->left]=curr;
+                }
+                if(curr->right){
+                    q.push(curr->right);
+                    parents[curr->right]=curr;
+                }
+            }
+        }
+    }
+    int minTime(Node* root, int target) 
+    {
+        if(root==0) return 0;
+        map<Node*,Node*>parents;
+        markparents(root,parents);
+        Node* target_node=find_node(root,target);
+        
+        set<Node*> visited;
+        visited.insert(target_node);
+        queue<Node*>q;
+        q.push(target_node);
+        int time=0;
+        while(!q.empty()){
+            time++;
+            int curr_size=q.size();
+            while(curr_size--){
+                Node*curr=q.front();
+                q.pop();
+                if(curr->left && visited.find(curr->left)==visited.end()){
+                    q.push(curr->left);
+                    visited.insert(curr->left);
+                }
+                if(curr->right && visited.find(curr->right)==visited.end()){
+                    q.push(curr->right);
+                    visited.insert(curr->right);
+                }
+                if(parents[curr] && visited.find(parents[curr])==visited.end()){
+                    q.push(parents[curr]);
+                    visited.insert(parents[curr]);
+                }
+            }
+        }
+        return time-1;
+    }

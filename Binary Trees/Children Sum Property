@@ -1,0 +1,12 @@
+GFG link: https://www.geeksforgeeks.org/problems/children-sum-parent/1
+
+int isSumProperty(Node *root)
+    {
+        if(root==0) return 1;
+        if(root->left==0 && root->right==0) return 1;
+        int left=root->left ? root->left->data : 0;
+        int right=root->right ? root->right->data : 0;
+        
+        if(root->data!=left + right) return 0;
+        return min(isSumProperty(root->left),isSumProperty(root->right));
+    }

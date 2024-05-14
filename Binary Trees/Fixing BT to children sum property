@@ -1,0 +1,17 @@
+Code Studio Link: https://www.naukri.com/code360/problems/childrensumproperty_790723?leftPanelTabValue=PROBLEM
+
+void changeTree(BinaryTreeNode < int > * root) {
+    if(root==0) return;
+    if(root->left==0 && root->right==0) return;
+    int left= root->left ? root->left->data : 0;
+    int right= root->right ? root->right->data : 0;
+    if(left+right < root->data){
+        if(root->left)root->left->data += root->data - left - right;
+       else root->right->data += root->data - left - right;                 // leaf node nhi h upar check kr lia h 
+    }
+    changeTree(root->left);
+    changeTree(root->right);
+    left= root->left ? root->left->data : 0;
+    right= root->right ? root->right->data : 0;
+    root->data = left+right;
+} 

@@ -1,0 +1,27 @@
+LC link: https://leetcode.com/problems/count-complete-tree-nodes/
+
+    int left_height(TreeNode*root){
+        int ans=0;
+        while(root){
+            root=root->left;
+            ans++;
+        }
+        return ans;
+    }
+    int right_height(TreeNode*root){
+        int ans=0;
+        while(root){
+            root=root->right;
+            ans++;
+        }
+        return ans;
+    }
+    int countNodes(TreeNode* root) {
+        if(root==0) return 0;
+        int lh=left_height(root);
+        int rh=right_height(root);
+        if(lh==rh) return (1<<lh)-1;
+        return countNodes(root->left)+countNodes(root->right)+1;
+    }
+// Yaha kuch bhi ni bas normal counting ko thoda optimise kr dia gya h jisse  TC O(log^2 (n)) ho gya h 
+// SC is same O(log n)

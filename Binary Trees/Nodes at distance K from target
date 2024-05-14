@@ -1,0 +1,61 @@
+LC link: https://leetcode.com/problems/all-nodes-distance-k-in-binary-tree/
+
+    void markparents(TreeNode*root,auto &parents){
+        queue<TreeNode*>q;
+        q.push(root);
+        while(!q.empty()){
+            TreeNode*curr=q.front();
+            q.pop();
+            if(curr->left){
+                q.push(curr->left);
+                parents[curr->left]=curr;
+            }
+            if(curr->right){
+                q.push(curr->right);
+                parents[curr->right]=curr;
+            }
+        }
+    }
+    vector<int> distanceK(TreeNode* root, TreeNode* target, int k) {
+        if(k==0) return {target->val};
+        map<TreeNode*,TreeNode*> parents;
+        parents[root]=NULL;
+        markparents(root,parents);
+
+        queue<TreeNode*>q;
+        set<TreeNode*> visited;
+        q.push(target);
+        visited.insert(target);
+        int dist=0;
+
+        // Radial Traversal bolte isko
+        // Converted to an Undirected Graph aur fir BFS kr rhe
+        // Yahi CRUX hai iss question ka
+
+        while(!q.empty() && dist!=k){
+            dist++;
+            int curr_size=q.size();
+            while(curr_size--){
+                TreeNode* curr=q.front();
+                q.pop();
+                if(curr->left && visited.find(curr->left)==visited.end()){
+                    q.push(curr->left);
+                    visited.insert(curr->left);
+                }
+                if(curr->right && visited.find(curr->right)==visited.end()){
+                    q.push(curr->right);
+                    visited.insert(curr->right);
+                }
+                if(parents[curr] && visited.find(parents[curr])==visited.end()){
+                    q.push(parents[curr]);
+                    visited.insert(parents[curr]);
+                }
+            }
+        }
+        vector<int> ans;
+        while(!q.empty()){
+            ans.push_back(q.front()->val);
+            q.pop();
+        }
+        return ans;
+    }

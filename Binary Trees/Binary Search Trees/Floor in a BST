@@ -1,0 +1,17 @@
+GFG link: https://www.geeksforgeeks.org/problems/floor-in-bst/1
+
+int floor(Node* root, int x) {
+        if(root==0) return -1;
+        int ans=-1;
+        Node*curr=root;
+        while(curr){
+            if(curr->data <= x){
+                ans=curr->data;
+                curr=curr->right;
+            }
+            else{
+                curr=curr->left;
+            }
+        }
+        return ans;
+    }

@@ -1,0 +1,18 @@
+LC link: https://leetcode.com/problems/path-sum-ii/
+
+    vector<vector<int>> ans;
+    void helper(TreeNode*root,int targetSum,vector<int>&temp){
+        if(root==0) return;
+        temp.push_back(root->val);
+        if(root->left==0 && root->right==0 && root->val==targetSum){
+            ans.push_back(temp);
+        }
+        helper(root->left,targetSum-root->val,temp);
+        helper(root->right,targetSum-root->val,temp);
+        temp.pop_back();
+    }
+    vector<vector<int>> pathSum(TreeNode* root, int targetSum) {
+        vector<int> temp;
+        helper(root,targetSum,temp);
+        return ans;
+    }

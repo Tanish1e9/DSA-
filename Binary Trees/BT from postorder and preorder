@@ -1,0 +1,37 @@
+LC link: https://leetcode.com/problems/construct-binary-tree-from-preorder-and-postorder-traversal/
+
+    TreeNode* helper(int post_start,int post_end,int pre_start,int pre_end,
+    vector<int>&postorder,vector<int>&preorder,unordered_map<int,int>&indices){
+        if(post_start>post_end || pre_start>pre_end) return 0;
+
+        TreeNode*root=new TreeNode(preorder[pre_start]);
+
+        if(pre_start==pre_end) return root;
+        int root_index = indices[preorder[pre_start+1]];
+        int elements = root_index-post_start + 1; // including the root
+
+        // dekh yahi pe choice h ki agar baki saare elements kisi ek hi tree me aa ja rhe to tu usko left subtree banayega ya right subtree
+        // ye if block likhne se right ban ja rha wo and left me null rh jayega
+        // but agar sirf else wala part likhega to wo left me aa jayega and right me jaake automatically null ho jayega
+        // To islie bhut jada hi choices ni hote but ha thode se hote h
+        if(root_index == post_end -1){
+            root->right=helper(post_start,post_end-1,pre_start+1,pre_end,postorder,preorder,indices);
+        }
+        else{
+            root->left=helper(post_start,post_start+elements-1,pre_start+1,pre_start+elements,postorder,preorder,indices);
+            root->right=helper(post_start+elements,post_end-1,pre_start+elements+1,pre_end,postorder,preorder,indices);
+        }
+        return root;
+    }
+    TreeNode* constructFromPrePost(vector<int>& preorder, vector<int>& postorder) {
+        int post_start=0;
+        int post_end=postorder.size()-1;
+        int pre_start=0;
+        int pre_end=preorder.size()-1;
+    
+        unordered_map<int,int> indices;
+        for(int i=0;i<postorder.size();i++){
+            indices[postorder[i]]=i;
+        }
+        return helper(post_start,post_end,pre_start,pre_end,postorder,preorder,indices);
+    }

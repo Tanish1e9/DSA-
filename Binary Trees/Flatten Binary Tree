@@ -1,0 +1,88 @@
+LC link: https://leetcode.com/problems/flatten-binary-tree-to-linked-list/
+
+    // 1) Morris Original by me
+    // void flatten(TreeNode* root) {
+    //     if(root==0) return ;
+    //     TreeNode*curr=root;
+    //     while(curr){
+    //         if(curr->left==0){
+    //             curr=curr->right;
+    //         }
+    //         else{
+    //             TreeNode*temp=curr->left;
+    //             while(temp->right && temp->right!=curr) temp=temp->right;
+    //             if(temp->right==curr){
+    //                 temp->right=curr->right;
+    //                 TreeNode*temp=curr->right;
+    //                 curr->right=curr->left;
+    //                 curr->left=0;
+    //                 curr=temp;
+    //             }
+    //             else{
+    //                 temp->right=curr;
+    //                 curr=curr->left;
+    //             }
+    //         }
+    //     }
+    // }
+
+    // 2) Recursive original by me
+    // void flatten(TreeNode* root) {
+    //     if(root==0) return ;
+    //     flatten(root->left);
+    //     flatten(root->right);
+    //     if(root->left){
+    //         TreeNode*temp=root->left;
+    //         while(temp->right) temp=temp->right;
+    //         temp->right=root->right;
+    //         root->right=root->left;
+    //         root->left=0;
+    //     }
+    // }
+
+    // 3) Recursive Actual
+    // TreeNode*prev=NULL;
+    // void flatten(TreeNode* root) {
+    //     if(root==0) return ;
+    //     flatten(root->right);
+    //     flatten(root->left);
+    //     root->right=prev;
+    //     root->left=0;
+    //     prev=root;
+    // }
+
+    4) Iterative by Stack Actual 
+    // void flatten(TreeNode* root) {
+    //     if(root==0) return ;
+    //     stack<TreeNode*> s;
+    //     s.push(root);
+    //     TreeNode*prev=0;
+    //     while(!s.empty()){
+    //         TreeNode*curr=s.top();
+    //         s.pop();
+    //         if(curr->right){
+    //             s.push(curr->right);
+    //         }
+    //         if(curr->left){
+    //             s.push(curr->left);
+    //         }
+    //         if(!s.empty()) curr->right=s.top();
+    //         curr->left=0;
+    //     }
+    // }
+
+    5) Morris Actual O(n),O(1)
+    void flatten(TreeNode*root){
+        if(root==0) return ;
+        TreeNode*curr=root;
+        while(curr){
+            if(curr->left){
+                TreeNode*temp=curr->left;
+                while(temp->right) temp=temp->right;
+                temp->right=curr->right;
+                curr->right=curr->left;
+                curr->left=0;
+            }
+            curr=curr->right;
+        }
+    }

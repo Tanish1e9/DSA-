@@ -1,0 +1,42 @@
+LC link: https://leetcode.com/problems/path-sum-iii/
+
+// O(n^2),O(n) approach
+    // int ans=0;
+    // void helper(TreeNode*root,long targetSum){
+    //     if(root==0) return;
+    //     if(root->val==targetSum){
+    //         ans++;
+    //     }
+    //     helper(root->left,long(targetSum)-root->val);
+    //     helper(root->right,long(targetSum)-root->val);
+    // }
+    // void trav(TreeNode*root,int targetSum){
+    //     if(root==0) return;
+    //     helper(root,targetSum);
+    //     trav(root->left,targetSum);
+    //     trav(root->right,targetSum);
+    // }
+    // int pathSum(TreeNode* root, int targetSum) {
+    //     trav(root,targetSum);
+    //     return ans;
+    // }
+
+// O(n),O(2n) approach
+
+    int ans=0;
+    void trav(TreeNode*root,int target,auto &pre_sum,long long sum){
+        if(root==0) return;
+        sum+=root->val;
+        if(sum==target) ans++;
+        
+        if(pre_sum.contains(sum - target)) ans+=pre_sum[sum - target];
+        pre_sum[sum]++;
+        trav(root->left,target,pre_sum,sum);
+        trav(root->right,target,pre_sum,sum);
+        pre_sum[sum]--;
+    }
+    int pathSum(TreeNode* root, int targetSum){
+        unordered_map<long long,int> pre_sum;
+        trav(root,targetSum,pre_sum,0);
+        return ans;
+    }

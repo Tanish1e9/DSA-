@@ -1,0 +1,28 @@
+LC link: https://leetcode.com/problems/binary-tree-postorder-traversal/description/
+
+vector<int> postorderTraversal(TreeNode* root) {
+        if(root==0) return {};
+        vector<int> ans;
+        TreeNode*curr=root;
+        while(curr){
+            if(curr->right==0){
+                ans.push_back(curr->val);
+                curr=curr->left;
+            }
+            else{
+                TreeNode*temp=curr->right;
+                while(temp->left && temp->left!=curr) temp=temp->left;
+                if(temp->left==curr) {
+                    temp->left=0;
+                    curr=curr->left;
+                }
+                else{
+                    temp->left=curr;
+                    ans.push_back(curr->val);
+                    curr=curr->right;
+                }
+            }
+        }
+        reverse(ans.begin(),ans.end());
+        return ans;
+    }

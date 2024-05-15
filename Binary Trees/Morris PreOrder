@@ -1,0 +1,27 @@
+LC link: https://leetcode.com/problems/binary-tree-preorder-traversal/description/
+
+vector<int> preorderTraversal(TreeNode* root) {
+        if(root==0) return {};
+        vector<int> ans;
+        TreeNode*curr=root;
+        while(curr){
+            if(curr->left==0){
+                ans.push_back(curr->val);
+                curr=curr->right;
+            }
+            else{
+                TreeNode*temp=curr->left;
+                while(temp->right && temp->right!=curr) temp=temp->right;
+                if(temp->right==curr){
+                    temp->right=0;
+                    curr=curr->right;
+                }
+                else{
+                    temp->right=curr;
+                    ans.push_back(curr->val);
+                    curr=curr->left;
+                }
+            }
+        }
+        return ans;
+    }

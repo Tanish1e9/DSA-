@@ -54,7 +54,7 @@ LC link: https://leetcode.com/problems/construct-binary-search-tree-from-preorde
     O(N),O(height)
     TreeNode*helper(vector<int>&preorder,int &i,int ub){
         if(i>=preorder.size()) return 0;
-        if(preorder[i]>ub) return 0;
+        if(preorder[i]>=ub) return 0;
         TreeNode*root = new TreeNode(preorder[i++]);
         root->left = helper(preorder,i,root->val);
         root->right = helper(preorder,i,ub);

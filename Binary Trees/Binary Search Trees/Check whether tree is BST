@@ -4,6 +4,7 @@ LC link: https://leetcode.com/problems/validate-binary-search-tree/description/
     // range of node's values was INT_MIN to INT_MAX
     // islie prev =0 kia
 
+    // 1) O(N),O(height)
     // TreeNode*prev=0;
     // bool helper(TreeNode*root){
     //     if(root==0) return 1;
@@ -15,6 +16,20 @@ LC link: https://leetcode.com/problems/validate-binary-search-tree/description/
     // bool isValidBST(TreeNode* root) {
     //     return helper(root);
     // }
+
+    // 2) O(N),O(height)
+    bool helper(TreeNode*root,long left,long right){
+        if(root==0) return 1;
+        if(root->val <= left || root->val >= right) return 0;
+        return helper(root->left,left,root->val) && helper(root->right,root->val,right);
+    }
+    bool isValidBST(TreeNode* root) {
+        long left = long(INT_MIN)-1;
+        long right = long(INT_MAX)+1;
+        return helper(root,left,right);
+    }
+
+    // 3) O(N),O(1)
     bool isValidBST(TreeNode* root) {
         TreeNode*prev=0;
         TreeNode*curr=root;

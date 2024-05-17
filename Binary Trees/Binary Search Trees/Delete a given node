@@ -12,6 +12,7 @@ LC link: https://leetcode.com/problems/delete-node-in-a-bst/description/
         while(curr->left) curr=curr->left;
         return curr;
     }
+    // Best Approach All iterative
     TreeNode* deleteNode(TreeNode* root, int key) {
         if(root==0) return 0;
         TreeNode*curr=root;
@@ -34,7 +35,7 @@ LC link: https://leetcode.com/problems/delete-node-in-a-bst/description/
         }
         else{
             TreeNode*min_el = mini(curr->right);
-            min_el->left = curr->left;
+            if(min_el) min_el->left = curr->left;
             if(prev){
                 if(prev->left==curr) prev->left=curr->right;
                 else prev->right=curr->right;
@@ -46,8 +47,8 @@ LC link: https://leetcode.com/problems/delete-node-in-a-bst/description/
         return root;
     }
 
-
-TreeNode* deleteNode(TreeNode* root, int key) {
+    // Bit of recursion
+    TreeNode* deleteNode(TreeNode* root, int key) {
         if(root==0)return 0;
         if(root->val == key){
             if(root->left==0 && root->right==0){
@@ -67,6 +68,72 @@ TreeNode* deleteNode(TreeNode* root, int key) {
                 TreeNode*temp=root->right;
                 delete root;
                 return temp;
+            }
+        }
+        else if(root->val < key){
+            root->right = deleteNode(root->right,key);
+        }
+        root->left = deleteNode(root->left,key);
+        return root;
+    }
+
+    //Iterative another way
+    TreeNode* deleteNode(TreeNode* root, int key) {
+        if(root==0) return 0;
+        TreeNode*curr=root;
+        TreeNode*prev=0;
+        while(curr && curr->val!=key){
+            prev=curr;
+            if(curr->val < key) curr=curr->right;
+            else curr=curr->left;
+        }
+        if(curr==0) return root;
+
+        if(curr->right==0){
+            if(prev){
+                if(prev->left==curr) prev->left=curr->left;
+                else prev->right=curr->left;
+            }
+            else root=curr->left;
+        }
+        else if(curr->left==0){
+            if(prev){
+                if(prev->left==curr) prev->left=curr->right;
+                else prev->right=curr->right;
+            }
+            else root=curr->right;
+        }
+        else{
+            TreeNode* el = maxi(curr->left);
+            el->right=curr->right;
+            if(prev){
+                if(prev->left==curr) prev->left=curr->left;
+                else prev->right=curr->left;
+            }
+            else root=curr->left;
+        }
+
+        delete curr;
+        return root;
+    }
+
+    // Full recursion
+    TreeNode* deleteNode(TreeNode* root, int key) {
+        if(root==0)return 0;
+        if(root->val == key){
+            if(root->left==0 && root->right==0){
+                delete root;
+                return 0;
+            }
+            else if(root->left){
+                TreeNode*max_el = maxi(root->left);
+                root->val = max_el->val;
+                root->left=deleteNode(root->left,root->val);
+            }
+            else{
+                TreeNode*min_el = mini(root->right);
+                root->val = min_el->val;
+                root->right = deleteNode(root->right,root->val);
             }
         }
         else if(root->val < key){

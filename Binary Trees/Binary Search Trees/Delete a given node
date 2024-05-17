@@ -25,7 +25,7 @@ LC link: https://leetcode.com/problems/delete-node-in-a-bst/description/
 
         if(curr->left){
             TreeNode*max_el = maxi(curr->left);
-            if(max_el) max_el->right = curr->right;
+            max_el->right = curr->right;
             if(prev){
                 if(prev->left==curr) prev->left=curr->left;
                 else prev->right=curr->left;
@@ -34,7 +34,7 @@ LC link: https://leetcode.com/problems/delete-node-in-a-bst/description/
         }
         else{
             TreeNode*min_el = mini(curr->right);
-            if(min_el) min_el->left = curr->left;
+            min_el->left = curr->left;
             if(prev){
                 if(prev->left==curr) prev->left=curr->right;
                 else prev->right=curr->right;

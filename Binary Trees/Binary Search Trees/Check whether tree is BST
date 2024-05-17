@@ -1,0 +1,44 @@
+LC link: https://leetcode.com/problems/validate-binary-search-tree/description/
+
+    // Yaha prev ko as a Node islie hi store kia h because value me ni kr skte the
+    // range of node's values was INT_MIN to INT_MAX
+    // islie prev =0 kia
+
+    // TreeNode*prev=0;
+    // bool helper(TreeNode*root){
+    //     if(root==0) return 1;
+    //     if(helper(root->left)==0) return 0;
+    //     if(prev && root->val <= prev->val) return 0;
+    //     prev=root;
+    //     return helper(root->right);
+    // }
+    // bool isValidBST(TreeNode* root) {
+    //     return helper(root);
+    // }
+    bool isValidBST(TreeNode* root) {
+        TreeNode*prev=0;
+        TreeNode*curr=root;
+        bool ans=true;
+        while(curr){
+            if(curr->left==0){
+                if(prev && curr->val <= prev->val) ans=0;
+                prev=curr;
+                curr=curr->right;
+            }
+            else{
+                TreeNode*temp=curr->left;
+                while(temp->right && temp->right!=curr) temp=temp->right;
+                if(temp->right==curr){
+                    temp->right=0;
+                    if(prev && curr->val <= prev->val) ans=0;
+                    prev=curr;
+                    curr=curr->right;
+                }
+                else{
+                    temp->right=curr;
+                    curr=curr->left;
+                }
+            }
+        }
+        return ans;
+    }

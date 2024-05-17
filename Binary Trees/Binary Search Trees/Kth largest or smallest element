@@ -1,0 +1,57 @@
+
+    // This is for frequent asks for kth largest and smallest
+    // suppose Q queries then O(NQ),O(1) if we use the morris traversal one
+    // But here O(N) + O(Q),O(N) if we use some space
+    // void inorder(TreeNode*root,vector<int>&ans){
+    //     if(root==0) return ;
+    //     inorder(root->left,ans);
+    //     ans.push_back(root->val);
+    //     inorder(root->right,ans);
+    // }
+    // int kthSmallest(TreeNode* root, int k) {
+    //     vector<int> ans;
+    //     inorder(root,ans);
+    //     return ans[k-1];
+    // }
+
+    // TC O(N),SC O(N)
+    void inorder(TreeNode*root,int&count,int&ans,int k){
+        if(root==0) return;
+        inorder(root->left,count,ans,k);
+        if(count++==k) ans=root->val;
+        inorder(root->right,count,ans,k);
+    }
+    int kthSmallest(TreeNode* root, int k) {
+        int count=1;
+        int ans=-1;
+        inorder(root,count,ans,k);
+        return ans;
+    }
+    
+    // TC O(N),SC O(1)
+    // Morris inorder
+    // int kthSmallest(TreeNode* root, int k) {
+    //     TreeNode*curr=root;
+    //     int count=0;
+    //     int ans=-1;
+    //     while(curr){
+    //         if(curr->left==0){
+    //             if(count++==k-1) ans=curr->val;
+    //             curr=curr->right;
+    //         }
+    //         else{
+    //             TreeNode*temp=curr->left;
+    //             while(temp->right && temp->right!=curr) temp=temp->right;
+    //             if(temp->right==curr){
+    //                 temp->right=0;
+    //                 if(count++==k-1) ans=curr->val;
+    //                 curr=curr->right;
+    //             }
+    //             else{
+    //                 temp->right=curr;
+    //                 curr=curr->left;
+    //             }
+    //         }
+    //     }
+    //     return ans;
+    // }

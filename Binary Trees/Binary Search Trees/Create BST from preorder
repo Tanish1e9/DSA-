@@ -1,0 +1,66 @@
+LC link: https://leetcode.com/problems/construct-binary-search-tree-from-preorder-traversal/description/
+
+    // Ye bhut hi ghatiya h O(Nlogn)+O(N),O(N)
+    // TreeNode*helper(vector<int>&preorder,vector<int>&inorder,int pre_start,int pre_end,int in_start,int in_end,auto&indices){
+    //     if(pre_start>pre_end || in_start>in_end) return 0;
+    //     TreeNode*root=new TreeNode(preorder[pre_start]);
+    //     int root_index=indices[root->val];
+    //     int elements = root_index - in_start;
+
+    //     root->left=helper(preorder,inorder,pre_start+1,pre_start+elements,in_start,root_index-1,indices);
+    //     root->right=helper(preorder,inorder,pre_start+elements+1,pre_end,root_index+1,in_end,indices);
+    //     return root;
+    // }
+    // TreeNode* bstFromPreorder(vector<int>& preorder) {
+    //     vector<int> inorder=preorder;
+    //     sort(inorder.begin(),inorder.end());
+    //     map<int,int> indices;
+    //     for(int i=0;i<inorder.size();i++){
+    //         indices[inorder[i]]=i;
+    //     }
+    //     return helper(preorder,inorder,0,preorder.size()-1,0,inorder.size()-1,indices);
+    // }
+
+    // O(Nlogn),O(1)
+    // void insert(TreeNode*root,int el){
+    //     TreeNode*new_node=new TreeNode(el);
+    //     if(root==0) return;
+    //     TreeNode*curr=root;
+    //     while(true){
+    //         if(curr->val < el){ 
+    //             if(curr->right==0){
+    //                 curr->right=new_node;
+    //                 break;
+    //             }
+    //             else curr=curr->right;
+    //         }
+    //         else{
+    //             if(curr->left==0){
+    //                 curr->left=new_node;
+    //                 break;
+    //             }
+    //             else curr=curr->left;
+    //         }
+    //     }
+    // }
+    // TreeNode* bstFromPreorder(vector<int>& preorder) {
+    //     TreeNode*root=new TreeNode(preorder[0]);
+    //     for(int i=1;i<preorder.size();i++){
+    //         insert(root,preorder[i]);
+    //     }
+    //     return root;
+    // }
+
+    O(N),O(height)
+    TreeNode*helper(vector<int>&preorder,int &i,int ub){
+        if(i>=preorder.size()) return 0;
+        if(preorder[i]>ub) return 0;
+        TreeNode*root = new TreeNode(preorder[i++]);
+        root->left = helper(preorder,i,root->val);
+        root->right = helper(preorder,i,ub);
+        return root;
+    }
+    TreeNode* bstFromPreorder(vector<int>& preorder) {
+        int i=0;
+        return helper(preorder,i,1e9);
+    }

@@ -1,0 +1,25 @@
+LC link: https://leetcode.com/problems/insert-into-a-binary-search-tree/description/
+
+    TreeNode* insertIntoBST(TreeNode* root, int val) {
+        TreeNode*new_node=new TreeNode(val);
+        if(root==0) return new_node;
+
+        TreeNode*curr=root;
+        while(true){
+            if(curr->val > val){
+                if(curr->left==0) {
+                    curr->left=new_node;
+                    break;
+                }
+                else curr=curr->left;
+            }
+            else{
+                if(curr->right==0) {
+                    curr->right=new_node;
+                    break;
+                }
+                else curr=curr->right;
+            }
+        }
+        return root;
+    }

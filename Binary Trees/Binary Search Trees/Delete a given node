@@ -45,3 +45,33 @@ LC link: https://leetcode.com/problems/delete-node-in-a-bst/description/
         delete curr;
         return root;
     }
+
+
+TreeNode* deleteNode(TreeNode* root, int key) {
+        if(root==0)return 0;
+        if(root->val == key){
+            if(root->left==0 && root->right==0){
+                delete root;
+                return 0;
+            }
+            else if(root->left){
+                TreeNode*max_el = maxi(root->left);
+                max_el->right = root->right;
+                TreeNode*temp=root->left;
+                delete root;
+                return temp;
+            }
+            else{
+                TreeNode* min_el = mini(root->right);
+                min_el->left = root->left;
+                TreeNode*temp=root->right;
+                delete root;
+                return temp;
+            }
+        }
+        else if(root->val < key){
+            root->right = deleteNode(root->right,key);
+        }
+        root->left = deleteNode(root->left,key);
+        return root;
+    }

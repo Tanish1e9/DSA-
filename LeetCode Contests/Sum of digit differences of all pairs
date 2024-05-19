@@ -1,0 +1,22 @@
+LC link: https://leetcode.com/problems/sum-of-digit-differences-of-all-pairs/
+
+    long long sumDigitDifferences(vector<int>& nums) {
+        long long n=nums.size();
+        long long tot=(n*(n-1))/2;
+        long long ans=0;
+        int c=1;
+        while(nums[0]>=c){
+            vector<int>count(10,0);
+            for(int i=0;i<n;i++){
+                int number = nums[i]/c;
+                count[number%10]++;
+            }
+            ans+=tot;
+            for(int i=0;i<10;i++){
+                long long x=count[i];
+                ans -=  (x*(x-1))/2;
+            }
+            c*=10;
+        }   
+        return ans;
+    }

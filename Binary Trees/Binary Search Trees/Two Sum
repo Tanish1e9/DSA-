@@ -38,5 +38,52 @@ LC linK: https://leetcode.com/problems/two-sum-iv-input-is-a-bst/description/
         return false;
     }
 
-// Another great Quality code
+// Another Great Quality Code
+class BSTiterator{
+    stack<TreeNode*> s;
+    bool reverse;
+    public:
+    BSTiterator(TreeNode*root,bool rev){
+        reverse=rev;
+        push(root);
+    }
+    bool hasnext(){
+        return !s.empty();
+    }
+    int next(){
+        TreeNode*curr=s.top();
+        s.pop();
+        if(reverse) push(curr->left);
+        else push(curr->right);
+        return curr->val;
+    }
+    private:
+    void push(TreeNode*curr){
+        while(curr){
+            s.push(curr);
+            if(reverse){
+                curr=curr->right;
+            }
+            else{
+                curr=curr->left;
+            }
+        }
+    }
+};
+class Solution {
+public:
+    bool findTarget(TreeNode* root, int k) {
+        if(root==0) return 0;
+        BSTiterator l(root,false);
+        BSTiterator r(root,true);
 
+        int i=l.next();
+        int j=r.next();
+        while(i!=j){
+            if(i+j==k) return true;
+            else if(i+j<k) i=l.next();
+            else j=r.next();
+        }
+        return 0;
+    }
+};

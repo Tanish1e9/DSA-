@@ -1,0 +1,45 @@
+LC link: https://leetcode.com/problems/recover-binary-search-tree/
+
+    // Brute Force simply store the sorted values of all the nodes by doing any traversal
+    // Then again travel inorder and exchange the values from your stored data structure
+
+    // Optimal Solution O(N),O(1)
+    void recoverTree(TreeNode* root) {
+        if(root==0) return ;
+        TreeNode*a=0,*b=0,*c=0;
+        TreeNode*curr=root;
+        TreeNode*prev=0;
+        while(curr){
+            if(curr->left==0){
+                if(prev && curr->val < prev->val){
+                    if(a==0 && b==0){
+                        a=prev;
+                        b=curr;
+                    }else c=curr;
+                }
+                prev=curr;
+                curr=curr->right;
+            }
+            else {
+                TreeNode*temp=curr->left;
+                while(temp->right && temp->right!=curr) temp=temp->right;
+                if(temp->right==curr){
+                    if(prev && curr->val < prev->val){
+                        if(a==0 && b==0){
+                            a=prev;
+                            b=curr;
+                        }else c=curr;
+                    }
+                    temp->right=0;
+                    prev=curr;
+                    curr=curr->right;
+                }
+                else{
+                    temp->right=curr;
+                    curr=curr->left;
+                }
+            }
+        }
+        if(c==0) swap(a->val,b->val);
+        else swap(a->val,c->val);
+    }

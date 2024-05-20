@@ -1,0 +1,63 @@
+GFG link: 
+
+    // M-1    // isme jo commented portion h wo bhi likh skte ho aur pure recursion bhi
+    void findPreSuc(Node* root, Node*& pre, Node*& suc, int key)
+    {
+        if(root==0) return;
+        if(root->key==key){
+            // Node*temp=root->left;
+            // if(temp){
+            //     while(temp->right) temp=temp->right;
+            //     pre=temp;
+            // }
+            // temp=root->right;
+            // if(temp){
+            //     while(temp->left) temp=temp->left;
+            //     suc=temp;
+            // }
+            findPreSuc(root->left,pre,suc,key);
+            findPreSuc(root->right,pre,suc,key);
+            
+        }
+        else if(root->key > key){
+            // if(!suc || suc->key > root->key) 
+            suc=root;
+            findPreSuc(root->left,pre,suc,key);
+        }
+        else{
+            // if(!pre || pre->key < root->key)
+            pre=root;
+            findPreSuc(root->right,pre,suc,key);
+        }
+    }
+
+    // M-2 Fully iterative
+    void findPreSuc(Node* root, Node*& pre, Node*& suc, int key)
+    {
+        if(root==0) return;
+        Node*curr=root;
+        while(curr){
+            if(curr->key > key){
+                suc=curr;
+                curr=curr->left;
+            }
+            else if(curr->key < key){
+                pre=curr;
+                curr=curr->right;
+            }
+            else{
+                Node*temp=curr->left;
+                if(temp){
+                    while(temp->right) temp=temp->right;
+                    pre=temp;
+                }
+                temp=curr->right;
+                if(temp){
+                    while(temp->left) temp=temp->left;
+                    suc=temp;
+                }
+                curr=0;
+            }
+        }
+    }
+  

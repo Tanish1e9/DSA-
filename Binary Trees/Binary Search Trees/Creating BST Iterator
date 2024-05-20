@@ -1,5 +1,7 @@
 LC link: https://leetcode.com/problems/binary-search-tree-iterator/
 
+
+// M-1  but it has SC O(N)
 class BSTIterator {
 public:
     vector<int>inorder;
@@ -37,6 +39,34 @@ public:
     }
 };
 
+// M-2 This has SC O(height) and TC is O(1) on average
+class BSTIterator {
+    stack<TreeNode*> s;
+    public:
+    BSTIterator(TreeNode* root) {
+        func(root);
+    }
+    
+    int next() {
+        TreeNode* curr=s.top();
+        s.pop();
+        int ans=curr->val;
+        func(curr->right);
+        return ans;
+    }
+    
+    bool hasNext() {
+        return !s.empty();
+    }
+
+    private:
+    void func(TreeNode*curr){
+        while(curr){
+            s.push(curr);
+            curr=curr->left;
+        }
+    }
+};
 /**
  * Your BSTIterator object will be instantiated and called as such:
  * BSTIterator* obj = new BSTIterator(root);

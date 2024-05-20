@@ -1,0 +1,42 @@
+LC linK: https://leetcode.com/problems/two-sum-iv-input-is-a-bst/description/
+
+    void push_left(TreeNode*root,auto &s){
+        while(root){
+            s.push(root);
+            root=root->left;
+        }
+    }
+    void push_right(TreeNode*root,auto &s){
+        while(root){
+            s.push(root);
+            root=root->right;
+        }
+    }
+    bool findTarget(TreeNode* root, int k) {
+        if(root==0) return 0;
+        stack<TreeNode*>left;
+        stack<TreeNode*>right;
+        push_left(root,left);
+        push_right(root,right);
+
+        TreeNode*i=left.top(),*j=right.top();
+        left.pop();
+        right.pop();
+        while(i!=j){
+            if(i->val + j->val == k) return true;
+            else if(i->val + j->val < k){
+                push_left(i->right,left);
+                i=left.top();
+                left.pop();
+            }
+            else{
+                push_right(j->left,right);
+                j=right.top();
+                right.pop();
+            }
+        }
+        return false;
+    }
+
+// Another great Quality code
+

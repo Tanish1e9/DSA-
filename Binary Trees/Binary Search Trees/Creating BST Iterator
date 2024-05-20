@@ -50,9 +50,8 @@ class BSTIterator {
     int next() {
         TreeNode* curr=s.top();
         s.pop();
-        int ans=curr->val;
         func(curr->right);
-        return ans;
+        return curr->val;
     }
     
     bool hasNext() {

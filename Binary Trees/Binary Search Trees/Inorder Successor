@@ -1,0 +1,25 @@
+GFG link: https://www.geeksforgeeks.org/problems/inorder-successor-in-bst/1
+
+    // Commented portion is recursive baaki iterative bhi likha hua h
+    Node * inOrderSuccessor(Node *root, Node *x)
+    {
+        // if(root==0) return 0; 
+        // if(root-> data <= x->data){
+        //     return inOrderSuccessor(root->right,x);
+        // }
+        // Node*temp=inOrderSuccessor(root->left,x);
+        // if(temp) return temp;
+        // return root;
+        
+        if(root==0) return 0;
+        Node*curr=root;
+        Node*suc=NULL;
+        while(curr){
+            if(curr->data <= x->data) curr=curr->right;
+            else{
+                suc=curr;
+                curr=curr->left;
+            }
+        }
+        return suc;
+    }

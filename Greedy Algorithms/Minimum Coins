@@ -1,0 +1,30 @@
+GFG link: 
+
+
+
+// ye DP se hi hoga 
+class Solution{
+   public:
+   int f(int i,int V,vector<int>&coins,vector<vector<int>>&memo){
+       if(V==0) return 0;
+       if(i>=coins.size()) return 1e9;
+       if(memo[i][V]!=-1) return memo[i][V];
+       int ans=1e9;
+       if(V>=coins[i]){
+           ans=min(ans,1+f(i,V-coins[i],coins,memo));
+       }
+       ans=min(ans,f(i+1,V,coins,memo));
+       return memo[i][V]=ans;
+   }
+	int minCoins(vector<int> &coins, int M, int V) 
+	{ 
+	    vector<vector<int>>memo(M,vector<int>(V+1,-1));
+	    int ans=f(0,V,coins,memo);
+	    if(ans>=1e9) return -1;
+	    return ans;
+	} 
+};
+
+// Greedy jo hota h ki bade se bade denominations hm lenge wo sirf indian currency pe kaam krega
+// you would see 2 conditions ki 1) prefix sum< curr_element   2) twice of any element < curr_element tab greedy kaam krta but it is wrong
+// eg {5,11,23} V=30  by greedy answer is not possible but actually it is 5*6 coins

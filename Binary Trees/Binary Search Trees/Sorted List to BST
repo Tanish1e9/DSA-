@@ -1,0 +1,45 @@
+LC link: https://leetcode.com/problems/convert-sorted-list-to-binary-search-tree/
+
+
+    // ye optimal h yaha leaves to root bana rhe ek bar count kr lie total nodes then
+    // left subtree pehle bana denge sath sath head move krte rhenge
+    TreeNode*helper(ListNode*&head,int n){
+        if(n==0) return 0;
+        TreeNode*left=helper(head,n/2);
+        TreeNode*root=new TreeNode(head->val);
+        root->left=left;
+        head=head->next;
+        root->right=helper(head,n-n/2-1);
+        return root;
+    }
+    int count(ListNode*head){
+        int ans=0;
+        while(head){
+            head=head->next;
+            ans++;
+        }
+        return ans;
+    }
+    TreeNode* sortedListToBST(ListNode*head){
+        int n=count(head);
+        return helper(head,n);
+    }
+
+    // brute array me jaise krte h mid element ko root banake fir left and right subtree waha pe actually we are
+    // constructing from root to leaves and TC  O(nlogn) chala jata similar to merge sort
+    // TreeNode* sortedListToBST(ListNode* head) {
+        // if(head==0) return 0;
+        // if(head->next==0){
+        //     return new TreeNode(head->val);
+        // }
+        // ListNode* slow=head,*fast=head->next->next;
+        // while(fast!=0 && fast->next!=0){
+        //     fast=fast->next->next;
+        //     slow=slow->next;
+        // }
+        // TreeNode* root = new TreeNode(slow->next->val);
+        // root->right=sortedListToBST(slow->next->next);
+        // slow->next=0;
+        // root->left=sortedListToBST(head);
+        // return root;      
+    // }

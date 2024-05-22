@@ -1,0 +1,68 @@
+GFG link: https://www.geeksforgeeks.org/problems/flatten-bst-to-sorted-list--111950/1
+
+
+    // M-1 simply inorder me traverse krenge prev pointer maintain krte jayenge and uska right set krte jayenge
+    // Node*prev=0;
+    // Node *flattenBST(Node *root)
+    // {
+    //     if(root==0) return 0;
+    //     Node*temp=flattenBST(root->left);
+    //     if(prev){
+    //         prev->right=root;
+    //     }
+    //     prev=root;
+    //     root->left=0;
+    //     flattenBST(root->right);
+    //     if(temp) return temp;
+    //     return root;
+    // }
+
+    // M-2 simply inorder me traverse krenge prev pointer maintain krte jayenge and uska right set krte jayenge
+    // Bas yaha jo head hoga finally w0 first non null element inorder me jo milega wohi hoga to usi ko store kra lie h
+    // Node*prev=0;
+    // Node*first=0;
+    // Node*flattenBST(Node*root){
+    //     if(root==0) return 0;
+    //     flattenBST(root->left);
+    //     if(prev){
+    //         prev->right=root;
+    //     }
+    //     prev=root;
+    //     root->left=0;
+    //     if(first==0) first=root;
+    //     flattenBST(root->right);
+    //     return first;
+    // }
+
+    // M-3 yaha bby reference prev ko pass kr die jada koi difference ni h
+    // Node*helper(Node*root,Node*&prev){
+    //     if(root==0) return 0;
+    //     Node*temp=helper(root->left,prev);
+    //     if(prev) prev->right=root;
+    //     prev=root;
+    //     root->left=0;
+    //     helper(root->right,prev);
+    //     if(temp) return temp;
+    //     return root;
+    // }
+    // Node*flattenBST(Node*root){
+    //     Node*prev=0;
+    //     return helper(root,prev);
+    // }
+
+
+    // M-4 yaha pe next pointer store kra lie in place of prev and we are traversing reverse inorder
+    void helper(Node*root,Node*&next){
+        if(root==0) return ;
+        helper(root->right,next);
+        root->right=next;
+        next=root;
+        helper(root->left,next);
+        root->left=0;
+    }
+    Node *flattenBST(Node *root)
+    {
+        Node*next=0;
+        helper(root,next);
+        return next;
+    }

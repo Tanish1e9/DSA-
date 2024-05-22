@@ -1,0 +1,25 @@
+Lc link: https://leetcode.com/problems/valid-parentheses/description/
+
+class Solution {
+public:
+    bool isValid(string s) {
+        stack<char> mystack;
+        mystack.push('!');
+        for(char c:s){
+            if(c==')'){
+                if(mystack.top()=='(') mystack.pop();
+                else return false;
+            }
+            else if(c=='}'){
+                if(mystack.top()=='{') mystack.pop();
+                else return false;
+            }
+            else if(c==']'){
+                if(mystack.top()=='[') mystack.pop();
+                else return false;
+            }
+            else mystack.push(c);
+        }
+        return mystack.top()=='!';
+    }
+};

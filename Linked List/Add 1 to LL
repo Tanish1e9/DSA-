@@ -12,8 +12,7 @@ Node*reverse(Node*head){
     head->next=0;
     return newHead;
 }
-Node *addOne(Node *head)
-{
+Node *addOne(Node *head){
     Node*newHead=reverse(head);
     Node*cur=newHead;
     int c=1;
@@ -40,8 +39,7 @@ int helper(Node*head,int c){
     head->data%=10;
     return c;
 }
-Node* addOne(Node *head) 
-{
+Node* addOne(Node *head) {
     int c=helper(head,1);
     if(c>0){
         Node*newnode = new Node(c);
@@ -52,4 +50,28 @@ Node* addOne(Node *head)
 }
 
 // M-3 O(2n), O(n) user stack space 
-
+Node* addOne(Node *head) {
+    stack<Node*> s;
+    Node*curr=head;
+    while(curr->next){
+        s.push(curr);
+        curr=curr->next;
+    }
+    int c=1;
+    while(c>=1 && curr){
+        curr->data+=c;
+        c=curr->data / 10;
+        curr->data %= 10;
+        if(!s.empty()){
+            curr=s.top();
+            s.pop();
+        }
+        else break;
+    }
+    if(c>0){
+        Node*newnode=new Node(c);
+        newnode->next=head;
+        head=newnode;
+    }
+    return head;
+}

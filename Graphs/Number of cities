@@ -1,0 +1,36 @@
+LC link: https://leetcode.com/problems/number-of-provinces/
+
+    void dfs(int i,vector<int>&visited,vector<vector<int>>&adj){
+        visited[i]=1;
+        for(int el=0;el<adj.size();el++){
+            if(adj[i][el]==0 || el==i) continue;
+            if(!visited[el]) dfs(el,visited,adj);
+        }
+    }
+    void bfs(int i,vector<int>&visited,vector<vector<int>>&adj){
+        queue<int>q;
+        q.push(i);
+        visited[i]=1;
+        while(!q.empty()){
+            int curr=q.front();
+            q.pop();
+            for(int el=0;el<visited.size();el++){
+                if(adj[curr][el]==0 || el==curr) continue;
+                if(!visited[el]){
+                    q.push(el);
+                    visited[el]=1;
+                }
+            }
+        }
+    }
+    int findCircleNum(vector<vector<int>>& isConnected) {
+        int ans=0;
+        vector<int>visited(isConnected.size(),0);
+        for(int i=0;i<visited.size();i++){
+            if(!visited[i]){
+                ans++;
+                bfs(i,visited,isConnected);
+            }
+        }
+        return ans;
+    }

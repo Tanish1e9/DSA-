@@ -1,0 +1,10 @@
+GFG link: https://www.geeksforgeeks.org/problems/graph-and-vertices/1
+
+
+long long count(int n) {
+      // long long x=1;
+      return 1ll<<((n*n-n)/2);
+  }
+
+// dekh simply matrix imagine kro since undirected h to symmetric hoga and diagonals pe 0 hi hoga because self loops ni hote
+// to bas (n*n-n)/2 independent entries bache jaha 0 ya 1 likh skte so bas hogya

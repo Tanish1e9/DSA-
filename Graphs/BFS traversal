@@ -1,0 +1,25 @@
+GFG link: https://www.geeksforgeeks.org/problems/bfs-traversal-of-graph/1
+
+    void bfs(int i,vector<int>&visited,vector<int>adj[],vector<int>&ans){
+        queue<int> q;
+        q.push(i);
+        visited[i]=1;
+        while(!q.empty()){
+            int curr = q.front();
+            q.pop();
+            ans.push_back(curr);
+            for(auto el:adj[curr]){
+                if(!visited[el]){
+                    q.push(el);
+                    visited[el]=1;
+                }
+            } 
+        }
+    }
+    vector<int> bfsOfGraph(int v, vector<int> adj[]) {
+        // Code here
+        vector<int> ans;
+        vector<int> visited(v,0);
+        bfs(0,visited,adj,ans);
+        return ans;
+    }

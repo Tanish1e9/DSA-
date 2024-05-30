@@ -78,6 +78,8 @@ LC link: https://leetcode.com/problems/rotting-oranges/
     }
 
     // Most optimal yaha dekho ek to fresh=0 ka edge check krke simply 0 return kr die and I have maintained level number to indicate time
+    // rot ko neighbour wale loop k andar islie likha h ki we want to count new rotten oranges and that should be equal to fresh
+    // agar jaha q.pop() krte waha rot++ krte to initial rotten oranges bhi count ho jate to if unko tum pehle se hi minus kr do then that also works well
     int orangesRotting(vector<vector<int>>& grid) {
         int m=grid.size();
         int n=grid[0].size();
@@ -88,6 +90,7 @@ LC link: https://leetcode.com/problems/rotting-oranges/
             for(int j=0;j<n;j++){
                 if(grid[i][j]==2){
                     q.push({i,j});
+                    //rot--;
                 }
                 else if(grid[i][j]==1) fresh++;
             }
@@ -102,6 +105,7 @@ LC link: https://leetcode.com/problems/rotting-oranges/
             while(curr_size--){
                 pair<int,int> curr=q.front();
                 q.pop();
+                // rot++;
                 for(int k=0;k<4;k++){
                     int x = curr.first + dx[k];
                     int y = curr.second + dy[k];

@@ -1,5 +1,6 @@
 LC link: https://leetcode.com/problems/all-nodes-distance-k-in-binary-tree/
 
+    // M-1 ekdum graph me jaise BFS krte ye waise likha gya h
     void markparents(TreeNode*root,auto &parents){
         queue<TreeNode*>q;
         q.push(root);
@@ -56,6 +57,34 @@ LC link: https://leetcode.com/problems/all-nodes-distance-k-in-binary-tree/
         while(!q.empty()){
             ans.push_back(q.front()->val);
             q.pop();
+        }
+        return ans;
+    }
+
+
+    // M-2 ye na specific to binary tree h isme thoda memory efficient h
+    // markparents function remains same
+    vector<int> distanceK(TreeNode* root, TreeNode* target, int k) {
+        map<TreeNode*,TreeNode*> parents;
+        vector<int>ans;
+        set<TreeNode*>visited,visited2;
+        markparents(root,parents);
+        queue<TreeNode*> q;
+        q.push(target);
+        int c=-1;
+        while(!q.empty() && c<k){
+            c++;
+            int curr_size=q.size();
+            while(curr_size--){
+                TreeNode*curr=q.front();q.pop();
+                visited.insert(curr);
+                if(c==k) ans.push_back(curr->val);
+                if(curr->left && visited2.find(curr->left)==visited2.end())
+                    q.push(curr->left);
+                if(curr->right && visited2.find(curr->right)==visited2.end()) q.push(curr->right);
+                if(parents[curr] && visited2.find(parents[curr])==visited2.end())q.push(parents[curr]);
+            }   
+            visited2=visited;
         }
         return ans;
     }

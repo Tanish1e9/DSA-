@@ -76,3 +76,44 @@ LC link: https://leetcode.com/problems/rotting-oranges/
         if(rot==fresh) return time;
         return -1;
     }
+
+    // Most optimal yaha dekho ek to fresh=0 ka edge check krke simply 0 return kr die and I have maintained level number to indicate time
+    int orangesRotting(vector<vector<int>>& grid) {
+        int m=grid.size();
+        int n=grid[0].size();
+        queue<pair<int,int>>q;
+        int fresh=0;
+        int rot=0;
+        for(int i=0;i<m;i++) {
+            for(int j=0;j<n;j++){
+                if(grid[i][j]==2){
+                    q.push({i,j});
+                }
+                else if(grid[i][j]==1) fresh++;
+            }
+        }
+        if(fresh == 0) return 0;
+        int dy[]={-1,1,0,0};
+        int dx[]={0,0,-1,1};
+        int time=-1;
+        while(!q.empty()){
+            time++;
+            int curr_size=q.size();
+            while(curr_size--){
+                pair<int,int> curr=q.front();
+                q.pop();
+                for(int k=0;k<4;k++){
+                    int x = curr.first + dx[k];
+                    int y = curr.second + dy[k];
+                    if(x>=m || y>=n || x<0 || y<0) continue;
+                    if(grid[x][y]==1){
+                        q.push({x,y});
+                        grid[x][y]=2;
+                        rot++;
+                    }
+                }
+            }
+        }
+        if(rot==fresh) return time;
+        return -1;
+    }

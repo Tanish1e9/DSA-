@@ -1,0 +1,54 @@
+LC link: https://leetcode.com/problems/valid-parenthesis-string/description/
+
+    // M-1 My original thoda stacks ka use h
+    bool checkValidString(string s) {
+        stack<int> mystack;
+        stack<int> starstack;
+        mystack.push(-1);
+        starstack.push(-1);
+        for(int i=0;i<s.size();i++){
+            if(s[i]==')'){
+                if(mystack.top()>=0) mystack.pop();
+                else if(starstack.top()!=-1 && starstack.top()<i) starstack.pop();
+                else return false;
+            }
+            else if(s[i]=='('){
+                mystack.push(i);
+            }
+            else{
+                starstack.push(i);
+            }
+        }
+        while(mystack.top()!=-1){
+            if(starstack.top()!=-1 && starstack.top()>mystack.top()){
+                starstack.pop();
+                mystack.pop();
+            }
+            else return false;
+        }
+        return true;
+    }
+
+    // M-2 optimal O(n),O(1)
+    // aur agar sirf (,) ho na aur check krna ho ki balanced h ya nhi
+    // to simply ek counter se check kia ja skta min max lene ka jroorat ni h
+    bool checkValidString(string s) {
+        int mini=0;
+        int maxi=0;
+        for(int i=0;i<s.size();i++){
+            if(s[i]==')') {
+                mini = max(0,mini-1);
+                maxi--;
+                if(maxi<0) return false;
+            }
+            else if(s[i]=='('){
+                mini++;
+                maxi++;
+            }
+            else if(s[i]=='*'){
+                mini = max(0,mini-1);
+                maxi++;
+            }
+        }
+        return mini==0;
+    }

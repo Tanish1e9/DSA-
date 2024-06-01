@@ -1,0 +1,30 @@
+GFG link: https://www.geeksforgeeks.org/problems/page-faults-in-lru5603/1
+
+
+    int pageFaults(int n, int c, int pages[]){
+        int ans=0;
+        map<int,int> cache;
+        for(int i=0;i<n;i++){
+            if(cache.find(pages[i])!=cache.end()) {
+                cache[pages[i]]=i;
+                continue;
+            }
+            else{
+                ans++;
+                if(cache.size()<c) cache[pages[i]]=i;
+                else{
+                    int min_index =-1;
+                    int mini=1e9;
+                    for(auto it:cache){
+                        if(it.second < mini){
+                            mini=it.second;
+                            min_index=it.first;
+                        }
+                    }
+                    cache.erase(min_index);
+                    cache[pages[i]]=i;
+                }
+            }
+        }
+        return ans;
+    }

@@ -1,0 +1,23 @@
+GFG link: https://www.geeksforgeeks.org/problems/n-meetings-in-one-room-1587115620/1
+// same as non-overlapping intervals
+
+
+    static bool com(pair<int,int>&a,pair<int,int>&b){
+        return a.second<b.second;
+    }
+    int maxMeetings(int start[], int end[], int n){
+        vector<pair<int,int>> v;
+        for(int i=0;i<n;i++){
+            v.push_back({start[i],end[i]});
+        }
+        sort(v.begin(),v.end(),com);
+        int ending=-1;
+        int ans=0;
+        for(int i=0;i<n;i++){
+            if(v[i].first>ending){
+                ans++;
+                ending=v[i].second;
+            }
+        }
+        return ans;
+    }

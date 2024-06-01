@@ -2,6 +2,7 @@ GFG link: https://www.geeksforgeeks.org/problems/job-sequencing-problem-15871156
 
 
     // basically yahi implementation h ki na at any given instant of time t , top t jobs rhe priority queue me kyunki unko hi kr payenge and that's it
+    // TC is again O(2nlogn)
     static bool comp(Job&a,Job&b){
         return a.dead < b.dead;
     }

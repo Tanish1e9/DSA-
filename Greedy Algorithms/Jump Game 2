@@ -1,0 +1,35 @@
+LC link: https://leetcode.com/problems/jump-game-ii/
+
+
+    // isme recursion se to kia hi h usko memoise krke kr skte but that's a O(n^2) approach
+    // to na we have maintained ranges just like the valid parantheses string problem
+    // dekh greedy yaha pe ye h ki since we can reach any index in a range by some jumps ... If we would take another jump then that will
+    // certainly not be in the same range bcz when we can reach that index already in one less jump why to waste it
+    // and we are exploring all possibilities
+    int f(int i,vector<int>&nums,auto &memo){
+        if(i>=nums.size()-1) return 0;
+        if(memo[i]!=-1) return memo[i];
+        int ans=1e9;
+        for(int k=nums[i];k>=1;k--){
+            ans = min(ans,1+f(i+k,nums,memo));
+        }
+        return memo[i]=ans;
+    }
+    int jump(vector<int>& nums) {
+        // vector<int>memo(nums.size(),-1);
+        // return f(0,nums,memo);
+        int n=nums.size();
+        int l=0,r=0;
+        int j=0;
+        while(r<n-1){
+            assert(l<=r);
+            int maxi=0;
+            for(int i=l;i<=r;i++){
+                maxi= max(maxi,i+nums[i]);
+            }
+            l=r+1;
+            r=maxi;
+            j++;
+        }
+        return j;
+    }

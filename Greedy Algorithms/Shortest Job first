@@ -1,0 +1,13 @@
+GFG link: https://www.geeksforgeeks.org/problems/shortest-job-first/1
+
+    long long solve(vector<int>& bt) {
+        // code here
+        sort(bt.begin(),bt.end());
+        long long ans=0;
+        long long time=0;
+        for(int i=0;i<bt.size();i++){
+            ans+=time;
+            time+=bt[i];
+        }
+        return ans/bt.size();
+    }

@@ -1,6 +1,12 @@
 GFG link: https://www.geeksforgeeks.org/problems/n-meetings-in-one-room-1587115620/1
 // same as non-overlapping intervals
-
+// dekh
+// 1) ascending order of lengths k lie counter is (1,7) (6,9) (8,16)
+            --------------------    -----------------------
+                            -----------
+// 2) ascending order of starting times (1,100) (3,10) (20,30)
+            ------------------------------------------------------
+                    ------------      --------------
 
     static bool com(pair<int,int>&a,pair<int,int>&b){
         return a.second<b.second;

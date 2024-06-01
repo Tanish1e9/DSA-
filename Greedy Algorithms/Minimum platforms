@@ -1,0 +1,43 @@
+GFG link: https://www.geeksforgeeks.org/problems/minimum-platforms-1587115620/1
+
+    // M-1 simulated the platforms with the platform on top jo ki sabse jaldi khali hoga
+    // TC is (2nlogn)
+    int findPlatform(int arr[], int dep[], int n){
+    	vector<pair<int,int>> v;
+    	for(int i=0;i<n;i++){
+    	    v.push_back({arr[i],dep[i]});
+    	}
+    	sort(v.begin(),v.end());
+    	priority_queue<int,vector<int>,greater<int>> pq;
+    	int ans=0;
+    	for(int i=0;i<n;i++){
+    	    if(pq.empty() || pq.top() >= v[i].first){
+    	        pq.push(v[i].second);
+    	        ans++;
+    	    }
+    	    else{
+    	        pq.pop();
+    	        pq.push(v[i].second);
+    	    }
+    	}
+    	return ans;
+    }
+    
+    // M-2 line sweep algorithm bas time ka hisaab rakhe h aur kuch ni
+    // TC O(n)+O(2400)
+    // Actually striver bhi yahi kia h bas wo arr aur dep array ko alag alag sort kr lia aur jaise two pointer merge hota waise time compare kr krke
+    // count++ ya -- kr rha h
+    int findPlatform(int arr[],int dep[],int n){
+      // 	vector<int> times(2400,0);
+      // 	for(int i=0;i<n;i++){
+      // 	    times[arr[i]]++;
+      // 	    times[dep[i]+1]--;
+      // 	}
+      // 	int count =0;
+      // 	int ans=0;
+      // 	for(int i=0;i<2400;i++){
+      // 	    count+=times[i];
+      // 	    ans=max(ans,count);
+      // 	}
+      // 	return ans;
+    }

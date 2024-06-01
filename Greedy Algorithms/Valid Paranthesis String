@@ -1,5 +1,6 @@
 LC link: https://leetcode.com/problems/valid-parenthesis-string/description/
 
+    // one more brute method can be to try out all possibilities using DP and recursion
     // M-1 My original thoda stacks ka use h
     bool checkValidString(string s) {
         stack<int> mystack;

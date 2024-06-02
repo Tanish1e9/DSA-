@@ -1,0 +1,44 @@
+LC link: https://leetcode.com/problems/car-pooling/description/
+// Similar to minimum platforms required
+// Bas yaha pe ek time instant me multiple trains aa ja rhi aisa samjho aur multipe platforms ki requirement h
+
+    // M-1 jaise platforms ko simulate kia tha waise hi seats ko simulate kia h 
+    // Difference is waha ek platform ki requirement thi yaha multiple h islie ek sath kaafi saare pop kre h
+    static bool comp(vector<int>&a,vector<int>&b){
+        return a[1]<b[1];      // on the basis of start time
+    }
+    bool carPooling(vector<vector<int>>& trips, int capacity) {
+        typedef pair<int,int> p;
+        sort(trips.begin(),trips.end(),comp);
+        priority_queue<p,vector<p>,greater<p>>pq;
+        int count=0;
+        for(int i=0;i<trips.size();i++){
+            while(!pq.empty() && pq.top().first <= trips[i][1]){
+                count-=pq.top().second;
+                pq.pop();
+            }
+            count+=trips[i][0];
+            pq.push({trips[i][2],trips[i][0]});
+            if(count>capacity) return false;
+        }
+        return true;
+    }
+
+    // M-2  Line sweep hi bas ye large range k lie kaam kr jayega
+
+
+    // M-3 line sweep algorithm 
+    // TC O(n)+O(1000)
+    bool carPooling(vector<vector<int>>&trips,int capacity){
+         vector<int>points(1001,0);
+         for(int i=0;i<trips.size();i++){
+             points[trips[i][1]]+=trips[i][0];
+             points[trips[i][2]]-=trips[i][0];
+         }
+         int count =0;
+         for(int i=0;i<1001;i++){
+             count+=points[i];
+             if(count>capacity) return false;
+         }
+         return true;
+    }

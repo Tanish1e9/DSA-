@@ -1,6 +1,14 @@
 LC link: https://leetcode.com/problems/find-right-interval/
 // yaha bhi similar arr,dep wala approach lagaye h
 
+    1) Brute force way is ki har interval k lie scan the whole array jo sabse kam start wala satisfy kr de usko daal do
+        O(n^2)
+
+    2) Better is ki saare start times ko along with their indices daal do ek array me and sort it
+       Now,for each interval we can binary search on this array to find the required position
+       O(nlogn)
+    
+    3) O(nlogn) hi h 
     vector<int> findRightInterval(vector<vector<int>>& intervals) {
         int n=intervals.size();
         vector<pair<int,int>> arr;

@@ -1,0 +1,19 @@
+class comp{
+    public:
+    bool operator()(T&a,T&b){
+        return a->val < b->val;
+    }//Note that priority queue me comparator min heap implementation me hi jata h to yaha soch rhe hoge increasing order me ayega but 
+    // ulta hoga decreasing order me aa jayega
+};
+int main(){
+    priority_queue<T,vector<T>,comp>pq;
+    return 0;
+}
+
+ Or we can do through lambda functions
+
+auto comp = [](T&a,T&b)->bool{
+    return a->val < b->val;
+    // same thing ulta ayega since min heap h
+};
+priority_queue<T,vector<T>,decltype(comp)> pq;

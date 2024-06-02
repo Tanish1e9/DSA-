@@ -1,10 +1,10 @@
 class comp{
     public:
-    static bool operator()(const T&a,const T&b){
+    bool operator()(T&a,T&b)const{
         return a->val < b->val;
     }//Note that priority queue me comparator min heap implementation me hi jata h to yaha soch rhe hoge increasing order me ayega but 
     // ulta hoga decreasing order me aa jayega
-    // static ,const , & likh dia krna kahi kahi error aa jata h
+    // const likh dia krna kahi kahi error aa jata h
 };
 int main(){
     sort(arr.begin(),arr.end(),comp());        // sort me dekho class daalna ho to () laga dena end me bas

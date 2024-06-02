@@ -25,3 +25,5 @@ sort(arr.begin(),arr.end(),comp);        // dekho sort me decltype ni likhna h
 priority_queue<T,vector<T>,decltype(comp)> pq;
 map<T,V,decltype(comp)> mp;
 set<T,decltype(comp)> s;
+
+// Agar T jo ho wo Node* ho to & lagane se shyd kahi error de skta h to & mat lagana

@@ -1,0 +1,61 @@
+GFG link: https://www.geeksforgeeks.org/problems/find-the-number-of-islands/1
+
+    // isme bhi 
+    TC :- O(nxm) + O(nxmx8)
+    SC :- O(nxm) + O(nxm)
+    int dx[3]={-1,0,1};
+    int dy[3]={-1,0,1};
+    void dfs(int i,int j,vector<vector<char>>&grid,vector<vector<int>>&vis){
+        int m=grid.size();
+        int n=grid[0].size();
+        vis[i][j]=1;
+        for(int p=0;p<3;p++){
+            for(int k=0;k<3;k++){
+                if(dx[p]==0 && dy[k]==0) continue;
+                int new_x=i+dx[p];
+                int new_y=j+dy[k];
+                if(new_x>=m || new_x<0 || new_y>=n || new_y<0) continue;
+                if(!vis[new_x][new_y] && grid[new_x][new_y]=='1'){
+                    dfs(new_x,new_y,grid,vis);
+                }
+            }
+        }
+    }
+    void bfs(int i,int j,vector<vector<char>>&grid,vector<vector<int>>&vis){
+        int m=grid.size();
+        int n=grid[0].size();
+        queue<pair<int,int>> q;
+        q.push({i,j});
+        vis[i][j]=1;
+        while(!q.empty()){
+            pair<int,int>curr=q.front();q.pop();
+            for(int p=0;p<3;p++){
+                for(int k=0;k<3;k++){
+                    if(dx[p]==0 && dy[k]==0) continue;
+                    int new_x=curr.first+dx[p];
+                    int new_y=curr.second+dy[k];
+                    if(new_x>=m || new_x<0 || new_y>=n || new_y<0) continue;
+                    if(!vis[new_x][new_y] && grid[new_x][new_y]=='1'){
+                        q.push({new_x,new_y});
+                        vis[new_x][new_y]=1;
+                    }
+                }
+            }
+        }
+    }
+    int numIslands(vector<vector<char>>& grid) {
+        int m=grid.size();
+        int n=grid[0].size();
+        int ans=0;
+        vector<vector<int>> vis(m,vector<int>(n,0));
+        for(int i=0;i<m;i++){
+            for(int j=0;j<n;j++){
+                if(!vis[i][j] && grid[i][j]=='1'){
+                    ans++;
+                    // bfs(i,j,grid,vis);
+                    dfs(i,j,grid,vis);
+                }
+            }
+        }
+        return ans;
+    }

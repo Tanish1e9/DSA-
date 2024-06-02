@@ -18,7 +18,8 @@ GFG link: https://www.geeksforgeeks.org/problems/water-the-plants--170646/0
                 last_tap++;
             }
             taps++;
-            if(target>farthest) return -1;
+            //if(target>farthest) return -1;
+            if(farthest==-1) return -1;
             target=farthest+1;
         }
         return taps;
@@ -28,3 +29,5 @@ GFG link: https://www.geeksforgeeks.org/problems/water-the-plants--170646/0
 // isme kya scene h ki 0 to n-1 discrete points ko cover krna h
 // so isme ek target banaye h and at any instant suppose jo target tha usko skip kr gya last_tap wale ka starting point
 // to farthest -1 ho jayega and target>farthest hoke -1 return ho jayega 
+// dekho ek hi condition farthest==-1 se check ho jayega LC and GFG dono me
+// bas fark h ki target = farthest+1 and maxi=farthest ka 

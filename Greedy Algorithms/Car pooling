@@ -25,7 +25,30 @@ LC link: https://leetcode.com/problems/car-pooling/description/
     }
 
     // M-2  Line sweep hi bas ye large range k lie kaam kr jayega
-
+    bool carPooling(vector<vector<int>>& trips, int capacity) {
+        vector<pair<int,int>> arr;
+        vector<pair<int,int>> dep;
+        for(int i=0;i<trips.size();i++){
+            arr.push_back({trips[i][1],trips[i][0]});
+            dep.push_back({trips[i][2],trips[i][0]});
+        }
+        sort(arr.begin(),arr.end());
+        sort(dep.begin(),dep.end());
+        int i=0,j=0;
+        int count=0;
+        while(i<trips.size()){  // hmesha pehle arrival hi khatam hoga
+            if(arr[i].first < dep[j].first){
+                count+=arr[i].second;
+                i++;
+            }
+            else{
+                count-=dep[j].second;
+                j++;
+            }
+            if(count>capacity) return false;
+        }
+        return true;
+    }
 
     // M-3 line sweep algorithm 
     // TC O(n)+O(1000)

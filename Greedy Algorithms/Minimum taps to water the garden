@@ -19,7 +19,8 @@ LC link: https://leetcode.com/problems/minimum-number-of-taps-to-open-to-water-a
                 last_tap++;
             }
             taps++;
-            if(maxi+1>farthest) return -1;
+            // if(maxi+1>farthest) return -1;
+            if(farthest==-1) return -1;
             maxi=farthest;
         }
         return taps;
@@ -27,6 +28,8 @@ LC link: https://leetcode.com/problems/minimum-number-of-taps-to-open-to-water-a
 
 // yaha kya h ki [0,n] continuous interval ko water krna h to maxi denotes ki kis point tk hm pahuch chuke h
 // to at any instant agar farthest<=maxi ho gya yani atak gya maxi pe then return -1
-// farthest ko kam se kam maxi+1 tk to jana hi chahye on the other hand gfg wale me farthest agar target hi rha to bhi chalega kyunki uske agla point se target+1
-// ka poorti ho skta h but yaha continuity chahye
+// farthest ko kam se kam maxi+1 tk to jana hi chahye on the other hand gfg wale me 
+// farthest agar target hi rha to bhi chalega kyunki uske agla point se target+1 ka poorti ho skta h but yaha continuity chahye
 // observe krna ki +1 ko sirf change kia gya h dono question me difference laa dene k lie
+// jo condition h simply farthest==-1 krke check kr stke ho because ek bar suppose kro farthest maxi hi rh gya then agle last_tap pe
+// loop se break out hoke farthest -1 hi rh jayega

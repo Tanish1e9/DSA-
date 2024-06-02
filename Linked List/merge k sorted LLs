@@ -75,3 +75,9 @@ public:
         }
     }
 };
+
+
+    // agar ListNode* type ka priority queue banana h but thoda comparator likhne me dikkat ho to class banake krte h
+    // operator overloading k through
+    // See one file in main branch
+

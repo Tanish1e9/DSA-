@@ -26,7 +26,7 @@ Node *flatten(Node *head)
 // ye niche different tarah ka priority queue h
     class comp{
         public:
-        bool operator ()(ListNode* a,ListNode* b){
+        bool operator ()(ListNode* a,ListNode* b)const{
             return a->val > b->val;
         }
     };

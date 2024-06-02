@@ -1,0 +1,42 @@
+LC link: https://leetcode.com/problems/flood-fill/
+
+    int dx[4]={-1,1,0,0};
+    int dy[4]={0,0,1,-1};
+    void dfs(int x,int y,vector<vector<int>>&image,int color,int ini_colour){
+        int m=image.size();
+        int n=image[0].size();
+        image[x][y]=color;
+        for(int k=0;k<4;k++){
+            int new_x=x+dx[k];
+            int new_y=y+dy[k];
+            if(new_x<0 || new_x>=m || new_y<0 || new_y>=n) continue;
+            if(image[new_x][new_y]==ini_colour){
+                dfs(new_x,new_y,image,color,ini_colour);
+            }
+        }
+    }
+    vector<vector<int>> floodFill(vector<vector<int>>& image, int sr, int sc, int color) {
+        int ini_colour = image[sr][sc];
+        if(ini_colour==color) return image;
+        int m=image.size();
+        int n=image[0].size();
+        // queue<pair<int,int>> q;
+        // q.push({sr,sc});
+        // image[sr][sc]=color;
+        // while(!q.empty()){
+        //     pair<int,int> curr=q.front();
+        //     q.pop();
+        //     for(int k=0;k<4;k++){
+        //         int x=curr.first+dx[k];
+        //         int y=curr.second+dy[k];
+        //         if(x>=m || x<0 || y>=n || y<0) continue;
+        //         if(image[x][y]==ini_colour){
+        //             image[x][y]=color;
+        //             q.push({x,y});
+        //         }
+        //     }
+        // }
+        // return image;
+        dfs(sr,sc,image,color,ini_colour);
+        return image;
+    }

@@ -1,0 +1,26 @@
+LC link: https://leetcode.com/problems/find-right-interval/
+// yaha bhi similar arr,dep wala approach lagaye h
+
+    vector<int> findRightInterval(vector<vector<int>>& intervals) {
+        int n=intervals.size();
+        vector<pair<int,int>> arr;
+        vector<pair<int,int>> dep;
+        vector<int> ans(n,-1);
+        for(int i=0;i<n;i++){
+            arr.push_back({intervals[i][0],i});
+            dep.push_back({intervals[i][1],i});
+        }
+        sort(arr.begin(),arr.end());
+        sort(dep.begin(),dep.end());
+        int i=0,j=0;
+        while(i<n && j<n){     
+            // jaise hi arrivals khatam ho gye baki sabke minus -1 hi ho jayenge
+            // aur agar departures pehle khatam ho gya to balle balle
+            if(arr[i].first>=dep[j].first){
+                ans[dep[j].second]=arr[i].second;
+                j++;
+            }
+            else i++;
+        }
+        return ans;
+    }

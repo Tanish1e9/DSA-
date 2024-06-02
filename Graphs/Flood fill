@@ -1,5 +1,8 @@
 LC link: https://leetcode.com/problems/flood-fill/
 
+
+    // TC :- O(nxmx4) 
+    // SC :- O(nxm)
     int dx[4]={-1,1,0,0};
     int dy[4]={0,0,1,-1};
     void dfs(int x,int y,vector<vector<int>>&image,int color,int ini_colour){

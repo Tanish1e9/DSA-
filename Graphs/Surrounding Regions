@@ -1,0 +1,29 @@
+LC link: https://leetcode.com/problems/surrounded-regions/
+
+    int dx[4]={-1,1,0,0};
+    int dy[4]={0,0,-1,1};
+    void dfs(int i,int j,auto&board,auto&ans){
+        int m=board.size();
+        int n=board[0].size();
+        ans[i][j]='O';
+        for(int k=0;k<4;k++){
+            int x=i+dx[k];
+            int y=j+dy[k];
+            if(x>=m || x<0 || y>=n || y<0) continue;
+            if(board[x][y]=='O' && ans[x][y]=='X') dfs(x,y,board,ans);
+        }
+    }
+    void solve(vector<vector<char>>& board) {
+        int m=board.size();
+        int n=board[0].size();
+        vector<vector<char>> ans(m,vector<char>(n,'X'));
+        for(int i=0;i<m;i++){
+            if(board[i][0]=='O' && ans[i][0]=='X') dfs(i,0,board,ans);
+            if(board[i][n-1]=='O' && ans[i][n-1]=='X') dfs(i,n-1,board,ans);
+        }
+        for(int j=0;j<n;j++){
+            if(board[0][j]=='O' && ans[0][j]=='X') dfs(0,j,board,ans);
+            if(board[m-1][j]=='O' && ans[m-1][j]=='X') dfs(m-1,j,board,ans);
+        }
+        board=ans;
+    }

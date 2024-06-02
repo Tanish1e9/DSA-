@@ -22,11 +22,32 @@ GFG link: https://www.geeksforgeeks.org/problems/minimum-platforms-1587115620/1
     	}
     	return ans;
     }
-    
-    // M-2 line sweep algorithm bas time ka hisaab rakhe h aur kuch ni
+
+    // M-2 Ye line sweep hi h bas ye tab bhi kaam kr jayega agar range of times bhut jaada ho
+    // Here we have sorted arr and dep times separately and just we are considering the smaller time first
+    int findPlatform(int arr[], int dep[], int n){
+    	sort(arr,arr+n);
+    	sort(dep,dep+n);
+    	int i=0,j=0;
+    	int count=0;
+    	int ans=0;
+    	while(i<n){
+    	    if(arr[i]<=dep[j]){
+    	        count++;
+    	        ans=max(ans,count);
+    	        i++;
+    	    }
+    	    else{
+    	        count--;
+    	        j++;
+    	    }
+    	}
+	   return ans;
+    }
+
+
+    // M-3 line sweep algorithm bas time ka hisaab rakhe h aur kuch ni
     // TC O(n)+O(2400)
-    // Actually striver bhi yahi kia h bas wo arr aur dep array ko alag alag sort kr lia aur jaise two pointer merge hota waise time compare kr krke
-    // count++ ya -- kr rha h
     int findPlatform(int arr[],int dep[],int n){
       // 	vector<int> times(2400,0);
       // 	for(int i=0;i<n;i++){

@@ -1,0 +1,30 @@
+GFG link: https://www.geeksforgeeks.org/problems/water-the-plants--170646/0
+
+    int min_sprinklers(int ranges[], int n){
+        vector<pair<int,int>> intervals;
+        for(int i=0;i<n;i++){
+            if(ranges[i]==-1) continue;
+            intervals.push_back({max(0,i-ranges[i]),min(n-1,i+ranges[i])});
+        }
+        sort(intervals.begin(),intervals.end());
+        // if(intervals[0].first>0) return -1;
+        int target = 0;
+        int taps = 0;
+        int last_tap = 0;
+        while(target<n){
+            int farthest = -1;
+            while(last_tap < n+1 && intervals[last_tap].first<=target){
+                farthest = max(farthest,intervals[last_tap].second);
+                last_tap++;
+            }
+            taps++;
+            if(target>farthest) return -1;
+            target=farthest+1;
+        }
+        return taps;
+    }
+
+// Ye LC wale question se thoda different h 
+// isme kya scene h ki 0 to n-1 discrete points ko cover krna h
+// so isme ek target banaye h and at any instant suppose jo target tha usko skip kr gya last_tap wale ka starting point
+// to farthest -1 ho jayega and target>farthest hoke -1 return ho jayega 

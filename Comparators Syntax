@@ -7,6 +7,8 @@ class comp{
     // static ,const , & likh dia krna kahi kahi error aa jata h
 };
 int main(){
+    sort(arr.begin(),arr.end(),comp());        // sort me dekho class daalna ho to () laga dena end me bas
+    // baaki normal static bool function to bana hi skte ho wo to malum hi h sort k lie
     priority_queue<T,vector<T>,comp>pq;
     map<T,V,comp> mp;
     set<T,comp> s;
@@ -19,6 +21,7 @@ auto comp = [](T&a,T&b)->bool{
     return a->val < b->val;
     // same thing ulta ayega since min heap h
 };
+sort(arr.begin(),arr.end(),comp);        // dekho sort me decltype ni likhna h
 priority_queue<T,vector<T>,decltype(comp)> pq;
 map<T,V,decltype(comp)> mp;
 set<T,decltype(comp)> s;

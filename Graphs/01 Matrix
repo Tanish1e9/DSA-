@@ -1,0 +1,71 @@
+LC link: https://leetcode.com/problems/01-matrix/description/
+
+    // M-1 dekho normal BFS h tm chaaho to jab queue me daal rhe tabhi ans array me value set kr skte ho
+    // ya fir jab visit ho yani pop ho queue se tab bhi daal skte ho sahi hoga
+    vector<vector<int>> updateMatrix(vector<vector<int>>& mat) {
+        int m=mat.size();
+        int n=mat[0].size();
+        vector<vector<int>> ans(m,vector<int>(n,1e9));
+        vector<vector<int>> vis(m,vector<int>(n,0));
+        queue<pair<pair<int,int>,int>> q;
+        for(int i=0;i<m;i++){
+            for(int j=0;j<n;j++){
+                if(mat[i][j]==0){
+                    ans[i][j]=0;
+                    q.push({{i,j},0});
+                    vis[i][j]=1;
+                }
+            }
+        }
+        int dx[]={0,0,-1,1};
+        int dy[]={-1,1,0,0};
+        while(!q.empty()){
+            auto curr=q.front();
+            q.pop();
+            // ans[curr.first.first][curr.first.second]=curr.second;
+            for(int k=0;k<4;k++){
+                int x=curr.first.first+dx[k];
+                int y=curr.first.second+dy[k];
+                if(x>=m || x<0 || y>=n || y<0) continue;
+                if(!vis[x][y]){
+                    ans[x][y]=curr.second+1;
+                    q.push({{x,y},curr.second+1});
+                    vis[x][y]=1;
+                }
+            }
+        }
+        return ans;
+    }
+
+    // M-2 a bit more optimal since without vis array h ye
+    vector<vector<int>> updateMatrix(vector<vector<int>>& mat) {
+        int m=mat.size();
+        int n=mat[0].size();
+        vector<vector<int>> ans(m,vector<int>(n,1e9));
+        queue<pair<pair<int,int>,int>> q;
+        for(int i=0;i<m;i++){
+            for(int j=0;j<n;j++){
+                if(mat[i][j]==0){
+                    ans[i][j]=0;
+                    q.push({{i,j},0});
+                }
+            }
+        }
+        int dx[]={0,0,-1,1};
+        int dy[]={-1,1,0,0};
+        while(!q.empty()){
+            auto curr=q.front();
+            q.pop();
+            for(int k=0;k<4;k++){
+                int x=curr.first.first+dx[k];
+                int y=curr.first.second+dy[k];
+                if(x>=m || x<0 || y>=n || y<0) continue;
+                if(curr.second+1 < ans[x][y]){
+                    ans[x][y]=curr.second+1;
+                    q.push({{x,y},curr.second+1});
+                }
+            }
+        }
+        return ans;
+    }
+    

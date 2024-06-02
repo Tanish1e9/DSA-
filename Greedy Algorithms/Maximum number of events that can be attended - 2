@@ -1,0 +1,39 @@
+LC link: https://leetcode.com/problems/maximum-number-of-events-that-can-be-attended-ii/
+// Ye actually DP ka question h bas yahi ek chiz tha ki why to do linear search jab sort kia hi h to binary search krke
+// jaldi se next index pata laga skte h
+
+    int bin(int s,int end_time,auto&events){
+        int low=s;
+        int high=events.size()-1;
+        int ans=events.size();
+        while(low<=high){
+            int mid=low+(high-low)/2;
+            if(events[mid][0]>end_time){
+                ans=mid;
+                high=mid-1;
+            }
+            else low=mid+1;
+        }
+        return ans;
+    }
+    int f(int i,auto&events,int k,auto&memo){
+        if(i>=events.size()) return 0;
+        if(k==0) return 0;
+        if(memo[i][k]!=-1) return memo[i][k];
+        int pick = events[i][2];
+        int j=bin(i+1,events[i][1],events);
+        pick+=f(j,events,k-1,memo);
+        // for(int j=i+1;j<events.size();j++){
+        //     if(events[j][0]>events[i][1]) {
+        //         pick+=f(j,events,k-1,memo);
+        //         break;
+        //     }
+        // }
+        int npick=f(i+1,events,k,memo);
+        return memo[i][k]=max(pick,npick);
+    }
+    int maxValue(vector<vector<int>>& events, int k) {
+        vector<vector<int>> memo(events.size(),vector<int>(k+1,-1));
+        sort(events.begin(),events.end());
+        return f(0,events,k,memo);
+    }

@@ -68,4 +68,6 @@ LC link: https://leetcode.com/problems/01-matrix/description/
         }
         return ans;
     }
+    // dekho jaise yaha ans array ko hi visited k tarah use kr rha tha to q.push jo initial starting points h waha bhi ans me 0 daala h
+    // aur agar alag se visited array bna rhe ho to you can set ans me value anytime q me daalte waqt ya nikalte waqt doesnt matter
     

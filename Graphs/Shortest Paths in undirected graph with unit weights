@@ -9,7 +9,6 @@ GFG link: https://www.geeksforgeeks.org/problems/shortest-path-in-undirected-gra
         }
         vector<int>ans(n,-1);
         vector<int>vis(n,0);
-        ans[src]=0;
         queue<pair<int,int>>q;
         q.push({src,0});
         vis[src]=1;

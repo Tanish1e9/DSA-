@@ -1,0 +1,30 @@
+GFG link: https://www.geeksforgeeks.org/problems/detect-cycle-in-a-directed-graph/1
+
+  bool isCyclic(int v, vector<int> adj[]) {
+        vector<int>vis(v,0);
+	    vector<int>indegree(v,0);
+	    for(int i=0;i<v;i++){
+	        for(auto el:adj[i]){
+	            indegree[el]++;
+	        }
+	    }
+	    queue<int>q;
+	    for(int i=0;i<v;i++){
+	        if(indegree[i]==0){
+	            q.push(i);
+	        }
+	    }
+	    int ans=0;
+	    while(!q.empty()){
+           int curr=q.front();
+           q.pop();
+           ans++;
+           for(auto el:adj[curr]){
+               indegree[el]--;
+               if(indegree[el]==0) q.push(el);
+           }
+	    }
+	    return ans!=v; 
+    }
+    // TC O(V+E)
+    // SC O(V)

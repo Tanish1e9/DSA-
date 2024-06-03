@@ -1,0 +1,33 @@
+GFG link: https://www.geeksforgeeks.org/problems/alien-dictionary/1?itm_source=geeksforgeeks&itm_medium=article&itm_campaign=bottom_sticky_on_article
+
+    // Topo sort krna h using DFS or Kahn's dono chalega
+    string findOrder(string dict[], int n, int k) {
+        vector<int> indegree(k,0);
+        vector<vector<int>> adj(k);
+        for(int i=0;i<n-1;i++){
+            int t1=0,t2=0;
+            while(t1<dict[i].size() && t2<dict[i+1].size()){
+                if(dict[i][t1]!=dict[i+1][t2]){
+                    adj[dict[i][t1] - 'a'].push_back(dict[i+1][t2]-'a');
+                    indegree[dict[i+1][t2]-'a']++;
+                    break;
+                }
+                t1++;t2++;
+            }
+        }
+        queue<int>q;
+        for(int i=0;i<k;i++){
+            if(indegree[i]==0) q.push(i);
+        }
+        string ans;
+        while(!q.empty()){
+            int curr=q.front();
+            q.pop();
+            ans+=string(1,curr+'a');
+            for(auto el:adj[curr]){
+                indegree[el]--;
+                if(indegree[el]==0) q.push(el);
+            }
+        }
+        return ans;
+    }

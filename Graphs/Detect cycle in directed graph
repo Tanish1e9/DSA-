@@ -17,8 +17,10 @@ GFG link: https://www.geeksforgeeks.org/problems/detect-cycle-in-a-directed-grap
         vector<int>vis(v,0);
         vector<int>path_vis(v,0);
         for(int i=0;i<v;i++){
-            if(!vis[i])
+            if(!vis[i]){
+                // vector<int>path_vis(v,0);
                 if(dfs(i,vis,path_vis,adj)) return true;
+            }
         }
         return false;
     }

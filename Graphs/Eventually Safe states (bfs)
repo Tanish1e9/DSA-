@@ -1,5 +1,7 @@
 LC link: https://leetcode.com/problems/find-eventual-safe-states/
 
+    // TC O(V+E)+O(VlogV)
+    // SC O(E)+O(V)
     void reverse_edges(vector<vector<int>>&graph,vector<vector<int>>&ans,vector<int>&indegree){
         for(int i=0;i<graph.size();i++){
             for(auto el:graph[i]){

@@ -1,0 +1,52 @@
+GFG link: https://www.geeksforgeeks.org/problems/shortest-path-in-undirected-graph-having-unit-distance/1
+
+    // M-1 using vis array as normal
+    vector<int> shortestPath(vector<vector<int>>& edges, int n,int m, int src){
+        vector<vector<int>> adj(n);
+        for(auto edge:edges){
+            adj[edge[0]].push_back(edge[1]);
+            adj[edge[1]].push_back(edge[0]);
+        }
+        vector<int>ans(n,-1);
+        vector<int>vis(n,0);
+        ans[src]=0;
+        queue<pair<int,int>>q;
+        q.push({src,0});
+        vis[src]=1;
+        while(!q.empty()){
+            auto curr=q.front();
+            q.pop();
+            ans[curr.first]=curr.second;
+            for(auto el:adj[curr.first]){
+                if(!vis[el]){
+                    q.push({el,curr.second+1});
+                    vis[el]=1;
+                }
+            }
+        }
+        return ans;
+    }
+
+    // M-2 using ans itself as the vis array
+    vector<int> shortestPath(vector<vector<int>>& edges, int n,int m, int src){
+        vector<vector<int>> adj(n);
+        for(auto edge:edges){
+            adj[edge[0]].push_back(edge[1]);
+            adj[edge[1]].push_back(edge[0]);
+        }
+        vector<int>ans(n,-1);
+        ans[src]=0;
+        queue<pair<int,int>>q;
+        q.push({src,0});
+        while(!q.empty()){
+            auto curr=q.front();
+            q.pop();
+            for(auto el:adj[curr.first]){
+                if(ans[el]==-1 || curr.second + 1 < ans[el]){
+                    ans[curr.first]=curr.second+1;
+                    q.push({el,curr.second+1});
+                }
+            }
+        }
+        return ans;
+    }

@@ -1,0 +1,34 @@
+LC link: https://leetcode.com/problems/find-eventual-safe-states/
+
+    void reverse_edges(vector<vector<int>>&graph,vector<vector<int>>&ans,vector<int>&indegree){
+        for(int i=0;i<graph.size();i++){
+            for(auto el:graph[i]){
+                ans[el].push_back(i);
+                indegree[i]++;
+            }
+        }
+    }
+    vector<int> eventualSafeNodes(vector<vector<int>>& graph) {
+        int v=graph.size();
+        vector<vector<int>> reverse_graph(v);
+        vector<int>indegree(v,0);
+        reverse_edges(graph,reverse_graph,indegree);
+        queue<int>q;
+        for(int i=0;i<v;i++){
+            if(indegree[i]==0){
+                q.push(i);
+            }
+        }
+        vector<int>ans;
+        while(!q.empty()){
+            int curr=q.front();
+            q.pop();
+            ans.push_back(curr);
+            for(auto el:reverse_graph[curr]){
+                indegree[el]--;
+                if(indegree[el]==0) q.push(el);
+            }
+        }
+        sort(ans.begin(),ans.end());
+        return ans;
+    }

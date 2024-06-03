@@ -1,0 +1,27 @@
+GFG link: https://www.geeksforgeeks.org/problems/topological-sort/1
+
+  vector<int> topoSort(int v, vector<int> adj[]) {
+	    vector<int>indegree(v,0);
+	    for(int i=0;i<v;i++){
+	        for(auto el:adj[i]){
+	            indegree[el]++;
+	        }
+	    }
+	    queue<int>q;
+	    for(int i=0;i<v;i++){
+	        if(indegree[i]==0){
+	            q.push(i);
+	        }
+	    }
+	    vector<int>ans;
+	    while(!q.empty()){
+           int curr=q.front();
+           q.pop();
+           ans.push_back(curr);
+           for(auto el:adj[curr]){
+               indegree[el]--;
+               if(indegree[el]==0) q.push(el);
+           }
+	    }
+	    return ans; 
+	}

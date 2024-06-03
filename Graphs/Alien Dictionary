@@ -42,7 +42,7 @@ GFG link: https://www.geeksforgeeks.org/problems/alien-dictionary/1?itm_source=g
                 dfs(el,adj,vis);
             }
         }
-        ans = char(i+'a') + ans;
+        ans = char(i+'a') + ans;        // ye work krta h dekh lo dhyan se
     }
     string findOrder(string dict[], int n, int k) {
         vector<int>vis(k,0);

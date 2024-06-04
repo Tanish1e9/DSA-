@@ -1,0 +1,29 @@
+LC link: https://leetcode.com/problems/maximum-number-of-events-that-can-be-attended/
+
+    // Dekh it's like we have to simulate days
+    // har din jo jo bhi event chal rhe honge unka data hoga hmare pas
+    // hmlog jiska deadline sabse paas h usko attend krenge because others can wait if we want to maximise our attendance
+    // Also pq me sirf deadlines store kro na because usi se mtlb h
+
+    int maxEvents(vector<vector<int>>& events) {
+        sort(events.begin(),events.end());
+        int last_day=0;
+        for(int i=0;i<events.size();i++){
+            last_day = max(last_day,events[i][1]);
+        }
+        int i=0;
+        int ans=0;
+        priority_queue<int,vector<int>,greater<int>> pq;
+        for(int day=1;day<=last_day;day++){
+            while(i<events.size() && events[i][0]==day){
+                pq.push(events[i][1]);
+                i++;
+            }
+            if(!pq.empty()){
+                pq.pop();
+                ans++;
+            }
+            while(!pq.empty() && pq.top() == day) pq.pop();
+        }
+        return ans;
+    }

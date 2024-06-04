@@ -1,6 +1,9 @@
 GFG link: https://www.geeksforgeeks.org/problems/shortest-path-in-undirected-graph-having-unit-distance/1
 
     // M-1 using vis array as normal
+    // yahi tarika na wahi par applicable h jaha surity h ki jo node ko first visit krega wo minimum distance me krega
+    // because level wise distance increase krta h yaha pe but wahi edge weights variable ho jate then this would not have worked
+    // M-2 would have still worked bas usme thodi redundancies ho jati
     vector<int> shortestPath(vector<vector<int>>& edges, int n,int m, int src){
         vector<vector<int>> adj(n);
         for(auto edge:edges){
@@ -27,6 +30,7 @@ GFG link: https://www.geeksforgeeks.org/problems/shortest-path-in-undirected-gra
     }
 
     // M-2 using ans itself as the vis array
+    // yaha queue of pair banana as such imp ni tha ans array se hi distances dekh skte the
     vector<int> shortestPath(vector<vector<int>>& edges, int n,int m, int src){
         vector<vector<int>> adj(n);
         for(auto edge:edges){

@@ -1,5 +1,7 @@
 LC link: https://leetcode.com/problems/word-ladder-ii/
+GFG link: https://www.geeksforgeeks.org/problems/word-ladder-ii/1
 
+    // M-1 this is the brute way works on GFG but TLE on LC
     vector<vector<string>> findLadders(string beginWord, string endWord, vector<string>& wordList) {
         vector<vector<string>>ans;
         int n = wordList.size();

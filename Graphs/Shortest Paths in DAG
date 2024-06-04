@@ -1,0 +1,63 @@
+GFG link: https://www.geeksforgeeks.org/problems/shortest-path-in-undirected-graph/1
+
+     // M-1 using BFS ... it has redundancies
+     vector<int> shortestPath(int N,int M, vector<vector<int>>& edges){
+        vector<vector<pair<int,int>>>adj(N);
+        for(auto edge:edges){
+            adj[edge[0]].push_back({edge[1],edge[2]});
+        }
+        vector<int>ans(N,-1);
+        ans[0]=0;
+        queue<int>q;
+        q.push(0);
+        while(!q.empty()){
+            int curr=q.front();
+            q.pop();
+            for(auto el:adj[curr]){
+                if(ans[el.first]==-1 || ans[el.first]>ans[curr]+el.second){
+                    ans[el.first]=ans[curr]+el.second;
+                    q.push(el.first);
+                }
+            }
+        }
+        return ans;
+    }
+
+
+     // M-2 Optimal using Topo Sort to avoid redundancies
+     void topo(int i,vector<vector<pair<int,int>>>&adj,vector<int>&vis,stack<int>&st){
+         vis[i]=1;
+         for(auto el:adj[i]){
+             if(!vis[el.first]){
+                 topo(el.first,adj,vis,st);
+             }
+         }
+         st.push(i);
+     }
+     vector<int> shortestPath(int N,int M, vector<vector<int>>& edges){
+        vector<vector<pair<int,int>>>adj(N);
+        for(auto edge:edges){
+            adj[edge[0]].push_back({edge[1],edge[2]});
+        }
+        vector<int>ans(N,-1);
+        ans[0]=0;
+        stack<int>st;
+        vector<int>vis(N,0);
+        for(int i=0;i<N;i++) {
+            if(!vis[i])
+                topo(i,adj,vis,st);
+        }
+        while(!st.empty()){
+            int curr=st.top();st.pop();
+            if(ans[curr]==-1) continue;    // skip for nodes whose distances are yet uncalculated
+            for(auto el:adj[curr]){
+                if(ans[el.first]==-1 || ans[el.first]>ans[curr]+el.second){
+                    ans[el.first] = ans[curr]+el.second;
+                }
+            }
+        }
+        return ans;
+    }
+    // Jaise jaha pe unit weights hote ya distance uniformly level wise increase krta h na waha pe alag se visited array banake
+    // we can do BFS aur fir jab node visit ho tab distance update kr skte ... kyunki waha surity thi ki already visited node ko koi dubara visit
+    // krke uska distance kam ni kr skta h but yaha pe variable edge weights h to ye surity nahi h yaha that's why ye vis wala applicable ni hoga

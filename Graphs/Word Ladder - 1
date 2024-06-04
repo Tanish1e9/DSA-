@@ -1,0 +1,56 @@
+LC link: https://leetcode.com/problems/word-ladder/
+
+    // M-1 simply I have created a graph and I have applied BFS
+    // kaafi time lag rha h graph banane me hi O(n^2) so we will try to optimise this
+    bool differing_chars(string &a,string &b){
+        int ans=0;
+        for(int i=0;i<a.size();i++){
+            if(a[i]!=b[i]) ans++;
+        }
+        return (ans==1);
+    }
+    int ladderLength(string beginWord, string endWord, vector<string>& wordList) {
+        int n = wordList.size();
+        vector<vector<int>> adj(n);
+        bool flag=false;
+        int beg=-1;
+        int end=-1;
+        for(int i=0;i<n;i++){
+            if(wordList[i]==beginWord) {flag=true;beg=i;}
+            if(wordList[i]==endWord) end=i;
+            for(int j=i+1;j<n;j++){
+                if(differing_chars(wordList[i],wordList[j])){
+                    adj[i].push_back(j);
+                    adj[j].push_back(i);
+                }
+            }
+        }
+        if(end==-1) return 0;
+        if(!flag){
+            vector<int> temp;
+            beg=n;
+            for(int i=0;i<n;i++){
+                if(differing_chars(wordList[i],beginWord)){
+                    temp.push_back(i);
+                    adj[i].push_back(n);
+                }
+            }
+            adj.push_back(temp);
+        }
+        queue<int>q;
+        q.push(beg);
+        vector<int>ans(max(beg+1,n),-1);
+        ans[beg]=0;
+        while(!q.empty()){
+            if(ans[end]!=-1) break;
+            int curr=q.front();
+            q.pop();
+            for(auto el:adj[curr]){
+                if(ans[el]==-1 || ans[el]>ans[curr]+1){
+                    ans[el]=ans[curr]+1;
+                    q.push(el);
+                }
+            }
+        }
+        return ans[end]+1;
+    }

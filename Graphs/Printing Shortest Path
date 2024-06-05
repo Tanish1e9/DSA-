@@ -1,0 +1,39 @@
+GFG link: https://www.geeksforgeeks.org/problems/shortest-path-in-weighted-undirected-graph/1
+
+    // isme bas backtracking kie h Dijkstra hi h basically
+    typedef pair<int,int> p;
+    vector<int> shortestPath(int n, int m, vector<vector<int>>& edges) {
+        vector<vector<p>> adj(n+1);
+        for(auto edge:edges){
+            adj[edge[0]].push_back({edge[1],edge[2]});
+            adj[edge[1]].push_back({edge[0],edge[2]});
+        }
+        vector<int> from(n+1,-1);
+        vector<int> ans(n+1,1e9);
+        ans[1]=0;
+        from[1]=-1;
+        priority_queue<p,vector<p>,greater<p>> q;
+        q.push({0,1});
+        while(!q.empty()){
+            auto curr=q.top();q.pop();
+            if(ans[curr.second]<curr.first) continue;
+            
+            for(auto el:adj[curr.second]){
+                if(ans[el.first] > curr.first + el.second){
+                    ans[el.first] = curr.first + el.second;
+                    from[el.first] = curr.second;
+                    q.push({ans[el.first],el.first});
+                }
+            }
+        }
+        if(ans[n]==1e9) return {-1};
+        vector<int> res;
+        int last = n;
+        while(last!=-1){
+            res.push_back(last);
+            last = from[last];
+        }
+        res.push_back(ans[n]);
+        reverse(res.begin(),res.end());
+        return res;
+    }

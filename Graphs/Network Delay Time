@@ -1,0 +1,30 @@
+LC link: https://leetcode.com/problems/network-delay-time/
+
+    typedef pair<int,int> p;
+    int networkDelayTime(vector<vector<int>>& times, int n, int k) {
+        vector<vector<p>> adj(n+1);
+        for(auto time:times){
+            adj[time[0]].push_back({time[1],time[2]});
+        }
+        vector<int> ans(n+1,1e9);
+        ans[0]=0;           // ye islie ki wrna ye 0th node ko to koi visit ni krne wala h na to 1e9 na dikha de time
+        ans[k]=0;
+        priority_queue<p,vector<p>,greater<p>>q;
+        q.push({0,k});
+        while(!q.empty()){
+            auto curr=q.top();
+            q.pop();
+
+            if(ans[curr.second] < curr.first) continue;
+            
+            for(auto el:adj[curr.second]){
+                if(ans[el.first] > curr.first + el.second){
+                    ans[el.first] = curr.first + el.second;
+                    q.push({ans[el.first],el.first});
+                }
+            }
+        }
+        int maxi = *max_element(ans.begin(),ans.end());
+        if(maxi==1e9) return -1;
+        return maxi;
+    }

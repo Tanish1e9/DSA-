@@ -1,6 +1,11 @@
 LC link: https://leetcode.com/problems/path-with-minimum-effort/
 
     // Bas dijkstra laga die h remember yaha pe node dubara visit hoke distance kam ho skta h to first time bottom right encounter hone pe return mat krna
+    // encounter as in queue me daalte waqt return mat krna ye BFS with unit weights me kr skte h
+    // par jaise hi queue se nikla tab sidhe return kr stke h because wo distance queue me minimum tha
+    // and aage k koi bhi path hoga minimum utna effort to leke hi ayega that's why
+    // it is true for those distances which are non-decreasing jaise normal edge weights add krna ya iss question me jaise tha waisa
+
     int dx[4] = {-1,1,0,0};
     int dy[4] = {0,0,-1,1};
     typedef pair<int,pair<int,int>> p;
@@ -14,6 +19,7 @@ LC link: https://leetcode.com/problems/path-with-minimum-effort/
         while(!q.empty()){
             auto curr = q.top();
             q.pop();
+            if(curr.second.first == m-1 && curr.second.second == n-1) return curr.first;
             if(curr.first > ans[curr.second.first][curr.second.second]) continue;
             for(int k=0;k<4;k++){
                 int x=curr.second.first + dx[k];
@@ -26,5 +32,5 @@ LC link: https://leetcode.com/problems/path-with-minimum-effort/
                 }
             }
         }
-        return ans[m-1][n-1];
+        return -1;
     }

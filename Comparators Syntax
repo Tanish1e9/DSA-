@@ -27,3 +27,5 @@ map<T,V,decltype(comp)> mp;
 set<T,decltype(comp)> s;
 
 // Agar T jo ho wo Node* ho to & lagane se shyd kahi error de skta h to & mat lagana
+is_sorted(vec.begin(),vec.end());    // krke use kr skte ho
+// gcd , lcm functions hote h numeric library me builtin

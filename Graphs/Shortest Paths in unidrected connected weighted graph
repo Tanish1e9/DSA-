@@ -33,4 +33,44 @@ GFG link: https://www.geeksforgeeks.org/problems/implementing-dijkstra-set-1-adj
     }
 
     // M-2 Dijkstra's Algo
-    
+    typedef pair<int,int> p;
+    // using priority queue (min heap)
+    void dijk(int S,vector<vector<int>> adj[],vector<int>&ans,int V){
+        priority_queue<p,vector<p>,greater<p>> q;
+        q.push({0,S});
+        
+        while(!q.empty()){
+            auto curr=q.top();
+            q.pop();
+            if(ans[curr.second] < curr.first) continue;
+            for(auto el:adj[curr.second]){
+                if(ans[el[0]] > curr.first + el[1]){
+                    ans[el[0]] = curr.first + el[1];
+                    q.push({ans[el[0]],el[0]});
+                }
+            }
+        }
+    }
+    //using set
+    void dijk2(int S,vector<vector<int>> adj[],vector<int>&ans,int V){
+        set<p> s;
+        s.insert({0,S});
+        while(!s.empty()){
+            auto curr = *(s.begin());
+            s.erase(curr);
+            
+            for(auto el:adj[curr.second]){
+                if(ans[el[0]] > curr.first + el[1]){
+                    if(ans[el[0]]!=1e9) s.erase({ans[el[0]],el[0]});
+                    ans[el[0]] = curr.first + el[1];
+                    s.insert({ans[el[0]],el[0]});
+                }
+            }
+        }
+    }
+    vector <int> dijkstra(int V, vector<vector<int>> adj[], int S){
+        vector<int>ans(V,1e9);
+        ans[S]=0;
+        dijk(S,adj,ans,V);
+        return ans;
+    }

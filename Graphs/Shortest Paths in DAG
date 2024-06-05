@@ -23,8 +23,29 @@ GFG link: https://www.geeksforgeeks.org/problems/shortest-path-in-undirected-gra
         return ans;
     }
 
+    // M-2 using dfs same hi chiz h redundancies h saare path explore ho rhe and ho ja rha
+    void dfs(int i,vector<vector<pair<int,int>>>&adj,vector<int>&ans){
+        for(auto el:adj[i]){
+            if(ans[el.first]==-1 || ans[el.first] > ans[i]+el.second){
+                ans[el.first] = ans[i]+el.second;
+                dfs(el.first,adj,ans);
+            }
+        }
+    }
+    vector<int> shortestPath(int N,int M, vector<vector<int>>& edges){
+        vector<vector<pair<int,int>>>adj(N);
+        for(auto edge:edges){
+            adj[edge[0]].push_back({edge[1],edge[2]});
+        }
+        vector<int>ans(N,-1);
+        ans[0]=0;
+        queue<int>q;
+        dfs(0,adj,ans);
+        return ans;
+    }
 
-     // M-2 Optimal using Topo Sort to avoid redundancies
+
+     // M-3 Optimal using Topo Sort to avoid redundancies
      void topo(int i,vector<vector<pair<int,int>>>&adj,vector<int>&vis,stack<int>&st){
          vis[i]=1;
          for(auto el:adj[i]){

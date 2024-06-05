@@ -1,6 +1,12 @@
 GFG link: https://www.geeksforgeeks.org/problems/shortest-path-in-weighted-undirected-graph/1
 
     // isme bas backtracking kie h Dijkstra hi h basically
+    // Dekh aisa jroor hota h dijkstra me ki already visited node ko koi dubara visit krke kam distance me possible kra de
+    // But once you take out the target node from the priority queue wo jo dist h wo shortest hoga
+    // kyu ... kyunki distance to additive h aur priority queue me uss waqt ye minimum distance tha top wala
+    // aage koi dubara target pe ayega to bache hue jo nodes h queue me unhi k through na ayega to add hoke unka distance jada ho jayega na 
+    // aur like agar unit weights wala chiz ho na usme to daalte hi sure ho skte h ki shortest hoga because distances badhte usme uniformly
+
     typedef pair<int,int> p;
     vector<int> shortestPath(int n, int m, vector<vector<int>>& edges) {
         vector<vector<p>> adj(n+1);
@@ -16,8 +22,8 @@ GFG link: https://www.geeksforgeeks.org/problems/shortest-path-in-weighted-undir
         q.push({0,1});
         while(!q.empty()){
             auto curr=q.top();q.pop();
+            if(curr.second == n) break;        // this line works in dijkstra
             if(ans[curr.second]<curr.first) continue;
-            
             for(auto el:adj[curr.second]){
                 if(ans[el.first] > curr.first + el.second){
                     ans[el.first] = curr.first + el.second;

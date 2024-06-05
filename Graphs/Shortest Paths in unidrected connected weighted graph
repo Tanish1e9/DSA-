@@ -1,0 +1,36 @@
+GFG link: https://www.geeksforgeeks.org/problems/implementing-dijkstra-set-1-adjacency-matrix/1
+
+    // M-1 brute wahi jo krte h har path ko explore krna with redundancies 
+    // somehow bfs pe kaam kr ja rha par dfs me TLE de rha
+    // Anyways optimal tarika is Dijkstra's Algorithm
+    void dfs(int curr,vector<vector<int>>adj[],vector<int>&ans){
+        for(auto el:adj[curr]){
+            if(ans[el[0]] > ans[curr]+el[1]){
+                ans[el[0]] = ans[curr]+el[1];
+                dfs(el[0],adj,ans);
+            }
+        }
+    }
+    void bfs(int S,vector<vector<int>> adj[],vector<int>&ans){
+        queue<int>q;
+        q.push(S);
+        while(!q.empty()){
+            int curr=q.front();
+            q.pop();
+            for(auto el:adj[curr]){
+                if(ans[el[0]] > ans[curr]+el[1]){
+                    ans[el[0]] = ans[curr]+el[1];
+                    q.push(el[0]);
+                }
+            }
+        }
+    }
+    vector <int> dijkstra(int V, vector<vector<int>> adj[], int S){
+        vector<int>ans(V,1e9);
+        ans[S]=0;
+        dfs(S,adj,ans);
+        return ans;
+    }
+
+    // M-2 Dijkstra's Algo
+    

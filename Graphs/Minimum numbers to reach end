@@ -1,0 +1,26 @@
+GFG link: https://www.geeksforgeeks.org/problems/minimum-multiplications-to-reach-end/1
+
+
+// Yaha to simple BFS hua h aur dekho jaise hi queue me target node dale wahi pe return kr skte h because uniformly badh rha h
+// TC O(1e5 * N)
+int minimumMultiplications(vector<int>& arr, int start, int end) {
+        if(start==end) return 0;
+        queue<int>q;
+        vector<int> ans(1e5,1e9);
+        ans[start] =0;
+        q.push(start);
+        while(!q.empty()){
+            auto curr=q.front();
+            q.pop();
+            // if(curr==end) return ans[curr];
+            for(int i:arr){
+                int new_num = ((long long)(i)*curr)%int(1e5);
+                if(ans[new_num] > ans[curr]+1){
+                    if(new_num==end) return ans[curr]+1;
+                    ans[new_num] = ans[curr]+1;
+                    q.push(new_num);
+                }
+            }
+        }
+        return -1;
+    }

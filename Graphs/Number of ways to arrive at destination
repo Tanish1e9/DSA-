@@ -1,0 +1,37 @@
+LC link: https://leetcode.com/problems/number-of-ways-to-arrive-at-destination/
+
+    // dekh isme simple dijkstra lagayenge and jab bhi naya distance update hoga tab ways[el] reset ho jayega to ways[curr]
+    // aur jab equal hoga tab bas increment krenge
+    // yahi agar print krna hota na to jaise word ladder -2 me kie the waise hi dfs krte but since print ni krna to aise ways array bana skte
+
+    int MOD = 1e9+7;
+    typedef pair<long,long> p;
+    int countPaths(int n, vector<vector<int>>& roads) {
+        vector<vector<p>> adj(n);
+        for(auto &road:roads){
+            adj[road[0]].push_back({road[1],road[2]});
+            adj[road[1]].push_back({road[0],road[2]});
+        }
+        priority_queue<p,vector<p>,greater<p>>q;
+        q.push({0,0});
+        vector<long> ways(n,0);
+        vector<long> ans(n,1e18);
+        ways[0]=1;
+        ans[0]=0;
+        while(!q.empty()){
+            auto curr=q.top();
+            q.pop();
+            if(ans[curr.second] < curr.first) continue;
+            for(auto &el:adj[curr.second]){
+                if(ans[el.first] > curr.first + el.second){
+                    ans[el.first] = curr.first + el.second;
+                    q.push({ans[el.first],el.first});
+                    ways[el.first] = ways[curr.second]%MOD;
+                }
+                else if(ans[el.first]==curr.first + el.second){
+                    ways[el.first] = (ways[el.first]+ways[curr.second])%MOD;
+                }
+            }
+        }
+        return ways[n-1];
+    }

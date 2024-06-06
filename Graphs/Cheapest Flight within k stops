@@ -1,0 +1,47 @@
+LC link: https://leetcode.com/problems/cheapest-flights-within-k-stops/
+
+    // M-1 normal dijkstra
+    // Dekh isme kya h na stops ko priority dena hoga because agar price ko dia to agar koi jada stops wala aake price ko kam kr dia
+    // To fir required stops wala ni sahi kr payega and also since stops to uniformly increase honge just a queue will suffice just ek line likhna h
+    // curr_stops + 1 > k+1 ho jaye yani ab jo neighbour hoga usme k+1 se jada stops lag jayega ye to chahye nahi islie break because kabhi bhi queue se nikla to ye minimum h na
+    // aur isko chalne dena h end tk <=k+1 stops me pura optimal price aa jayega
+    // k+1 islie ki ending node ko count ni kr rha tha k but we have counted islie
+
+      // TC is O(E) log v wala factor hat gya
+     typedef pair<pair<int,int>,int> p;
+     int findCheapestPrice(int n, vector<vector<int>>& flights, int src, int dst, int k) {
+         vector<vector<pair<int,int>>> adj(n);
+         for(auto flight:flights){
+             adj[flight[0]].push_back({flight[1],flight[2]});
+         }
+         vector<int> ans(n,1e9);
+         ans[src]=0;
+         queue<p>q;
+         q.push({{0,0},src});
+         while(!q.empty()){
+             auto curr=q.top();
+             q.pop();
+             if(curr.first.first > k) break;
+             for(auto el:adj[curr.second]){
+                 if(ans[el.first] > curr.first.second + el.second){
+                     ans[el.first] = curr.first.second + el.second;
+                     q.push({{curr.first.first + 1,ans[el.first]},el.first});
+                 }
+             }
+         }
+         if(ans[dst]==1e9) return -1;
+         return ans[dst];
+     }
+
+    // M-2 ye bhi bhai chal ja rha h bas kuch ni stop wise badhate ja rhe and end me minimum mil jayega
+    int findCheapestPrice(int n, std::vector<std::vector<int>>& flights, int src, int dst, int k) {
+        vector<int> curr(n,1e9);
+        curr[src]=0;
+        for(int i=0;i<=k;i++){
+            vector<int>prev=curr;
+            for(auto &flight:flights){
+                curr[flight[1]] = min(curr[flight[1]],prev[flight[0]]+flight[2]);
+            }
+        }
+        return curr[dst]==1e9 ? -1 : curr[dst];
+    }

@@ -1,0 +1,46 @@
+LC link: https://leetcode.com/problems/bus-routes/
+
+
+    // Dekh simple BFS h thoda observation ye h ki
+    // Here buses are the actual nodes
+    // aur ek particular bus k saare stops ek cluster banate h
+    // initially source jis jis bus k family me aata h uss bus ko q me insert kr dia jayega
+    // fir jaise hi target ki family_buses me se koi bus encounter hogi return kr dena h distance
+    // to dekho har ek stop jin jin buses ki family me aata h uska map bana lia
+    // then source node ki saari buses ko insert kr dia visited mark krte hue
+    // then jo bus pop hui uske har ek route pe gya aur uski family buses ko push kr dia
+    // agar koi target ki bus takrayi hogi to uske stops me se koi target hoga hi wahi return kr jana h
+    // aur 1 se ginti shuru hoga because socho agar x->y->z path h 
+    and xy are connected by bus and yz are connected by bus to 2 buses ka hi faasla h na xz me 
+
+    int numBusesToDestination(vector<vector<int>>& routes, int source, int target) {
+        if(source==target) return 0;
+        int n=routes.size();
+        unordered_map<int,vector<int>> mymap;
+        for(int i=0;i<n;i++){
+            for(int j:routes[i]){
+                mymap[j].push_back(i);
+            }
+        }
+        // bus,dist
+        queue<pair<int,int>>q;
+        vector<int>vis(n,0);
+        for(int i:mymap[source]){
+            q.push({i,1});
+            vis[i]=1;
+        }
+        while(!q.empty()){
+            auto curr=q.front();
+            q.pop();
+            for (int i:routes[curr.first]){
+                if(i==target) return curr.second;
+                for(int bus:mymap[i]){
+                    if(!vis[bus]){
+                        q.push({bus,curr.second+1});
+                        vis[bus]=1;
+                    }
+                }
+            }
+        }
+        return -1;
+    }

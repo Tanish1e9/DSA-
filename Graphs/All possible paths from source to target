@@ -1,0 +1,24 @@
+LC link: https://leetcode.com/problems/all-paths-from-source-to-target/
+
+// yaha visited ka kaam hi nhi h because hmko jaana hi h har possible raaste pe
+void dfs(int i,auto&adj,auto&ans,auto&temp){
+        if(i==adj.size()-1){
+            temp.push_back(adj.size()-1);
+            ans.push_back(temp);
+            temp.pop_back();
+            return;
+        }
+        temp.push_back(i);
+        for(auto el:adj[i]){
+            dfs(el,adj,ans,temp);
+        }
+        temp.pop_back();
+    }
+    vector<vector<int>> allPathsSourceTarget(vector<vector<int>>& adj) {
+        int n=adj.size();
+        vector<vector<int>>ans;
+        
+        vector<int>temp;
+        dfs(0,adj,ans,temp);
+        return ans;
+    }

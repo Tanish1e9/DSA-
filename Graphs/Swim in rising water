@@ -1,0 +1,30 @@
+LC link: https://leetcode.com/problems/swim-in-rising-water/
+
+    // Path with minimum effort jaisa hi question h dijkstra ka application h
+    int dx[4]={-1,1,0,0,};
+    int dy[4]={0,0,-1,1};
+    typedef pair<int,pair<int,int>> p;
+    int swimInWater(vector<vector<int>>& grid) {
+        int n=grid.size();
+        vector<vector<int>> ans(n,vector<int>(n,1e9));
+        ans[0][0]=grid[0][0];
+        priority_queue<p,vector<p>,greater<p>> q;
+        q.push({grid[0][0],{0,0}});
+        while(!q.empty()){
+            auto curr=q.top();
+            q.pop();
+            if(curr.second.first == n-1 && curr.second.second==n-1) return curr.first;
+            if(ans[curr.second.first][curr.second.second] < curr.first) continue;
+            for(int k=0;k<4;k++){
+                int x=curr.second.first + dx[k];
+                int y=curr.second.second + dy[k];
+                if(x>=n || x<0 || y>=n || y<0) continue;
+                int new_eff = max(curr.first,grid[x][y]);
+                if(ans[x][y] > new_eff){
+                    ans[x][y] = new_eff;
+                    q.push({new_eff,{x,y}});
+                }
+            }
+        }
+        return -1;
+    }

@@ -1,0 +1,28 @@
+LC link: https://leetcode.com/problems/path-with-maximum-probability/
+
+
+    // Literally plain dijkstra ka application h
+    double maxProbability(int n, vector<vector<int>>& edges, vector<double>& succProb, int start_node, int end_node) {
+        vector<vector<pair<int,double>>> adj(n);
+        for(int i=0;i<edges.size();i++){
+            auto &edge=edges[i];
+            adj[edge[0]].push_back({edge[1],succProb[i]});
+            adj[edge[1]].push_back({edge[0],succProb[i]});
+        }
+        vector<double>ans(n,0);
+        ans[start_node] = 1;
+        priority_queue<pair<double,int>> q;
+        q.push({1,start_node});
+        while(!q.empty()){
+            auto curr=q.top();
+            q.pop();
+            if(curr.second == end_node) return curr.first;
+            for(auto &el:adj[curr.second]){
+                if(ans[el.first] < curr.first*el.second){
+                    ans[el.first] = curr.first * el.second;
+                    q.push({ans[el.first],el.first});
+                }
+            }
+        }
+        return 0;
+    }

@@ -1,0 +1,59 @@
+GFG link: https://www.geeksforgeeks.org/problems/minimum-spanning-tree/1
+
+    // isme agar koi tree ki edges bhi nikalne bol de to ye h code and that is only when we need to carry parent
+    // MST is defined for undirected graphs only
+
+    typedef pair<int,pair<int,int>> p;
+    int spanningTree(int V, vector<vector<int>> adj[]){
+        priority_queue<p,vector<p>,greater<p>> q;
+        vector<int>vis(V,0);
+        q.push({0,{0,-1}});
+        int sum=0;
+        vector<pair<int,int>> mst;
+        while(!q.empty()){
+            auto curr = q.top();
+            q.pop();
+            int node = curr.second.first;
+            int par = curr.second.second;
+            int wt = curr.first;
+            if(vis[node]) continue;
+            vis[node] = 1;
+            if(par!=-1){
+                sum += wt;
+                mst.push_back({par,node});
+            }
+            for(auto &el:adj[node]){
+                if(!vis[el[0]]){
+                    q.push({el[1],{el[0],node}});
+                }
+            }
+        }
+        return sum;
+    }
+
+
+    // If we just need the sum of the edge weights here it is
+    typedef pair<int,int> p;
+    int spanningTree(int V, vector<vector<int>> adj[]){
+        priority_queue<p,vector<p>,greater<p>> q;
+        vector<int>vis(V,0);
+        q.push({0,0});
+        int sum=0;
+        while(!q.empty()){
+            auto curr = q.top();
+            q.pop();
+            int node = curr.second;
+            int wt = curr.first;
+            if(vis[node]) continue;
+            vis[node] = 1;
+            sum += wt;
+            // jab parent -1 h tab weight 0 hi h to fark ni padega
+        
+            for(auto &el:adj[node]){
+                if(!vis[el[0]]){
+                    q.push({el[1],el[0]});
+                }
+            }
+        }
+        return sum;
+    }

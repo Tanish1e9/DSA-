@@ -1,0 +1,66 @@
+GFG link: https://www.geeksforgeeks.org/problems/disjoint-set-union-find/1
+
+int find(int A[],int X){
+    if(A[X]==X) return X;
+    return A[X]=find(A,A[X]);
+}
+void unionSet(int A[],int X,int Z){
+	int ult_z = find(A,Z);
+	int ult_x = find(A,X);
+  A[ult_x]=ult_z;
+}
+
+
+// Main implementation niche h
+class DSU{
+    vector<int> parent,rank,size;
+    public:
+    DSU(int n){
+        parent = vector<int>(n+1,0);
+        rank = vector<int>(n+1,0);
+        size = vector<int>(n+1,1);
+        for(int i=0;i<n+1;i++) parent[i]=i;
+    }
+    int find_par(int u){
+        if(parent[u]==u) return u;
+        return parent[u]=find_par(parent[u]);
+    }
+    void union_by_rank(int u,int v){
+        int ult_u = find_par(u);
+        int ult_v = find_par(v);
+        if(ult_u==ult_v) return;
+        if(rank[ult_u]<rank[ult_v]){
+            parent[ult_u] = ult_v;
+        }
+        else if(rank[ult_u] > rank[ult_v]){
+            parent[ult_v] = ult_u;
+        }
+        else{
+            parent[ult_v] = ult_u;
+            rank[ult_u]++;
+        }
+    }
+    void union_by_size(int u,int v){
+        int ult_u = find_par(u);
+        int ult_v = find_par(v);
+        if(ult_u==ult_v) return;
+        if(size[ult_u] < size[ult_v]){
+            parent[ult_u] = ult_v;
+            size[ult_v] += size[ult_u];
+        }
+        else{
+            parent[ult_v] = ult_u;
+            size[ult_u] += size[ult_v];
+        }
+    }
+    void print(){
+        cout << "parent" << endl;
+        for(int i=0;i<parent.size();i++){
+            cout << i << " : " <<parent[i] << endl;
+        }
+        cout << "size" << endl;
+        for(int i=0;i<size.size();i++){
+            cout << i << " : " <<size[i] << endl;
+        }
+    }
+};

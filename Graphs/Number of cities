@@ -1,5 +1,6 @@
 LC link: https://leetcode.com/problems/number-of-provinces/
 
+    // M-1 using traversal techniques
     void dfs(int i,vector<int>&visited,vector<vector<int>>&adj){
         visited[i]=1;
         for(int el=0;el<adj.size();el++){
@@ -34,3 +35,49 @@ LC link: https://leetcode.com/problems/number-of-provinces/
         }
         return ans;
     }
+
+    // M-2 Using DSU
+class DSU{
+    vector<int> parent,size;
+    public:
+    DSU(int n){
+        size = vector<int>(n+1,1);
+        parent = vector<int>(n+1);
+        for(int i=0;i<=n;i++) parent[i]=i;
+    }
+    int find_par(int u){
+        if(parent[u]==u) return u;
+        return parent[u]=find_par(parent[u]);
+    }
+    void union_by_size(int u,int v){
+        int ult_u = find_par(u);
+        int ult_v = find_par(v);
+        if(ult_u == ult_v) return;
+        if(size[ult_u] < size[ult_v]){
+            parent[ult_u] = ult_v;
+            size[ult_v]+=size[ult_u];
+        }
+        else{
+            parent[ult_v] = ult_u;
+            size[ult_u]+=size[ult_v];
+        }
+    }
+};
+class Solution {
+public:
+    int findCircleNum(vector<vector<int>>& mat) {
+        int n=mat.size();
+        DSU ds(n);
+        for(int i=0;i<n;i++){
+            for(int j=0;j<n;j++){
+                if(mat[i][j]==0) continue;
+                ds.union_by_size(i,j);
+            }
+        }
+        int count=0;
+        for(int i=0;i<n;i++){
+            if(ds.find_par(i)==i) count++;
+        }
+        return count;
+    }
+};

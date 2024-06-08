@@ -1,0 +1,35 @@
+LC link: https://leetcode.com/problems/find-the-city-with-the-smallest-number-of-neighbors-at-a-threshold-distance/description/
+
+
+    // dekh simple floyd warshall ka application h yaha pe same city to same city ka dekhne ka jroorat tha hi ni islie continue kr die h har jagah
+    // warna real floyd warshall me ye ni krna hota negative cycle detect krne k kaam ata h
+    int findTheCity(int n, vector<vector<int>>& edges, int distanceThreshold) {
+        vector<vector<int>> dist(n,vector<int>(n,1e9));
+        for(auto &edge:edges){
+            dist[edge[0]][edge[1]] = edge[2];
+            dist[edge[1]][edge[0]] = edge[2];
+        }
+        
+        for(int node=0;node<n;node++){
+            for(int i=0;i<n;i++){
+                for(int j=0;j<n;j++){
+                    if(i==j || i==node || j==node || dist[i][node]==1e9 || dist[node][i]==1e9) continue;
+                    dist[i][j]=min(dist[i][j],dist[i][node]+dist[node][j]);
+                }
+            }
+        }
+        int mini = 1e9;
+        int min_index = -1;
+        for(int i=0;i<n;i++){
+            int count = 0;
+            for(int j=0;j<n;j++){
+                if(i==j) continue;
+                if(dist[i][j] <= distanceThreshold) count++;
+            }
+            if(count <= mini){
+                mini = count; 
+                min_index = i;
+            }
+        }
+        return min_index;
+    }

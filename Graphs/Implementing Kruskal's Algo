@@ -1,0 +1,22 @@
+GFG link: https://www.geeksforgeeks.org/problems/minimum-spanning-tree/1
+
+    // simple intuition h ki union hote waqt minimum se minimum possible edge le lia jayega
+    int spanningTree(int V, vector<vector<int>> adj[]){
+        vector<pair<int,pair<int,int>>> edges;
+        for(int i=0;i<V;i++){
+            for(auto &el:adj[i]){
+                edges.push_back({el[1],{i,el[0]}});
+            }
+        }
+        sort(edges.begin(),edges.end());
+        DSU ds(V);
+        int sum=0;
+        for(auto &edge:edges){
+            int ult_u = ds.find_par(edge.second.first);
+            int ult_v = ds.find_par(edge.second.second);
+            if(ult_u == ult_v) continue;
+            sum+= edge.first;
+            ds.union_by_size(ult_u,ult_v);
+        }
+        return sum;
+    }

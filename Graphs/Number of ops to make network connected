@@ -1,0 +1,19 @@
+LC link: https://leetcode.com/problems/number-of-operations-to-make-network-connected/
+
+    int makeConnected(int n, vector<vector<int>>& connections) {
+        int cables=0;
+        DSU ds(n);
+        for(auto &el:connections){
+            if(ds.find_par(el[0])!=ds.find_par(el[1]))
+                ds.union_by_size(el[0],el[1]);
+            else cables++;
+        }
+        int req=0;
+        for(int i=0;i<n;i++){
+            if(ds.find_par(i)==i) req++;
+        }
+        req--;    
+        // agar x number of comps ko connect krna h to x-1 hi chahye hoga na
+        // aur bas jab union krte waqt already connected paaye hmlog to cables badha die h simple
+        return (req<=cables)?req:-1;
+    }

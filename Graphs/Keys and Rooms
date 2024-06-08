@@ -1,0 +1,32 @@
+LC link: https://leetcode.com/problems/keys-and-rooms/
+
+    // simple BFS DFS h bhai
+    void dfs(int i,auto&vis,auto &rooms){
+        vis[i]=1;
+        for(auto el:rooms[i]){
+            if(!vis[el]){
+                dfs(el,vis,rooms);
+            }
+        }
+    }
+    void bfs(int i,auto&vis,auto&rooms){
+        queue<int>q;
+        q.push(i);
+        vis[i]=1;
+        while(!q.empty()){
+            auto curr=q.front();
+            q.pop();
+            for(auto el:rooms[curr]){
+                if(!vis[el]){
+                    q.push(el);
+                    vis[el]=1;
+                }
+            }
+        }
+    }
+    bool canVisitAllRooms(vector<vector<int>>& rooms) {
+        int n=rooms.size();
+        vector<int>vis(n,0);
+        dfs(0,vis,rooms);
+        return accumulate(vis.begin(),vis.end(),0)==n;
+    }

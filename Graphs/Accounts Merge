@@ -3,32 +3,6 @@ LC link: https://leetcode.com/problems/accounts-merge/description/
 
 // Dekh ye thoda sa tough tha to come up but after seeing solution easy hi lagta h
 // intuition yahi h ki since we need unique nodes har ek index ko hi node maan lia and unko merge krte gye
-class DSU{
-    vector<int>parent,size;
-    public:
-    DSU(int n){
-        parent=vector<int>(n+1);
-        size=vector<int>(n+1,1);
-        for(int i=0;i<=n;i++) parent[i]=i;
-    }
-    int find_par(int node){
-        if(parent[node]==node) return node;
-        return parent[node]=find_par(parent[node]);
-    }
-    void union_by_size(int u,int v){
-        int ult_u = find_par(u);
-        int ult_v = find_par(v);
-        if(ult_u==ult_v) return;
-        if(size[ult_u]<size[ult_v]){
-            parent[ult_u] = ult_v;
-            size[ult_v]+=size[ult_u];
-        }
-        else{
-            parent[ult_v] = ult_u;
-            size[ult_u]+=size[ult_v];
-        }
-    }
-};
 class Solution {
 public:
     vector<vector<string>> accountsMerge(vector<vector<string>>& accounts) {

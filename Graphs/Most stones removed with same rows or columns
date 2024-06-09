@@ -1,0 +1,22 @@
+LC link: https://leetcode.com/problems/most-stones-removed-with-same-row-or-column/description/
+
+    // dekh isme na ye code hm likhe h aur jada efficient laga h
+    // stones already numbered h aur first stone appeared in any column or row usko kind of leader bana die h
+    int removeStones(vector<vector<int>>& stones) {
+        int n=stones.size();
+        DSU ds(n);
+        unordered_map<int,int> rows,cols;
+        for(int i=0;i<stones.size();i++){
+            int row = stones[i][0];
+            int col = stones[i][1];
+            if(rows.contains(row)) ds.union_by_size(rows[row],i);
+            else rows[row]=i;
+            if(cols.contains(col)) ds.union_by_size(cols[col],i);
+            else cols[col]=i;
+        }
+        int ans=0;
+        for(int i=0;i<n;i++){
+            if(ds.find_par(i)==i) ans+=ds.size[i]-1;
+        }
+        return ans;
+    }

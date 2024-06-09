@@ -1,0 +1,44 @@
+LC link: https://leetcode.com/problems/making-a-large-island/
+
+    // isme intuition yahi h ki pehle to existing land ko daal do DSU and compute the sizes waghera
+    // then har sea pe jake dekh lo ki agar wo land banta to largest size kya rhta and that's it
+
+    int dx[4]={-1,1,0,0};
+    int dy[4]={0,0,-1,1};
+    int largestIsland(vector<vector<int>>& grid) {
+        int m=grid.size();
+        int n=grid[0].size();
+        DSU ds(n*m);
+        int size = 0;
+        for(int i=0;i<m;i++){
+            for(int j=0;j<n;j++){
+                if(grid[i][j]==0) continue;
+                for(int k=0;k<4;k++){
+                    int x=i+dx[k];
+                    int y=j+dy[k];
+                    if(x>=m || x<0 || y>=n || y<0 || grid[x][y]==0) continue;
+                    ds.union_by_size(i*n+j,x*n+y);
+                }
+                size = max(ds.size[ds.find_par(i*n+j)],size);
+                // ye rakhna islie jroori h because agar saara hi land ho gya to niche se kabhi size compute hi ni hoga
+            }
+        }
+        for(int i=0;i<m;i++){
+            for(int j=0;j<n;j++){
+                if(grid[i][j]==1) continue;
+                int curr_size=1;
+                unordered_set<int>vis;
+                for(int k=0;k<4;k++){
+                    int x=i+dx[k];
+                    int y=j+dy[k];
+                    if(x>=m || x<0 || y>=n || y<0 || grid[x][y]==0) continue;
+                    if(vis.find(ds.find_par(x*n+y)) == vis.end()){
+                        curr_size += ds.size[ds.find_par(x*n+y)];
+                        vis.insert(ds.find_par(x*n+y));
+                    }
+                }
+                size=max(size,curr_size);
+            }
+        }
+        return size;
+    }

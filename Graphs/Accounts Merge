@@ -1,0 +1,61 @@
+LC link: https://leetcode.com/problems/accounts-merge/description/
+
+
+// Dekh ye thoda sa tough tha to come up but after seeing solution easy hi lagta h
+// intuition yahi h ki since we need unique nodes har ek index ko hi node maan lia and unko merge krte gye
+class DSU{
+    vector<int>parent,size;
+    public:
+    DSU(int n){
+        parent=vector<int>(n+1);
+        size=vector<int>(n+1,1);
+        for(int i=0;i<=n;i++) parent[i]=i;
+    }
+    int find_par(int node){
+        if(parent[node]==node) return node;
+        return parent[node]=find_par(parent[node]);
+    }
+    void union_by_size(int u,int v){
+        int ult_u = find_par(u);
+        int ult_v = find_par(v);
+        if(ult_u==ult_v) return;
+        if(size[ult_u]<size[ult_v]){
+            parent[ult_u] = ult_v;
+            size[ult_v]+=size[ult_u];
+        }
+        else{
+            parent[ult_v] = ult_u;
+            size[ult_u]+=size[ult_v];
+        }
+    }
+};
+class Solution {
+public:
+    vector<vector<string>> accountsMerge(vector<vector<string>>& accounts) {
+        int n=accounts.size();
+        DSU ds(n);
+        unordered_map<string,int>mymap;
+        for(int i=0;i<n;i++){
+            for(int j=1;j<accounts[i].size();j++){
+                if(mymap.contains(accounts[i][j])) ds.union_by_size(i,mymap[accounts[i][j]]);
+                else mymap[accounts[i][j]]=i;
+            }
+        }
+        unordered_map<int,vector<string>> merged;
+        for(auto &it:mymap){
+            int ult_p = ds.find_par(it.second);
+            merged[ult_p].push_back(it.first);
+        }
+        vector<vector<string>> ans;
+        for(auto &it:merged){
+            auto &vec = it.second;
+            vector<string>temp={accounts[it.first][0]};
+            sort(vec.begin(),vec.end());
+            for(auto &str:vec){
+                temp.push_back(str);
+            }
+            ans.push_back(temp);
+        }
+        return ans;
+    }
+};

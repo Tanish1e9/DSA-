@@ -1,0 +1,42 @@
+GFG link: https://www.geeksforgeeks.org/problems/strongly-connected-components-kosarajus-algo/1
+
+
+  void dfs(int i,vector<int>&vis,vector<vector<int>>&adj,stack<int>&finish,bool change){
+	    vis[i]=1;
+	    for(auto el:adj[i]){
+	        if(!vis[el]){
+	            dfs(el,vis,adj,finish,change);
+	        }
+	    }
+	    if(change)finish.push(i);
+	}
+	void reverse_graph(int V,vector<vector<int>>&adj,vector<vector<int>>&reverse_adj){
+	    for(int i=0;i<V;i++){
+	        for(auto el:adj[i]){
+	            reverse_adj[el].push_back(i);
+	        }
+	    }
+	}
+    int kosaraju(int V, vector<vector<int>>& adj){
+        stack<int> finish;
+        vector<int>vis(V,0);
+        for(int i=0;i<V;i++){
+            if(!vis[i]){
+                dfs(i,vis,adj,finish,true);
+            }
+        }
+        vis = vector<int>(V,0);
+        vector<vector<int>> reverse_adj(V);
+        reverse_graph(V,adj,reverse_adj);
+        int count = 0;
+        while(!finish.empty()){
+            auto curr=finish.top();
+            finish.pop();
+            if(!vis[curr]){
+                dfs(curr,vis,reverse_adj,finish,0);
+                // isi dfs call me ek vector pass kr dena store kr lega wo uss comp ka saara nodes
+                count++;
+            }
+        }
+        return count;
+    }

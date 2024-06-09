@@ -1,0 +1,31 @@
+GFG link: https://www.geeksforgeeks.org/problems/number-of-islands/1
+
+// dekh ye to simple tha bas yahi catch tha ki har node ko ek unique number dia gya h
+class Solution {
+  public:
+    int dx[4]={-1,1,0,0};
+    int dy[4]={0,0,-1,1};
+    vector<int> numOfIslands(int n, int m, vector<vector<int>> &operators) {
+        DSU ds(n*m);
+        vector<vector<int>> mat(n,vector<int>(m,0));
+        int count =0;
+        vector<int> ans;
+        for(auto &op:operators){
+            if(mat[op[0]][op[1]]==0){
+                mat[op[0]][op[1]]=1;
+                count++;
+                for(int k=0;k<4;k++){
+                    int x= op[0]+dx[k];
+                    int y= op[1]+dy[k];
+                    if(x>=n || x<0 || y>=m || y<0 || mat[x][y]==0) continue;
+                    if(ds.find_par(x*m+y)!=ds.find_par(op[0]*m+op[1])){
+                        count--;
+                        ds.union_by_size(x*m+y,op[0]*m+op[1]);
+                    }
+                }
+            }
+            ans.push_back(count);
+        }
+        return ans;
+    }
+};

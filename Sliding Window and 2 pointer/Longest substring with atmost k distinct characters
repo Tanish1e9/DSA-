@@ -1,0 +1,48 @@
+Code Studio link: https://www.naukri.com/code360/problems/longest-substring-with-at-most-k-distinct-characters_2221410?leftPanelTabValue=SUBMISSION
+
+int kDistinctChars(int k, string &str){
+    // O(n^2)
+    // int n=str.size();
+    // int maxi=0;
+    // for(int i=0;i<n;i++){
+    //     set<char> s;
+    //     for(int j=i;j<n;j++){
+    //         s.insert(str[j]);
+    //         if(s.size()>k) break;
+    //         maxi = max(maxi,j-i+1);
+    //     }
+    // }
+    // return maxi;
+
+    // O(2n)
+    // int n=str.size();
+    // int maxi=0,l=0,r=0;
+    // map<char,int> freq;
+    // while(r<n){
+    //     freq[str[r]]++;
+    //     while(freq.size()>k){
+    //         freq[str[l]]--;
+    //         if(freq[str[l]]==0) freq.erase(str[l]);
+    //         l++;
+    //     }
+    //     maxi = max(maxi,r-l+1);
+    //     r++;
+    // }
+    // return maxi;
+
+    // O(n)
+    int n=str.size();
+    int maxi=0,l=0,r=0;
+    map<char,int> freq;
+    while(r<n){
+        freq[str[r]]++;
+        if(freq.size()>k){
+            freq[str[l]]--;
+            if(freq[str[l]]==0) freq.erase(str[l]);
+            l++;
+        }
+        maxi = max(maxi,r-l+1);
+        r++;
+    }
+    return maxi;
+}

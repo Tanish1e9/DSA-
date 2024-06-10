@@ -1,0 +1,47 @@
+LC link: https://leetcode.com/problems/binary-subarrays-with-sum/
+
+    int func(vector<int>&nums,int goal){
+        if(goal<0) return 0;
+        int l=0,r=0,count=0,sum=0;
+        int n=nums.size();
+        while(r<n){
+            sum+=nums[r];
+            while(l<=r && sum > goal){
+                sum-=nums[l];
+                l++;
+            }
+            count+=r-l+1;
+            r++;
+        }
+        return count;
+    }
+    int numSubarraysWithSum(vector<int>& nums, int goal) {
+        // O(n^2)
+        // int n=nums.size();
+        // int count=0;
+        // for(int i=0;i<n;i++){
+        //     int sum=0;
+        //     for(int j=i;j<n;j++){
+        //         sum+=nums[j];
+        //         if(sum==goal) count++;
+        //         else if(sum>goal) break;
+        //     }
+        // }
+        // return count;
+        
+        //O(n),O(n)
+        // this one is optimal when array contains negative numbers as well
+        // unordered_map<int,int> mpp;
+        // int sum=0,count=0;
+        // for(int i=0;i<nums.size();i++){
+        //     sum+=nums[i];
+        //     if(sum==goal) count++;
+        //     count+=mpp[sum-goal];
+        //     mpp[sum]++;
+        // }
+        // return count;
+
+        // for positive numbers only we can use sliding window
+        // O(4n),O(1)
+        return func(nums,goal) - func(nums,goal-1);
+    }

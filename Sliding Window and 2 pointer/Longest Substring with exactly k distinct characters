@@ -1,0 +1,53 @@
+GFG link: https://www.geeksforgeeks.org/problems/longest-k-unique-characters-substring0853/1
+
+int longestKSubstr(string s, int k) {
+        // O(n^2)
+        // int n=s.size();
+        // int maxi = 0;
+        // for(int i=0;i<n;i++){
+        //     set<char> freq;
+        //     for(int j=i;j<n;j++){
+        //         freq.insert(s[j]);
+        //         if(freq.size() > k) break;
+        //         else if(freq.size()==k) maxi = max(maxi,j-i+1);
+        //     }
+        // }
+        // if(maxi==0) return -1;
+        // return maxi;
+        
+        // O(2n)
+        // int n=s.size();
+        // int l=0,r=0,maxi=0;
+        // map<char,int> freq;
+        // while(r<n){
+        //     freq[s[r]]++;
+        //     while(freq.size()>k){
+        //         freq[s[l]]--;
+        //         if(freq[s[l]]==0) freq.erase(s[l]);
+        //         l++;
+        //     }
+        //     if(freq.size()==k)maxi=max(maxi,r-l+1);
+        //     r++;
+        // }
+        
+        // if(maxi==0) return -1;
+        // return maxi;
+        
+        // O(n)
+        int n=s.size();
+        int l=0,r=0,maxi=0;
+        map<char,int> freq;
+        while(r<n){
+            freq[s[r]]++;
+            if(freq.size()>k){
+                freq[s[l]]--;
+                if(freq[s[l]]==0) freq.erase(s[l]);
+                l++;
+            }
+            if(freq.size()==k)maxi=max(maxi,r-l+1);
+            r++;
+        }
+        
+        if(maxi==0) return -1;
+        return maxi;
+    }

@@ -1,0 +1,45 @@
+LC link: https://leetcode.com/problems/number-of-substrings-containing-all-three-characters/
+
+    int numberOfSubstrings(string s) {
+        // O(n^2)
+        // int n=s.size();
+        // int count = 0;
+        // for(int i=0;i<n;i++){
+        //     set<char>freq;
+        //     for(int j=i;j<n;j++){
+        //         freq.insert(s[j]);
+        //         if(freq.size()==3) {
+        //             count+= (n-j);
+        //             break;
+        //         }
+        //     }
+        // }
+        // return count;
+
+        // O(2n)
+        // int n=s.size();
+        // int count=0,l=0,r=0;
+        // unordered_map<char,int>freq;
+        // while(r<n){
+        //     freq[s[r]]++;
+        //     while(freq.size()==3){
+        //         count += n-r;
+        //         freq[s[l]]--;
+        //         if(freq[s[l]]==0) freq.erase(s[l]);
+        //         l++;
+        //     }
+        //     r++;
+        // }
+        // return count;
+
+        // O(n)
+        int n=s.size();
+        vector<int> last(3,-1);
+        int count=0;
+        for(int i=0;i<n;i++){
+            last[s[i]-'a']=i;
+            int mini = *min_element(last.begin(),last.end());
+            count += mini+1;
+        }
+        return count;
+    }

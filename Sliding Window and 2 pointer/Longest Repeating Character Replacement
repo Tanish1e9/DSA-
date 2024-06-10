@@ -1,0 +1,55 @@
+LC link: https://leetcode.com/problems/longest-repeating-character-replacement/description/
+
+    int characterReplacement(string s, int k) {
+        // O(2n * 26)
+        int n=s.size();
+        int l=0,r=0,maxlen=0;
+        vector<int>freq(26,0);
+        while(r<n){
+            freq[s[r]-'A']++;
+            while(r-l+1 - *max_element(freq.begin(),freq.end()) > k){
+                freq[s[l]-'A']--;
+                l++;
+            }
+            maxlen=max(maxlen,r-l+1);
+            r++;
+        }
+        return maxlen;
+
+        // dekh  len - max <= k pe valid maana jata h substring ko
+        // to agar for some max value   len - max > k
+        // to fir len jab badhega to max ko bhi to badhna hi padega na agar valid krana h yani <=k laana h
+        // to fir max ko decrease krke kya fayda hua wahi intuition h
+
+        // O(2n)
+        int n=s.size();
+        int l=0,r=0,maxlen=0,maxi=0;
+        vector<int>freq(26,0);
+        while(r<n){
+            freq[s[r]-'A']++;
+            maxi=max(maxi,freq[s[r]-'A']);
+            while(r-l+1 - maxi > k){
+                freq[s[l]-'A']--;
+                l++;
+            }
+            maxlen=max(maxlen,r-l+1);
+            r++;
+        }
+        return maxlen;
+
+        // O(n)
+        int n=s.size();
+        int l=0,r=0,maxlen=0,maxi=0;
+        vector<int>freq(26,0);
+        while(r<n){
+            freq[s[r]-'A']++;
+            maxi = max(maxi,freq[s[r]-'A']);
+            if(r-l+1 - maxi > k){
+                freq[s[l]-'A']--;
+                l++;
+            }
+            maxlen=max(maxlen,r-l+1);
+            r++;
+        }
+        return maxlen;
+    }

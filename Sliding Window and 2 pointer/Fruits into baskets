@@ -6,14 +6,10 @@ GFG link: https://www.geeksforgeeks.org/problems/fruit-into-baskets-1663137462/1
         int maxi = 0;
         for(int i=0;i<n;i++){
             set<int>s;
-            int c=0;
             for(int j=i;j<n;j++){
                 s.insert(fruits[j]);
-                if(s.size()<=2) {
-                    c++;
-                    maxi = max(c,maxi);
-                }
-                else break;
+                if(s.size() > 2) break;
+                maxi = max(j-i+1,maxi);
             }
         }
         return maxi;

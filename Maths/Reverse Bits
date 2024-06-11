@@ -1,5 +1,9 @@
 LC link: https://leetcode.com/problems/reverse-bits/
 
+    // Bits reverse krna is totally different from number ko reverse krna in base 10
+    // aur dekho U suffix use krne se (1<<31) sahi se kaam krega
+    // I saw ki nahi use kre to kahi chal rha tha kahi ni
+    // So it's safe to use U
     uint32_t reverseBits(uint32_t n) {
         // uint32_t rev=0;
         // for(int i=0;i<32;i++){

@@ -1,0 +1,71 @@
+CSES link: https://cses.fi/problemset/task/1713/
+
+// M-1 using SPF wala chiz and prime factors k through jana 
+TC is O(Nlog logn) + O(T logn)
+#include<bits/stdc++.h>
+using namespace std;
+#define int long long
+vector<int> getspf(int n){
+    vector<int>ans(n+1,0);
+    for(int i=0;i<=n;i++) ans[i]=i;
+    for(int i=2;i<=n/i;i++){
+        if(ans[i]!=i) continue;
+        for(int j=i*i;j<=n;j+=i){
+            if(ans[j]==j) ans[j]=i;
+        }
+    }
+    return ans;
+}
+signed main(){
+    int t;
+    cin>>t;
+    vector<int> spf=getspf(1e6);
+    while(t--){
+        int n;
+        cin >> n;
+        int last = -1,count=1,ans=1;
+        while(n!=1){
+            if(last==-1 || last == spf[n]) {last=spf[n];count++;}
+            else{
+                ans*=count;
+                count=2;
+                last=spf[n];
+            } 
+            n/=spf[n];
+        }
+        ans*=count;
+        cout << ans << endl;
+    }
+    return 0;
+}
+
+
+// M-2 Optimal 
+// isme divisors precompute kr lie h
+// O(nlogn) + O(T) me ho jayega ye 
+#include<bits/stdc++.h>
+using namespace std;
+#define int long long
+vector<int> get_divisors(int n){
+    vector<int>ans(n+1,0);
+    for(int i=1;i<=n;i++){
+        for(int j=i;j<=n;j+=i){
+            ans[j]++;
+        }
+    }
+    return ans;
+}
+signed main(){
+    ios::sync_with_stdio(0);
+    cin.tie(0);
+    cout.tie(0);
+    vector<int>sieve=get_divisors(1e6);
+    int t;
+    cin>>t;
+    while(t--){
+        int n;
+        cin>>n;
+        cout << sieve[n] << endl;
+    }
+    return 0;
+}

@@ -1,0 +1,11 @@
+GFG link: https://www.geeksforgeeks.org/problems/number-of-factors1435/1?itm_source=geeksforgeeks&itm_medium=article&itm_campaign=bottom_sticky_on_article
+
+    int countFactors(int N){
+        int ans=0;
+        for(int i=1;i<=N/i;i++){
+            if(N%i!=0)continue;
+            ans++;
+            if(i!=N/i) ans++;
+        }
+        return ans;
+    }

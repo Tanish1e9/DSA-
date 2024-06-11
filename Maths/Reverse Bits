@@ -1,0 +1,19 @@
+LC link: https://leetcode.com/problems/reverse-bits/
+
+    uint32_t reverseBits(uint32_t n) {
+        // uint32_t rev=0;
+        // for(int i=0;i<32;i++){
+        //     if(1U<<i & n){
+        //         rev |= 1U<<(31-i);
+        //     }
+        // }
+        // return rev;
+
+        uint32_t rev=n;
+        for(int i=0;i<16;i++){
+            bool a = (1U<<i) & n;
+            bool b = (1U<<(31-i)) & n;
+            if(a!=b) rev = rev^ (1U<<i) ^ (1U<<(31-i));
+        }
+        return rev;
+    }

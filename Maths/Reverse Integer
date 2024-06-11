@@ -1,0 +1,17 @@
+LC link: https://leetcode.com/problems/reverse-integer/description/
+
+    // M-1 dekho abs krne ka dhyan rakhna because x negative bhi to ho skta h na
+    // INT_MIN ko alg se handle kie because uska to dikh rha h ki overflow ho jayega reverse krne me
+    int reverse(int x){
+        if(x==INT_MIN) return 0;
+        int rev=0;
+        int n=abs(x);
+        while(n>0){
+            int d=n%10;
+            if(rev<=INT_MAX/10)rev = rev*10+d;
+            else return 0;
+            n/=10;
+        }
+        if(x<0) return -rev;
+        return rev;
+    }

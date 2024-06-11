@@ -1,0 +1,14 @@
+GFG link: https://www.geeksforgeeks.org/problems/all-divisors-of-a-number/1
+
+    void print_divisors(int n) {
+        vector<int>arr;
+        for(int i=1;i<=n/i;i++){
+            if(n%i!=0) continue;
+            arr.push_back(i);
+            if(i!=n/i) arr.push_back(n/i);
+        }
+        sort(arr.begin(),arr.end());
+        for(int i:arr){
+            cout << i << " " ;
+        }
+    }

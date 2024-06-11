@@ -4,7 +4,8 @@ GFG link: https://www.geeksforgeeks.org/problems/prime-factorization-using-sieve
     // ye smallest prime factor wale concept se prime factorisation aaya h aur number of divisors count krne me bhi use ho skta
     // see CSES problem "Counting Divisors"
     // waha pe TrootN  bhi TLE maar rha 
-    // T logN + 1e6logLog1e6 hi chal payega
+    // T logN + 1e6loglog1e6 hi chal payega
+    // isse bhi better solution h uska dekho repo me but ye yad rakhna ki SPF is used for prime factorisation O(log n) me factorise kr dega
 
     void sieve2(int n,vector<int>&sieve){
         for(int i=2;i<=n/i;i++){

@@ -1,0 +1,20 @@
+GFG link: https://www.geeksforgeeks.org/problems/count-primes-in-range1604/1?itm_source=geeksforgeeks&itm_medium=article&itm_campaign=bottom_sticky_on_article
+
+    vector<int> getsieve(int n){
+        vector<int> ans(n+1,1);
+        ans[1]=0;
+        for(int i=2;i<=n/i;i++){
+            for(int j=i*i;j<=n;j+=i){
+                ans[j]=0;
+            }
+        }
+        return ans;
+    }
+    int countPrimes(int l, int r) {
+        vector<int>sieve = getsieve(r);
+        int ans=0;
+        for(int i=l;i<=r;i++){
+            if(sieve[i])ans++;
+        }
+        return ans;
+    }

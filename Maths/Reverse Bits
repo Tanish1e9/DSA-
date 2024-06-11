@@ -15,7 +15,7 @@ LC link: https://leetcode.com/problems/reverse-bits/
 
         uint32_t rev=n;
         for(int i=0;i<16;i++){
-            bool a = (1U<<i) & n;
+            bool a = (1U<<i) & n;        // yaha bool likhna mat bhoolna because a aur b decimal me treat hote to wo ajib ho jayega
             bool b = (1U<<(31-i)) & n;
             if(a!=b) rev = rev^ (1U<<i) ^ (1U<<(31-i));
         }

@@ -28,3 +28,21 @@ GFG link: https://www.geeksforgeeks.org/problems/sum-of-all-divisors-from-1-to-n
         }
         return ans;
     }
+
+    // M-3 Optimal O(root n)
+    // ek bar i ko as a number socho
+    // aur fir i ko frequency soch k unn numbers ka sum nikal do jinka freq i hoga 
+    // ye yaha se ayega  GIF(N/x)=i  isko solve kro x ka range mil jayega sum nikal dena
+    long long sumOfDivisors(int N){
+        long long ans=0;
+        for(long long i=1;i<=N/i;i++){
+            if(i==N/i) ans+=i*(N/i);
+            else{
+                ans+= i*(N/i);
+                long long left = N/i;
+                long long right = N/(i+1);
+                ans+= ((left*(left+1))/2 - (right*(right+1))/2)*i;
+            }
+        }
+        return ans;
+    }

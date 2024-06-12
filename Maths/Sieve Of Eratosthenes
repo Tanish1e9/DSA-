@@ -1,5 +1,7 @@
 GFG link: https://www.geeksforgeeks.org/problems/sieve-of-eratosthenes5242/1
 
+
+    // iska TC is O(Nlog logn)
     vector<int> getsieve(int n){
         vector<int>arr(n+1,1);
         for(int i=2;i<=n/i;i++){
@@ -17,4 +19,20 @@ GFG link: https://www.geeksforgeeks.org/problems/sieve-of-eratosthenes5242/1
             if(sieve[i]) ans.push_back(i);
         }
         return ans;
+    }
+
+
+    // iska TC is O(nlogn) bhut difference nhi h and ye kaafi bar exactly isi tarah se use hoga
+    // for example highest prime factor nikalne ka ye code h
+    // SPF nikale the na uska highest kr de to
+    vector<int> getsieve(int n){
+        vector<int>arr(n+1,1);
+        for(int i=0;i<=n;i++) arr[i]=i;
+        for(int i=2;i<=n;i++){
+            if(arr[i]!=i) continue;
+            for(int j=i*2;j<=n;j+=i){
+                arr[j]=j;
+            }
+        }
+        return arr;
     }

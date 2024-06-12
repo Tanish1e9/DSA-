@@ -46,3 +46,36 @@ GFG link: https://www.geeksforgeeks.org/problems/sum-of-all-divisors-from-1-to-n
         }
         return ans;
     }
+
+    n<=1e12 k lie h ye dekho left * (left+1) me overflow ho jayega long data type ka since 1e12 h na
+    // islie binary multiplication lagaye h but divide pehle krna padega wrna baad me inverse se multiply krna hoga bas yahi dhyan rakhna
+    // and difference lete hue mod add kr dena that's it
+    #include<bits/stdc++.h>
+    using namespace std;
+    #define int long long
+    int mod=1e9+7;
+    signed main(){
+        ios::sync_with_stdio(0);
+        cin.tie(0);
+        cout.tie(0);
+        int n;
+        cin >> n;
+        int ans=0;
+        for(int i=1;i<=n/i;i++){
+            ans=(ans+i*(n/i))%mod;
+            if(i!=n/i){
+                int left = (n/i);
+                int right = (n/(i+1));
+                int l_sum = 0,r_sum=0;
+                if(left&1) l_sum = ((left%mod) * (((left+1)/2)%mod))%mod;
+                else l_sum = (((left/2)%mod) * ((left+1)%mod))%mod;
+                
+                if(right&1) r_sum = ((right%mod) * (((right+1)/2)%mod))%mod;
+                else r_sum = (((right/2)%mod) * ((right+1)%mod))%mod;
+                
+                ans = (ans+ i*(l_sum - r_sum + mod))%mod;
+            }
+        }
+        cout << ans << endl;
+        return 0;
+    }

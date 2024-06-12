@@ -1,0 +1,32 @@
+LC link: https://leetcode.com/problems/super-pow/description/
+
+    int calc_power(vector<int>&b,int prime){
+        int ans=0;
+        int p =1;
+        for(int i=b.size()-1;i>=0;i--){
+            ans = (ans + b[i]*p)%(prime-1);
+            p = (p*10)%(prime-1);
+        }
+        return ans;
+    }
+    int power(int a,int b,int m){
+        if(a%m==0) return 0;
+        a=a%m;
+        int ans=1;
+        while(b>0){
+            if(b&1){
+                ans = (ans*a)%m;
+                b--;
+            }
+            else{
+                a = (a*a)%m;
+                b>>=1;
+            }
+        }
+        return ans;
+    }
+    int superPow(int a, vector<int>& b) {
+        int p1 = calc_power(b,7);
+        int p2 = calc_power(b,191);
+        return (764*power(a,p1,7) + 574*power(a,p2,191))%1337;
+    }

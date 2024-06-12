@@ -1,0 +1,53 @@
+CSES link: https://cses.fi/problemset/task/1712
+
+int power(int x,int n,int mod=M){
+    if(n==0) return 1;      // CSES me 0 power 0 ko 1 assume krne bola tha 
+    if(x%mod==0) return 0;    // agar x mod ka hi koi multiple h tab to zero hi ayega na ye sure h
+    int ans=1;
+    while(n>0){
+        if(n&1){
+            n--;
+            ans=(ans*x)%mod;
+        }
+        else{
+            n>>=1;
+            x=(x*x)%mod;
+        }
+    }
+    return ans;
+}
+signed main(){
+    int n;
+    cin>>n;
+    while(n--){
+        int a,b,c;
+        cin >> a>> b>> c;
+        cout << power(a,power(b,c,M-1)) << endl;
+    }
+    return 0;
+}
+
+// achha large b ho to samajh aa hi gya ye kya h
+// agar large a ho i.e a power b me base bada ho jaye to kuch nhi a ko a mod m kr dena h wo sahi hi rhega
+
+// agar mod bada ho jaye na like 1e18 tab bhi power wala code to sahi h but multiplication me gadbad ho jayega
+// long long k range se hi bahar chala jayega
+// iske lie jo 2 multiplications use kie h waha binary multiplication laga lena baaki sahi h
+
+int mult(int a,int b,int mod=M){
+    if(a%mod==0 || b%mod==0) return 0;    // agar x mod ka hi koi multiple h tab to zero hi ayega na ye sure h
+    a=a%mod;
+    b=b%mod;
+    int ans=0;
+    while(b>0){
+        if(b&1){
+            b--;
+            ans=(ans+a)%mod;
+        }
+        else{
+            b>>=1;
+            x=(b+b)%mod;
+        }
+    }
+    return ans;
+}

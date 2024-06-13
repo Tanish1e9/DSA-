@@ -1,0 +1,64 @@
+CSES link: https://cses.fi/problemset/task/2417
+
+// this question can be solved through mobius theorem kind of also
+// but not required 
+// good methodology please try to remember
+
+#include<bits/stdc++.h>
+using namespace std;
+#define int long long
+const int max_val = 1e6;
+void generate_subsets(vector<int>&temp,auto &numbers_divisible_by){
+    for(int mask=1;mask < (1<<temp.size());mask++){
+        int num=1,set=0;
+        for(int i=0;i<temp.size();i++){
+            if(mask & 1<<i){
+                set++;
+                num*=temp[i];
+            }
+        }
+        if(set&1)
+            numbers_divisible_by[num]++;
+        else
+            numbers_divisible_by[num]--;
+    }
+}
+void sieve(auto & prime_factors_of){
+    for(int i=2;i<=max_val;i++){
+        if(prime_factors_of[i].size()>0) continue;
+        for(int j=i;j<=max_val;j+=i){
+            prime_factors_of[j].push_back(i);
+        }
+    }
+}
+int func(auto &numbers_divisible_by){ 
+    int ans=0;
+    for(auto n:numbers_divisible_by){
+        bool neg = (n<0);
+        n=abs(n);
+        if(!neg)ans+=(n*(n-1))/2;
+        else ans-=(n*(n-1))/2;
+    }
+    return ans;
+}
+signed main(){
+    int n;
+    cin>>n;
+    vector<vector<int>> prime_factors_of(max_val+1);
+    sieve(prime_factors_of);
+    vector<int> numbers_divisible_by(max_val+1,0);
+    for(int i=0;i<n;i++){
+        int x;
+        cin>>x;
+        generate_subsets(prime_factors_of[x],numbers_divisible_by);
+    }
+    cout << (n*(n-1))/2 - func(numbers_divisible_by) << endl;
+    // dekh isme na inclusion exclusion lagane ka hm soch lie the but problem ye tha ki 1e6 tk 1e5 k around prime numbers hote
+    // aur inka subset agar nikalne baith gya to TLE ho jayega
+    // to yaha kind of reverse khelte
+    // hmko unke unhi subsets yani combination se mtlb h jo array me h aur ek element at max 7 prime numbers ka ho skta h
+    // because 2*3*5*7*11*13*17 ~ 1e6 
+    return 0;
+}
+// 8
+// 5 4 20 1 16 17 5 15

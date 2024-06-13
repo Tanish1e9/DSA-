@@ -58,6 +58,9 @@ signed main(){
     // to yaha kind of reverse khelte
     // hmko unke unhi subsets yani combination se mtlb h jo array me h aur ek element at max 7 prime numbers ka ho skta h
     // because 2*3*5*7*11*13*17 ~ 1e6 
+    // to yahi trick h ek ek number k prime factors ko pakda aur unka subsets generate kr dia 
+    // ye to 2^7 hi ban payenge    and that's accepted
+    // wahi agar saare primes ka ek sath banane baith jate to TLE ho jata
     return 0;
 }
 // 8

@@ -1,6 +1,7 @@
 CSES link: https://cses.fi/problemset/task/1723/
 
 // ye binary exponentiation ka concept lag rha
+// yaha BFS ni lag skta because k<=1e9 hai to soch lo
 
 #include<bits/stdc++.h>
 using namespace std;

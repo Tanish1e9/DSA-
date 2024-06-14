@@ -1,6 +1,8 @@
 CSES link: https://cses.fi/problemset/task/1723/
 
 // ye binary exponentiation ka concept lag rha
+// it's like A^4 = A^2 * A^2 kr rhe na to 2 edge me jaha se jaha pahuch rakhe unka data ko multiply krne se 4 ka aa jata
+// because i to j in k length =  (i to x) * (x to j) summed over all x aur ye paths k/2 k/2 ke ho ya matrix powers ka sum k aa jaye wahi chahye basically
 // yaha BFS ni lag skta because k<=1e9 hai to soch lo
 
 #include<bits/stdc++.h>

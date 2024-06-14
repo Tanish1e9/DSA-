@@ -1,0 +1,62 @@
+CSES link: https://cses.fi/problemset/task/1724/
+
+// dekh yaha na simple intuition h ki 2 matrix multiply honge to min(i to k + k to j) for all k will be path from i to j 
+// bas yahi chiz laga dia gya h
+// yaha pe dijkstra waghera islie ni lagega because k large agar k chota hota to hmlog BFS waghera laga hi dete
+
+#include<bits/stdc++.h>
+using namespace std;
+#define int long long
+const int max_val = 5e18;
+void print(vector<vector<int>>&mat){
+    for(int i=0;i<mat.size();i++){
+        for(int j=0;j<mat[0].size();j++){
+            cout << mat[i][j] << " ";
+        }
+        cout << endl;
+    }
+}
+vector<vector<int>> mult(vector<vector<int>>&a,vector<vector<int>>&b){
+    int rows = a.size();
+    int cols = b[0].size();
+    int comm = b.size();
+    vector<vector<int>> ans(rows,vector<int>(cols,max_val));
+    for(int i=0;i<rows;i++){
+        for(int j=0;j<cols;j++){
+            for(int k=0;k<comm;k++){
+                if(a[i][k]==max_val || b[k][j]==max_val) continue;
+                ans[i][j]= min(ans[i][j],a[i][k]+b[k][j]);
+            }
+        }
+    }
+    return ans;
+}
+int func(vector<vector<int>>&mat,int n,int k){
+    vector<vector<int>> ans(n,vector<int>(n,0));
+    bool f= false;
+    while(k > 0){
+        if(k&1){
+            k--;
+            if(!f){ ans = mat;f=1;}
+            else ans = mult(ans,mat);
+        }
+        else{
+            k>>=1;
+            mat = mult(mat,mat);
+        }
+    }
+    return ans[0][n-1];
+}
+signed main(){
+    int n,m,k;
+    cin >> n >> m >> k;
+    vector<vector<int>> mat(n,vector<int>(n,max_val));
+    for(int i=0;i<m;i++){
+        int x,y,z;
+        cin >> x>> y >> z;
+        mat[x-1][y-1] = min(mat[x-1][y-1],z);
+    }
+    int ans=func(mat,n,k);
+    (ans!=max_val)?cout << ans << endl : cout << -1 << endl;
+    return 0;
+}

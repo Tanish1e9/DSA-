@@ -1,54 +1,49 @@
 CSES link: https://cses.fi/problemset/task/1723/
 
 // ye binary exponentiation ka concept lag rha
-// bilkul optimal approach h ye but somehow accept ni ho rha baad me dekhenge concept yaad rakho par
-
 
 #include<bits/stdc++.h>
 using namespace std;
 #define int long long
-int mod=1e9+7;
-vector<vector<int>> mult(vector<vector<int>>& a,vector<vector<int>>& b){
-    int r=a.size();
-    int c=b[0].size();
-    int comm=b.size();
-    vector<vector<int>> ans(r,vector<int>(c,0));
-    for(int i=0;i<r;i++){
-        for(int j=0;j<c;j++){
+const int mod = 1e9+7;        // yaha const na likhne se TLE ho ja rha bhagwan hi jane kahe but thik h const likhke accept ho rha kuch glitch hoga ig
+vector<vector<int>> mult(vector<vector<int>>&a,vector<vector<int>>&b){
+    int rows = a.size();
+    int cols = b[0].size();
+    int comm = b.size();
+    vector<vector<int>> ans(rows,vector<int>(cols,0));
+    for(int i=0;i<rows;i++){
+        for(int j=0;j<cols;j++){
             for(int k=0;k<comm;k++){
-                ans[i][j] = (ans[i][j] + (a[i][k] * b[k][j])%mod)%mod;
+                ans[i][j]= (ans[i][j]+ (a[i][k]*b[k][j])%mod)%mod;
             }
         }
     }
     return ans;
 }
-int func(int n,vector<vector<int>>& mat,int node){
+int func(vector<vector<int>>&mat,int n,int k){
     vector<vector<int>> ans(n,vector<int>(n,0));
     for(int i=0;i<n;i++) ans[i][i]=1;
-    while(n>0){
-        if(n%2==1){
-            n--;
-            ans = mult(ans,mat); 
+    while(k){
+        if(k&1){
+            k--;
+            ans = mult(ans,mat);
         }
         else{
-            n/=2;
+            k>>=1;
             mat = mult(mat,mat);
         }
     }
-    return ans[0][node];
+    return ans[0][n-1];
 }
 signed main(){
-    ios_base::sync_with_stdio(0);
-    cin.tie(0);
-    cout.tie(0);
-    int n,m,k,a,b;
+    int n,m,k;
     cin >> n >> m >> k;
-    vector<vector<int>>mat(n,vector<int>(n,0));
+    vector<vector<int>> mat(n,vector<int>(n,0));
     for(int i=0;i<m;i++){
-        cin >> a >> b;
-        mat[a-1][b-1]++;
+        int x,y;
+        cin >> x>> y;
+        mat[x-1][y-1]++;
     }
-    cout << func(k,mat,n-1) << endl;
+    cout << func(mat,n,k) << endl;
     return 0;
 }
-   

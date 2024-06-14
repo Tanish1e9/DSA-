@@ -1,0 +1,57 @@
+CSES link1: https://cses.fi/problemset/task/1096
+CSES link2: https://cses.fi/problemset/task/1633/
+
+// simple recurrence h yaha f(n) = f(n-1) + f(n-2) + f(n-3) + f(n-4) + f(n-5) + f(n-6)
+// f(0)=1 
+// f(negative)=0
+// simple thought yahi h ki pehle me maan lo 1 aaya fir 2 aya fir 3 and so on to 6
+// to matrix exponentiation se kr do
+// n<=1e18 pe to yahi kaam krega
+// but n<=1e6 me hmlog dp bhi laga skte h
+// see above two questions for clarity
+
+#include<bits/stdc++.h>
+using namespace std;
+#define int long long
+int mod=1e9+7;
+vector<vector<int>> mult(vector<vector<int>>&a,vector<vector<int>>&b){
+    int r=a.size();
+    int c=b[0].size();
+    int comm=b.size();
+    vector<vector<int>> ans(r,vector<int>(c,0));
+    for(int i=0;i<r;i++){
+        for(int j=0;j<c;j++){
+            for(int k=0;k<comm;k++){
+                ans[i][j] = (ans[i][j] + a[i][k] * b[k][j])%mod;
+            }
+        }
+    }
+    return ans;
+}
+int func(int n){
+    vector<vector<int>> start = {{16},{8},{4},{2},{1},{1}};          // yaha koi bhi configuration set kr lena and you can get it
+    if(n<=5) return start[5-n][0];
+    vector<vector<int>> base={{1,1,1,1,1,1},{1,0,0,0,0,0},{0,1,0,0,0,0},{0,0,1,0,0,0},{0,0,0,1,0,0},{0,0,0,0,1,0}};
+    vector<vector<int>> ans={{1,0,0,0,0,0},{0,1,0,0,0,0},{0,0,1,0,0,0},{0,0,0,1,0,0},{0,0,0,0,1,0},{0,0,0,0,0,1}}; 
+    // identity matrix h
+    while(n>0){
+        if(n&1){
+            n--;
+            ans = mult(base,ans);       
+            // yaha koi bhi order chalega multiply ka bas kyunki powers of base hi chal rha h ans me na 
+            // to left se kre multiply ya right se same hi ayega
+        }
+        else{
+            n>>=1;
+            base = mult(base,base);
+        }
+    }
+    ans = mult(ans,start);      // order dekh k multiply krna 
+    return ans[5][0];
+}
+signed main(){
+    int n;
+    cin >> n;
+    cout << func(n) << endl;
+    return 0;
+}

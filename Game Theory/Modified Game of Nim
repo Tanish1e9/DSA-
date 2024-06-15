@@ -1,0 +1,11 @@
+GFG link: https://www.geeksforgeeks.org/problems/variation-in-nim-game4317/1?category=
+
+    int findWinner(int n, int A[]){
+        int xr=0;
+        for(int i=0;i<n;i++) {
+            xr^=A[i];
+        }
+        if(xr==0) return 1;
+        if(n&1) return 2;
+        return 1;
+    }

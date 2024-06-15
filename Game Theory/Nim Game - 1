@@ -1,0 +1,22 @@
+CSES link: 
+
+#include<bits/stdc++.h>
+using namespace std;
+#define int long long
+signed main(){
+    int t;
+    cin >> t;
+    while(t--){
+        int n;
+        cin >> n;
+        int xr=0;
+        for(int i=0;i<n;i++) {
+            int x;
+            cin >> x;
+            xr^=x;        // grundy of each individual heap is x itself  calculate krke dekh lo
+        }
+        if(xr) cout << "first" << endl;
+        else cout << "second" << endl;
+    }
+    return 0;
+}

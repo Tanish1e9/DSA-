@@ -1,0 +1,22 @@
+GFG link: https://www.geeksforgeeks.org/problems/who-will-receive-the-death-note/0
+
+#include <iostream>
+using namespace std;
+
+int main() {
+	int t;
+	cin >> t;
+	while(t--){
+	    int k;
+	    cin >> k;
+	    int xr=0;
+	    for(int i=0;i<k;i++){
+	        int n,m;
+	        cin >> n >> m;
+	        xr ^=(n+m-2)%3;
+	    }
+	    if(xr==0) cout << "EL"<<endl;
+	    else cout << "Light" << endl;
+	}
+	return 0;
+}

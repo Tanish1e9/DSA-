@@ -1,8 +1,8 @@
 GFG link: https://www.geeksforgeeks.org/problems/who-will-receive-the-death-note/0
 
+// different combinations lo n,m ke ek matrix bana lo and observe krne pe ye mil jayega
 #include <iostream>
 using namespace std;
-
 int main() {
 	int t;
 	cin >> t;

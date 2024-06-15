@@ -1,0 +1,21 @@
+GFG link: https://www.geeksforgeeks.org/problems/arrays-game0327/1?category%255B%255D=Game%2BTheor
+
+    // simple hi tha har ek move me ek ek addition ho rha h so we can easily check
+    bool check_draw(int n,int arr[]){
+        int last = -1;
+        for(int i=0;i<n;i++){
+            if(last!=-1 && arr[i]!=last) return false;
+            else last = arr[i];
+        }
+        return true;
+    }
+    string arrayGame(int n, int arr[]) {
+        if(check_draw(n,arr)) return "Draw";
+        int maxi = *max_element(arr,arr+n);
+        int req_additions=0;
+        for(int i=0;i<n;i++) req_additions+= maxi-arr[i];
+        if(req_additions & 1){
+            return "First";
+        }
+        return "Second";
+    }

@@ -1,0 +1,42 @@
+GFG link: https://www.geeksforgeeks.org/problems/pots-of-gold-game/1?category=
+
+    // M-1 originally I wrote this thoda sa messy DP h 
+    // yaha na as such koi pattern ni milega to DP lagana hi padega
+
+    pair<int,int> f(vector<int>&A,int i,int j,int player,vector<vector<pair<int,int>>>&memo){
+        if(i>j) return {0,0};
+        if(memo[i][j].first!=-1) return memo[i][j];
+        pair<int,int> left=f(A,i+1,j,!player,memo);
+        pair<int,int> right=f(A,i,j-1,!player,memo);
+        
+        if(player==0){
+            if(A[i]+left.first > A[j]+right.first){
+                return memo[i][j]={A[i]+left.first,left.second};
+            }
+            else{
+                return memo[i][j]={A[j]+right.first,right.second};
+            }
+        }
+        if(A[i]+left.second > A[j]+right.second){
+            return memo[i][j]={left.first,A[i]+left.second};
+        }
+        return memo[i][j]={right.first,A[j]+right.second};
+    }
+    int maxCoins(vector<int>&A,int n){
+        vector<vector<pair<int,int>>> memo(n,vector<pair<int,int>>(n,{-1,-1}));
+	    return f(A,0,n-1,0,memo).first;
+    }
+
+
+    // M-2 Cleaner
+    int f(vector<int>&A,int i,int j,vector<vector<int>>&memo){
+        if(i>j) return 0;
+        if(memo[i][j]!=-1) return memo[i][j];
+        int left = A[i]+min(f(A,i+2,j,memo),f(A,i+1,j-1,memo));
+        int right = A[j]+min(f(A,i,j-2,memo),f(A,i+1,j-1,memo));
+        return memo[i][j]=max(left,right);
+    }
+    int maxCoins(vector<int>&A,int n){
+        vector<vector<int>> memo(n,vector<int>(n,-1));
+	    return f(A,0,n-1,memo);
+    }

@@ -1,0 +1,21 @@
+GFG link: https://www.geeksforgeeks.org/problems/divide-and-subtract-game2253/1?category%255B%255D=
+
+    string divAndSub(int N) {
+        vector<char>dp(N+1);
+        dp[0]='L';
+        dp[1]='L';
+        for(int i=2;i<=N;i++){
+            dp[i]='L';
+            for(int k=2;k<=5;k++){
+                if(i/k!=1 && dp[i/k]=='L'){
+                    dp[i]='W';
+                    break;
+                }
+                if(i>=k && i-k!=1 && dp[i-k]=='L'){
+                    dp[i]='W';
+                    break;
+                }
+            }
+        }
+        return dp[N]=='W'?"Jon":"Arya";
+    }

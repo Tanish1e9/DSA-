@@ -1,0 +1,6 @@
+GFG link: https://www.geeksforgeeks.org/problems/cycle-race3338/1?category%255B%255D=Game%2BTheory
+    
+    string captain(int N){
+        if(N%3==0) return "JACK";
+        return "JELLY";
+    }

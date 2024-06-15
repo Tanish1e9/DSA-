@@ -1,0 +1,40 @@
+CSES link: https://cses.fi/problemset/task/1099/
+
+
+// isme na 2 intuitions h consider 0 based indexing in both
+1) Think of ith stair pe jitni bhi balls h unko i bar travel krna hoga tab wo stair 0 pe pahuchegi
+So, we can create i copies of each stair k balls aur fir ye copies na individually sidha 0th stair pe ja skti h
+To, 0th stair pe jana is like gayab hona to fir ye game of nim hi ban gya
+To, saari copies ka xor le lena h
+But ye socho jinki even copies bani unka to 0 ho jayega aur odd copies ka ek hi ayega
+Hence saari odd positions ka xor le lo and we are done
+
+2) Dusra prakaar ka intuition is ki we can cancel even stairs k moves
+Like stair 0 to dead h
+Stair 2 se agar x balls ko stair 1 leke gye
+I can move same x balls from stair 1 to 0
+Iss tarah se recursively har even position wale balls dead h
+
+
+#include<bits/stdc++.h>
+using namespace std;
+#define int long long
+signed main(){
+    int t;
+    cin >> t;
+    while(t--){
+        int n;
+        cin >> n;
+        int xr=0;
+        for(int i=0;i<n;i++) {
+            int x;
+            cin >> x;
+            if(i&1){
+                xr^=x;
+            }
+        }
+        if(xr) cout << "first" << endl;
+        else cout << "second" << endl;
+    }
+    return 0;
+}

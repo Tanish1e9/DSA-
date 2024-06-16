@@ -1,0 +1,46 @@
+LC link: https://leetcode.com/problems/gray-code/
+CSES link: https://cses.fi/problemset/task/2205/
+
+    // M-1 ye wala hm originally likhe the
+
+    // simply pattern observe kr lia h
+    // right taraf se 0 based indexing start kro to 
+    // o ya 1 jo hai wo 1<<(i+1) baar chalenge
+    // bas shuru me 0 aadhe baar chalte h
+    // to uske lie initial count ko badha k initialise kra do
+    // and end me bhi aadha baar hota h wo apne aap hi ho jayega
+    #include<bits/stdc++.h>
+    using namespace std;
+    #define int long long
+    signed main(){
+        int n;
+        cin >> n;
+        vector<int>count(n,0),last(n,0);
+        for(int i=0;i<n;i++) count[i] = (1<<(n-1-i));
+    
+        for(int i=0;i<(1<<n);i++){
+            for(int j=0;j<n;j++){
+                if(count[j] >= (1<<(n-j))){
+                    last[j] = !last[j];
+                    count[j]=1;
+                }
+                else count[j]++;
+                
+                cout << last[j];
+            }
+            cout << endl;
+        }
+        return 0;
+    }
+
+    // M-2 ye wala log batate h most efficient
+    // halanki bhut antar ni h but thik h
+    vector<int> grayCode(int n){
+        if(n==1) return {0,1};
+        vector<int> ans = grayCode(n-1);
+
+        for(int i=(1<<(n-1))-1 ;i>=0;i--){
+            ans.push_back(ans[i] | (1<<(n-1)));
+        }
+        return ans;
+    }

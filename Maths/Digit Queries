@@ -1,0 +1,57 @@
+CSES link: https://cses.fi/problemset/task/2431/
+
+
+// dekh isme na binary search ka jroorat h nhi linearly bhi kr skte h
+// approach simple h pehle ye pata krna h ki k kon se digit numbers k range me aa rha i.e. 1 digit ya 2 digit and so on
+// then uske ek kam digit tk kitne positions cover ho gye h usko minus kr do 
+// and then jitna bacha usse nikaal lo ki kon se number pe aayega
+// then uska required digit nikal lena
+// easy tarika is string me convert kr do but aise bhi nikalne aata hi h koi bhi digit 
+// power function khud ka likhna in-built pow overflow kr rha tha
+
+#include<bits/stdc++.h>
+using namespace std;
+#define int long long
+int power(int x,int n){
+    int ans=1;
+    while(n>0){
+        if(n&1){
+            ans = ans*x;
+            n--;
+        }
+        else{
+            x= x*x;
+            n>>=1;
+        }
+    }
+    return ans;
+}
+int func (int r){
+    return ((9*r-1)*power(10,r) + 1)/9;
+}
+int bin(int k){
+    int low = 1;
+    int high = 18;
+    while(low <= high){
+        int mid = low + (high-low)/2;
+        if(func(mid)<k) low=mid+1;
+        else high=mid-1;
+    }
+    return low;
+}
+signed main(){
+    int q;
+    cin >> q;
+    while(q--){
+        int k;
+        cin >> k;
+        int dig = bin(k);
+        // dig  digits h range me hai given k
+        int start = power(10,dig-1);
+        int diff = k-func(dig-1)-1;
+        start = start + diff/dig;
+        string s = to_string(start);
+        cout << s[diff%dig] << endl;
+    }
+    return 0;
+}

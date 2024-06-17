@@ -1,0 +1,62 @@
+CSES link: https://cses.fi/problemset/task/2187
+
+// isme na simply jaha pe pahuch gye na i.e. (open,close) waha se n,n tk ka path nikalo and n-1,n+1 tk k paths ko subtract kr do
+// just like how the catalan numbers are derived 
+// aur simple se sanity checks krne hai
+// sanity checks dekhna jab ncr wale terms negative ho rhe honge unhi ko handle kr rhe h
+
+#include<bits/stdc++.h>
+using namespace std;
+#define int long long
+const int mod = 1e9+7;
+int power(int x,int n){
+    int ans=1;
+    while(n>0){
+        if(n&1){
+            n--;
+            ans = (ans*x)%mod;
+        }
+        else{
+            n>>=1;
+            x = (x*x)%mod;
+        }
+    }
+    return ans;
+}
+signed main(){
+    vector<int>fact(1e6+1,1),ifact(1e6+1,1);
+    for(int i=2;i<=1e6;i++){
+        fact[i] = (fact[i-1]*i)%mod;
+    }
+    ifact[1e6] = power(fact[1e6],mod-2);
+    for(int i=1e6-1;i>=2;i--){
+        ifact[i] = ((i+1)*ifact[i+1])%mod;
+    }
+    int n;
+    cin >> n;
+    string s;
+    cin >> s;
+    if(n&1) cout << 0 << endl;
+    else{
+        int open = 0;
+        int close = 0;
+        bool flag = 1;
+        for(int i=0;i<s.size();i++){
+            if(s[i]=='(') open++;
+            else close++;
+            if(close > open){flag = false;break;}
+        }
+        if(!flag || open > n/2 || close > n/2) cout << 0 << endl;
+        else if(open == n/2 || close == n/2) cout << 1 << endl;
+        else{
+            int ans = fact[n-open-close];
+            ans = (ans * ifact[n/2-close])%mod;
+            ans = (ans * ifact[n/2-open])%mod;
+            int diff = fact[n-open-close];
+            diff = (diff * ifact[n/2-1-open])%mod;
+            diff = (diff * ifact[n/2+1-close])%mod;
+            cout << (ans - diff + mod)%mod << endl;
+        }
+    }
+    return 0;
+}

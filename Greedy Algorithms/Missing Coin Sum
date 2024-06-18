@@ -1,0 +1,32 @@
+CSES link: https://cses.fi/problemset/task/2183
+
+// iska intuition ye h na 
+// like inductive proof denge
+// first position pe after sorting to 1 hi aana chahye wrna 1 hi ni ban payega
+// then maan lo kisi position tk (1 to x) saare aa gye
+// Now next position pe 1 ho to x+1 tk range gya
+// 2 ho to 2+x-1 se x+1 and 2+x se x+2 so x+2 tk range chala gya
+// like observe kro ki continuity nhi toot rha h
+// continuity tabhi tootega jab x+2 aa jaye ..... yaha x+1 missing ho gya
+
+#include<bits/stdc++.h>
+using namespace std;
+#define int long long
+int func(vector<int>&arr){
+    sort(arr.begin(),arr.end());
+    int n=arr.size();
+    int prev=0;
+    for(int i=0;i<n;i++){
+        if(arr[i] > prev+1) break;
+        prev+=arr[i];
+    }
+    return prev+1;
+}
+signed main(){
+    int n;
+    cin >> n;
+    vector<int>arr(n);
+    for(int i=0;i<n;i++) cin >> arr[i];
+    cout << func(arr) << endl;
+    return 0;
+}

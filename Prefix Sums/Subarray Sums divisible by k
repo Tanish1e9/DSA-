@@ -1,0 +1,17 @@
+LC link: https://leetcode.com/problems/subarray-sums-divisible-by-k/
+
+    int subarraysDivByK(vector<int>& nums, int k) {
+        int n=nums.size();
+        vector<int> mpp(k,0);
+        int sum=0,ans=0;
+        for(int i=0;i<n;i++){
+            // yaha pe na suppose k=5 hai to nums[i] = -121 bhi ho skta islie ek bar k add krne se kaam ni chalega
+            // loop lagake add krna hoga jab tk sum negative h
+            // but usko ek line me krne k lie nums[i] ka bhi mod le lie h dekh lo
+            sum=(sum+nums[i]%k+k)%k;
+            if(sum==0) ans++;
+            ans+= mpp[sum];
+            mpp[sum]++;
+        }
+        return ans;
+    }

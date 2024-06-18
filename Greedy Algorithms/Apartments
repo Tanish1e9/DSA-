@@ -5,6 +5,7 @@ CSES link: https://cses.fi/problemset/task/1084/
 // < aur > ka sochna pada h wrna to == me kaam chal jata
 // isme bhi hm pair store kr rhe the pq me but uska koi requirement h hi nhi bas deadlines store kro
 
+// M-1 Better h ye
 #include<bits/stdc++.h>
 using namespace std;
 #define int long long
@@ -38,6 +39,47 @@ signed main(){
             pq.pop();
             ans++;
         }
+    }
+    cout << ans << endl;
+    return 0;
+}
+
+// M-2 Optimal
+// dekh events wale question me na variable length thi events ki
+// par yaha fixed length h
+// to agar koi apartment kisi interval me fit baith rha to usko de do and aage badho
+// and similar greedy two pointer approach kaam krega
+// yaha ye surity h ki aage wale events ka deadline bhi baad me hi hoga
+// par events wale me ye surity ni tha islie to pq lagana pada tha
+
+#include<bits/stdc++.h>
+using namespace std;
+#define int long long
+signed main(){
+    int n,m,k;
+    cin >> n >> m >> k;
+    vector<pair<int,int>> events;
+    vector<int> times(m);
+    for(int i=0;i<n;i++){
+        int x;
+        cin >> x;
+        events.push_back({max(x-k,0ll),x+k});
+    }
+    for(int i=0;i<m;i++){
+        cin >> times[i];
+    }
+    sort(events.begin(),events.end());
+    sort(times.begin(),times.end());
+    int i=0,j=0,ans=0;
+    while(i<n && j<m){
+        if(times[j]>=events[i].first && events[i].second >=times[j]){
+            ans++;
+            i++;j++;
+        }
+        else if(times[j]<events[i].first){
+            j++;
+        }
+        else i++;
     }
     cout << ans << endl;
     return 0;

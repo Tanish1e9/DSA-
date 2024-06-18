@@ -1,0 +1,44 @@
+CSES link: https://cses.fi/problemset/task/1084/
+
+// ye ekdum similar to max events that can be attended h
+// fark ye h ki waha har din aake decide krte the yaha kuch particular days pe hi aake decide krenge islie thoda
+// < aur > ka sochna pada h wrna to == me kaam chal jata
+// isme bhi hm pair store kr rhe the pq me but uska koi requirement h hi nhi bas deadlines store kro
+
+#include<bits/stdc++.h>
+using namespace std;
+#define int long long
+signed main(){
+    int n,m,k;
+    cin >> n >> m >> k;
+    vector<pair<int,int>> events;
+    vector<int> times(m);
+    for(int i=0;i<n;i++){
+        int x;
+        cin >> x;
+        events.push_back({max(x-k,0ll),x+k});
+    }
+    for(int i=0;i<m;i++){
+        cin >> times[i];
+    }
+    sort(events.begin(),events.end());
+    sort(times.begin(),times.end());
+    priority_queue<int,vector<int>,greater<int>> pq;
+    int last = 0;
+    int ans=0;
+    for(int i=0;i<times.size();i++){
+        while(!pq.empty() && pq.top()<times[i]){
+            pq.pop();
+        }
+        while(last < n && events[last].first<=times[i]){
+            if(events[last].second>=times[i]) pq.push(events[last].second);
+            last++;
+        }
+        if(!pq.empty()) {
+            pq.pop();
+            ans++;
+        }
+    }
+    cout << ans << endl;
+    return 0;
+}

@@ -23,3 +23,6 @@ public:
         return mystack.top()=='!';
     }
 };
+
+
+// iska agar simple version ho jisme sirf ek hi type k brackets ho to usko sirf ek single variable se kra ja skta h

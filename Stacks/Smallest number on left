@@ -1,0 +1,33 @@
+GFG link: https://www.geeksforgeeks.org/problems/smallest-number-on-left3403/1?itm_source=geeksforgeeks&itm_medium=article&itm_campaign=bottom_sticky_on_article
+
+    vector<int> leftSmaller(int n, int a[]){
+        stack<int> s;
+        vector<int>ans(n);
+        for(int i=0;i<n;i++){
+            while(!s.empty() && s.top() >= a[i]) s.pop();
+            if(!s.empty()) ans[i] = s.top();
+            else ans[i]=-1;
+            s.push(a[i]);
+        }
+        return ans;
+    }
+
+CSES link: https://cses.fi/problemset/task/1645/
+#include<bits/stdc++.h>
+using namespace std;
+#define int long long
+signed main(){
+    int n;
+    cin >> n ;
+    stack<pair<int,int>> s;
+    for(int i=0;i<n;i++){
+        int el;
+        cin >> el;
+        while(!s.empty() && s.top().first >= el) s.pop();
+        if(!s.empty()) cout << s.top().second << " ";
+        else cout << 0 << " ";
+        s.push({el,i+1});
+    }
+    cout << endl;
+    return 0;
+}

@@ -1,0 +1,19 @@
+LC link: https://leetcode.com/problems/shortest-subarray-with-sum-at-least-k/
+
+    int shortestSubarray(vector<int>& nums, int k) {
+        deque<pair<long,int>> dq;
+        long sum=0;
+        int ans=1e9;
+        for(int i=0;i<nums.size();i++){
+            sum+=nums[i];
+            if(sum>=k) ans = min(ans,i+1);
+            while(!dq.empty() && dq.front().first <= sum-k){
+                ans = min(ans,i-dq.front().second);
+                dq.pop_front();
+            }
+            while(!dq.empty() && dq.back().first>=sum) dq.pop_back();
+            dq.push_back({sum,i});
+        }
+        if(ans==1e9) return -1;
+        return ans;
+    }

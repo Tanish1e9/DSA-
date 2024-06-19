@@ -1,0 +1,37 @@
+CSES link: https://cses.fi/problemset/task/1632/
+
+// dekh mere dimag me na priority_queue wala aaya tha ki end time k hisab se sort krke agar daal ske pq me to daal denge
+// but usme dikkat h ki jo sabse pehle free hua rhega uss banda ko agla movie chala jayega
+// jabki ho skta h koi later banda bhi wo movie dekh ske and uss earlier bande ka kahi pe jroorat pad jaye
+// isi dikkat k lie multiset lagaya gya h jisse ekdum latest banda jo current movie ko dekh sake usi ko assign ho
+
+#include<bits/stdc++.h>
+using namespace std;
+#define int long long
+bool comp(pair<int,int>&a,pair<int,int>&b){
+    return a.second < b.second;
+}
+signed main(){
+    int n,k;
+    cin >> n >> k;
+    vector<pair<int,int>> intervals(n);
+    for(int i=0;i<n;i++){
+        cin >> intervals[i].first;
+        cin >> intervals[i].second;
+    }
+    sort(intervals.begin(),intervals.end(),comp);
+    multiset<int> ms;
+    int ans=0;
+    for(int i=0;i<k;i++) ms.insert(0);
+    for(int i=0;i<n;i++){
+        auto it = ms.upper_bound(intervals[i].first);
+        if(it!=ms.begin()){
+            it--;
+            ms.erase(it);
+            ms.insert(intervals[i].second);
+            ans++;
+        }
+    }
+    cout << ans << endl;
+    return 0;
+}

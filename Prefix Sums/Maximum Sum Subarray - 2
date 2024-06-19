@@ -1,0 +1,32 @@
+CSES link: https://cses.fi/problemset/task/1644/
+
+#include<bits/stdc++.h>
+using namespace std;
+#define int long long
+signed main(){
+    int n,a,b;
+    cin >> n >> a >> b;
+    vector<int>arr(n),pre(n);
+    int sum=0,ans=-1e18;
+    for(int i=0;i<n;i++) {
+        cin >> arr[i];
+        sum+=arr[i];
+        pre[i]=sum;
+    }
+    map<int,int> window;
+    int l=a-b-1;int r=-1;
+    for(int i=a-1;i<n;i++){
+        if(i>=a-1 && i<=b-1) ans = max(ans,pre[i]);
+        if(r>=0) window[pre[r]]++;
+        if(l>=0 && r-l+1 > b-a+1) {
+            window[pre[l]]--;
+            if(window[pre[l]]==0) window.erase(pre[l]);
+            l++;
+        }
+        if(window.size()>0) ans = max(ans,pre[i]-window.begin()->first);
+        if(l<0)l++;
+        r++;
+    }
+    cout << ans << endl;
+    return 0;
+}

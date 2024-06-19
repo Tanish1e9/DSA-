@@ -13,6 +13,9 @@ GFG link: https://www.geeksforgeeks.org/problems/smallest-number-on-left3403/1?i
     }
 
 CSES link: https://cses.fi/problemset/task/1645/
+// isme pair ka stack banane ka jroorat nhi h sirf index store krke
+// element to array se dekh hi skte ho na
+// but thik h concept important h wo tumko strike kia tha first go me... very good
 #include<bits/stdc++.h>
 using namespace std;
 #define int long long

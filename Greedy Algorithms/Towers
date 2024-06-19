@@ -3,6 +3,11 @@ CSES link: https://cses.fi/problemset/task/1073/
 // yaha dekho agar value pass krke erase kroge multiset se to saari values delete ho jayengi
 // jabki iterator pass krke kroge to sirf wahi delete hoga
 // also set ka method wala upper_bound is faster
+// Intuition ye h ki like agar koi cube kisi k upar place ho skta na to kr do it wont harm anyone because
+// say koi aage aane wale cube ko iss tower pe rakhte but then jo current cube h uska ek new tower ban jata 
+// In both cases towers remain same
+// A funny thing- I thought of this approach at the very first when I read the problem but somehow thought that it was wrong 
+// next day I tried to submit it then it worked
 
 #include<bits/stdc++.h>
 using namespace std;

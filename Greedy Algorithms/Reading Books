@@ -1,5 +1,15 @@
 CSES link: https://cses.fi/problemset/task/1631/
 
+
+// dekh n=1 k lie to dry run krke dekh le kaam kr hi rha h
+// now ab n>=2 me suppose sabse mota book > sum of all other 
+// then kuch waiting time hoga ... like ek banda wo maxi book padh rha hoga utna der me dusra banda baki saara padh chuka hoga
+// and wait kr rha hoga
+// so maxi-(tot-maxi) is the waiting time
+// so tot + 2*maxi - tot = 2*maxi aa gya
+// agar lekin aisa ni h to maan lo ek banda first book read kr rha and dusra wala last book
+// since last wala sabse mota h to first wala pehle khatam ho jayega
+// to fir ek cyclic order me padhna imagine kro ... dekho ki koi bhi khali ni baith rha hoga
 #include<bits/stdc++.h>
 using namespace std;
 #define int long long

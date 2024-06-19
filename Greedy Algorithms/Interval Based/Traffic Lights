@@ -1,0 +1,33 @@
+CSES link: https://cses.fi/problemset/task/1163/
+
+// M-1 --- ye going forward wala implementation h
+// bhut jagah lengths ko store krne k lie multiset bhi use kia gya h
+// but wo thoda inefficient hoga bcz duplicate lengths aa gyi to jada space le lega as compared to map
+// islie hi multiset wala solution fast input k dam par hi accept ho rha
+// whereas ye map wala solution irrespective of fast input accept ho rha
+#include<bits/stdc++.h>
+using namespace std;
+#define int long long
+signed main(){
+    int x,n;
+    cin >> x >> n;
+    map<int,int> mpp;
+    set<int> lights;
+    mpp[x]=1;
+    lights.insert(0);
+    lights.insert(x);
+    for(int i=0;i<n;i++){
+        int pos;
+        cin >> pos;
+        auto ub = lights.upper_bound(pos);
+        auto lb = ub;lb--;
+        int len = *ub - *lb;
+        mpp[len]--;
+        if(mpp[len]==0) mpp.erase(len);
+        mpp[pos-*lb]++;
+        mpp[*ub-pos]++;
+        lights.insert(pos);
+        cout << mpp.rbegin()->first << endl;
+    }
+    return 0;
+}

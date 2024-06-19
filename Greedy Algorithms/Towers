@@ -1,5 +1,9 @@
 CSES link: https://cses.fi/problemset/task/1073/
 
+// yaha dekho agar value pass krke erase kroge multiset se to saari values delete ho jayengi
+// jabki iterator pass krke kroge to sirf wahi delete hoga
+// also set ka method wala upper_bound is faster
+
 #include<bits/stdc++.h>
 using namespace std;
 #define int long long

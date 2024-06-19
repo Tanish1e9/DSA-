@@ -1,0 +1,32 @@
+CSES link: https://cses.fi/problemset/task/1630/
+
+// dekh isme na deadlines to add up honge hi chahe kuch bhi kr
+// bas ab jis order me jobs finish hote rhenge matter ni krta kon sa job h uska finishing time ko subtract kr dena h
+// that's our answer
+// ab lower finishing times k lie small duration walo ko hi carry forward krega na islie 
+// increasing order of durations k basis pe sort kia
+
+#include<bits/stdc++.h>
+using namespace std;
+#define int long long
+signed main(){
+    int n;
+    cin >> n;
+    vector<int> durations(n);
+    int deadline_sum=0;
+    for(int i=0;i<n;i++){
+        int a,d;
+        cin >> a >> d;
+        durations[i]=a;
+        deadline_sum += d;
+    }
+    sort(durations.begin(),durations.end());
+    int sum=0;
+    int finish_sum=0;
+    for(int i=0;i<n;i++){
+        sum+=durations[i];
+        finish_sum+=sum;
+    }
+    cout << deadline_sum - finish_sum << endl;
+    return 0;
+}

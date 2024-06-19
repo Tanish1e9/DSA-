@@ -30,3 +30,33 @@ signed main(){
     cout << ans << endl;
     return 0;
 }
+
+// a bit cleaner
+#include<bits/stdc++.h>
+using namespace std;
+#define int long long
+signed main(){
+    int n,a,b;
+    cin >> n >> a >> b;
+    vector<int>arr(n),pre(n);
+    int sum=0,ans=-1e18;
+    for(int i=0;i<n;i++) {
+        cin >> arr[i];
+        sum+=arr[i];
+        pre[i]=sum;
+    }
+    map<int,int> window;
+    // dekh for any i length ko [a,b] me rakhke where length = i-j tab 
+    // jo window aayegi wo [i-b,i-a] ki aayegi
+    for(int i=a-1;i<n;i++){
+        if(i>=a-1 && i<=b-1) ans = max(ans,pre[i]);
+        if(i-a>=0) window[pre[i-a]]++;
+        if(i-b-1>=0){
+            window[pre[i-b-1]]--;
+            if(window[pre[i-b-1]]==0) window.erase(pre[i-b-1]);
+        }
+        if(window.size()>0) ans = max(ans,pre[i]-window.begin()->first);
+    }
+    cout << ans << endl;
+    return 0;
+}

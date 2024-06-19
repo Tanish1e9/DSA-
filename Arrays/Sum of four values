@@ -1,0 +1,42 @@
+CSES link: https://cses.fi/problemset/task/1642/
+
+// Dekh iska O(n^3) solution to pata hi h jo striver kraya h
+// usse bhi ye accept ho rha tha CSES pe 
+// par ye O(n^2) mila hmko to likh de rhe h
+// isme saare pairs ka sum store krenge kind of and then pair matching khelenge
+// to avoid overlaps hmlog ensure krenge ki suppose i,j pe agar khade h
+// to jin pairs ko search kr rhe wo within the subarray [0,i+1] ho isse overlap nhi hoga
+// to achieve this, pehle i set kro then j=i+1 k aage saare pe jaake dekh lo if sum is contained or not
+// ab fir saare j=0 to i-1 iterate kro and i,j ka sums store kr do... because i aage badhne wala hi h so overlap nahi hoga
+
+#include<bits/stdc++.h>
+using namespace std;
+#define int long long
+void func(vector<int>&arr,int x){
+    int n=arr.size();
+    unordered_map<int,pair<int,int>> mpp;
+    for(int i=0;i<n;i++){
+        for(int j=i+1;j<n;j++){
+            int target = x-arr[i]-arr[j];
+            if(mpp.contains(target)){
+                cout << i+1 << " " << j+1 << " " << mpp[target].first+1 << " " << mpp[target].second+1 << endl;
+                return;
+            }
+        }
+        for(int j=0;j<i;j++){
+            mpp[arr[i]+arr[j]] = {i,j};
+        }
+    }
+    cout << "IMPOSSIBLE" << endl;
+    return;
+}
+signed main(){
+    int n,x;
+    cin >> n >> x;
+    vector<int>arr(n);
+    for(int i=0;i<n;i++){
+        cin >> arr[i];
+    }
+    func(arr,x);
+    return 0;
+}

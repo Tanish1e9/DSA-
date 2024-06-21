@@ -1,0 +1,31 @@
+LC link: https://leetcode.com/problems/minimum-window-substring/
+
+// dekh isme na har bar ghata islie rhe h ki pata rhega ki kon sa character excess me ja rha h
+// to yehi concept h
+// and jab bhi kisi positive frequency ko ghataye iska mtlb wo ans me count ho rha islie count++ kr die
+// Now jab count==t.size() ho gya to shrink krte rhna h jab tk valid rhe tab tk minlen lete rhna h
+// Also, jab increase kr rhe hoge to increase krne k baad positive ho jaye iska mtlb count-- krna h
+
+    string minWindow(string s, string t) {
+        if(s.size() < t.size()) return "";
+        unordered_map<char,int> freq;
+        for(char c:t) freq[c]++;
+        int l=0,r=0,minlen=1e9,start=-1;
+        int count=0;
+        while(r<s.size()){
+            if(freq[s[r]]>0) count++;
+            freq[s[r]]--;
+            while(count==t.size()){
+                if(r-l+1 < minlen){
+                    minlen = r-l+1;
+                    start = l;
+                }
+                freq[s[l]]++;
+                if(freq[s[l]]>0) count--;
+                l++;
+            }
+            r++;
+        }
+        if(start == -1) return "";
+        return s.substr(start,minlen);
+    }

@@ -1,0 +1,27 @@
+CSES link: https://cses.fi/problemset/task/2164/
+
+// Ye recurrence simply thoda pattern observe krke dry run krke socha gya h
+
+#include<bits/stdc++.h>
+using namespace std;
+#define int long long
+int f(int n,int k){
+    if(n==1) return 1;
+    if(k<= (n+1)/2) {
+        if(2*k > n) return (2*k)%n;
+        return 2*k;
+    }
+    int x=2*f(n/2,k-((n+1)/2));
+    if(n&1) return x+1;
+    return x-1;
+}
+signed main(){
+    int t;
+    cin >> t;
+    while(t--){
+        int n,k;
+        cin >> n >> k;
+        cout << f(n,k) << endl;
+    }
+    return 0;
+}

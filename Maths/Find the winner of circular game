@@ -1,0 +1,40 @@
+LC link: https://leetcode.com/problems/find-the-winner-of-the-circular-game/
+
+
+// M-1 Brute force just use a queue and simulate the process
+    int findTheWinner(int n, int k) {
+         queue<int>q;
+         for(int i=1;i<=n;i++) q.push(i);
+         while(q.size()>1){
+            for(int j=1;j<k;j++){
+                 int el=q.front();
+                 q.pop();
+                 q.push(el);
+             }
+             q.pop();
+         }
+         return q.front();
+    }
+
+// M-2 using recurrence
+    int helper(int n,int k){
+        if(n==1) return 0;
+        return (helper(n-1,k)+k)%n;
+    }
+    int findTheWinner(int n, int k) {
+        return helper(n,k)+1;  // adding 1 to convert 0 based to 1 based indexing
+    }
+
+// M-3 iterative version of the recurrence
+
+    int findTheWinner(int n,int k){
+        int last = 0;
+        int new_n = 1;
+        while(new_n < n){
+            new_n++;
+            last = (last + k)%new_n;
+        }
+        return last+1;
+    }
+
+// M-4 also can be done using the ordered set refer josephus problem 2 for the code

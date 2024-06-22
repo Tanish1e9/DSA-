@@ -1,0 +1,45 @@
+GFG link: https://www.geeksforgeeks.org/problems/geeks-training/1
+
+    int f(int i,int last,vector<vector<int>>&points,vector<vector<int>>&memo){
+        if(i<0) return 0;
+        if(last!=-1 && memo[i][last]!=-1) return memo[i][last];
+        int ans=0;
+        for(int j=0;j<3;j++){
+            if(j!=last) ans=max(ans,points[i][j]+f(i-1,j,points,memo));
+        }
+        if(last!=-1) memo[i][last]=ans;
+        return ans;
+    }
+    int maximumPoints(vector<vector<int>>& points, int n) {
+        // vector<vector<int>> memo(n,vector<int>(3,-1));
+        // return f(n-1,-1,points,memo);
+        
+        // vector<vector<int>> memo(n,vector<int>(4,0));
+        // for(int i=0;i<n;i++){
+        //     for(int last=0;last<=3;last++){
+        //         int ans=0;
+        //         for(int j=0;j<3;j++){
+        //             if(j!=last-1){
+        //                 int point = points[i][j];
+        //                 if(i>=1) point+=memo[i-1][j+1];
+        //                 ans=max(ans,point);
+        //             }
+        //         }
+        //         memo[i][last] = ans;
+        //     }
+        // }
+        // return memo[n-1][0];
+
+        vector<int>prev(4,0),curr(4,0);
+        for(int i=0;i<n;i++){
+            for(int last=0;last<4;last++){
+                for(int j=0;j<3;j++){
+                    if(j!=last-1){
+                        curr[last] = max(curr[last],points[i][j]+prev[j+1]);
+                    }
+                }
+            }
+            prev=curr;
+        }
+        return prev[0];
+    }

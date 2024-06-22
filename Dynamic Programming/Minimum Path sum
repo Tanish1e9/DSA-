@@ -1,0 +1,43 @@
+LC link: https://leetcode.com/problems/minimum-path-sum/
+
+    int f(int i,int j,auto&grid,auto&memo){
+        if(i<0 || j<0) return 1e9;
+        if(i==0 && j==0) return grid[i][j];
+        if(memo[i][j]!=-1) return memo[i][j];
+        int up = f(i-1,j,grid,memo);
+        int left = f(i,j-1,grid,memo);
+        return memo[i][j]=min(up,left)+grid[i][j];
+    }
+    int minPathSum(vector<vector<int>>& grid) {
+        int m=grid.size();
+        int n=grid[0].size();
+        // vector<vector<int>> memo(m,vector<int>(n,-1));
+        // return f(m-1,n-1,grid,memo);
+
+        // vector<vector<int>> memo(m,vector<int>(n,1e9));
+        // for(int i=0;i<m;i++){
+        //     for(int j=0;j<n;j++){
+        //         if(i==0 && j==0) memo[i][j]=grid[i][j];
+        //         else{
+        //             if(i>=1) memo[i][j]=min(memo[i][j],grid[i][j] + memo[i-1][j]);
+        //             if(j>=1) memo[i][j]=min(memo[i][j],grid[i][j]+memo[i][j-1]);
+        //         }
+        //     }
+        // }
+        // return memo[m-1][n-1];
+
+        vector<int>prev(n,0),curr(n,0);
+        for(int i=0;i<m;i++){
+            for(int j=0;j<n;j++){
+                if(i==0 && j==0) curr[j]= grid[i][j];
+                else {
+                    int up=1e9,left=1e9;
+                    if(i>=1) up=grid[i][j]+prev[j];
+                    if(j>=1) left=grid[i][j]+curr[j-1];
+                    curr[j]=min(left,up);
+                }
+            }
+            prev=curr;
+        }
+        return prev[n-1];
+    }

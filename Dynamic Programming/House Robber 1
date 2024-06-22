@@ -1,0 +1,34 @@
+LC link: https://leetcode.com/problems/house-robber/
+
+    int f(int i,vector<int>&nums,vector<int>&memo){
+        if(i<0) return 0;
+        if(memo[i]!=-1) return memo[i];
+        int left = nums[i] + f(i-2,nums,memo);
+        int right = f(i-1,nums,memo);
+        return memo[i]=max(left,right);
+    }
+    int rob(vector<int>& nums) {
+        int n=nums.size();
+        // vector<int>memo(n,-1);
+        // return f(n-1,nums,memo);
+
+        // vector<int>memo(n,0);
+        // for(int i=0;i<n;i++){
+        //     int left = nums[i];
+        //     if(i>=2) left+=memo[i-2];
+        //     int right = 0;
+        //     if(i>=1) right = memo[i-1];
+        //     memo[i]=max(left,right);
+        // }
+        // return memo[n-1];
+
+        int last=0,sec_last=0;
+        for(int i=0;i<n;i++){
+            int left=nums[i]+sec_last;
+            int right = last;
+            int curr=max(left,right);
+            sec_last=last;
+            last=curr;
+        }
+        return last;
+    }

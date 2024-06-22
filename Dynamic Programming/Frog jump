@@ -1,0 +1,32 @@
+GFG link: https://www.geeksforgeeks.org/problems/geek-jump/1
+
+    int f(int i,vector<int>&height,vector<int>&memo){
+        if(i<=0) return 0;
+        if(memo[i]!=-1) return memo[i];
+        int left = f(i-1,height,memo)+abs(height[i-1]-height[i]);
+        int right=1e9;
+        if(i>=2) right = f(i-2,height,memo)+abs(height[i-2]-height[i]);
+        return memo[i] = min(left,right);
+    }
+    int minimumEnergy(vector<int>& height, int n) {
+        // vector<int>memo(n,-1);
+        // return f(n-1,height,memo);
+        
+        // vector<int>memo(n,1e9);
+        // memo[0]=0;
+        // for(int i=1;i<n;i++){
+        //     memo[i]=min(memo[i],memo[i-1]+abs(height[i]-height[i-1]));
+        //     if(i>=2) memo[i]=min(memo[i],memo[i-2]+abs(height[i]-height[i-2]));
+        // }
+        // return memo[n-1];
+        
+        int last=0;
+        int sec_last=0;
+        for(int i=1;i<n;i++){
+            int curr = last+abs(height[i]-height[i-1]);
+            if(i>=2) curr = min(curr,sec_last+abs(height[i]-height[i-2]));
+            sec_last=last;
+            last=curr;
+        }
+        return last;
+    }

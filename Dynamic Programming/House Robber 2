@@ -1,0 +1,18 @@
+LC link: https://leetcode.com/problems/house-robber-ii/
+
+    int helper(vector<int>&nums,int s,int e){
+        int n=nums.size();
+        int last=0,sec_last=0;
+        for(int i=s;i<e;i++){
+            int left=nums[i]+sec_last;
+            int right = last;
+            int curr=max(left,right);
+            sec_last=last;
+            last=curr;
+        }
+        return last;
+    }
+    int rob(vector<int>& nums) {
+        int n=nums.size();
+        return max(helper(nums,0,n-1),helper(nums,1,n-2)+nums[n-1]);
+    }

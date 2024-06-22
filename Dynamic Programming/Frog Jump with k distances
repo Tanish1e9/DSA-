@@ -1,0 +1,24 @@
+GFG link: https://www.geeksforgeeks.org/problems/minimal-cost/1
+
+    int f(int i,vector<int>&height,vector<int>&memo,int k){
+        if(i<=0) return 0;
+        if(memo[i]!=-1) return memo[i];
+        int ans=1e9;
+        for(int j=1;j<=k;j++){
+            if(i>=j) ans=min(ans,f(i-j,height,memo,k)+abs(height[i]-height[i-j]));
+        }
+        return memo[i]=ans;
+    }
+    int minimizeCost(vector<int>& height, int n, int k) {
+        // vector<int>memo(n,-1);
+        // return f(n-1,height,memo,k);
+        
+        vector<int>memo(n,1e9);
+        memo[0]=0;
+        for(int i=1;i<n;i++){
+            for(int j=1;j<=k;j++){
+                if(i>=j) memo[i]=min(memo[i],memo[i-j]+abs(height[i]-height[i-j]));
+            }
+        }
+        return memo[n-1];
+    }

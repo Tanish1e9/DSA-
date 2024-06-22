@@ -19,3 +19,12 @@ GFG link: https://www.geeksforgeeks.org/problems/introduction-to-dp/1
         }
         return memo[n];
     }
+    int sec_last=0;
+    int last=1;
+    for(int i=1;i<=n;i++){
+        int curr = (last+sec_last)%mod;
+        sec_last=last;
+        last=curr;
+    }
+    return sec_last;
+// dekh lo memoization , tabulation and space optimisation

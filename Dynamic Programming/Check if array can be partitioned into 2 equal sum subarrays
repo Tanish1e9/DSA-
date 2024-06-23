@@ -1,0 +1,33 @@
+LC link: https://leetcode.com/problems/partition-equal-subset-sum/
+
+    // yaha tot tk ka islie bana lia h array because single element
+    // thoda skew kr de rha tha
+    // for ex [99,1] isme tot/2 to 50 hoga but curr[arr[0]] out of bound chala gya h na
+    // islie hi tot tk ka bana dia storage
+    // ek aur tarika h ki check kr lo ki bounds me hi h na
+    bool isSubsetSum(vector<int>arr, int sum){
+        int n=arr.size();
+        vector<bool>prev(sum+1,0);
+        vector<bool>curr(sum+1,0);
+        for(int i=0;i<n;i++){
+            for(int k=0;k<=sum;k++){
+                if(i==0) {
+                    if(arr[0]<=sum) curr[arr[0]]=1;
+                    curr[0]=1;
+                }
+                else{
+                    bool pick=0;
+                    if(k>=arr[i]) pick=prev[k-arr[i]];
+                    bool npick = prev[k];
+                    curr[k]=pick || npick;
+                }
+            }
+            prev=curr;
+        }
+        return prev[sum];
+    }
+    bool canPartition(vector<int>& nums) {
+        int tot = accumulate(nums.begin(),nums.end(),0);
+        if(tot%2==1) return false;
+        return isSubsetSum(nums,tot/2);
+    }

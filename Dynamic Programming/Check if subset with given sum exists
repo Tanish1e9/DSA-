@@ -1,0 +1,52 @@
+GFG link: https://www.geeksforgeeks.org/problems/subset-sum-problem-1611555638/1
+
+    bool f(int i,vector<int>&arr,vector<vector<int>>&memo,int sum){
+        if(sum==0) return true;
+        if(i<0) return false;
+        if(memo[i][sum]!=-1) return memo[i][sum];
+        bool pick = 0;
+        if(sum>=arr[i]) pick=f(i-1,arr,memo,sum-arr[i]);
+        bool npick = f(i-1,arr,memo,sum);
+        return memo[i][sum]=(pick || npick);
+    }
+    bool isSubsetSum(vector<int>arr, int sum){
+        int n=arr.size();
+        // vector<vector<int>>memo(n,vector<int>(sum+1,-1));
+        // return f(n-1,arr,memo,sum);
+        
+        // vector<vector<bool>>memo(n,vector<bool>(sum+1,0));
+        // for(int i=0;i<n;i++){
+        //     for(int k=0;k<=sum;k++){
+        //         if(i==0) {
+        //             memo[i][arr[0]]=1;
+        //             memo[i][0]=1;
+        //         }
+        //         else{
+        //             bool pick=0;
+        //             if(k>=arr[i]) pick=memo[i-1][k-arr[i]];
+        //             bool npick = memo[i-1][k];
+        //             memo[i][k]=pick||npick;
+        //         }
+        //     }
+        // }
+        // return memo[n-1][sum];
+        
+        vector<bool>prev(sum+1,0);
+        vector<bool>curr(sum+1,0);
+        for(int i=0;i<n;i++){
+            for(int k=0;k<=sum;k++){
+                if(i==0) {
+                    curr[arr[0]]=1;
+                    curr[0]=1;
+                }
+                else{
+                    bool pick=0;
+                    if(k>=arr[i]) pick=prev[k-arr[i]];
+                    bool npick = prev[k];
+                    curr[k]=pick||npick;
+                }
+            }
+            prev=curr;
+        }
+        return prev[sum];
+    }

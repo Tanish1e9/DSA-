@@ -29,3 +29,8 @@ set<T,decltype(comp)> s;
 // Agar T jo ho wo Node* ho to & lagane se shyd kahi error de skta h to & mat lagana
 is_sorted(vec.begin(),vec.end());    // krke use kr skte ho
 // gcd , lcm functions hote h numeric library me builtin
+
+endl is slow kyunki wo buffer ko khaali krta h
+islie agar sirf new line deni ho bhut baar to \n use krna wrna TLE bhi aa skta h
+
+// also to optimise hashing we can write mpp.reserve(1<<20) isse utne keys k lie hashing optimise ho jayega

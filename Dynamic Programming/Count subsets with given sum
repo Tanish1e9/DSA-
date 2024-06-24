@@ -1,5 +1,8 @@
 GFG link: https://www.geeksforgeeks.org/problems/perfect-sum-problem5633/1
 
+    // isme observe krna n*sum <=1e6 de rakha h to dp solution chal gya
+    // but CSES me higher constraints h to niche dekho wo kaise hoga
+
     int mod=1e9+7;
     int f(int i,int arr[],vector<vector<int>>&memo,int sum){
         if(i==0){
@@ -52,3 +55,60 @@ GFG link: https://www.geeksforgeeks.org/problems/perfect-sum-problem5633/1
         }
         return prev[sum];
     }
+
+
+CSES link: https://cses.fi/problemset/task/1628/
+
+// meet in the middle technique bolte
+sum <=1e9 and n<=40 to n*sum <= 1e10 ya 1e11 ho gya so TLE MLE dono de jayega
+// islie yaha pe we will try to generate all subsets 
+// but 2^40 wo bhi TLE maar dega
+// but observe 2*(2^20) yaani array ko split krke agar generate kre to range me hoga
+// we will store all the sums with their frequency and fir jin do sums ka sum x hoga unki frequencies ko multiply krke
+// add krte jana and that's the ans
+
+#include<bits/stdc++.h>
+using namespace std;
+#define int long long
+int func(int* arr1,int*arr2,int n,int x){
+	unordered_map<int,int> sums_1;
+	sums_1.reserve(1<<20);
+    // code to simple hi h bas ye ek line bhut keemti h... reserve like pehle hi map ko bata deta itne keys aane wale h
+    // to maap apne se hi optimised hashing kr leta h ni likhoge to TLE aayega likh doge to chal jayega
+	int ans=0;
+	for(int mask=0; mask < (1<<(n/2));mask++){
+		int sum=0;
+		for(int j=0;j<(n/2);j++){
+			if((1<<j)&mask){
+				sum+=arr1[j];
+			}
+		}
+		sums_1[sum]++;
+	}
+	for(int mask=0; mask<(1<<(n-n/2));mask++){
+		int sum=0;
+		for(int j=0;j<(n-n/2);j++){
+			if((1<<j)&mask){
+				sum+=arr2[j];
+			}
+		}
+		if(sums_1.contains(x-sum)) ans+=sums_1[x-sum];
+	}
+	return ans;
+}
+signed main(){
+    ios_base::sync_with_stdio(0);
+    cin.tie(0);
+    cout.tie(0);
+    int n,x;
+	cin >> n >> x;
+	int arr1[n/2],arr2[n-n/2];
+	for(int i=0;i<n/2;i++){
+		cin >> arr1[i];
+	}
+	for(int i=0;i<n-n/2;i++){
+		cin >> arr2[i];
+	}
+	cout << func(arr1,arr2,n,x) << endl;
+    return 0;
+}

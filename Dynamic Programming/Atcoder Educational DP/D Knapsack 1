@@ -1,0 +1,37 @@
+#include<bits/stdc++.h>
+using namespace std;
+#define int long long
+int func(vector<int>&wt,vector<int>&val,int n,int W){
+	vector<int>prev(W+1,0);
+	vector<int>curr(W+1,0);
+	for(int i=0;i<n;i++){
+		for(int w=0;w<=W;w++){
+			if(w==0) curr[w]=0;
+			else if(i==0) {
+				if(w>=wt[i]) curr[w]=val[i];
+			}
+			else{
+				int pick=0;
+				if(w>=wt[i]) pick = val[i]+prev[w-wt[i]];
+				int npick = prev[w];
+				curr[w] = max(pick,npick);
+			}
+		}
+		prev=curr;
+	}
+	return prev[W];
+
+}
+signed main(){
+    ios_base::sync_with_stdio(0);
+    cin.tie(0);
+    cout.tie(0);
+    int n,maxwt;
+	cin >> n >> maxwt;
+	vector<int>weights(n),values(n);
+	for(int i=0;i<n;i++) {
+		cin >> weights[i] >> values[i];
+	}
+	cout << func(weights,values,n,maxwt) << endl;
+    return 0;
+}

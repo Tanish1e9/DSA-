@@ -1,0 +1,51 @@
+GFG link: https://www.geeksforgeeks.org/problems/knapsack-with-duplicate-items4201/1
+
+    int f(int i,int W,int wt[],int val[],vector<vector<int>>&memo){
+        if(W==0) return 0;
+        if(i<0) return 0;
+        if(memo[i][W]!=-1) return memo[i][W];
+        int pick=0;
+        if(W>=wt[i]) pick = val[i]+f(i,W-wt[i],wt,val,memo);
+        int npick = f(i-1,W,wt,val,memo);
+        return memo[i][W]=max(pick,npick);
+    }
+    int knapSack(int n, int W, int val[], int wt[]){
+    //   vector<vector<int>> memo(n,vector<int>(W+1,-1));
+    //   return f(n-1,W,wt,val,memo);
+    
+    //   vector<vector<int>> memo(n,vector<int>(W+1,0));
+    //   for(int i=0;i<n;i++){
+    //       for(int w=0;w<=W;w++){
+    //           if(w==0) memo[i][w]=0;
+    //           else if(i==0) {
+    //               if(w>=wt[i]) memo[i][w]=val[i] * (w/wt[i]);
+    //           }
+    //           else{
+    //                 int pick=0;
+    //                 if(w>=wt[i]) pick = val[i]+memo[i][w-wt[i]];
+    //                 int npick = memo[i-1][w];
+    //                 memo[i][w] = max(pick,npick);
+    //           }
+    //       }
+    //   }
+    //   return memo[n-1][W];
+      
+      vector<int>prev(W+1,0);
+      vector<int>curr(W+1,0);
+      for(int i=0;i<n;i++){
+          for(int w=0;w<=W;w++){
+              if(w==0) curr[w]=0;
+              else if(i==0) {
+                  if(w>=wt[i]) curr[w]=val[i]*(w/wt[i]);
+              }
+              else{
+                    int pick=0;
+                    if(w>=wt[i]) pick = val[i]+curr[w-wt[i]];
+                    int npick = prev[w];
+                    curr[w] = max(pick,npick);
+              }
+          }
+          prev=curr;
+      }
+      return prev[W];
+    }

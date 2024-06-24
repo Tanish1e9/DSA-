@@ -1,0 +1,44 @@
+LC link: https://leetcode.com/problems/longest-common-subsequence/
+
+    int f(int i,int j,string&s,string&t,auto&memo){
+        if(i<0 || j<0) return 0;
+        if(memo[i][j]!=-1) return memo[i][j];
+        if(s[i]==t[j]) return memo[i][j]=1+f(i-1,j-1,s,t,memo);
+        int pick = f(i-1,j,s,t,memo);
+        int npick = f(i,j-1,s,t,memo);
+        return memo[i][j] = max(pick,npick);
+    }
+    int longestCommonSubsequence(string s, string t) {
+        int m=s.size();
+        int n=t.size();
+        // vector<vector<int>> memo(m,vector<int>(n,-1));
+        // return f(m-1,n-1,s,t,memo);
+
+        // vector<vector<int>> memo(m+1,vector<int>(n+1,0));
+        // for(int i=1;i<=m;i++){
+        //     for(int j=1;j<=n;j++){
+        //         if(s[i-1]==t[j-1]) memo[i][j]=1+memo[i-1][j-1];
+        //         else{
+        //             int pick = memo[i-1][j];
+        //             int npick = memo[i][j-1];
+        //             memo[i][j] = max(pick,npick);
+        //         }
+        //     }
+        // }
+        // return memo[m][n];
+
+        vector<int>prev(n+1,0);
+        vector<int>curr(n+1,0);
+        for(int i=1;i<=m;i++){
+            for(int j=1;j<=n;j++){
+                if(s[i-1]==t[j-1]) curr[j]=1+prev[j-1];
+                else{
+                    int pick = prev[j];
+                    int npick = curr[j-1];
+                    curr[j] = max(pick,npick);
+                }
+            }
+            prev=curr;
+        }
+        return prev[n];
+    }

@@ -1,0 +1,36 @@
+Code Studio Link: https://www.naukri.com/code360/problems/partition-a-set-into-two-subsets-such-that-the-difference-of-subset-sums-is-minimum_842494
+
+// yaha pe sirf non negative values thi array me that's why this worked
+vector<int> perfectSum(vector<int>&arr, int n, int sum){
+    vector<int>prev(sum+1,0);
+    vector<int>curr(sum+1,0);
+    for(int i=0;i<n;i++){
+        for(int k=0;k<=sum;k++){
+            if(i==0){
+                if(k==0) curr[k]=(arr[0]==0)+1;
+                else curr[k] = (arr[0]==k);
+            }
+            else{
+                int pick=0;
+                if(k>=arr[i]) pick=prev[k-arr[i]];
+                int npick = prev[k];
+                curr[k]=(pick+npick);
+            }
+        }
+        prev=curr;
+    }
+    return prev;
+}
+int minSubsetSumDifference(vector<int>& arr, int n){
+    int tot = accumulate(arr.begin(),arr.end(),0);
+    vector<int> ans = perfectSum(arr, n, tot);
+    int mini=1e9;
+    for(int i=0;i<=ans.size()/2;i++){
+        if(ans[i]==0) continue;
+        mini = min(mini,abs(tot-2*i));
+    }
+    return mini;
+}
+
+LC link: https://leetcode.com/problems/partition-array-into-two-arrays-to-minimize-sum-difference/description/
+// But LC version me negative values bhi h so this won't work we have to generate all subsets using meet in the middle technique

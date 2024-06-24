@@ -1,0 +1,39 @@
+Atcoder Educational DP contest: E problem
+
+#include<bits/stdc++.h>
+using namespace std;
+#define int long long
+int func(vector<int>&wt,vector<int>&val,int n,int W,int tot_val){
+	vector<vector<int>> memo(n,vector<int>(tot_val+1,1e18));
+	for(int i=0;i<n;i++){
+		for(int v=0;v<=tot_val;v++){
+			if(v==0) memo[i][v]=0;
+			else if(i==0){
+				memo[i][val[i]] = wt[i];
+			}
+			else{
+				if(v>=val[i]) memo[i][v]=memo[i-1][v-val[i]]+wt[i];
+				memo[i][v]=min(memo[i][v],memo[i-1][v]);
+			}
+		}
+	}
+	for(int v=tot_val;v>=0;v--){
+		if(memo[n-1][v]<=W) return v;
+	}
+	return -1;
+}
+signed main(){
+    ios_base::sync_with_stdio(0);
+    cin.tie(0);
+    cout.tie(0);
+    int n,maxwt;
+	cin >> n >> maxwt;
+	vector<int>weights(n),values(n);
+	int tot_val=0;
+	for(int i=0;i<n;i++) {
+		cin >> weights[i] >> values[i];
+		tot_val+=values[i];
+	}
+	cout << func(weights,values,n,maxwt,tot_val) << endl;
+    return 0;
+}

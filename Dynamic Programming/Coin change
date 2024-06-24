@@ -1,0 +1,56 @@
+LC link: https://leetcode.com/problems/coin-change/
+
+    int f(int i,int amt,auto&coins,auto&memo){
+        if(amt==0) return 0;
+        if(i<0) return 1e9;
+        if(memo[i][amt]!=-1) return memo[i][amt];
+        int pick=1e9;
+        if(amt>=coins[i]) pick = 1+f(i,amt-coins[i],coins,memo);
+        int npick = f(i-1,amt,coins,memo);
+        return memo[i][amt]=min(pick,npick);
+    }
+    int coinChange(vector<int>& coins, int amount) {
+        int n=coins.size();
+        // vector<vector<int>> memo(n,vector<int>(amount+1,-1));
+        // int ans=f(n-1,amount,coins,memo);
+        // if(ans>=1e9) return -1;
+        // return ans;
+
+        // vector<vector<int>> memo(n,vector<int>(amount+1,1e9));
+        // for(int i=0;i<n;i++){
+        //     for(int amt=0;amt<=amount;amt++){
+        //         if(amt==0) memo[i][amt]=0;
+        //         else if(i==0){
+        //             if(amt%coins[i]==0) memo[0][amt] = amt/coins[i];
+        //         }
+        //         else{
+        //             int pick=1e9;
+        //             if(amt>=coins[i]) pick = 1+memo[i][amt-coins[i]];
+        //             int npick = memo[i-1][amt];
+        //             memo[i][amt]=min(pick,npick);
+        //         }
+        //     }
+        // }
+        // if(memo[n-1][amount]>=1e9) return -1;
+        // return memo[n-1][amount];
+
+        vector<int>prev(amount+1,1e9);
+        vector<int>curr(amount+1,1e9);
+        for(int i=0;i<n;i++){
+            for(int amt=0;amt<=amount;amt++){
+                if(amt==0) curr[amt]=0;
+                else if(i==0){
+                    if(amt%coins[i]==0) curr[amt] = amt/coins[i];
+                }
+                else{
+                    int pick=1e9;
+                    if(amt>=coins[i]) pick = 1+curr[amt-coins[i]];
+                    int npick = prev[amt];
+                    curr[amt]=min(pick,npick);
+                }
+            }
+            prev=curr;
+        }
+        if(prev[amount]>=1e9) return -1;
+        return prev[amount];
+    }

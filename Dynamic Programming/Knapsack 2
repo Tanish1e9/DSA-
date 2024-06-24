@@ -4,21 +4,39 @@ Atcoder Educational DP contest: E problem
 using namespace std;
 #define int long long
 int func(vector<int>&wt,vector<int>&val,int n,int W,int tot_val){
-	vector<vector<int>> memo(n,vector<int>(tot_val+1,1e18));
+	// vector<vector<int>> memo(n,vector<int>(tot_val+1,1e18));
+	// for(int i=0;i<n;i++){
+	//	for(int v=0;v<=tot_val;v++){
+	//		if(v==0) memo[i][v]=0;
+	//		else if(i==0){
+	//			memo[i][val[i]] = wt[i];
+	//		}
+	//		else{
+	//			if(v>=val[i]) memo[i][v]=memo[i-1][v-val[i]]+wt[i];
+	//			memo[i][v]=min(memo[i][v],memo[i-1][v]);
+	//		}
+	//	}
+	// }
+	// for(int v=tot_val;v>=0;v--){
+	//	if(memo[n-1][v]<=W) return v;
+	// }
+	// return -1;
+
+	vector<int>prev(tot_val+1,1e18);
+	vector<int>curr(tot_val+1,1e18);
 	for(int i=0;i<n;i++){
 		for(int v=0;v<=tot_val;v++){
-			if(v==0) memo[i][v]=0;
-			else if(i==0){
-				memo[i][val[i]] = wt[i];
-			}
+			if(v==0) curr[v]=0;
+			else if(i==0) curr[val[i]] = wt[i];
 			else{
-				if(v>=val[i]) memo[i][v]=memo[i-1][v-val[i]]+wt[i];
-				memo[i][v]=min(memo[i][v],memo[i-1][v]);
+				if(v>=val[i]) curr[v]=prev[v-val[i]]+wt[i];
+				curr[v]=min(curr[v],prev[v]);
 			}
 		}
+		prev=curr;
 	}
 	for(int v=tot_val;v>=0;v--){
-		if(memo[n-1][v]<=W) return v;
+		if(prev[v]<=W) return v;
 	}
 	return -1;
 }

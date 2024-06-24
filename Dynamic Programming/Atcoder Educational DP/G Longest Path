@@ -1,0 +1,34 @@
+#include<bits/stdc++.h>
+using namespace std;
+#define int long long
+int f(int i,auto&adj,auto& memo){
+    if(memo[i]!=-1) return memo[i];
+    int ans=0;
+    for(int el:adj[i]){
+        ans=max(ans,1+f(el,adj,memo));
+    }
+    return memo[i]=ans;
+}
+int longest_directed_edge(auto&adj,int n,int m){
+    vector<int> memo(n,-1);
+    int ans=0;
+    for(int i=0;i<n;i++){
+        ans=max(ans,f(i,adj,memo));
+    }
+    return ans;
+}
+signed main(){
+    ios_base::sync_with_stdio(0);
+    cin.tie(0);
+    cout.tie(0);
+    int n,m;
+    cin >> n >> m;
+    vector<vector<int>> adj(n);
+    for(int i=0;i<m;i++){
+        int a,b;
+        cin >> a >> b;
+        adj[a-1].push_back(b-1);
+    }
+    cout << longest_directed_edge(adj,n,m) << endl;
+    return 0;
+}

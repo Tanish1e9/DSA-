@@ -1,0 +1,29 @@
+GFG link: https://www.geeksforgeeks.org/problems/partitions-with-given-difference/1
+
+    int mod=1e9+7;
+    int perfectSum(vector<int>&arr, int n, int sum){
+        vector<int>prev(sum+1,0);
+        vector<int>curr(sum+1,0);
+        for(int i=0;i<n;i++){
+            for(int k=0;k<=sum;k++){
+                if(i==0){
+                    if(k==0) curr[k]=(arr[0]==0)+1;
+                    else curr[k] = (arr[0]==k);
+                }
+                else{
+                    int pick=0;
+                    if(k>=arr[i]) pick=prev[k-arr[i]]%mod;
+                    int npick = prev[k]%mod;
+                    curr[k]=(pick+npick)%mod;
+                }
+            }
+            prev=curr;
+        }
+        return prev[sum];
+    }
+    int countPartitions(int n, int d, vector<int>& arr) {
+        int target = accumulate(arr.begin(),arr.end(),0);
+        target += d;
+        if(target&1) return 0;
+        return perfectSum(arr,n,target/2);
+    }

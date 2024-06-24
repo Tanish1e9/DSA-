@@ -1,0 +1,51 @@
+GFG link: https://www.geeksforgeeks.org/problems/rod-cutting0840/1
+
+    int f(int i,int len,int price[],vector<vector<int>>&memo){
+        if(len==0) return 0;
+        if(i<0) return 0;
+        if(memo[i][len]!=-1) return memo[i][len];
+        int pick=0;
+        if(len >= i+1) pick = price[i]+f(i,len-i-1,price,memo);
+        int npick = f(i-1,len,price,memo);
+        return memo[i][len]=max(pick,npick);
+    }
+    int cutRod(int price[], int n) {
+        // vector<vector<int>> memo(n,vector<int>(n+1,-1));
+        // return f(n-1,n,price,memo);
+        
+        // vector<vector<int>> memo(n,vector<int>(n+1,0));
+        // for(int i=0;i<n;i++){
+        //     for(int len=0;len<=n;len++){
+        //         if(len==0) memo[i][len]=0;
+        //         else if(i==0){
+        //             memo[i][len] = len*price[i];
+        //         }
+        //         else{
+        //             int pick=0;
+        //             if(len >= i+1) pick = price[i]+memo[i][len-i-1];
+        //             int npick = memo[i-1][len];
+        //             memo[i][len]=max(pick,npick);
+        //         }
+        //     }
+        // }
+        // return memo[n-1][n];
+        
+        vector<int>prev(n+1,0);
+        vector<int>curr(n+1,0);
+        for(int i=0;i<n;i++){
+            for(int len=0;len<=n;len++){
+                if(len==0) curr[len]=0;
+                else if(i==0){
+                    curr[len] = len*price[i];
+                }
+                else{
+                    int pick=0;
+                    if(len >= i+1) pick = price[i]+curr[len-i-1];
+                    int npick = prev[len];
+                    curr[len]=max(pick,npick);
+                }
+            }
+            prev=curr;
+        }
+        return prev[n];
+    }

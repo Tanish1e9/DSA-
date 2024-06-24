@@ -34,3 +34,42 @@ int minSubsetSumDifference(vector<int>& arr, int n){
 
 LC link: https://leetcode.com/problems/partition-array-into-two-arrays-to-minimize-sum-difference/description/
 // But LC version me negative values bhi h so this won't work we have to generate all subsets using meet in the middle technique
+LC link: https://leetcode.com/problems/partition-array-into-two-arrays-to-minimize-sum-difference/
+
+// hmlog ko size k saath ek vector me saare possible sums store krne honge jisse unhi sums ko consider kra jaye jinke sizes ka sum n ho
+// because given h ki n sized subsets me hi partition krna h
+// fir we used 2 pointer simply to minimise difference we would like to be as close to tot/2 to wahi kr dia h
+    void find_sum(vector<int>&arr,auto &sums1,auto&sums2,int n){
+        for(int mask=0;mask<(1<<n);mask++){
+            int sum=0,sum2=0;
+            for(int j=0;j<n;j++){
+                if(mask & (1<<j)){
+                    sum+= arr[j];
+                    sum2+= arr[n+j];
+                }
+            }
+            int bits = __builtin_popcount(mask);
+            sums1[bits].push_back(sum);
+            sums2[bits].push_back(sum2);
+        }
+    }
+    int minimumDifference(vector<int>& nums) {
+        int n=nums.size()/2;
+        int tot=accumulate(nums.begin(),nums.end(),0);
+        vector<vector<int>> sums_1(n+1),sums_2(n+1);
+        find_sum(nums,sums_1,sums_2,n);
+        
+        int mini=1e9;
+        for(int i=0;i<=n;i++){
+            auto &vec = sums_2[n-i];
+            sort(vec.begin(),vec.end());
+            sort(sums_1[i].begin(),sums_1[i].end());
+            int j=0,k=vec.size()-1;
+            while(j<sums_1[i].size() && k>=0){
+                mini = min(mini,abs(2*(sums_1[i][j]+vec[k])-tot));
+                if(sums_1[i][j]+vec[k] < tot/2) j++;
+                else k--;
+            }
+        }
+        return mini;
+    }

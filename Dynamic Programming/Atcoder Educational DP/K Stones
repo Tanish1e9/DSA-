@@ -1,0 +1,28 @@
+#include<bits/stdc++.h>
+using namespace std;
+#define int long long
+void f(auto&arr,int k){
+	vector<int>dp(k+1,0);		// 0 for losing , 1 for winning
+	for(int i=1;i<=k;i++){
+		for(int j=0;j<arr.size() && arr[j]<=i;j++){
+			if(dp[i-arr[j]]==0){
+				dp[i]=1;
+				break;
+			}
+		}
+	}
+	if(dp[k]) cout << "First" << endl;
+	else cout << "Second" << endl;
+}
+signed main(){
+    ios_base::sync_with_stdio(0);
+    cin.tie(0);
+    cout.tie(0);
+	int n,k;
+	cin >> n >> k;
+	vector<int>arr(n);
+	for(int i=0;i<n;i++) cin >> arr[i];
+	sort(arr.begin(),arr.end());
+	f(arr,k);
+    return 0;
+}

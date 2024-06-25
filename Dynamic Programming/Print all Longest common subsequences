@@ -1,5 +1,18 @@
 GFG link: https://www.geeksforgeeks.org/problems/print-all-lcs-sequences3413/1
 
+	// dekh isme na pehle approach dimag me aata h ki jaise any one LCS print kr rhe the na usi me
+	// we will check ki left and up wale agar equal ho memo me to dono paths ko traverse kre through recursion
+	// aur jab s[i-1]=t[j-1] ho tab to ye equal character aayega hi end me
+	// par usse bhut repetitions banenge aur ye question me TLE de rha tha I tried to use a set<string>
+	// so krna ye h ki we will try to construct LCS letter by letter from the end 
+	// why end because hmlog memo[i][j] ko s[0...i-1],t[0....j-1] maane hue h
+	// so we will pick a character and find its rightmost position in both strings
+	// then jo bhi position mila suppose x and y so check memo[x+1][y+1] + temp.size() == lcs_len
+	// yaani ye character ko ye position pe leke can we form a LCS 
+	// if Yes then we are done for that character and just call the recurrence
+	// for eg dekh abc, abac me b ko dhundega to ab,ab substrings me max len to 2 milega which is not lcs ... to b ko
+	// leke aage jaake skip krne se behtar h call hi na kre that's why we check 
+
     void helper(int e1,int e2,string& temp,vector<vector<int>>&memo,int lcs_len,string&s,string&t){
 	        if(temp.size()==lcs_len){
 	            reverse(temp.begin(),temp.end());

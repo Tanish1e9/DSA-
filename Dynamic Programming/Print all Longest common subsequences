@@ -1,0 +1,48 @@
+GFG link: https://www.geeksforgeeks.org/problems/print-all-lcs-sequences3413/1
+
+    void helper(int e1,int e2,string& temp,vector<vector<int>>&memo,int lcs_len,string&s,string&t){
+	        if(temp.size()==lcs_len){
+	            reverse(temp.begin(),temp.end());
+	            ans.push_back(temp);
+	            reverse(temp.begin(),temp.end());
+	            return;
+	        }
+	        
+	        if(e1<0 || e2<0) return;
+	        for(char ch='a';ch<='z';ch++){
+	            bool done=false;
+	            for(int i=e1;i>=0;i--){
+	                if(s[i]!=ch) continue;
+	                for(int j=e2;j>=0;j--){
+	                    if(t[j]!=ch) continue;
+	                    if(temp.size() + memo[i+1][j+1] == lcs_len){
+	                        temp.push_back(ch);
+	                        helper(i-1,j-1,temp,memo,lcs_len,s,t);
+	                        temp.pop_back();
+	                        done=true;
+	                        break;
+	                    }
+	                }
+	                if(done) break;
+	            }
+	        }
+	    }
+		vector<string> all_longest_common_subsequences(string s, string t){
+		    int m=s.size();
+		    int n=t.size();
+		    vector<vector<int>> memo(m+1,vector<int>(n+1,0));
+            for(int i=1;i<=m;i++){
+                for(int j=1;j<=n;j++){
+                    if(s[i-1]==t[j-1]) memo[i][j]=1+memo[i-1][j-1];
+                    else{
+                        int pick = memo[i-1][j];
+                        int npick = memo[i][j-1];
+                        memo[i][j] = max(pick,npick);
+                    }
+                }
+            }
+            string temp;
+            helper(m-1,n-1,temp,memo,memo[m][n],s,t);
+            sort(ans.begin(),ans.end());
+            return ans;
+		}

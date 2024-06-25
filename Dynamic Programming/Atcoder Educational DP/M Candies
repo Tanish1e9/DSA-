@@ -1,0 +1,73 @@
+#include<bits/stdc++.h>
+using namespace std;
+#define int long long
+const int mod=1e9+7;
+int f(int i,int k,auto&arr,auto&memo){
+	if(k==0) return 1;
+	if(i<0) return 0;
+	int ans=0;
+	for(int j=0;j<=min(arr[i],k);j++){
+		ans = (ans + f(i-1,k-j,arr,memo))%mod;
+	}
+	return memo[i][k]=ans;
+}
+int func(auto&arr,int K){
+	int n=arr.size();
+	// vector<vector<int>> memo(n,vector<int>(K+1,-1));
+	// return f(n-1,K,arr,memo);
+
+    // isme na n*k*k ho ja rha h TC we will use prefix sums to optmise this
+	// vector<vector<int>> memo(n,vector<int>(K+1,0));
+	// for(int i=0;i<n;i++){
+	//	for(int k=0;k<=K;k++){
+	//		if(k==0) memo[i][k]=1;
+	//		else if(i==0){
+	//			if(arr[i]>=k) memo[i][k]=1;
+	//		}
+	//		else{
+	//			int ans=0;
+	//			for(int j=0;j<=min(arr[i],k);j++){
+	//				ans = (ans + memo[i-1][k-j])%mod;
+	//			}
+	//			memo[i][k]=ans;
+	// 		}
+	// 	}
+	// }
+	// return memo[n-1][K];
+
+    // simply bas jo normal k wala loop tha uske upar ek aur loop chala ke prefix sum array bana lie
+    // and then just use it aur ye i==0 k lie jroorat ni h banane ka to bas utna hi kaam kia h aur dekho simple hi tha
+    vector<int>prev(K+1,0);
+	for(int i=0;i<n;i++){
+		vector<int> pre_sum(K+1);
+		if(i>=1){
+			pre_sum[0] = prev[0];
+			for(int k=1;k<=K;k++){
+				pre_sum[k] = (pre_sum[k-1]+prev[k])%mod;
+			}
+		}
+		for(int k=0;k<=K;k++){
+			if(k==0) prev[k]=1;
+			else if(i==0){
+				if(arr[i]>=k) prev[k]=1;
+			}
+			else{
+				int ans = pre_sum[k];
+				if(k>arr[i]) ans = (ans - pre_sum[k-arr[i]-1] + mod)%mod;
+				prev[k] = ans;
+			}
+		}
+	}
+	return prev[K];    
+}
+signed main(){
+    ios_base::sync_with_stdio(0);
+    cin.tie(0);
+    cout.tie(0);
+	int n,k;
+	cin >> n >>k;
+	vector<int>arr(n);
+	for(int i=0;i<n;i++) cin >> arr[i];
+	cout << func(arr,k) << endl;
+    return 0;
+}

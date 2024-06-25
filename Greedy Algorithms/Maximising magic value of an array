@@ -1,0 +1,17 @@
+Code Studio link: https://www.naukri.com/code360/problems/maximizing-the-magic-value-of-an-array_7823153?leftPanelTabValue=PROBLEM
+
+// intuition yahi h na ki maan lo n unique elements h ekdum
+// to (n+1)/2 ans hoga because half half me divide krdenge inc aur dec k lie and odd length pe ek element common ho  jayega
+// now upon thinking we realise that freq uptill 2 matters usse jada is useless to islie
+
+int maximizeMagicValue(int n, vector<int> a) {
+    map<int,int> freq;
+    for(int i=0;i<n;i++){
+        freq[a[i]]++;
+    }
+    int el=0;
+    for(auto &it:freq){
+        el+= min(2,it.second);
+    }
+    return (el+1)/2;
+}

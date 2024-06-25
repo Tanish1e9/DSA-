@@ -1,0 +1,30 @@
+// yaad kr game theory me pots of gold kia tha ekdum waisa hi h
+
+#include<bits/stdc++.h>
+using namespace std;
+#define int long long
+int f(int i,int j,auto&arr,auto&memo){
+	if(i>j) return 0;
+	if(memo[i][j]!=-1) return memo[i][j];
+	int left = arr[i]+min(f(i+2,j,arr,memo),f(i+1,j-1,arr,memo));
+	int right = arr[j]+min(f(i,j-2,arr,memo),f(i+1,j-1,arr,memo));
+	return memo[i][j]=max(left,right);
+}
+int func(auto&arr){
+	int n=arr.size();
+	vector<vector<int>> memo(n,vector<int>(n,-1));
+	int x=f(0,n-1,arr,memo);
+	int y=min(f(0,n-2,arr,memo),f(1,n-1,arr,memo));
+	return x-y;
+}
+signed main(){
+    ios_base::sync_with_stdio(0);
+    cin.tie(0);
+    cout.tie(0);
+	int n;
+	cin >> n;
+	vector<int>arr(n);
+	for(int i=0;i<n;i++) cin >> arr[i];
+	cout << func(arr) << endl;
+    return 0;
+}

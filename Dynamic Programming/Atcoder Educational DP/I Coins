@@ -1,0 +1,37 @@
+// Target sum jaisa hi h ab isko tabulation space optimisation sab kr lena but basic idea dekh le yahi h
+
+#include<bits/stdc++.h>
+using namespace std;
+#define int long long
+double f(int i,int heads,auto&arr,auto&memo){
+	if(i==0){
+		if(heads>1) return 0;
+		if(heads==1) return arr[i];
+		return 1-arr[i];
+	}
+	if(memo[i][heads]!=-1) return memo[i][heads];
+	double pick = 0;
+	if(heads>0) pick = arr[i]*f(i-1,heads-1,arr,memo);
+	double npick = (1-arr[i])*f(i-1,heads,arr,memo);
+	return memo[i][heads]=pick+npick;
+}
+double func(auto&arr){
+	int n=arr.size();
+	vector<vector<double>> memo(n,vector<double>(n+1,-1));
+	double ans=0;
+	for(int sum=n/2+1;sum<=n;sum++){
+		ans+=f(n-1,sum,arr,memo);
+	}
+	return ans;
+}
+signed main(){
+    ios_base::sync_with_stdio(0);
+    cin.tie(0);
+    cout.tie(0);
+	int n;
+	cin >> n;
+	vector<double>arr(n);
+	for(int i=0;i<n;i++) cin >> arr[i];
+	cout << fixed << setprecision(9) << func(arr) << endl;
+    return 0;
+}

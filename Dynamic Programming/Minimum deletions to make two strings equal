@@ -1,0 +1,34 @@
+LC link: https://leetcode.com/problems/delete-operation-for-two-strings/
+
+    // yaha LCS wala concept to easily h but dekho direct recurrence bhi likh lie the
+    int f(int i,int j,string&s,string&t,auto&memo){
+        if(i<0 && j<0) return 0;
+        if(i<0) return j+1;
+        if(j<0) return i+1;
+        if(memo[i][j]!=-1) return memo[i][j];
+        if(s[i]!=t[j]){
+            return memo[i][j] = 1+min(f(i-1,j,s,t,memo),f(i,j-1,s,t,memo));
+        }
+        return memo[i][j] = f(i-1,j-1,s,t,memo);
+    }
+    int lcs(string &s,string &t){
+        int m=s.size();
+        int n=t.size();
+        vector<vector<int>> memo(m+1,vector<int>(n+1,0));
+        for(int i=1;i<=m;i++){
+            for(int j=1;j<=n;j++){
+                if(s[i-1]==t[j-1]){
+                    memo[i][j]=1+memo[i-1][j-1];
+                }
+                else memo[i][j] =max(memo[i][j-1],memo[i-1][j]);
+            }
+        }
+        return memo[m][n];
+    }
+    int minDistance(string word1, string word2) {
+        int m=word1.size();
+        int n=word2.size();
+        // vector<vector<int>> memo(m,vector<int>(n,-1));
+        // return f(m-1,n-1,word1,word2,memo);
+        return n+m-2*lcs(word1,word2);
+    }

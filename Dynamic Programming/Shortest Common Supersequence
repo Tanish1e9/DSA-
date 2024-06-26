@@ -1,0 +1,44 @@
+LC link: https://leetcode.com/problems/shortest-common-supersequence/
+
+    string shortestCommonSupersequence(string s, string t){
+        int m=s.size();
+        int n=t.size();
+        vector<vector<int>> memo(m+1,vector<int>(n+1,0));
+        for(int i=1;i<=m;i++){
+            for(int j=1;j<=n;j++){
+                if(s[i-1]==t[j-1]) memo[i][j]=1+memo[i-1][j-1];
+                else{
+                    int pick = memo[i-1][j];
+                    int npick = memo[i][j-1];
+                    memo[i][j] = max(pick,npick);
+                }
+            }
+        }
+        int row=m,col=n;
+        string ans;
+        while(row>0 && col>0){
+            if(s[row-1]==t[col-1]){
+                ans.push_back(s[row-1]);
+                row--;
+                col--;
+            }
+            else if(memo[row-1][col] > memo[row][col-1]){
+                ans.push_back(s[row-1]);
+                row--;
+            }
+            else{
+                ans.push_back(t[col-1]);
+                col--;
+            }
+        }
+        while(row>0){
+            ans.push_back(s[row-1]);
+            row--;
+        }
+        while(col>0){
+            ans.push_back(t[col-1]);
+            col--;
+        }
+        reverse(ans.begin(),ans.end());
+        return ans;
+    }

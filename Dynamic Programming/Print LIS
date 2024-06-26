@@ -1,0 +1,31 @@
+GFG link: https://www.geeksforgeeks.org/problems/printing-longest-increasing-subsequence/1
+
+    // yaha seq[i] denotes LIS length starting at arr[i]
+    // aur fir to backtrack kr rhe samajh aa hi rha h
+    // lexicographically smallest index waala LIS chahye islie dekho jitna shuru ka element le sake wo lia gya h har jagah
+    vector<int> longestIncreasingSubsequence(int n, vector<int>& arr) {
+        vector<int> seq(n,1);
+        vector<int> child(n);
+        for(int i=0;i<n;i++) child[i]=i;
+        
+        int max_ind=-1,maxi=0;
+        for(int i=n-1;i>=0;i--){
+            for(int j=i+1;j<n;j++){
+                if(arr[j]>arr[i] && seq[j]+1>seq[i]){
+                    seq[i]=seq[j]+1;
+                    child[i]=j;
+                }
+            }
+            if(seq[i]>=maxi){
+                maxi=seq[i];
+                max_ind=i;
+            }
+        }
+        vector<int>ans={arr[max_ind]};
+        int i=max_ind;
+        while(child[i]!=i){
+            ans.push_back(arr[child[i]]);
+            i=child[i];
+        }
+        return ans;
+    }

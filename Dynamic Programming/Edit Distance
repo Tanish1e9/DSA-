@@ -1,0 +1,52 @@
+LC link: https://leetcode.com/problems/edit-distance/
+
+    int f(int i,int j,string&s,string&t,auto&memo){
+        if(i<0 && j<0) return 0;
+        if(j<0) return i+1;
+        if(i<0) return j+1;
+        if(memo[i][j]!=-1) return memo[i][j];
+        if(s[i]==t[j]){
+            return memo[i][j]=f(i-1,j-1,s,t,memo);
+        }
+        return memo[i][j]= 1+min({f(i,j-1,s,t,memo),f(i-1,j,s,t,memo),f(i-1,j-1,s,t,memo)});
+    }
+    int minDistance(string word1, string word2) {
+        int m=word1.size();
+        int n=word2.size();
+        // vector<vector<int>> memo(m,vector<int>(n,-1));
+        // return f(m-1,n-1,word1,word2,memo);
+
+        // vector<vector<int>> memo(m+1,vector<int>(n+1,0));
+        // for(int j=0;j<=n;j++) memo[0][j]=j;
+        // for(int i=0;i<=m;i++) memo[i][0]=i;
+        // memo[0][0]=0;
+        // for(int i=1;i<=m;i++){
+        //     for(int j=1;j<=n;j++){
+        //         if(word1[i-1]==word2[j-1]){
+        //             memo[i][j] = memo[i-1][j-1];
+        //         }
+        //         else{
+        //             memo[i][j] = 1+min({memo[i-1][j],memo[i][j-1],memo[i-1][j-1]});
+        //         }
+        //     }
+        // }
+        // return memo[m][n];
+
+        vector<int>prev(n+1,0);
+        vector<int>curr(n+1,0);
+        for(int j=0;j<=n;j++) prev[j]=j;
+        prev[0]=0;
+        for(int i=1;i<=m;i++){
+            curr[0]=i;
+            for(int j=1;j<=n;j++){
+                if(word1[i-1]==word2[j-1]){
+                    curr[j] = prev[j-1];
+                }
+                else{
+                    curr[j] = 1+min({prev[j],curr[j-1],prev[j-1]});
+                }
+            }
+            prev=curr;
+        }
+        return prev[n];
+    }

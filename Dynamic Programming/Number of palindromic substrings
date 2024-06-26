@@ -1,0 +1,22 @@
+LC link: https://leetcode.com/problems/palindromic-substrings/
+
+int countSubstrings(string s) {
+        int n=s.size();
+        vector<vector<bool>> memo(n,vector<bool>(n,0));
+        int ans=0;
+        for(int gap=0;gap<n;gap++){
+            for(int i=0;i<n-gap;i++){
+                if(gap==0) memo[i][i+gap]=1;
+                else if(gap==1){
+                    memo[i][i+gap]=(s[i+gap]==s[i]);
+                }
+                else{
+                    if(s[i+gap]==s[i]){
+                        memo[i][i+gap] = memo[i+1][i+gap-1];
+                    }
+                }
+                ans+=memo[i][i+gap];
+            }
+        }
+        return ans;
+    }

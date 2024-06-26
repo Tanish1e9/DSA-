@@ -4,6 +4,7 @@ int countSubstrings(string s) {
         int n=s.size();
         vector<vector<bool>> memo(n,vector<bool>(n,0));
         int ans=0;
+        // yaha limits acche se dekh lo soch samajh ke i ka range rakha h
         for(int gap=0;gap<n;gap++){
             for(int i=0;i<n-gap;i++){
                 if(gap==0) memo[i][i+gap]=1;

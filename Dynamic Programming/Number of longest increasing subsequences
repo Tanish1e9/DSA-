@@ -1,0 +1,28 @@
+LC link: https://leetcode.com/problems/number-of-longest-increasing-subsequence/
+
+    // yaha same hi efficient tabulation wala approach use kie h aur dekh num ko initially 1 se initialise krna bhut jroori  h
+    // because jaha se bhi inherit krne ka shuruwat hoga waha 1 hona chahye na atleast inherit krne ko
+    int findNumberOfLIS(vector<int>& arr) {
+        int n=arr.size();
+        vector<int>seq(n,1);
+        vector<int>num(n,1);
+
+        int maxi=0;
+        for(int i=n-1;i>=0;i--){
+            for(int j=i+1;j<n;j++){
+                if(arr[j] > arr[i]){
+                    if(1+seq[j]>seq[i]){
+                        seq[i]=1+seq[j];
+                        num[i]=num[j];
+                    }
+                    else if(1+seq[j]==seq[i]) num[i]+=num[j];
+                }
+            }
+            maxi = max(maxi,seq[i]);
+        }
+        int ans=0;
+        for(int i=0;i<n;i++){
+            if(seq[i]==maxi) ans+=num[i];
+        }
+        return ans;
+    }

@@ -1,0 +1,51 @@
+LC link: https://leetcode.com/problems/palindrome-partitioning-ii/
+
+    // sirf check ko optimise kr dene se time kaafi reduce ho ja rha
+    vector<vector<int>> check_memo;
+    bool check(string&s,int st,int e){
+        int n=s.size();
+        if(check_memo[st][e]!=-1) return check_memo[st][e];
+        for(int gap=0;gap<n;gap++){
+            for(int i=0;i<n-gap;i++){
+                if(gap==0) check_memo[i][i+gap]=1;
+                else if(gap==1) check_memo[i][i+gap] = (s[i]==s[i+gap]);
+                else{
+                    if(s[i]==s[i+gap]){
+                        check_memo[i][i+gap] = check_memo[i+1][i+gap-1];
+                    }
+                    else check_memo[i][i+gap]=0;
+                }
+            }
+        }
+        return check_memo[st][e];
+    }
+    int f(int i,string&s,auto&memo){
+        if(i==s.size()) return 0;
+        if(memo[i]!=-1) return memo[i];
+        
+        int ans=1e9;
+        for(int j=i;j<s.size();j++){
+            if(check(s,i,j)){
+                ans = min(ans,1+f(j+1,s,memo));
+            }
+        }
+        return memo[i]=ans;
+    }
+    int minCut(string s) {
+        int n=s.size();
+        check_memo=vector<vector<int>>(n,vector<int>(n,-1));
+        // vector<int>memo(n,-1);
+        // return f(0,s,memo)-1;
+
+        vector<int>memo(n+1,0);
+        for(int i=n-1;i>=0;i--){
+            int ans=1e9;
+            for(int j=i;j<n;j++){
+                if(check(s,i,j)){
+                    ans = min(ans,1+memo[j+1]);
+                }
+            }
+            memo[i]=ans;
+        }
+        return memo[0]-1;
+    }

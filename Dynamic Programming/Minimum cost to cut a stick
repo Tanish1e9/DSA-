@@ -1,0 +1,30 @@
+LC link: https://leetcode.com/problems/minimum-cost-to-cut-a-stick/description/
+
+    int f(int i,int j,auto&cuts,auto&memo){
+        if(i+1 == j) return 0;
+        if(memo[i][j]!=-1) return memo[i][j];
+        int ans=1e9;
+        for(int k=i+1;k<j;k++){
+            ans=min(ans,cuts[j]-cuts[i]+f(i,k,cuts,memo)+f(k,j,cuts,memo));
+        }
+        return memo[i][j] = ans;
+    }
+    int minCost(int n, vector<int>& cuts) {
+        cuts.insert(cuts.begin(),0);
+        cuts.push_back(n);
+        sort(cuts.begin(),cuts.end());
+        int k=cuts.size();
+        // vector<vector<int>> memo(k,vector<int>(k,-1));
+        // return f(0,k-1,cuts,memo);
+
+        vector<vector<int>> memo(k,vector<int>(k,0));
+        for(int i=k-1;i>=0;i--){
+            for(int j=i+2;j<k;j++){
+                int ans=1e9;
+                for(int k=i+1;k<j;k++){
+                    ans=min(ans,cuts[j]-cuts[i]+memo[i][k]+memo[k][j]);
+                }
+                memo[i][j] = ans;
+            }
+        }
+        return memo[0][k-1];

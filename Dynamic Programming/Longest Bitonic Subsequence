@@ -1,0 +1,26 @@
+GFG link: https://www.geeksforgeeks.org/problems/longest-bitonic-subsequence0824/1
+
+    int LongestBitonicSequence(int n, vector<int> &arr) {
+        vector<int>inc(n,1),dec(n,1);
+        // inc ko end k hisab se and dec ko start k hisab se banayenge
+        // convenient hoga
+        for(int i=n-1;i>=0;i--){
+            for(int j=i+1;j<n;j++){
+                if(arr[j] < arr[i] && dec[j]+1 > dec[i]){
+                    dec[i] = dec[j]+1;
+                }
+            }
+        }
+        for(int i=0;i<n;i++){
+            for(int j=0;j<i;j++){
+                if(arr[j] < arr[i] && 1+inc[j] > inc[i]){
+                    inc[i] = inc[j]+1;
+                }
+            }
+        }
+        int maxi=0;
+        for(int i=0;i<n;i++){
+            if(inc[i]>1  && dec[i]>1)maxi = max(maxi,inc[i]+dec[i]-1);
+        }
+        return maxi;
+    }

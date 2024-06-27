@@ -1,0 +1,40 @@
+Code Studio Link: https://www.naukri.com/code360/problems/problem-name-boolean-evaluation_1214650
+
+#include <bits/stdc++.h>
+const int mod = 1e9+7;
+typedef pair<long,long> p;
+// first true then false
+p f(int i,int j,string&arr,vector<vector<p>>&memo){
+    if(i==j){
+        if(arr[i]=='T') return {1,0};
+        return {0,1};
+    }
+    if(memo[i][j].first!=-1) return memo[i][j];
+    p ans = {0,0};
+    for(int k=i+1;k<j;k+=2){
+        if(arr[k]=='|'){
+            ans.first = (ans.first + f(i,k-1,arr,memo).first*f(k+1,j,arr,memo).first)%mod;
+            ans.first = (ans.first + f(i,k-1,arr,memo).first*f(k+1,j,arr,memo).second)%mod;
+            ans.first = (ans.first + f(i,k-1,arr,memo).second*f(k+1,j,arr,memo).first)%mod;
+            ans.second = (ans.second+ f(i,k-1,arr,memo).second*f(k+1,j,arr,memo).second)%mod;
+        }
+        else if(arr[k]=='&'){
+            ans.second = (ans.second + f(i,k-1,arr,memo).first*f(k+1,j,arr,memo).second)%mod;
+            ans.second = (ans.second + f(i,k-1,arr,memo).second*f(k+1,j,arr,memo).second)%mod;
+            ans.second = (ans.second + f(i,k-1,arr,memo).second*f(k+1,j,arr,memo).first)%mod;
+            ans.first = (ans.first + f(i,k-1,arr,memo).first*f(k+1,j,arr,memo).first)%mod;
+        }
+        else{
+            ans.first = (ans.first + f(i,k-1,arr,memo).first*f(k+1,j,arr,memo).second)%mod;
+            ans.first = (ans.first + f(i,k-1,arr,memo).second*f(k+1,j,arr,memo).first)%mod;
+            ans.second = (ans.second + f(i,k-1,arr,memo).first*f(k+1,j,arr,memo).first)%mod;
+            ans.second = (ans.second + f(i,k-1,arr,memo).second*f(k+1,j,arr,memo).second)%mod;
+        }
+    }
+    return memo[i][j]=ans;
+}
+int evaluateExp(string& arr) {
+    int n=arr.size();
+    vector<vector<p>> memo(n,vector<p>(n,{-1,-1}));
+    return f(0,n-1,arr,memo).first;
+}

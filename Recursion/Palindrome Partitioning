@@ -1,4 +1,4 @@
-LC link: https://leetcode.com/problems/palindrome-partitioning/submissions/1301962853/
+LC link: https://leetcode.com/problems/palindrome-partitioning/description/
 
     vector<vector<string>> ans;
     bool check(string&s){

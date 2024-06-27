@@ -13,6 +13,17 @@ LC link: https://leetcode.com/problems/partition-array-for-maximum-sum/
     }
     int maxSumAfterPartitioning(vector<int>& arr, int k) {
         int n=arr.size();
-        vector<int>memo(n,-1);
-        return f(0,k,arr,memo);
+        // vector<int>memo(n,-1);
+        // return f(0,k,arr,memo);
+
+        vector<int>memo(n+1,0);
+        for(int i=n-1;i>=0;i--){
+            int maxi=0,ans=0;
+            for(int j=i;j<min(n,i+k);j++){
+                maxi = max(maxi,arr[j]);
+                ans = max(ans,(j-i+1)*maxi + memo[j+1]);
+            }
+            memo[i]=ans;
+        }
+        return memo[0];
     }

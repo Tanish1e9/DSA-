@@ -1,0 +1,50 @@
+CSES link: https://cses.fi/problemset/task/1744
+
+// simply har partition try krna h greedy approach ni kaam krega
+// bas baaki simple hi question h
+
+#include<bits/stdc++.h>
+using namespace std;
+#define int long long
+const int mod=1e9+7;
+int func(int a,int b,auto&memo){
+    if(a==b) return 0;
+    if(memo[a][b]!=-1) return memo[a][b];
+
+    int ans=1e18;
+    for(int j=1;j<=a/2;j++){
+        ans = min(ans,1+func(j,b,memo)+func(a-j,b,memo));
+    }
+    for(int j=1;j<=b/2;j++){
+        ans = min(ans,1+func(a,j,memo)+func(a,b-j,memo));
+    }
+    return memo[a][b] = ans;
+}
+signed main(){
+    ios_base::sync_with_stdio(0);
+    cin.tie(0);
+    cout.tie(0);
+    int n,m;
+    cin >> n >> m;
+    // vector<vector<int>> memo(n+1,vector<int>(m+1,-1));
+    // cout << func(n,m,memo) << endl;
+
+    vector<vector<int>> memo(n+1,vector<int>(m+1,0));
+    for(int i=1;i<=n;i++){
+        for(int j=1;j<=m;j++){
+            if(i==j) memo[i][j]=0;
+            else{
+                int ans=1e18;
+                for(int k=1;k<=i/2;k++){
+                    ans = min(ans,1+memo[k][j]+memo[i-k][j]);
+                }
+                for(int k=1;k<=j/2;k++){
+                    ans = min(ans,1+memo[i][k]+memo[i][j-k]);
+                }
+                memo[i][j] = ans;
+            }
+        }
+    }
+    cout << memo[n][m]<< endl;
+    return 0;
+}

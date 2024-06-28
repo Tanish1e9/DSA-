@@ -11,10 +11,10 @@ using namespace std;
 #define int long long
 class seg_tree{
   vector<int>lazy,seg;
-	public:
+public:
 	seg_tree(int n){
-        lazy=vector<int>(4*n+1,0);
-        seg=vector<int>(4*n+1,0);
+		lazy=vector<int>(4*n+1,0);
+		seg=vector<int>(4*n+1,0);
 	}
 	int query(int l,int r,int ind,int low,int high){
         int mid = (low+high)/2;
@@ -32,7 +32,7 @@ class seg_tree{
 		int right = query(l,r,2*ind+2,mid+1,high);
 		return left+right;
 	}
-  void range_update(int ind,int low,int high,int a,int b,int val){
+	void range_update(int ind,int low,int high,int a,int b,int val){
         int mid = (low+high)/2;
         if(lazy[ind]!=0){
             seg[ind] += lazy[ind];

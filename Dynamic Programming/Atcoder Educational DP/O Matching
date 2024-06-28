@@ -16,7 +16,6 @@ int f(int i,auto&arr,int vis,auto&memo){
             ans = (ans+f(i-1,arr,vis|(1<<j),memo))%mod;
         }
     }
-    cout << ans << endl;
     return memo[vis]=ans;
 }
 int func(auto&arr,int n){

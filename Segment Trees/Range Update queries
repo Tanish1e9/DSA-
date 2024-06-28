@@ -1,0 +1,83 @@
+CSES link: https://cses.fi/problemset/task/1651
+
+// isme na lazy propagate islie krte h ki maan lo baar baar full length updates ho gye to agar lazy na kre to baar baar n nodes visit krna pad jayega
+// seg[ind] just denotes ki kitna change h uss node me to agar partial overlap hua h
+// to children se to koi affect ni hona h because like uss range k saare nodes me wo update jaana hi nhi h
+// agar sum ya minimum hota seg me to jroor children se affect kr jata
+// bas itna sa hi concept h query aur range_update me pehle lazy kr lo uske baad jo kaam h wo kro as usual
+
+#include<bits/stdc++.h>
+using namespace std;
+#define int long long
+class seg_tree{
+  vector<int>lazy,seg;
+	public:
+	seg_tree(int n){
+        lazy=vector<int>(4*n+1,0);
+        seg=vector<int>(4*n+1,0);
+	}
+	int query(int l,int r,int ind,int low,int high){
+        int mid = (low+high)/2;
+        if(lazy[ind]!=0){
+            seg[ind] += lazy[ind];
+            if(low!=high){
+                lazy[2*ind+1]+=lazy[ind];
+                lazy[2*ind+2]+=lazy[ind];
+            }
+            lazy[ind]=0;
+        }
+		if(r<low || l>high) return 0;
+		if(l<=low && high<=r) return seg[ind];
+		int left = query(l,r,2*ind+1,low,mid);
+		int right = query(l,r,2*ind+2,mid+1,high);
+		return left+right;
+	}
+  void range_update(int ind,int low,int high,int a,int b,int val){
+        int mid = (low+high)/2;
+        if(lazy[ind]!=0){
+            seg[ind] += lazy[ind];
+            if(low!=high){
+                lazy[2*ind+1]+=lazy[ind];
+                lazy[2*ind+2]+=lazy[ind];
+            }
+            lazy[ind]=0;
+        }
+
+        if(a>high || b<low) return;
+        if(a<=low && high<=b){
+            seg[ind] += val;
+            if(low!=high){
+                lazy[2*ind+1]+=val;
+                lazy[2*ind+2]+=val;
+            }   
+            return;
+        }
+        range_update(2*ind+1,low,mid,a,b,val);
+        range_update(2*ind+2,mid+1,high,a,b,val);
+    }
+};
+signed main(){
+    ios_base::sync_with_stdio(0);
+    cout.tie(0);
+    cin.tie(0);
+    int n,q;
+    cin >> n >>q;
+    vector<int>arr(n);
+    for(int i=0;i<n;i++) cin >> arr[i];
+    seg_tree s(n);
+    while(q--){
+        int type;
+        cin >> type;
+        if(type==2){
+            int k;
+            cin >> k;
+            cout << arr[k-1]+s.query(k-1,k-1,0,0,n-1) << endl;
+        }
+        else{
+            int a,b,val;
+            cin >> a >> b >> val;
+            s.range_update(0,0,n-1,a-1,b-1,val);
+        }
+    }
+    return 0;
+}

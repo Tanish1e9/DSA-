@@ -1,0 +1,51 @@
+#include<bits/stdc++.h>
+using namespace std;
+#define int long long
+const int mod = 1e9+7;
+int f(int node,int par,auto&adj,auto&col,auto&memo){
+    // kisi bhi node ka parent to unique hi hoga na to wo changing parameter nhi h
+    // uska colour hi decide krega ki kitna possible ans hoga
+    // aur base condition ka bhi jroorat ni h apne aap hi leaf nodes pe jaake ruk jayega 
+    // recursion calls hi ni honge because sirf parent hi adjacent hoga
+    if(memo[node][col[par]]!=-1) return memo[node][col[par]];
+    int pick=0;
+    if(col[par]==0){
+        pick=1;
+        col[node]=1;
+        for(auto el:adj[node]){
+            if(el==par) continue;
+            pick=(pick*f(el,node,adj,col,memo))%mod;
+        }
+    }
+    int npick=1;
+    col[node]=0;
+    for(auto el:adj[node]){
+        if(el==par) continue;
+        npick=(npick*f(el,node,adj,col,memo))%mod;
+    }
+    return memo[node][col[par]] = (pick+npick)%mod;
+}
+int func(int n,auto&adj){
+    // 0 for white 
+    // 1 for black
+    vector<int>colours(n+1,-1);
+    colours[n]=0;
+    vector<vector<int>> memo(n,vector<int>(2,-1));
+    return f(0,n,adj,colours,memo);
+}
+signed main(){
+    ios_base::sync_with_stdio(0);
+    cout.tie(0);
+    cin.tie(0);
+    int n;
+    cin >> n;
+    vector<vector<int>> adj(n);
+    for(int i=0;i<n-1;i++){
+        int a,b;
+        cin >> a >> b;
+        adj[a-1].push_back(b-1);
+        adj[b-1].push_back(a-1);
+    }
+    cout << func(n,adj) << endl;
+    return 0;
+}

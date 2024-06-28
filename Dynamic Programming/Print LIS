@@ -29,3 +29,35 @@ GFG link: https://www.geeksforgeeks.org/problems/printing-longest-increasing-sub
         }
         return ans;
     }
+
+// Ye rha O(nlogn) me printing
+// basically ek inserted_at_length har ek element k lie rakh lo fir increasing length k order me print kr skte wo ek LIS hoga
+// index wise lexicographically smallest k lie thoda mehnat kie h like map bana lie aur fir end se chalte ja rhe h
+// ab jab bhi element daal sake that is uska next index allow kre to daal dena h because we are choosing lower index elements
+// aur ye jo lower bound waale ka intuition h na ye yahi h ki at a given length sabse minimum se minimum value rakha jaye taaki there is more room for expansion
+// aur ye yaad rakhna ki seq is not the LIS rather it is the smallest values for every possible length yaani there will be some inc subsequence
+// of the length ending with that value which is in seq
+    vector<int> longestIncreasingSubsequence(int n, vector<int>& arr) {
+        vector<int>seq;
+        map<int,int> mpp;
+        int maxi = 0;
+        for(int i=0;i<n;i++){
+            auto lb = lower_bound(seq.begin(),seq.end(),arr[i]);
+            if(lb==seq.end()) {
+                seq.push_back(arr[i]);
+                mpp[i] = seq.size();
+            }
+            else {
+                *lb=arr[i];
+                mpp[i] = lb-seq.begin()+1;
+            }
+            maxi = max(maxi,(int)seq.size());
+        }
+        vector<int>ans(maxi,-1);
+        for(int i=n-1;i>=0;i--){
+            if(mpp[i]==maxi || ans[mpp[i]] > arr[i]){
+                ans[mpp[i]-1]=arr[i];
+            }
+        }
+        return ans;
+    }

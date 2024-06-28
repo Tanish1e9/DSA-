@@ -1,0 +1,81 @@
+Atcoder Educational DP contest: Q problem
+
+// Dekh isme normal LIS me jaise tabulation krte h na O(N^2) me wo to kr hi skte h aur wo simple bhi h
+// But yaha ye trick laga h simple sa ki observe kro ki height is bounded [1,n] to bas height ko as index leke segment tree bana dia
+// values beauty ki jayengi initially sab zero h
+// aur left to right daalte ja rhe beauties ek range me maximum chahye na ki kiske piche iss flower ko attach kre yaha se segment tree ka intuition aya
+
+#include<bits/stdc++.h>
+using namespace std;
+#define int long long
+class seg_tree{
+	vector<int>seg;
+	public:
+	seg_tree(int n){
+		seg=vector<int>(4*n,0);
+	}
+	seg_tree(vector<int>&arr){
+		int n=arr.size();
+		seg = vector<int>(4*n,-1e9);
+		build(arr,0,0,n-1);
+	}
+	void build(auto&arr,int ind,int low,int high){
+		if(low==high){
+			seg[ind] = arr[low];
+			return;
+		}
+		int mid = low+(high-low)/2;
+		build(arr,2*ind+1,low,mid);
+		build(arr,2*ind+2,mid+1,high);
+		seg[ind] = max(seg[2*ind+1],seg[2*ind+2]);
+	}
+	int query(int l,int r,int ind,int low,int high){
+		if(r<low || l>high) return -1e9;
+		if(l<=low && high<=r) return seg[ind];
+		int mid = low + (high-low)/2;
+		int left = query(l,r,2*ind+1,low,mid);
+		int right = query(l,r,2*ind+2,mid+1,high);
+		return max(left,right);
+	}
+	void update(int tobe,int upd,int ind,int low,int high){
+		if(low==high && low==tobe){
+			seg[ind] = upd;
+			return;
+		}
+		int mid = low + (high-low)/2;
+		if(tobe<=mid) update(tobe,upd,2*ind+1,low,mid);
+		else update(tobe,upd,2*ind+2,mid+1,high);
+		seg[ind] = max(seg[2*ind+1],seg[2*ind+2]);
+	}
+};
+int func(int n,auto&height,auto&beauty){
+	seg_tree s(n);
+	int ans=0;
+	for(int i=0;i<n;i++){
+		// dekh since all heights are distinct to curr height to 0 hi hoga hmesha
+		// to include krne se koi dikkat nhi h
+		// but agar exclude hi kre to ek jagah dikkat aayega bas 
+		// ki like height maan le 1 rha to (0,-1) k lie call ho jayega
+		// jo ki gadbada dega
+		int q = s.query(0,height[i]-1,0,0,n-1);
+		ans = max(ans,q+beauty[i]);
+		s.update(height[i]-1,q+beauty[i],0,0,n-1);
+	}
+	return ans;
+}
+signed main(){
+	ios_base::sync_with_stdio(0);
+	cin.tie(0);
+	cout.tie(0);
+	int n;
+	cin >> n;
+	vector<int>height(n),beauty(n);
+	for(int i=0;i<n;i++){
+		cin >> height[i];
+	}
+	for(int i=0;i<n;i++){
+		cin >> beauty[i];
+	}
+	cout << func(n,height,beauty) << endl;
+	return 0;
+}	

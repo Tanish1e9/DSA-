@@ -7,6 +7,9 @@ int f(int node,int par,auto&adj,auto&col,auto&memo){
     // uska colour hi decide krega ki kitna possible ans hoga
     // aur base condition ka bhi jroorat ni h apne aap hi leaf nodes pe jaake ruk jayega 
     // recursion calls hi ni honge because sirf parent hi adjacent hoga
+    // also yaha pe like ek parent k jitne bhi children wo saare independent h na islie multiply honge
+    // and jab parent colour change krega tab add
+
     if(memo[node][col[par]]!=-1) return memo[node][col[par]];
     int pick=0;
     if(col[par]==0){

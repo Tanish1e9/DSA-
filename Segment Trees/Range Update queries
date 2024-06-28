@@ -17,15 +17,15 @@ class seg_tree{
 		seg=vector<int>(4*n+1,0);
 	}
 	int query(int l,int r,int ind,int low,int high){
-        int mid = (low+high)/2;
-        if(lazy[ind]!=0){
-            seg[ind] += lazy[ind];
-            if(low!=high){
-                lazy[2*ind+1]+=lazy[ind];
-                lazy[2*ind+2]+=lazy[ind];
-            }
-            lazy[ind]=0;
-        }
+	        int mid = (low+high)/2;
+	        if(lazy[ind]!=0){
+	            seg[ind] += lazy[ind];
+	            if(low!=high){
+	                lazy[2*ind+1]+=lazy[ind];
+	                lazy[2*ind+2]+=lazy[ind];
+	            }
+	            lazy[ind]=0;
+	        }
 		if(r<low || l>high) return 0;
 		if(l<=low && high<=r) return seg[ind];
 		int left = query(l,r,2*ind+1,low,mid);
@@ -33,28 +33,28 @@ class seg_tree{
 		return left+right;
 	}
 	void range_update(int ind,int low,int high,int a,int b,int val){
-        int mid = (low+high)/2;
-        if(lazy[ind]!=0){
-            seg[ind] += lazy[ind];
-            if(low!=high){
-                lazy[2*ind+1]+=lazy[ind];
-                lazy[2*ind+2]+=lazy[ind];
-            }
-            lazy[ind]=0;
-        }
+	        int mid = (low+high)/2;
+	        if(lazy[ind]!=0){
+	            seg[ind] += lazy[ind];
+	            if(low!=high){
+	                lazy[2*ind+1]+=lazy[ind];
+	                lazy[2*ind+2]+=lazy[ind];
+	            }
+	            lazy[ind]=0;
+	        }
 
-        if(a>high || b<low) return;
-        if(a<=low && high<=b){
-            seg[ind] += val;
-            if(low!=high){
-                lazy[2*ind+1]+=val;
-                lazy[2*ind+2]+=val;
-            }   
-            return;
-        }
-        range_update(2*ind+1,low,mid,a,b,val);
-        range_update(2*ind+2,mid+1,high,a,b,val);
-    }
+	        if(a>high || b<low) return;
+	        if(a<=low && high<=b){
+	            seg[ind] += val;
+	            if(low!=high){
+	                lazy[2*ind+1]+=val;
+	                lazy[2*ind+2]+=val;
+	            }   
+	            return;
+	        }
+	        range_update(2*ind+1,low,mid,a,b,val);
+	        range_update(2*ind+2,mid+1,high,a,b,val);
+	}
 };
 signed main(){
     ios_base::sync_with_stdio(0);

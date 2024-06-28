@@ -13,6 +13,8 @@ CSES link: https://cses.fi/problemset/task/1653
 // to bitmasking lagayenge base case dp[0]={1,0} likh dia h
 // ab soch koi bhi subset h na like mask h
 // to usme koi bhi set bit ko off kr de to wo chota hi hoga na mask se iska mtlb pehle compute ho chuka hoga islie simply ^ krke chalna
+// ab complexity n*2^n ho jaati h jo ki accepted h 
+
 
 #include<bits/stdc++.h>
 using namespace std;

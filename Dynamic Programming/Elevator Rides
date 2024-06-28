@@ -1,0 +1,50 @@
+CSES link: https://cses.fi/problemset/task/1653
+
+// intuition ye h na ki dekh imagine kr saare permutations likh lie and then partition kr rhe h jaise front partition tha na waisa
+// to minimum jo ans aa jayega
+// but complexity to n*n! ho jayega
+// to soch ke dekh for eg arr is [4,6,8,1] and maan le un permuations ko abhi dekh rhe jinke last me 1 ho
+// to [4,6,8] ke saare permutations le lo and check kro 1 k sath 
+// ab soch 4,6,8 ka permuation lene se aur fir 1 add krne se ... number of rides ya to utni hi hongi jitni 4,6,8 me lagi ya ek badh jayega
+// but kiss basis pe? ki last ride of some permutation of [4,6,8] usme kitna weight tha because agar 1 ko usi me include kr skte to kr denge and rides wont increase
+// but agar nahi to rides increase hongi
+// to bas yaha se intuition aata h ki har subset ka ek optimal answer hoga jisme first priority hogi rides ko minimise krna and 2nd priority hogi last ride k weight ko
+// minimise krna
+// to bitmasking lagayenge base case dp[0]={1,0} likh dia h
+// ab soch koi bhi subset h na like mask h
+// to usme koi bhi set bit ko off kr de to wo chota hi hoga na mask se iska mtlb pehle compute ho chuka hoga islie simply ^ krke chalna
+
+#include<bits/stdc++.h>
+using namespace std;
+#define int long long
+int func(auto&arr,int n,int x){
+    vector<pair<int,int>> dp((1<<n),{1e18,1e18});
+    dp[0]={1,0};
+    for(int mask=1;mask<(1<<n);mask++){
+        for(int i=0;i<n;i++){
+            if((1<<i) & mask){
+                pair<int,int> tobe = dp[mask^(1<<i)];
+                if(tobe.second + arr[i]<=x) tobe.second+=arr[i];
+                else{
+                    tobe.first++;
+                    tobe.second = arr[i];
+                }
+                dp[mask] = min(dp[mask],tobe);
+            }
+        }
+    }
+    return dp[((1<<n) - 1)].first;
+}
+signed main(){
+    ios_base::sync_with_stdio(0);
+    cout.tie(0);
+    cin.tie(0);
+    int n,x;
+    cin >> n >> x;
+    vector<int>arr(n);
+    for(int i=0;i<n;i++){
+        cin >> arr[i];
+    }
+    cout << func(arr,n,x) << endl;
+    return 0;
+}

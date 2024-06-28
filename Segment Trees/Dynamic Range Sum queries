@@ -1,0 +1,63 @@
+CSES link: https://cses.fi/problemset/task/1648/
+
+// once we have written the template code then to bhut simple h ye
+#include<bits/stdc++.h>
+using namespace std;
+#define int long long
+class seg_tree{
+	vector<int>seg;
+	public:
+	seg_tree(int n){
+		seg=vector<int>(4*n,0);
+	}
+	seg_tree(vector<int>&arr){
+		int n=arr.size();
+		seg = vector<int>(4*n,-1e9);
+		build(arr,0,0,n-1);
+	}
+	void build(auto&arr,int ind,int low,int high){
+		if(low==high){
+			seg[ind] = arr[low];
+			return;
+		}
+		int mid = low+(high-low)/2;
+		build(arr,2*ind+1,low,mid);
+		build(arr,2*ind+2,mid+1,high);
+		seg[ind] = seg[2*ind+1]+seg[2*ind+2];
+	}
+	int query(int l,int r,int ind,int low,int high){
+		if(r<low || l>high) return 0;
+		if(l<=low && high<=r) return seg[ind];
+		int mid = low + (high-low)/2;
+		int left = query(l,r,2*ind+1,low,mid);
+		int right = query(l,r,2*ind+2,mid+1,high);
+		return left+right;
+	}
+	void update(int tobe,int upd,int ind,int low,int high){
+		if(low==high && low==tobe){
+			seg[ind] = upd;
+			return;
+		}
+		int mid = low + (high-low)/2;
+		if(tobe<=mid) update(tobe,upd,2*ind+1,low,mid);
+		else update(tobe,upd,2*ind+2,mid+1,high);
+		seg[ind] = seg[2*ind+1]+seg[2*ind+2];
+	}
+};
+signed main(){
+    ios_base::sync_with_stdio(0);
+    cout.tie(0);
+    cin.tie(0);
+    int n,q;
+    cin >> n >>q;
+    vector<int>arr(n);
+    for(int i=0;i<n;i++) cin >> arr[i];
+    seg_tree s(arr);
+    while(q--){
+        int type,a,b;
+        cin >> type >> a >> b;
+        if(type==1) s.update(a-1,b,0,0,n-1);
+        else cout << s.query(a-1,b-1,0,0,n-1) << endl;
+    }
+    return 0;
+}

@@ -5,10 +5,7 @@ using namespace std;
 #define int long long
 const int mod = 1e9+7;
 int f(int i,auto&arr,int vis,auto&memo){
-    if(i<0){
-        int bits = __builtin_popcount(vis);
-        return bits == arr.size();
-    }
+    if(i<0) return 1;
     if(memo[vis]!=-1) return memo[vis];
     int ans=0;
     for(int j=0;j<arr.size();j++){

@@ -1,0 +1,23 @@
+CSES link: https://cses.fi/problemset/task/1727/
+
+// simply bhai assume ki 
+agar k ans hota  to probability kitni h iski  ...  1 - (k-1/k)^n ... like koi bhi atleast ek 'k' le aaye
+agar k-1 ans hota to probability hai....  (k-1/k)^n - (k-2/k)^n ....  (Koi bhi 'k' na laaye)  - (Koi bhi 'k-1' na laaye)
+... to ab dekh lo formula ban gya h
+
+#include<bits/stdc++.h>
+using namespace std;
+#define int long long
+signed main(){
+	ios_base::sync_with_stdio(0);
+	cin.tie(0);
+	cout.tie(0);
+	int n,k;
+	cin >> n >> k;
+	double ans = 0;
+	for(double maxi=1;maxi<=k;maxi++){
+		ans+=maxi*(pow(maxi/k,n) - pow((maxi-1)/k,n));
+	}
+	cout << fixed << setprecision(6) << ans << endl;
+	return 0;
+}

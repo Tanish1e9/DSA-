@@ -1,0 +1,22 @@
+LC link: https://leetcode.com/problems/number-of-digit-one/
+
+    // simple h think of it like har ek number pe iterate kr rhe h hm 
+    // aur end me idx==s.size() hone par uss number k lie kya add hona h wo h
+    // simple hi h aur yahi framework mostly follow hoga
+
+    int dp[11][2][11];
+    int solve(string&s,int idx,int restricted,int cnt){
+        if(idx==s.size()) return cnt;
+        if(dp[idx][restricted][cnt]!=-1) return dp[idx][restricted][cnt];
+        int limit = restricted ? s[idx]-'0' : 9;
+        int ans=0;
+        for(int i=0;i<=limit;i++){
+            ans+=solve(s,idx+1,restricted && (i==limit),cnt+(i==1));
+        }
+        return dp[idx][restricted][cnt] = ans;
+    }
+    int countDigitOne(int n) {
+        memset(dp,-1,sizeof(dp));
+        string s = to_string(n);
+        return solve(s,0,1,0);
+    }

@@ -4,6 +4,7 @@ CSES link: https://cses.fi/problemset/task/2220/
 // agar ye ni daalte to galat hota because starting me two consecutive zeros to ho skte h na
 // unko adjacent me thodi ginenge but aisa bhi ni h ki zero ko ignore kr de because bich me zero aa gya to
 // islie flag bana dia h 
+// aur raaste me hi invalid numbers ko avoid kr de rhe iska mtlb jo bhi s.size() tk pahuch rha wo valid hi h islie 1 return kr do
 
 #include<bits/stdc++.h>
 using namespace std;

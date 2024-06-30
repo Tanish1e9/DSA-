@@ -1,5 +1,10 @@
 CSES link: https://cses.fi/problemset/task/2220/
 
+// yaha ek flag h like agar ab tk koi bhi non zero digit ni aaaya h iska mtlb number start hi ni hua
+// agar ye ni daalte to galat hota because starting me two consecutive zeros to ho skte h na
+// unko adjacent me thodi ginenge but aisa bhi ni h ki zero ko ignore kr de because bich me zero aa gya to
+// islie flag bana dia h 
+
 #include<bits/stdc++.h>
 using namespace std;
 #define int long long

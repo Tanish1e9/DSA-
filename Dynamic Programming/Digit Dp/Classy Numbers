@@ -1,5 +1,9 @@
 CodeForces Link: https://codeforces.com/problemset/problem/1036/C
 
+// Agar isme soch rhe ki raaste me kyu check krte hue chal rhe count sidha sidha maintain krke end me hi check kr lenge
+// to wo bhi kr skte ho bilkul accept ho jayega wo bas thoda sa time jada lagega and states bhi
+// 4 ko 20 krna padega
+
 #include<bits/stdc++.h>
 using namespace std;
 #define int long long

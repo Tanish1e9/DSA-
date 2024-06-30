@@ -1,0 +1,29 @@
+LC link: https://leetcode.com/problems/number-of-beautiful-integers-in-the-range/description/
+
+    // dekh isme flag daalna islie h na because number agar abhi tk start hi ni hua to 0 as even digit ni count hoga na
+    // ye galti mat krna baaki similar hi h question kuch khaas nhi
+
+    int dp[12][2][30][20][2];
+    int f(string&s,int idx,int restricted,int cnt,int div,int flag,int k){
+        if(idx==s.size()) return cnt==0 && (div%k)==0;
+        if(dp[idx][restricted][10+cnt][div][flag]!=-1) return dp[idx][restricted][10+cnt][div][flag];
+        int limit = restricted ? s[idx]-'0' : 9;
+        int ans=0;
+        for(int i=0;i<=limit;i++){
+            int updated=cnt+1;
+            if(!flag && i==0) updated--;
+            else if(i%2==0) updated-=2;
+            int power = pow(10,s.size()-1-idx);
+            int up_div = (div+i*power)%k;
+            ans+=f(s,idx+1,restricted && (i==limit),updated,up_div,flag || (i!=0),k);
+        }
+        return dp[idx][restricted][10+cnt][div][flag]=ans;
+    }
+    int numberOfBeautifulIntegers(int low, int high, int k) {
+        memset(dp,-1,sizeof(dp));
+        string r = to_string(high);
+        string l = to_string(low-1);
+        int right = f(r,0,1,0,0,0,k);
+        memset(dp,-1,sizeof(dp));
+        return right - f(l,0,1,0,0,0,k);
+    }

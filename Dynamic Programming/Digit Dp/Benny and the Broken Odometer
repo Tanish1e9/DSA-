@@ -1,0 +1,36 @@
+Hackerearth Link: https://www.hackerearth.com/problem/algorithm/benny-and-the-broken-odometer/?purpose=login&source=problem-page&update=google
+
+// isme simply numbers count kie h jinme 3 digit naa ho
+
+#include<bits/stdc++.h>
+using namespace std;
+#define int long long
+const int mod = 1e9+7;
+int dp[12][2][2];
+int f(string&s,int idx,int restriction,int cnt){
+	if(idx==s.size()) return !cnt;
+	if(dp[idx][restriction][cnt]!=-1) return dp[idx][restriction][cnt];
+	int limit = restriction ? s[idx]-'0':9;
+	int ans=0;
+	for(int i=0;i<=limit;i++){
+		ans+=f(s,idx+1,restriction && (i==limit),cnt || i==3);
+	}
+	return dp[idx][restriction][cnt] = ans;
+}
+signed main(){
+	ios_base::sync_with_stdio(0);
+	cin.tie(0);
+	cout.tie(0);
+	int t;
+	cin >> t;
+	while(t--){
+		int b;
+		cin >> b;
+		string r = to_string(b);
+		memset(dp,-1,sizeof(dp));
+		int right = f(r,0,1,0);
+		cout << right -1<< endl;
+		// 0 ko exclude krna hoga na
+	}
+	return 0;
+}

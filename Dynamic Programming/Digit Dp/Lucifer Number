@@ -1,0 +1,60 @@
+Spoj link: https://www.spoj.com/problems/LUCIFER/
+
+// isme right se 1 based indexing k hisab se signed difference lena h
+// negative sums are not considered even if their absolute is prime
+// 200+cnt islie kie h ki kahi negative ho jaye to negative indexing na chala jaye aur isi chiz me safe rhne k lie
+// 1000 tk ka sieve bana die
+// flag denotes even hai yani add krna h
+// to agar number ka size even h na to first index will be even yani flag 1 pass krna h ab dekh lo kaise kia
+
+#include<bits/stdc++.h>
+using namespace std;
+#define int long long
+const int mod = 1e9+7;
+int dp[12][2][1000][2];
+vector<bool>isPrime(1000,1);
+void sieve(){
+	isPrime[0]=isPrime[1]=0;
+	for(int i=2;i<1000;i++){
+		if(!isPrime[i]) continue;
+		for(int j=i*2;j<1000;j+=i){
+			isPrime[j]=0;
+		}
+	}
+}
+int f(string&s,int idx,int restriction,int cnt,bool flag){
+	if(idx==s.size()) return cnt>=2 && isPrime[cnt];
+	if(dp[idx][restriction][200+cnt][flag]!=-1) return dp[idx][restriction][200+cnt][flag];
+	int limit = restriction ? s[idx]-'0':9;
+	int ans=0;
+	for(int i=0;i<=limit;i++){
+		int updated = cnt+i;
+		if(!flag) updated-=2*i;
+		ans+=f(s,idx+1,restriction && (i==limit),updated,!flag);
+	}
+	return dp[idx][restriction][200+cnt][flag] = ans;
+}
+signed main(){
+	ios_base::sync_with_stdio(0);
+	cin.tie(0);
+	cout.tie(0);
+	sieve();
+	int t;
+	cin >> t;
+	while(t--){
+		int a,b;
+		cin >> a>> b;
+		string r = to_string(b);
+		memset(dp,-1,sizeof(dp));
+		int right = f(r,0,1,0,(r.size()-1)%2);
+		if(a==0) cout << right << endl;
+		else{
+			string l = to_string(a-1);
+			memset(dp,-1,sizeof(dp));
+			cout << right - f(l,0,1,0,(l.size()-1)%2) << endl; 
+			// kabhi bhi right to left nahi ja skte wrna wo restriction wala logic galat ho
+			// jayega na soch khud hi 
+		}
+	}
+	return 0;
+}

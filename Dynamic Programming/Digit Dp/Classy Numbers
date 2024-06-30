@@ -1,0 +1,37 @@
+CodeForces Link: https://codeforces.com/problemset/problem/1036/C
+
+#include<bits/stdc++.h>
+using namespace std;
+#define int long long
+const int mod = 1e9+7;
+int dp[20][2][4];
+int f(string&s,int idx,int restriction,int cnt){
+	if(idx==s.size()) return 1;
+	if(dp[idx][restriction][cnt]!=-1) return dp[idx][restriction][cnt];
+	int limit = restriction ? s[idx]-'0':9;
+	int ans=0;
+	for(int i=0;i<=limit;i++){
+		int updated_count = cnt+(i!=0);
+		if(updated_count<=3) ans+=f(s,idx+1,restriction && (i==limit),updated_count);
+	}
+	return dp[idx][restriction][cnt] = ans;
+}
+signed main(){
+	ios_base::sync_with_stdio(0);
+	cin.tie(0);
+	cout.tie(0);
+	int t;
+	cin >> t;
+	while(t--){
+		int a,b;
+		cin >> a >> b;
+		string r = to_string(b);
+        // ye har bar function call k pehle dp ko reset krna bhut jroori hota h yaad rakhna ye
+		memset(dp,-1,sizeof(dp));
+		int right = f(r,0,1,0);
+		string l = to_string(a-1);
+		memset(dp,-1,sizeof(dp));
+		cout << right - f(l,0,1,0) << endl;
+	}
+	return 0;
+}

@@ -1,0 +1,40 @@
+LightOj link: https://lightoj.com/problem/digit-count
+
+// ye thoda alag tarah ka problem h
+// yaha flag sirf initially hi false hoga to waha difference ni check kia jayega also 0 ni lene dia jaayega baaki
+// sab jagah 0 aur difference dono lia jayega
+// simple hi h waise but thoda alag tha
+
+#include<bits/stdc++.h>
+using namespace std;
+#define int long long
+const int mod = 1e9+7;
+int dp[12][100][2];
+int f(int idx,int last,int flag,int n,vector<int>&digits){
+	if(idx==n) return 1;
+	int ans=0;
+	for(int i:digits){
+		if(!flag && i==0)  continue;
+		if(!flag || abs(last-i)<=2)	ans+=f(idx+1,i,1,n,digits);
+	}
+	return dp[idx][last][flag] = ans;
+}
+signed main(){
+	ios_base::sync_with_stdio(0);
+	cin.tie(0);
+	cout.tie(0);
+	int t;
+	cin >> t;
+	for(int i=1;i<=t;i++){
+		int m,n;
+		cin >> m >> n;
+		vector<int>digits(m);
+		for(int i=0;i<m;i++) cin >> digits[i];
+		memset(dp,-1,sizeof(dp));
+		// yaha restriction h hi nhi
+		// bas ye ki first number ko nonzero hona hoga hi n digit numbers h na
+		int right = f(0,0,0,n,digits);
+		cout << "Case " << i << ": " <<right << endl;
+	}
+	return 0;
+}

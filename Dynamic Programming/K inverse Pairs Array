@@ -1,0 +1,50 @@
+LC link: https://leetcode.com/problems/k-inverse-pairs-array/
+
+    const int mod = 1e9+7;
+    int f(int n,int k,auto&dp){
+        if(k==0) return 1;
+        if(n==0) return 0;
+        if(dp[n][k]!=-1) return dp[n][k];
+        int ans=0;
+        for(int inv=0;inv<=min(n-1,k);inv++){
+            ans=(ans+f(n-1,k-inv,dp))%mod;
+        }
+        return dp[n][k]=ans;
+    }
+    int kInversePairs(int n, int K) {
+        // vector<vector<int>>memo(n+1,vector<int>(K+1,-1));
+        // return f(n,K,memo);
+
+        // vector<vector<int>>memo(n+1,vector<int>(K+1,0));
+        // for(int i=0;i<=n;i++) memo[i][0]=1;
+        // for(int i=1;i<=n;i++){
+        //     for(int k=1;k<=K;k++){
+        //         int ans=0;
+        //         for(int inv=0;inv<=min(i-1,k);inv++){
+        //             ans=(ans+memo[i-1][k-inv])%mod;
+        //         }
+        //         memo[i][k]=ans;
+        //     }
+        // }
+        // return memo[n][K];
+
+
+        // Most optimal O(nk)
+        // Applied Prefix sum and converted to single array
+
+        vector<int>prev(K+1,0);
+        for(int i=1;i<=n;i++){
+            vector<int>pre_sum(K+1,0);
+            pre_sum[0]=prev[0];
+            for(int j=1;j<=K;j++){
+                pre_sum[j]=(pre_sum[j-1]+prev[j])%mod;
+            }
+            prev[0]=1;
+            for(int k=1;k<=K;k++){
+                prev[k] = pre_sum[k];
+                int num = k-min(i-1,k)-1;
+                if(num>=0) prev[k] = (prev[k]-pre_sum[num]+mod)%mod;
+            }
+        }
+        return prev[K];
+    }

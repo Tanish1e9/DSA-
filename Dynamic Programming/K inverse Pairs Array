@@ -1,5 +1,11 @@
 LC link: https://leetcode.com/problems/k-inverse-pairs-array/
 
+    // dekh ye wala approach we have fixed the order ki pehle 1 daalenge fir 2 and so on
+    // bas kis position pe daal skte wo variable h wo apne hisab se daalenge
+    // to agar k inversions chahye to n-1 tk me jitna bhi aaya usme jitna bhi remaining hoga k karane k lie
+    // uss hisab se position choose ho jayega next number ka because wo maximum h na
+    // to inversions create kr dega
+
     const int mod = 1e9+7;
     int f(int n,int k,auto&dp){
         if(k==0) return 1;
@@ -48,3 +54,52 @@ LC link: https://leetcode.com/problems/k-inverse-pairs-array/
         }
         return prev[K];
     }
+
+
+    // ye ek dusra thought h ki relative ordering hi matter krta h na
+    // kinhi bhi collection of numbers ko ek specific order me hm hmesha arrange kr skte na
+    // to it's like i numbers place kr dia h and we have inv inversions
+    // then ab agla number se hmlog extra 0 to i inversions create kr skte bas k k andar andar tk krenge and end me inv==k
+    // check ho jayega isi thought se ek dusra requirements wala question bhi hoga
+    // because waha par kitne numbers daal chuke h abhi tk wahi state me honge usme order to fix kr ni skte ki pehle kon baad me kon
+
+    const int mod = 1e9+7;
+    int f(int i,int inv,int n,int k,auto&dp){
+        if(i==n) return inv==k;
+        if(dp[i][inv]!=-1) return dp[i][inv];
+        int ans=0;
+        for(int j=0;j<=min(i,k-inv);j++){
+            ans=(ans+f(i+1,inv+j,n,k,dp))%mod;
+        }
+        return dp[i][inv]=ans;
+    }
+    int kInversePairs(int n, int k) {
+        // vector<vector<int>>dp(n+1,vector<int>(k+1,-1));
+        // return f(0,0,n,k,dp);
+
+        // vector<vector<int>>dp(n+1,vector<int>(k+1,0));
+        // dp[n][k]=1;
+        // for(int i=n-1;i>=0;i--){
+        //     for(int inv=k;inv>=0;inv--){
+        //         int ans=0;
+        //         for(int j=0;j<=min(i,k-inv);j++){
+        //             ans=(ans+dp[i+1][inv+j])%mod;
+        //         }
+        //         dp[i][inv]=ans;
+        //     }
+        // }
+        // return dp[0][0];
+
+        vector<int>next(k+1,0);
+        next[k]=1;
+        for(int i=n-1;i>=0;i--){
+            vector<int>pre(k+1,0);
+            pre[0]=next[0];
+            for(int j=1;j<=k;j++) pre[j] = (pre[j-1]+next[j])%mod;
+
+            for(int inv=k;inv>=0;inv--){
+                next[inv] = pre[inv+min(i,k-inv)];
+                if(inv>=1) next[inv] = (next[inv]-pre[inv-1]+mod)%mod;
+            }
+        }
+        return next[0];

@@ -1,0 +1,30 @@
+LC link: https://leetcode.com/problems/count-the-number-of-inversions/
+
+    // isme ind bas move krta rhega taaki limit me rhe saare inversions
+    // aur wahi thought h ki i numbers place kr chuke h agla number place krenge to usse kitna 
+    // aur inversions create kr skte to bas create krte jayenge
+    // aur end me return 1 hota jayega because hmesha sahi hi rhega inversions
+    // because inv+j==limit pehle hi check kr rakhe h na
+
+    const int mod=1e9+7;
+    int dp[301][401];
+    int f(int i,int inv,int n,auto&requirements,int ind){
+        if(i==n) return 1;
+        if(dp[i][inv]!=-1) return dp[i][inv];
+        bool flag=false;
+        if(requirements[ind][0]==i) flag=true;
+        int limit = requirements[ind][1];
+        int ans=0;
+        for(int j=0;j<=i;j++){
+            if(!flag && inv+j<=limit)
+            ans=(ans+f(i+1,inv+j,n,requirements,ind))%mod;
+            else if(flag && inv+j==limit)
+            ans=(ans+f(i+1,inv+j,n,requirements,ind+1))%mod;
+        }
+        return dp[i][inv]=ans;
+    }
+    int numberOfPermutations(int n, vector<vector<int>>& requirements) {
+        sort(requirements.begin(),requirements.end());
+        memset(dp,-1,sizeof(dp));
+        return f(0,0,n,requirements,0);
+    }

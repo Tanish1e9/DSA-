@@ -1,0 +1,61 @@
+LC link: https://leetcode.com/problems/implement-stack-using-queues/description/
+
+// Note ki push operation O(N) hi ho payega when pop is O(1)
+// using 2 queues
+class MyStack {
+public:
+    queue<int>q1,q2;
+    MyStack() {}
+    
+    void push(int x) {
+        q2.push(x);
+        while(!q1.empty()){
+            int el = q1.front();
+            q1.pop();
+            q2.push(el);
+        }
+        swap(q1,q2);
+    }
+    
+    int pop() {
+        int ans=q1.front();q1.pop();
+        return ans;
+    }
+    
+    int top() {
+        return q1.front();
+    }
+    
+    bool empty() {
+        return q1.size()==0;
+    }
+};
+
+
+// using one queue
+// simple bhai q.size()-1 bar pop and push kr dena h same queue me
+class MyStack {
+public:
+    queue<int>q;
+    MyStack() {}    
+    void push(int x) {
+        q.push(x);
+        for(int i=1;i<q.size();i++){
+            int el = q.front();
+            q.pop();
+            q.push(el);
+        }
+    }
+    int pop() {
+        int ans=q.front();q.pop();
+        return ans;
+    }
+    
+    int top() {
+        return q.front();
+    }
+    
+    bool empty() {
+        return q.size()==0;
+    }
+};

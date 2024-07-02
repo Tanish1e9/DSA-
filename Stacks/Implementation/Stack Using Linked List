@@ -1,0 +1,16 @@
+GFG link: https://www.geeksforgeeks.org/problems/implement-stack-using-linked-list/1
+
+void MyStack ::push(int x) {
+    StackNode* new_node = new StackNode(x);
+    new_node->next=top;
+    top=new_node;
+}
+
+int MyStack ::pop() {
+    if(top==0) return -1;
+    int ans=top->data;
+    StackNode*temp=top;
+    top=top->next;
+    delete temp;
+    return ans;
+}

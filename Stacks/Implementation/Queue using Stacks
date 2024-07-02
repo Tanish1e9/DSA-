@@ -1,5 +1,7 @@
 LC link: https://leetcode.com/problems/implement-queue-using-stacks/description/
 
+// ye wala jo tum soche ho isko defeat kr skte by doing alternate push pop
+// so ye amortised O(1) nahi rha
 class MyQueue {
 public:
     stack<int>s1,s2;
@@ -36,5 +38,42 @@ public:
     
     bool empty() {
         return (s1.size()+s2.size())==0;
+    }
+};
+
+
+// Here is the correct way
+class MyQueue {
+public:
+    stack<int>s1,s2;
+    MyQueue() {}
+    void push(int x) {
+        s1.push(x);
+    }
+    int pop() {
+        if(s2.empty()){
+            while(!s1.empty()){
+                int el = s1.top();
+                s1.pop();
+                s2.push(el);
+            }
+        }
+        int ans = s2.top();
+        s2.pop();
+        return ans;
+    }
+    int peek() {
+        if(s2.empty()){
+            while(!s1.empty()){
+                int el = s1.top();
+                s1.pop();
+                s2.push(el);
+            }
+        }
+        int ans = s2.top();
+        return ans;
+    }
+    bool empty() {
+        return s1.size()==0 & s2.size()==0;
     }
 };

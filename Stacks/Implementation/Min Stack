@@ -58,3 +58,49 @@ public:
 
 // O(n) space is used
 // but haa agar long wale constraints hote to ye use hi ni ho pata fir to pair hi krna pdta
+
+1) Why is modified value always less than current minimum?
+-> since if there comes a val < mini we do 2*val - mini and then update mini to val 
+so val - prev_mini is negative and hence the modified value is less than val which is the current mini
+So in this case the top is simply current minimum
+
+2) then when we pop we need to update the minimum so that also is done
+2*mini - s.top()
+2*mini - (2*mini-prev_mini)
+
+3) also 2* krne se kuch overflow ho ja rha tha islie aisa +- krke likh die h 
+
+class MinStack {
+public:
+    stack<long>s;
+    long mini;
+    MinStack() {
+        mini=-1;
+    }
+    
+    void push(int val) {
+        if(s.size()==0) {
+            mini = val;
+            s.push(val);
+        }
+        else if(val < mini){
+            s.push(val-mini+val);
+            mini=val;
+        }
+        else s.push(val);
+    }
+    
+    void pop(){
+        if(s.top() < mini) mini=mini-s.top()+mini;
+        s.pop();
+    }
+    
+    int top() {
+        if(s.top() < mini) return mini;
+        return s.top();
+    }
+    
+    int getMin() {
+        return mini;
+    }
+};

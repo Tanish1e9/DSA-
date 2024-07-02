@@ -1,0 +1,19 @@
+GFG link: https://www.geeksforgeeks.org/problems/implement-queue-using-linked-list/1
+
+void MyQueue:: push(int x){
+    QueueNode*new_node = new QueueNode(x);
+    if(rear==0) front = rear = new_node;
+    else{
+        rear->next=new_node;
+        rear=new_node;
+    }
+}
+int MyQueue :: pop(){
+    if(front==0) return -1;
+    int ans=front->data;
+    QueueNode*temp = front;
+    front=front->next;
+    delete temp;
+    if(front==0) rear=0;
+    return ans;
+}

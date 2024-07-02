@@ -1,0 +1,55 @@
+// Dekh isme yahi concept h na ki hm vis pass krke bata die ki kon kon se available rabbits h
+// ab tm unme se kitne bhi ek group k lie chun lo and baki bache rabbits ka wapas se same function call krke maximum answer nikalwa lo
+// and fir har group k across maxima leke ans aa jayega
+// so scores for any mask baar baar na compute krna pade islie pehle hi precompute kr lie h computed array me
+// now dekho uske baad ka jo loop h na wo jo commented h wo original h jo ki 4^n complexity chala jata
+// kyunki we want to iterate over all possible submasks of all the masks
+// to iss chiz ka ek beautiful optimisation h 3^n me cp algo pe jaake padhna wahi kr die h and boom accepted
+
+#include<bits/stdc++.h>
+using namespace std;
+#define int long long
+signed main(){
+    ios_base::sync_with_stdio(0);
+    cin.tie(0);
+    cout.tie(0);
+    int n;
+  	cin >> n;
+  	vector<vector<int>> grid(n,vector<int>(n,0));
+  	for(int i=0;i<n;i++){
+  		for(int j=0;j<n;j++){
+  			cin >> grid[i][j];
+  		}
+  	}
+    vector<int>computed(1<<n);
+    computed[0]=0;
+    for(int mask = 1;mask < (1<<n);mask++){
+        int curr_vis=0;
+        int score=0;
+        for(int i=0;i<n;i++){
+            if(!((1<<i) & mask)) continue;
+            for(int j=0;j<n;j++){
+                if(1<<j & curr_vis) score+=grid[i][j];
+            }
+            curr_vis|=(1<<i);
+        }
+        computed[mask] = score;
+    }
+    vector<int>memo(1<<n);
+    memo[(1<<n) - 1] = 0;
+    for(int vis=(1<<n)-2;vis>=0;vis--){
+        int ans=0;
+        // for(int mask=1;mask<(1<<n);mask++){
+        //     if(mask & vis)continue;
+
+        int m = ((1<<n) -1)^vis;
+        for(int mask=m;mask>0;mask=(mask-1)&m){
+            // dry run krne ka koshish you will se all possible submasks of available rabbits (jo vis me nhi h) getting iterated in descending order
+            // aur bas ye optimisation k kaaran hi ruka hua tha ye sawaal
+            ans = max(ans,computed[mask]+memo[mask|vis]);
+        }
+        memo[vis] = ans;
+    }
+    cout << memo[0] << endl;
+    return 0;
+}

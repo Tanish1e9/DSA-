@@ -21,4 +21,40 @@ public:
     }
 };
 
+// ye to thoda trick khel gye long data type me chhupake 2 integers store kra die and boom we are done
+class MinStack {
+public:
+    stack<long>s;
+    long mini;
+    MinStack() {
+        mini=-1;
+    }
+    
+    void push(int val) {
+        if(s.size()==0) mini = val;
+        else mini = min<long>(mini,val);
+        long ans=val;
+        ans &= ((1ll<<32) - 1);
+        long temp=(mini << 32);
+        s.push(ans | temp);
+    }
+    
+    void pop(){
+        s.pop();
+        if(!s.empty())mini = s.top()>>32;
+    }
+    
+    int top() {
+        long el = s.top();
+        long val = (1ll<<32) - 1;
+        return val & el;
+    }
+    
+    int getMin() {
+        long el = s.top();
+        return el>>32;
+    }
+};
+
 // O(n) space is used
+// but haa agar long wale constraints hote to ye use hi ni ho pata fir to pair hi krna pdta

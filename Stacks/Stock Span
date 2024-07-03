@@ -1,0 +1,22 @@
+LC link: https://leetcode.com/problems/online-stock-span/
+
+// dekh isme na stack me decreasing order of prices hi store hongi 
+// because koi agar bada aa gya s.top() se suppose to uske baad man lo koi chota aaya to uske raaste me pehle wala bada aa jayega na
+// on the other hand agar koi usse bhi bada aa gya to wo pichle bade k piche jo chota h usko bhi kha lega
+// since large prices act as obstacles that's why sirf decreasing order me hi store krna chahye
+
+class StockSpanner {
+public:
+    stack<pair<int,int>>s;
+    StockSpanner() {}
+    
+    int next(int price) {
+        int ans=1;
+        while(!s.empty() && s.top().first <= price){
+            ans+=s.top().second;
+            s.pop();
+        }
+        s.push({price,ans});
+        return ans;
+    }
+};

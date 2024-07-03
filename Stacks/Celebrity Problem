@@ -1,0 +1,21 @@
+GFG link: https://www.geeksforgeeks.org/problems/the-celebrity-problem/1?itm_source=geeksforgeeks&itm_medium=article&itm_campaign=bottom_sticky_on_article
+
+// isme yahi h ki initially maan lo ki i=0 is the celebrity
+// ab aage chalte rhe maan lo koi aisa aadmi aa gya jo i ko ni jaanta h ya i usko jaanta h
+// in that case i to celeb nhi hoga
+// also jo j aur i k bich wale log h wo saare uss i ko jante the islie wo bhi celeb ni honge islie i=j krke wapas aage badhe
+// fir actually koi celebrity h bhi ya nhi uske lie ek check kia h and that's it
+
+int celebrity(vector<vector<int> >& M, int n) {
+        int i=0;
+        for(int j=1;j<n;j++){
+            if(!M[j][i] || M[i][j]){
+                i=j;
+            }
+        }
+        for(int j=0;j<n;j++){
+            if(i==j) continue;
+            if(!M[j][i] || M[i][j]) return -1;
+        }
+        return i;
+    }

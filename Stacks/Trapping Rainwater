@@ -1,0 +1,66 @@
+LC link: https://leetcode.com/problems/trapping-rain-water/
+
+// dekh brute to clear h fir usse better wala optimisation bhi turant click kr jayega
+// Now for optimal aisa socho ki l,r milake har index ko visit krenge to it's like brute only jaha pe har index
+// ka ans individually joda jayega but smartly
+// kahi maan lo left<=right h ab yaha pe r wale ka to calculation ni kr skte na
+// because r k left ka saara data thodi h mere pas and jo requirement h ki left me koi >= right ho jaye
+// wo abhi tk pura nahi hua h na
+// But l wale me left ka data to h but right ke thode hi data se we have fulfilled our requirement to uska ans jod lie
+// and that's it ab maan lo arr[l]>=left ya arr[r]>=right ho gya to ye brute me ht < arr[i] type ka ho gya na yaha kuch bhi nahi judega
+// to bas update krke aage badh gye
+// wrna agar arr[l]<left ya arr[r]<right hua tab to ans fatt se nikal denge
+
+    int trap(vector<int>& arr) {
+        // int ans=0;
+        // int n=arr.size();
+        // for(int i=0;i<n;i++){
+        //     int left=0,right=0;
+        //     for(int j=0;j<i;j++){
+        //         left=max(left,arr[j]);
+        //     }
+        //     for(int j=i+1;j<n;j++){
+        //         right=max(right,arr[j]);
+        //     }
+        //     int ht = min(left,right);
+        //     if(ht>arr[i]) ans+=ht-arr[i];
+        // }
+        // return ans;
+
+        // int ans=0;
+        // int n=arr.size();
+        // vector<int>pre(n),suf(n);
+        // int left=0,right=0;
+        // for(int i=0;i<n;i++){
+        //     left=max(left,arr[i]);
+        //     pre[i]=left;
+        // }
+        // for(int i=n-1;i>=0;i--){
+        //     right=max(right,arr[i]);
+        //     suf[i]=right;
+        // }
+        // for(int i=0;i<n;i++){
+        //     int ht = 0;
+        //     if(i>=1 && i<n-1) ht=min(pre[i-1],suf[i+1]);
+        //     // i=0,i=n-1 pe to kabhi paani ni hi store hoga because
+        //     // left aur right respectively koi h hi nhi
+        //     if(ht>arr[i]) ans+=ht-arr[i];
+        // }
+        // return ans;
+
+        int l=0,r=arr.size()-1;
+        int left=0,right=0,ans=0;
+        while(l<=r){
+            if(left<=right){
+                if(arr[l]>=left) left=arr[l];
+                else ans+=left-arr[l];
+                l++;
+            }
+            else{
+                if(arr[r]>=right) right=arr[r];
+                else ans+=right-arr[r];
+                r--;
+            }
+        }
+        return ans;
+    }

@@ -1,0 +1,49 @@
+GFG link: https://www.geeksforgeeks.org/problems/number-of-nges-to-the-right/1
+
+// isme ye intuition to aa rha tha ki stacks se to galat ho jayega
+// par agar koi sirf right right se sorted order me maintain krta chale to upper_bound
+// se logn me pata chal jayega ki kitna elements h
+// to waha se merge sort ka intuition aata h
+// aur ekdum jaise count inversions me krte h waise hi yaha bhi krna h
+// bas problem ye h ki since elements are not distinct aur indices se kaam krna h
+// to ek naya hi array bana die h jisme har element se uska index attached h to jaake wahi update kr dia
+// bas ye kia h baaki to ho hi gya ye
+// jab l,r sort hota h to l,r k bich me jitna bhi answers hote sabhi k wo store ho jate then agle right half me sirf answers khoje jaate h
+
+
+    void merge(vector<pair<int,int>>&arr,int l,int mid,int r,vector<int>&res){
+        vector<pair<int,int>>a(arr.begin()+l,arr.begin()+mid+1);
+        vector<pair<int,int>>b(arr.begin()+mid+1,arr.begin()+r+1);
+        
+        int i=0,j=0,k=l;
+        while(i<a.size() && j<b.size()){
+            if(a[i].first < b[j].first){
+                res[a[i].second] += b.size()-j;
+                arr[k++] = a[i++];
+            }
+            else arr[k++] = b[j++];
+        }
+        while(i<a.size()) arr[k++]=a[i++];
+        while(j<b.size()) arr[k++]=b[j++];
+    }
+    void mergesort(vector<pair<int,int>>&arr,int l,int r,vector<int>&res){
+        if(l>=r) return;
+        int mid = l+(r-l)/2;
+        mergesort(arr,l,mid,res);
+        mergesort(arr,mid+1,r,res);
+        merge(arr,l,mid,r,res);
+    }
+    vector<int> count_NGE(int n, vector<int> &arr, int queries, vector<int> &indices){
+        vector<int>ans(queries,0);
+        vector<int>res(n,0);
+        
+        vector<pair<int,int>> vec(n);
+        for(int i=0;i<n;i++) vec[i] = {arr[i],i};
+        mergesort(vec,0,arr.size()-1,res);
+        
+        for(int i=0;i<queries;i++){
+            ans[i] = res[indices[i]];
+        }
+        
+        return ans;
+    }

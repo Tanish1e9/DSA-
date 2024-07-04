@@ -1,0 +1,29 @@
+LC link: https://leetcode.com/problems/remove-k-digits/
+
+// isme na simple ek observation h ki if we are given some digits and we have to form the
+// smallest possible number then digits ko increasing order me rakhenge
+// to dekho jitna ho sake we will try to maintain in increasing order
+// isko aise dekh skte ho ki left me sabse jada place value hoga na
+// to we are selecting the lowest candidate for that
+// agar agla number already selected number se chota mil gya to usko le lenge pop_back() krwake
+// fir to dekh lo bas yahi intuition laga h isme
+// aur preceeding zeros ko push hi mat hone do thoda condition lagake and that's it
+
+    string removeKdigits(string num, int k) {
+        if(num=="0" || k==num.size()) return "0";
+        string ans;
+        ans.push_back(num[0]);
+        for(int i=1;i<num.size();i++){
+            while(k>0 && ans.size()>0 && ans.back()>num[i]){
+                k--;
+                ans.pop_back();
+            }
+            if(ans.size()>0 || num[i]!='0') ans.push_back(num[i]);
+        }
+        while(k>0 && ans.size()>0){
+            k--;
+            ans.pop_back();
+        }
+        if(ans.size()==0) return "0";
+        return ans;
+    }

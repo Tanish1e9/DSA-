@@ -1,0 +1,46 @@
+LC link: 
+
+// ye ekdum sum of subarray minimums jaisa hi krenge
+// bas yaha greater bhi nikalna padega to just < ko > se replace kr dia and we are done
+// maximas ko plus k sath and minimas ko minus k saath likho
+
+    long long subArrayRanges(vector<int>& arr) {
+        int n=arr.size();
+        vector<long>left(n),right(n);
+        stack<int>s;
+        long ans=0,temp=0;
+        for(int i=0;i<n;i++){
+            while(!s.empty() && arr[s.top()] > arr[i]) s.pop();
+            if(s.empty()) left[i]=i+1;
+            else left[i]= i-s.top();
+            s.push(i);
+        }
+        s=stack<int>();
+        for(int i=n-1;i>=0;i--){
+            while(!s.empty() && arr[s.top()] >= arr[i]) s.pop();
+            if(s.empty()) right[i]=n-i;
+            else right[i]= s.top()-i;
+            s.push(i);
+        }
+        for(int i=0;i<n;i++){
+            ans=(ans+arr[i]*left[i]*right[i]);
+        }
+        s=stack<int>();
+        for(int i=0;i<n;i++){
+            while(!s.empty() && arr[s.top()] < arr[i]) s.pop();
+            if(s.empty()) left[i]=i+1;
+            else left[i]= i-s.top();
+            s.push(i);
+        }
+        s=stack<int>();
+        for(int i=n-1;i>=0;i--){
+            while(!s.empty() && arr[s.top()] <= arr[i]) s.pop();
+            if(s.empty()) right[i]=n-i;
+            else right[i]= s.top()-i;
+            s.push(i);
+        }
+        for(int i=0;i<n;i++){
+            temp=(temp+arr[i]*left[i]*right[i]);
+        }
+        return (temp-ans);
+    }

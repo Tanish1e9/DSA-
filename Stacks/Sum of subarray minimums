@@ -1,0 +1,36 @@
+LC link: https://leetcode.com/problems/sum-of-subarray-minimums/
+
+// isme naive tarika to dikh hi rha h O(n^2) ka
+// optimal me let's think about contribution of each element
+// to har element pe jaake we will expand jab tk wo element selected subarray ka minimum rhe
+// then fir jo range bana isme kitne subarray ban skte h left*right
+// likhkar dekhoge to dikh jayega
+// to it's like prev_smaller and next_smaller element khoj lena
+// to bas monotonic stack wala sawaaal ho gya na
+// jab equal koi element ho jaye to prevent double counting sirf ek hi side equal hone pe extend krenge jaise hm
+// left pe kie h
+
+    const int mod = 1e9+7;
+    int sumSubarrayMins(vector<int>& arr) {
+        int n=arr.size();
+        vector<long>left(n),right(n);
+        stack<int>s;
+        long ans=0;
+        for(int i=0;i<n;i++){
+            while(!s.empty() && arr[s.top()] > arr[i]) s.pop();
+            if(s.empty()) left[i]=i+1;
+            else left[i]= i-s.top();
+            s.push(i);
+        }
+        s=stack<int>();
+        for(int i=n-1;i>=0;i--){
+            while(!s.empty() && arr[s.top()] >= arr[i]) s.pop();
+            if(s.empty()) right[i]=n-i;
+            else right[i]= s.top()-i;
+            s.push(i);
+        }
+        for(int i=0;i<n;i++){
+            ans=(ans+arr[i]*(left[i]*right[i])%mod)%mod;
+        }
+        return ans;
+    }

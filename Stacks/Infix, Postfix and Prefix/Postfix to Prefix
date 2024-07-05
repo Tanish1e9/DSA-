@@ -1,0 +1,17 @@
+GFG link: https://www.geeksforgeeks.org/problems/postfix-to-prefix-conversion/1
+
+    bool isoperator(char ch){
+        return ch=='+' || ch=='-' || ch=='^' || ch=='*' || ch=='/';
+    }
+    string postToPre(string s) {
+        stack<string>st;
+        for(int i=0;i<s.size();i++){
+            if(isoperator(s[i])){
+                string b = st.top();st.pop();
+                string a = st.top();st.pop();
+                st.push(s[i]+a+b);
+            }
+            else st.push(string(1,s[i]));
+        }
+        return st.top();
+    }

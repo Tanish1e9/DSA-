@@ -1,0 +1,49 @@
+GFG link: https://www.geeksforgeeks.org/problems/postfix-to-prefix-conversion/1
+
+    // iska alag question link nahi h that's why hmlog
+    // postfix to prefix wale me hi pehle postfix to infix convert kr denge and then
+    // We will convert Infix to prefix
+    // Observe ki ekdum infix to postfix type ka code h bas sab kuch ulta ho gya h
+    // reverse travel kr rhe
+    // (,) ke roles swtiched h
+    // lower precedence wala higher wale ko nahi
+    // balki higher wala lower wale ko pop kra rha
+    // and end me ek bar reverse krna padega ans ko
+
+    string postToPre(string s) {
+        s = postToInfix(s); // ye wala function repo me se utha lena
+        map<char,int>precedence;
+        precedence['^'] = 3;
+        precedence['*'] = precedence['/'] = 2;
+        precedence['-'] = precedence['+'] = 1;
+        precedence[')'] = 4;
+        stack<char>operators;
+        string ans;
+        for(int i=s.size()-1;i>=0;i--){
+            if(s[i]==')'){
+                operators.push(s[i]);
+                continue;
+            }
+            if(s[i]=='('){
+                while(operators.top()!=')'){
+                    ans.push_back(operators.top());
+                    operators.pop();
+                }
+                operators.pop();
+            }
+            else if(isoperator(s[i])){
+                while(!operators.empty() && precedence[operators.top()] <= precedence[s[i]]){
+                    ans.push_back(operators.top());
+                    operators.pop();
+                }
+                operators.push(s[i]);
+            }
+            else ans.push_back(s[i]);
+        }
+        while(!operators.empty()){
+            ans.push_back(operators.top());
+            operators.pop();
+        }
+        reverse(ans.begin(),ans.end());
+        return ans;
+    }

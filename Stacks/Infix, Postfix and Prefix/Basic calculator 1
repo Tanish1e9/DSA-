@@ -62,3 +62,41 @@ LC link:
         empty_ops(operands,operators);
         return operands.top();
     }
+
+// optimal way
+int calculate(string s) {
+    int num=0;
+    int ans=0;
+    int sign=1;
+    stack<int>st;
+    for(int i=0;i<s.size();i++){
+        if(isspace(s[i])) continue;
+        if(isdigit(s[i])){
+            num = num*10+(s[i]-'0');
+        }
+        else if(s[i]=='('){
+            st.push(ans);
+            st.push(sign);
+            sign=1;
+            ans=0;
+            num=0;
+        }
+        else if(s[i]==')'){
+            ans+=sign*num;
+            sign=1;
+            num=0;
+            ans=st.top()*ans;
+            st.pop();
+            ans+=st.top();
+            st.pop();
+        }
+        else{
+            ans+=sign*num;
+            sign=(s[i]=='+'?1:-1);
+            num=0;
+        }
+    }
+    ans+=num*sign;
+    // "1+2" iss example me jroorat padega
+    return ans;
+}

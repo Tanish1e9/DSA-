@@ -1,0 +1,21 @@
+GFG link: https://www.geeksforgeeks.org/problems/prefix-to-postfix-conversion/1
+
+// what I am observing ki har string ko traverse krne ka ek tarika hota h
+// infix ka bataya hi two stack se (Although wo basic calc 1,2 another basic method se ho jayenge) but still
+// jab infix to postfix convert kia then prefix to post ya prefix to infix ekdum same tarah se right to left proceed kie h
+
+    bool isoperator(char ch){
+        return ch=='+' || ch=='-' || ch=='^' || ch=='*' || ch=='/';
+    }
+    string preToPost(string s) {
+        stack<string>st;
+        for(int i=s.size()-1;i>=0;i--){
+            if(isoperator(s[i])){
+                string a = st.top();st.pop();
+                string b = st.top();st.pop();
+                st.push(a+b+s[i]);
+            }
+            else st.push(string(1,s[i]));
+        }
+        return st.top();
+    }

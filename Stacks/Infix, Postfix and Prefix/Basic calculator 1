@@ -1,0 +1,64 @@
+LC link: 
+
+// ye in general infix expressions ko solve kr skta h iska basic calc 2 wale version me bas do the follwing changes
+// 1) precedence[(]=-1    taki koi bhi operator iss ( ko na pop kara de
+// 2) ) ka case alag se likhna hoga 
+
+// yaha to sirf +- tha to */ hata die h... also since yaha unary minus h to just ek chiz se fix ho gya ye
+// ki agar operator!=) me jaa rhe kabhi and flag already true h iska mtlb yaha par operand ko ana tha but aya nhi
+// islie apne se ek 0 ko operands me daal die and ho gya
+// this is the original code which I wrote... but kyunki iss question me sirf +- hai to isko aur simply bhi kr skte h
+// See the other method too
+
+    int solve(int a,int b,char ch){
+        if(ch=='+') return a+b;
+        return a-b;
+    }
+    void empty_ops(auto&operands,auto&operators,bool closing=false){
+        while(!operators.empty() && (!closing || operators.top()!='(')){
+            int b=operands.top();operands.pop();
+            int a=0;
+            if(!operands.empty()){
+                a=operands.top();
+                operands.pop();
+            }
+            char op=operators.top();operators.pop();
+            operands.push(solve(a,b,op));
+        }
+    }
+    int calculate(string s) {
+        stack<char>operators;
+        stack<int>operands;
+        operands.push(0);
+        bool flag=false;
+        for(int i=0;i<s.size();i++){
+            if(isspace(s[i])) continue;
+            if(s[i]=='('){
+                operators.push(s[i]);
+                continue;
+            }
+            if(isdigit(s[i])){
+                int num=s[i]-'0';
+                if(!flag){
+                    int x=operands.top();operands.pop();
+                    operands.push(10*x+num);
+                }
+                else{
+                    operands.push(num);
+                    flag=false;
+                }
+            }
+            else if(s[i]==')'){
+                empty_ops(operands,operators,true);
+                operators.pop();
+            }
+            else{
+                empty_ops(operands,operators,true);
+                operators.push(s[i]);
+                if(flag) operands.push(0);
+                flag=true;
+            }
+        }
+        empty_ops(operands,operators);
+        return operands.top();
+    }

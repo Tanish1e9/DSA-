@@ -1,0 +1,20 @@
+GFG link: https://www.geeksforgeeks.org/problems/prefix-to-infix-conversion/1
+
+// isme yaha se intuition aaya ki hm dekh rhe the left to right jaane pe kya pata 2 operands kab lagataar aaye
+// but right se jaane me to sure h ki jaise hi operator aaya last two were the operands to ekdum exact code likh die h
+
+    bool isoperator(char ch){
+        return ch=='+' || ch=='-' || ch=='^' || ch=='*' || ch=='/';
+    }
+    string preToInfix(string s) {
+        stack<string>st;
+        for(int i=s.size()-1;i>=0;i--){
+            if(isoperator(s[i])){
+                string a = st.top();st.pop();
+                string b = st.top();st.pop();
+                st.push('('+a+s[i]+b+')');
+            }
+            else st.push(string(1,s[i]));
+        }
+        return st.top();
+    }

@@ -52,3 +52,42 @@ LC link: https://leetcode.com/problems/basic-calculator-ii/
         empty_ops(operands,operators);
         return operands.top();
     }
+
+// literally jo basic calc 1 me kie the na couple of variables maintain krke blkul waise hi kie h
+// yaha stack use ni krna padega because brackets nhi h
+// agar brackets hote to bhi stack ka use kr lete isi solution ko extend krne k lie
+
+    void update_ans(int&sign,char&last_op,int&num,int&last_num,int&ans){
+        if(last_op==' ') ans+=sign*num;
+        else if(last_op=='/') ans+=sign*(last_num/num);
+        else ans+=sign*(last_num*num);
+        last_op=' ';
+        last_num=0;
+        num=0;
+    }
+    int calculate(string s) {
+        int ans=0;
+        int num=0;
+        int sign=1;
+        char last_op=' ';
+        int last_num=0;
+        for(int i=0;i<s.size();i++){
+            if(isspace(s[i])) continue;
+            if(isdigit(s[i])){
+                num=num*10+(s[i]-'0');
+            }
+            else if(s[i]=='+' || s[i]=='-'){
+                update_ans(sign,last_op,num,last_num,ans);
+                sign=(s[i]=='+'?1:-1);
+            }
+            else{
+                if(last_op==' ') last_num=num;
+                else if(last_op=='/') last_num=last_num/num;
+                else last_num=last_num*num;
+                num=0;
+                last_op = s[i];
+            }
+        }
+        update_ans(sign,last_op,num,last_num,ans);
+        return ans;
+    }

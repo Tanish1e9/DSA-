@@ -1,0 +1,17 @@
+GFG link: https://www.geeksforgeeks.org/problems/evaluation-of-postfix-expression1735/1?itm_source=geeksforgeeks&itm_medium=article&itm_campaign=bottom_sticky_on_article
+
+    int evaluatePostfix(string S){
+        stack<int>s;
+        for(int i=0;i<S.size();i++){
+            if(S[i]>='0' && S[i]<='9')s.push(S[i]-'0');
+            else{
+                int b=s.top();s.pop();
+                int a=s.top();s.pop();
+                if(S[i]=='+') s.push(a+b);
+                else if(S[i]=='*') s.push(a*b);
+                else if(S[i]=='/') s.push(a/b);
+                else s.push(a-b);
+            }
+        }
+        return s.top();
+    }

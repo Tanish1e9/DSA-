@@ -1,0 +1,54 @@
+LC link: https://leetcode.com/problems/basic-calculator-ii/
+
+// ye code originally hm kie h but isme O(n) space ja rha na so we need to optimise
+    map<char,int> precedence;
+    bool issolv(char a,char b){
+        return (precedence[b] >= precedence[a]);
+    }
+    int solve(int a,int b,char ch){
+        if(ch=='+') return a+b;
+        else if(ch=='-') return a-b;
+        else if(ch=='/') return a/b;
+        return a*b;
+    }
+    void empty_ops(auto&operands,auto&operators,bool check=false,char x=' '){
+        while(!operators.empty() && (!check || issolv(x,operators.top()))){
+            int b=operands.top();operands.pop();
+            int a=0;
+            if(!operands.empty()){
+                a=operands.top();
+                operands.pop();
+            }
+            char op=operators.top();operators.pop();
+            operands.push(solve(a,b,op));
+        }
+    }
+    int calculate(string s) {
+        precedence['+']=precedence['-']=0;
+        precedence['*']=precedence['/']=1;
+        stack<char>operators;
+        stack<int>operands;
+        operands.push(0);
+        bool flag=false;
+        for(int i=0;i<s.size();i++){
+            if(isspace(s[i])) continue;
+            if(isdigit(s[i])){
+                int num=s[i]-'0';
+                if(!flag){
+                    int x=operands.top();operands.pop();
+                    operands.push(10*x+num);
+                }
+                else{
+                    operands.push(num);
+                    flag=false;
+                }
+            }
+            else{
+                empty_ops(operands,operators,true,s[i]);
+                operators.push(s[i]);
+                flag=true;
+            }
+        }
+        empty_ops(operands,operators);
+        return operands.top();
+    }

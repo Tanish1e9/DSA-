@@ -1,0 +1,20 @@
+GFG link: https://www.geeksforgeeks.org/problems/postfix-to-infix-conversion/1
+
+// sirf abhi tk infix to postfix me hi thoda alag tarika laga h baaki sabme similar code copy paste hoke
+// minor changes kie ja rhe h
+
+    bool isoperator(char ch){
+        return ch=='+' || ch=='-' || ch=='^' || ch=='*' || ch=='/';
+    }
+    string postToInfix(string s) {
+        stack<string>st;
+        for(int i=0;i<s.size();i++){
+            if(isoperator(s[i])){
+                string b = st.top();st.pop();
+                string a = st.top();st.pop();
+                st.push('('+a+s[i]+b+')');
+            }
+            else st.push(string(1,s[i]));
+        }
+        return st.top();
+    }

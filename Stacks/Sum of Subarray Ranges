@@ -44,3 +44,37 @@ LC link: https://leetcode.com/problems/sum-of-subarray-ranges/
         }
         return (temp-ans);
     }
+
+
+// Again here is the optimal one pass solution ekdum similar to subarray minimums
+// isme bhi dono jagah equal to lagao ya na lagao koi fark ni padta
+// because like agar equal nikal die to 2 . . . . 2 usi pop k time consider ho jayega
+// wrna wo 2 pop ni hoga and stack pe ek aur two push ho jayega aur wo end me jab hypothetical element maanenge na
+// wo uss samay count ho jayega dry run krke dekh lena
+// similar case is with the greater wala stack 
+
+    long long subArrayRanges(vector<int>& arr) {
+        int n=arr.size();
+        long ans=0,temp=0;
+        stack<long>s;
+        stack<long>s2;
+        for(int i=0;i<=n;i++){
+            while(!s.empty() && (i==n || arr[s.top()] > arr[i])){
+                int el = s.top();s.pop();
+                long right = i-el;
+                long left = el+1;
+                if(!s.empty()) left = el-s.top();
+                ans = (ans+arr[el]*(right*left));
+            }
+            s.push(i);
+            while(!s2.empty() && (i==n || arr[s2.top()] <= arr[n-i-1])){
+                int el = s2.top();s2.pop();
+                long right = n-el;
+                long left = el-(n-i-1);
+                if(!s2.empty()) right = s2.top()-el;
+                temp = (temp+arr[el]*(right*left));
+            }
+            s2.push(n-i-1);
+        }
+        return temp-ans;
+    }

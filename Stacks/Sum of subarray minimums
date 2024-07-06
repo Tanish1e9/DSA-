@@ -44,7 +44,8 @@ LC link: https://leetcode.com/problems/sum-of-subarray-minimums/
 // also yaha equal likho chahe na likho dono correct h because isme na ek extra iteration chala h
 // i==n pe aisa maan lia gya h ki hypothetical element h jo ki sabse chota h to jitne bhi elements stack pe h un
 // sab ka right smaller h wo
-// to bas usi tarah se kr dia h
+// to agar equal walo ko tm consider kr lie pop krate time to thik h wrna jab end me hypo element lenge
+// tab ho jayega consider try to dry run and see
 
     const int mod = 1e9+7;
     int sumSubarrayMins(vector<int>& arr) {

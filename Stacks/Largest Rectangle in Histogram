@@ -1,0 +1,45 @@
+LC link: https://leetcode.com/problems/largest-rectangle-in-histogram/
+
+// ye to ekdum subarray minimums jaisa sawaal ho gya same tarike se ho bhi gya h 
+// but we can do it in single pass check the optimal solution also below
+
+    int largestRectangleArea(vector<int>& arr) {
+        // int n=arr.size();
+        // int ans=0;
+        // for(int i=0;i<n;i++){
+        //     int len=1;
+        //     for(int j=i-1;j>=0;j--){
+        //         if(arr[j]>=arr[i]) len++;
+        //         else break;
+        //     }
+        //     for(int j=i+1;j<n;j++){
+        //         if(arr[j]>=arr[i]) len++;
+        //         else break;
+        //     }
+        //     ans = max(ans,arr[i]*len);
+        // }
+        // return ans;
+
+        int n=arr.size();
+        vector<int>left(n),right(n);
+        stack<int>s;
+        for(int i=0;i<n;i++){
+            while(!s.empty() && arr[s.top()]>=arr[i]) s.pop();
+            if(s.empty()) left[i]=i+1;
+            else left[i]=i-s.top();
+            s.push(i);
+        }
+        s=stack<int>();
+        for(int i=n-1;i>=0;i--){
+            while(!s.empty() && arr[s.top()]>arr[i]) s.pop();
+            if(s.empty()) right[i]=n-i;
+            else right[i]=s.top()-i;
+            s.push(i);
+        }
+        int ans=0;
+        for(int i=0;i<n;i++){
+            int area = (left[i]+right[i]-1)*arr[i];
+            ans=max(ans,area);
+        }
+        return ans;
+    }

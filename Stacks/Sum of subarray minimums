@@ -34,3 +34,32 @@ LC link: https://leetcode.com/problems/sum-of-subarray-minimums/
         }
         return ans;
     }
+
+// Now here comes the optimal solution which is just one pass
+// Dekh yaha na left wala stack sirf maintain kr rhe
+// aur jaise hi koi element stack k top se chota aa rha h na to usko to pop krenge hi
+// but yaha se ye insight mila ki uss s.top() ka right smaller element is the current element
+// wrna koi pehle aya hota chota to wo pop kra deta na
+// to bas left ka data h hi right yaha se mil gya to uss s.top() wale ka contribution nikal gya
+// also yaha equal likho chahe na likho dono correct h because isme na ek extra iteration chala h
+// i==n pe aisa maan lia gya h ki hypothetical element h jo ki sabse chota h to jitne bhi elements stack pe h un
+// sab ka right smaller h wo
+// to bas usi tarah se kr dia h
+
+    const int mod = 1e9+7;
+    int sumSubarrayMins(vector<int>& arr) {
+        int n=arr.size();
+        long ans=0;
+        stack<long>s;
+        for(int i=0;i<=n;i++){
+            while(!s.empty() && (i==n || arr[s.top()] > arr[i])){
+                int el = s.top();s.pop();
+                long right = i-el;
+                long left = el+1;
+                if(!s.empty()) left = el-s.top();
+                ans = (ans+arr[el]*(right*left)%mod)%mod;
+            }
+            s.push(i);
+        }
+        return ans;
+    }

@@ -7,6 +7,7 @@ LC link: https://leetcode.com/problems/global-and-local-inversions/description/
 // that's why jaha bhi local inversion aaya usko swap kr die and i+=2 pe jaake ab check krna h hmlog ko
 // fir aise end me agar sorted aaya to thik h wrna wrong
 // iska fir equivalent ye aata h ki kisi index i pe max 1 hi difference ka koi rh skta h usse jada nhi
+// Also remember that the number of swaps required in bubble sort is equal to the total number of global inversions
 
     bool isIdealPermutation(vector<int>& arr) {
         // int n=arr.size();

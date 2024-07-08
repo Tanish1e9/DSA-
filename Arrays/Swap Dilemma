@@ -1,0 +1,64 @@
+CF link: https://codeforces.com/contest/1983/problem/D
+
+// dekh isme ye intuition lagaye na ki bubble sort krte rhenge agar dono me same parity ka swaps aaya na to possible h
+// because even extra swaps honge wo kisi bhi pair pe kr dena same hi rhega
+// aur kitne swaps required hote .... count inversions to bas inv count kre
+// and checked ki %2 equal h ya nahi
+// also check ki final sorted arrays equal hona chahye i.e. har element ka frequency same ho
+// bas ho gya
+
+#include<bits/stdc++.h>
+using namespace std;
+#define int long long
+int merge(vector<int>&arr,int l,int mid,int r){
+	vector<int>a(arr.begin()+l,arr.begin()+mid+1);
+	vector<int>b(arr.begin()+mid+1,arr.begin()+r+1);
+	int k=l,i=0,j=0;
+	int ans=0;
+	while(i<a.size() && j<b.size()){
+		if(a[i] > b[j]){
+			ans+=a.size()-i;
+			arr[k++]=b[j++];
+		}
+		else arr[k++]=a[i++];
+	}
+	while(i<a.size()){
+		arr[k++]=a[i++];
+	}
+	while(j<b.size()){
+		arr[k++]=b[j++];
+	}
+	return ans;
+}
+int mergesort(vector<int>&arr,int l,int r){
+	if(l>=r) return 0;
+	int mid = (l+r)/2;
+	int a = mergesort(arr,l,mid);
+	int b = mergesort(arr,mid+1,r);
+	int c = merge(arr,l,mid,r);
+	return a+b+c;
+}
+signed main(){
+	ios_base::sync_with_stdio(0);
+	cin.tie(0);
+	cout.tie(0);
+	int t;
+	cin >> t;
+	while(t--){
+		int n;
+		cin >> n;
+		vector<int>a(n),b(n);
+		
+		for(int i=0;i<n;i++) cin >> a[i];
+		for(int i=0;i<n;i++) cin >> b[i];
+		if(a==b){
+			cout << "YES" << endl;
+			continue;
+		}
+		int diff1 = mergesort(a,0,n-1);
+		int diff2 = mergesort(b,0,n-1);
+		if(a!=b || diff1%2!=diff2%2) cout << "NO" << endl;
+		else cout << "YES" << endl;
+	}
+	return 0;
+}

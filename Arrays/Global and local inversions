@@ -1,0 +1,26 @@
+LC link: https://leetcode.com/problems/global-and-local-inversions/description/
+
+// Dekh isme first thought to aayega ki global local dono count kr lete and we will check 
+// jo ki thoda mehnat k baad accept ho jayega but it is very poor
+// realise kr ki agar arr[i]>arr[i+1]>arr[i+2] aisa kahi ho gya then ans is false kyunki local k alawa ek global inversion ho gya na
+// so consecutively local inversions nhi ho skte
+// that's why jaha bhi local inversion aaya usko swap kr die and i+=2 pe jaake ab check krna h hmlog ko
+// fir aise end me agar sorted aaya to thik h wrna wrong
+// iska fir equivalent ye aata h ki kisi index i pe max 1 hi difference ka koi rh skta h usse jada nhi
+
+    bool isIdealPermutation(vector<int>& arr) {
+        // int n=arr.size();
+        // for(int i=0;i<n-1;i++){
+        //     if(arr[i]>arr[i+1]) {
+        //         swap(arr[i],arr[i+1]);
+        //         i++;
+        //     }
+        // }
+        // return is_sorted(arr.begin(),arr.end());
+        
+        int n=arr.size();
+        for(int i=0;i<n;i++){
+            if(abs(arr[i]-i)>1) return false;
+        }
+        return true;
+    }

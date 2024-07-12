@@ -1,0 +1,29 @@
+LC link: https://leetcode.com/problems/reverse-substrings-between-each-pair-of-parentheses/
+
+
+// O(n^2) approach 
+// simulate kr dia h aur like maaan lo koi bracket ni hota still stack me daalne k wajah se string reverse ho jata na
+// islie end me ek bar aur reverse kr die h
+    string reverseParentheses(string s) {
+        stack<char>st;
+        for(int i=0;i<s.size();i++){
+            if(s[i]==')'){
+                string temp;
+                while(st.top()!='(') {
+                    temp.push_back(st.top());
+                    st.pop();
+                }
+                st.pop();
+                for(char c:temp) st.push(c);
+            }
+            else st.push(s[i]);
+        }
+
+        string ans;
+        while(!st.empty()){
+            ans.push_back(st.top());
+            st.pop();
+        }
+        reverse(ans.begin(),ans.end());
+        return ans;
+    }

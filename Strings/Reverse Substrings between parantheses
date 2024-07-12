@@ -27,3 +27,33 @@ LC link: https://leetcode.com/problems/reverse-substrings-between-each-pair-of-p
         reverse(ans.begin(),ans.end());
         return ans;
     }
+
+// O(n) approach wormhole teleportation technique
+// simply brackets k bich bounce krte rho and direction gets reversed on each bounce
+
+    string reverseParentheses(string s) {
+        map<int,int>mpp;
+        stack<int>st;
+        for(int i=0;i<s.size();i++){
+            if(s[i]=='(') st.push(i);
+            else if(s[i]==')'){
+                mpp[st.top()] = i;
+                mpp[i]=st.top();
+                st.pop();
+            }
+        }
+
+        string ans;
+        bool left_to_right = true;
+        int i=0;
+        while(i<s.size() && i>=0){
+            if(s[i]=='(' || s[i]==')'){
+                i=mpp[i];
+                left_to_right = !left_to_right;
+            }
+            else ans.push_back(s[i]);
+            if(left_to_right) i++;
+            else i--;
+        }
+        return ans;
+    }

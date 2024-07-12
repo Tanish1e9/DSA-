@@ -1,6 +1,12 @@
 LC link: https://leetcode.com/problems/maximum-score-from-removing-substrings/description/
 
 // this is a O(n),O(n) approach
+// isme we will greedily remove that substring jo jada point de and baad me dusra wala
+// why does it always work?  "abab" leke dekh lo even if you choose "ba" greedily you will get to remove "ab" again
+// now yaha na jab stack se bhej rhe string to reverse ho ja rha h
+// to dusra substring ko bhi actually reverse krke wo pehle wala hi ban gya
+// halanki dekho point alag alag h 
+
 string remove(string&s,string tobe,int point,int& ans){
         stack<char>st;
         for(int i=0;i<s.size();i++){

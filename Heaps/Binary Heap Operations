@@ -1,0 +1,47 @@
+GFG link: https://www.geeksforgeeks.org/problems/operations-on-binary-min-heap/1
+
+// dekh isme na delete at particular index naya chiz h to isme simply last element se ni swap kr skte
+// because ho skta h na last element kisi doosre subheap ka hissa ho and wo aur bhut chota ho to wo upar float krna chaahe
+// islie aisa value daalo ki fir usko insert jaise upar float kra ke baahar nikal denge
+// and basic edge case handling to kr hi lena
+
+int MinHeap::extractMin() 
+{
+    if(heap_size==0) return -1;
+    int ans=harr[0];
+    swap(harr[0],harr[heap_size-1]);
+    heap_size--;
+    MinHeapify(0);
+    return ans;
+}
+void MinHeap::deleteKey(int i)
+{
+    if(heap_size <= i) return;
+    decreaseKey(i,-1);
+    extractMin();
+}
+void MinHeap::insertKey(int k) 
+{
+    decreaseKey(heap_size,k);
+    heap_size++;
+}
+void MinHeap::decreaseKey(int i, int new_val) 
+{
+    harr[i] = new_val;
+    while (i != 0 && harr[parent(i)] > harr[i]) {
+        swap(harr[i], harr[parent(i)]);
+        i = parent(i);
+    }
+}
+void MinHeap::MinHeapify(int i) 
+{
+    int l = left(i);
+    int r = right(i);
+    int smallest = i;
+    if (l < heap_size && harr[l] < harr[i]) smallest = l;
+    if (r < heap_size && harr[r] < harr[smallest]) smallest = r;
+    if (smallest != i) {
+        swap(harr[i], harr[smallest]);
+        MinHeapify(smallest);
+    }
+}

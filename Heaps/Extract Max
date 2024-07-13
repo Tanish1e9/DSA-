@@ -1,0 +1,10 @@
+GFG link: https://www.geeksforgeeks.org/problems/implementation-of-priority-queue-using-binary-heap/1
+
+    int extractMax() {
+        if(s==-1) return -1;
+        int ans=H[0];
+        swap(H[0],H[s]);
+        s--;
+        shiftDown(0);
+        return ans;
+    }

@@ -1,0 +1,32 @@
+GFG link: https://www.geeksforgeeks.org/problems/heap-sort/1
+
+// yaha swap function ye log khud likha h to pointers used h islie address daalna hoga
+// also reference variables kaam ni krte older version me to again pointers use kia h
+
+void heapify(int arr[], int n, int i) {
+    // Find largest among root, left child and right child
+    while(2*i+1<n){
+        int left = 2*i+1;
+        int right = 2*i+2;
+        int maxi = left;
+        if(right < n && arr[right] > arr[maxi]) maxi = right;
+        if(arr[maxi] < arr[i]) return;
+        swap(&arr[maxi],&arr[i]);
+        i=maxi;   
+    }
+}
+void hatao(int arr[],int *n){
+    swap(&arr[0],&arr[(*n)-1]);
+    (*n)--;
+    heapify(arr, *n, 0);
+}
+// Main function to do heap sort
+void buildHeap(int arr[], int n) {
+    // Build max heap
+    for(int i=(n-1)/2;i>=0;i--) heapify(arr,n,i);
+    
+    int size=n;
+    for(int i=0;i<size;i++){
+        hatao(arr,&n);
+    }
+}

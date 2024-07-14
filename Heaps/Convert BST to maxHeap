@@ -1,0 +1,27 @@
+GFG link: https://www.geeksforgeeks.org/problems/bst-to-max-heap/1
+
+// question me ni likha h but iska article padho to waha likha h given B.T. is complete
+// to bas postorder traverse krke inorder k hisab se elements bhar do
+// agar min heap banana ho to preorder kr dena
+
+    void inorder(Node*root,vector<int>&arr){
+        if(root==0) return ;
+        inorder(root->left,arr);
+        arr.push_back(root->data);
+        inorder(root->right,arr);
+    }
+    void postorder(Node*root,vector<int>&arr,int&idx){
+        if(root==0) return;
+        
+        postorder(root->left,arr,idx);
+        postorder(root->right,arr,idx);
+        
+        root->data = arr[idx++];
+    }
+    void convertToMaxHeapUtil(Node*& root){
+        vector<int>arr;
+        inorder(root,arr);
+        
+        int idx=0;
+        postorder(root,arr,idx);
+    }    

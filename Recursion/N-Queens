@@ -1,0 +1,48 @@
+LC link: https://leetcode.com/problems/n-queens/
+
+    vector<vector<string>> ans;
+    bool isvalid(int i,int j,int n,auto&grid,auto&up,auto&down){
+        for(int col=0;col<j;col++){
+            if(grid[i][col]=='Q') return false;
+        }
+        if(up[i+j]) return false;
+        if(down[i-j+n]) return false;
+        // int row=i-1,col=j-1;
+        // while(row>=0 && col>=0){
+        //     if(grid[row][col]=='Q') return false;
+        //     row--;
+        //     col--;
+        // }
+        // row=i+1;
+        // col=j-1;
+        // while(row<n && col>=0){
+        //     if(grid[row][col]=='Q') return false;
+        //     row++;
+        //     col--;
+        // }
+        return true;
+    }
+    void f(int col,int n,auto&temp,auto&up,auto&down){
+        if(col==n){
+            ans.push_back(temp);
+            return;
+        }
+        for(int i=0;i<n;i++){
+            if(isvalid(i,col,n,temp,up,down)){
+                temp[i][col]='Q';
+                up[i+col]=1;
+                down[i-col+n]=1;
+                f(col+1,n,temp,up,down);
+                temp[i][col]='.';
+                up[i+col]=0;
+                down[i-col+n]=0;
+            }
+        }
+    }
+    vector<vector<string>> solveNQueens(int n) {
+        vector<int>up(2*n,0);
+        vector<int>down(2*n,0);
+        vector<string>temp(n,string(n,'.'));
+        f(0,n,temp,up,down);
+        return ans;
+    }

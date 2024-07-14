@@ -1,0 +1,32 @@
+LC link: https://leetcode.com/problems/find-the-duplicate-number/
+
+    int findDuplicate(vector<int>& nums) {
+        // hashmap banake to kr hi lega O(n),O(n)
+
+        // this is a jugaad solution O(2n),O(1)
+        // int ans=0;
+        // for(int i=0;i<nums.size();i++){
+        //     int el = abs(nums[i]);
+        //     if(nums[el]<0) {ans=el;break;}
+        //     nums[el]*=-1;
+        // }
+        // for(int i=0;i<nums.size();i++){
+        //     nums[i]=abs(nums[i]);
+        // }
+        // return ans;
+
+        // optimal tortoise and hare algorithm
+        int slow=0,fast=0;
+        do{
+            slow=nums[slow];
+            fast=nums[fast];
+            fast=nums[fast];
+        }while(slow!=fast);
+
+        slow=0;
+        while(slow!=fast){
+            slow=nums[slow];
+            fast=nums[fast];
+        }
+        return slow;
+    }

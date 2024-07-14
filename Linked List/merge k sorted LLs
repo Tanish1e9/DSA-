@@ -53,12 +53,14 @@ public:
         //     lists[mini_idx]=lists[mini_idx]->next;
         // }
 
+
         // M2:- O((n1+n2)+(n1+n2+n3)+(n1+n2+n3+n4)+...),O(1) = O(n*k*k),O(1) // Better
         // ListNode*head=NULL;
         // for(int i=0;i<k;i++){
         //     head=merge(head,lists[i]);
         // }
         // return head;
+
 
         // M3:- O(klogk+mlogk),O(k)    m=n*k    // Most Optimal
         priority_queue<p,vector<p>,greater<p>>pq;
@@ -81,3 +83,36 @@ public:
     // operator overloading k through
     // See one file in main branch
 
+
+// M-4 ye thoda optimal merge h divide and conquer kia ja rha h
+
+        ListNode*merge(ListNode*a,ListNode*b){
+            ListNode*dummy = new ListNode(-1);
+            ListNode*prev=dummy;
+            ListNode*t1=a,*t2=b;
+            while(t1 && t2){
+                if(t1->val < t2->val){
+                    prev->next=t1;
+                    t1=t1->next;
+                }
+                else{
+                    prev->next=t2;
+                    t2=t2->next;
+                }
+                prev=prev->next;
+            }
+            if(t1) prev->next=t1;
+            if(t2) prev->next=t2;
+            return dummy->next;
+        }
+        ListNode*mergesort(auto&lists,int l,int r){
+            if(l>r) return 0;
+            if(l==r) return lists[l];
+            int mid = (l+r)/2;
+            ListNode*a=mergesort(lists,l,mid);
+            ListNode*b=mergesort(lists,mid+1,r);
+            return merge(a,b);
+        }
+        ListNode* mergeKLists(vector<ListNode*>& lists) {
+            return mergesort(lists,0,lists.size()-1);
+        }

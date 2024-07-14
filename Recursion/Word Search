@@ -1,0 +1,28 @@
+LC link: https://leetcode.com/problems/word-search/
+
+    bool dfs(int i,int j,auto&grid,auto&vis,string&word,int idx){
+        if(grid[i][j]!=word[idx]) return false;
+        if(idx==word.size()-1) return true;
+        vis[i][j]=1;
+        int dx[]={-1,1,0,0};
+        int dy[]={0,0,-1,1};
+        for(int k=0;k<4;k++){
+            int x = i+dx[k];
+            int y = j+dy[k];
+            if(x>=grid.size() || x<0 || y>=grid[0].size() || y<0 || vis[x][y]) continue;
+            if(dfs(x,y,grid,vis,word,idx+1))return true;
+        }
+        vis[i][j]=0;
+        return false;
+    }
+    bool exist(vector<vector<char>>& grid, string word) {
+        int m=grid.size();
+        int n=grid[0].size();
+        vector<vector<int>> vis(m,vector<int>(n,0));
+        for(int i=0;i<m;i++){
+            for(int j=0;j<n;j++){
+                if(dfs(i,j,grid,vis,word,0))return true;
+            }
+        }
+        return false;
+    }

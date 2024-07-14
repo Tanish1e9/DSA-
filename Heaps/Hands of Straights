@@ -5,9 +5,10 @@ LC link: https://leetcode.com/problems/hand-of-straights/
     bool isNStraightHand(vector<int>& arr, int groupSize) {
         if(arr.size()%groupSize!=0) return 0;
         int num = arr.size()/groupSize;
+
+        // M-1
         // map<int,int> mpp;
         // for(int i:arr) mpp[i]++;
-        
         // for(int i=0;i<num;i++){
         //     int start = mpp.begin()->first;
         //     mpp[start]--;
@@ -20,15 +21,33 @@ LC link: https://leetcode.com/problems/hand-of-straights/
         // }
         // return 1;
 
+        // M-2
         sort(arr.begin(),arr.end());
         unordered_map<int,int>mpp;
         for(int i:arr) mpp[i]++;
-
         for(int i=0;i<arr.size();i++){
             if(mpp[arr[i]]==0) continue;
             for(int j=0;j<groupSize;j++){
                 if(mpp[arr[i]+j]==0) return 0;
                 mpp[arr[i]+j]--;
+            }   
+        }
+        return 1;
+
+        //M-3  instead of sorting we can also use a minHeap
+        priority_queue<int,vector<int>,greater<int>>pq;        
+        unordered_map<int,int>mpp;
+        for(int i:arr) {
+            mpp[i]++;
+            pq.push(i);
+        }
+        while(!pq.empty()){
+            int start = pq.top();
+            pq.pop();
+            if(mpp[start]==0) continue;
+            for(int j=0;j<groupSize;j++){
+                if(mpp[start+j]==0) return 0;
+                mpp[start+j]--;
             }   
         }
         return 1;

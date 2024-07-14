@@ -1,0 +1,22 @@
+GFG link: https://www.geeksforgeeks.org/problems/merge-k-sorted-arrays/1
+
+// agar sirf top k elements daalke next next daalna chaho to wo bhi possible h
+// bas ye maintain krna hoga ki kon se array ka konsawa element h 
+// to ek pair bana lo jisme arr_index rakh lena element k sath aur ye pq me rhega
+// create another array jisme har array_index ka kitna element use hua h wo rakh lena and keep updating that
+// also merge k sorted lists me naively linearly merge kroge to bhut baar iterations ho jayega
+// to usko na merge sort waale tarike se krna to nk log(nk) ho jaayega complexity 
+
+    vector<int> mergeKArrays(vector<vector<int>> arr, int k){
+        priority_queue<int,vector<int>,greater<int>>pq;
+        for(int i=0;i<k;i++){
+            for(int j=0;j<k;j++)
+                pq.push(arr[i][j]);
+        }
+        vector<int>ans;
+        while(!pq.empty()){
+            ans.push_back(pq.top());
+            pq.pop();
+        }
+        return ans;
+    }

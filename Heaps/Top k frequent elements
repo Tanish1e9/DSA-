@@ -1,5 +1,7 @@
 LC link: https://leetcode.com/problems/top-k-frequent-elements/
 
+// O(klogd + n + d)
+// d=distinct elements
     typedef pair<int,int> p;
     vector<int> topKFrequent(vector<int>& arr, int k) {
         vector<int>ans;
@@ -15,4 +17,28 @@ LC link: https://leetcode.com/problems/top-k-frequent-elements/
             pq.pop();
         }
         return ans;
+    }
+
+
+// yaha bucket sort technique lag gya
+// frequency==i jin jinki hi unko ek sath kr die to sort wort ni krna pada that's why linear rh gya
+    vector<int> topKFrequent(vector<int>& arr, int k) {
+        vector<int>ans;
+        unordered_map<int,int> freq;
+        int n=arr.size();
+        for(int i=0;i<n;i++) {
+            freq[arr[i]]++;
+        }
+        vector<vector<int>>kitne(n+1);
+        for(auto &it:freq){
+            kitne[it.second].push_back(it.first);
+        }
+
+        for(int i=n;i>=0;i--){
+            for(int el:kitne[i]){
+                ans.push_back(el);
+                if(ans.size()==k) return ans;
+            }
+        }
+        return {};
     }

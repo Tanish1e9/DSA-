@@ -4,6 +4,9 @@ LC link: https://leetcode.com/problems/find-the-duplicate-number/
         // hashmap banake to kr hi lega O(n),O(n)
 
         // this is a jugaad solution O(2n),O(1)
+        // it modifies the array so not acceptable just giving a idea
+        // along with it we can add (n+1) to that index and el will be %(n+1) this way the quotient gives the freq count as well
+        // also we can use the other half bits to store frequency
         // int ans=0;
         // for(int i=0;i<nums.size();i++){
         //     int el = abs(nums[i]);
@@ -15,6 +18,55 @@ LC link: https://leetcode.com/problems/find-the-duplicate-number/
         // }
         // return ans;
 
+        // Binary Search O(nlogn),O(1)
+        // Isme ye h na ki imagine kr pehle 1 to n numbers likhe h
+        // then ab ek extra duplicate number add krenge to wo jin bhi numbers se <= hoga
+        // unke lie count exceed kr jayega na
+        // Now if wo duplicate baaki numbers me se jisko bhi replace kre usse koi fark hi ni padega   
+        // because like koi bhi number jo >= ho uss duplicate number se unke lie to no change
+        // bakio k lie to count decrease kr jayega so it will work
+
+        int count(vector<int>&nums,int el){
+            int ans=0;
+            for(int i:nums){
+                if(i<=el) ans++;
+            }
+            return ans;
+        }
+        int findDuplicate(vector<int>& nums) {
+            int n=nums.size()-1;
+            int low=1,high=n;
+            while(low<=high){
+                int mid = low+(high-low)/2;
+                if(count(nums,mid) <= mid) low = mid+1;
+                else high = mid-1;
+            }
+            return low;
+        }   
+
+        // similar kind of intuition hi h bas ye bit manipulation se kr rhe
+        // duplicate number waali bits hmesha extra hi hoga examples leke dekh lo
+        void add(vector<int>&arr,int el){
+            for(int i=0;i<30;i++){
+                if(el & (1<<i)) arr[i]++;
+            }
+        }
+        int findDuplicate(vector<int>& nums) {
+            int n=nums.size()-1;
+            vector<int> num_count(30,0),base_count(30,0);
+            for(int i=0;i<=n;i++){
+                if(i>0) add(base_count,i);
+                add(num_count,nums[i]);
+            }
+            int ans=0;
+            for(int i=0;i<30;i++){
+                if(num_count[i]>base_count[i]) ans|=(1<<i);
+            }
+            return ans;
+        }
+
+
+    
         // optimal tortoise and hare algorithm
         int slow=0,fast=0;
         do{

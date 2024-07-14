@@ -1,0 +1,38 @@
+LC link: https://leetcode.com/problems/hand-of-straights/
+
+// har bar jo minimum possible element hoga usse ek naye group ki shuruwaat krenge
+
+    bool isNStraightHand(vector<int>& arr, int groupSize) {
+        if(arr.size()%groupSize!=0) return 0;
+        int num = arr.size()/groupSize;
+        // map<int,int> mpp;
+        // for(int i:arr) mpp[i]++;
+        
+        // for(int i=0;i<num;i++){
+        //     int start = mpp.begin()->first;
+        //     mpp[start]--;
+        //     if(mpp[start]==0) mpp.erase(start);
+        //     for(int j=1;j<groupSize;j++){
+        //         if(mpp[start+j]==0) return 0;
+        //         mpp[start+j]--;
+        //         if(mpp[start+j]==0) mpp.erase(start+j);
+        //     }
+        // }
+        // return 1;
+
+        sort(arr.begin(),arr.end());
+        unordered_map<int,int>mpp;
+        for(int i:arr) mpp[i]++;
+
+        for(int i=0;i<arr.size();i++){
+            if(mpp[arr[i]]>0){
+                for(int j=0;j<groupSize;j++){
+                    if(mpp[arr[i]+j]==0) return 0;
+                    mpp[arr[i]+j]--;
+                }   
+                num--;
+                if(num==0) break;
+            }
+        }
+        return 1;
+    }

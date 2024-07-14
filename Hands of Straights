@@ -25,14 +25,11 @@ LC link: https://leetcode.com/problems/hand-of-straights/
         for(int i:arr) mpp[i]++;
 
         for(int i=0;i<arr.size();i++){
-            if(mpp[arr[i]]>0){
-                for(int j=0;j<groupSize;j++){
-                    if(mpp[arr[i]+j]==0) return 0;
-                    mpp[arr[i]+j]--;
-                }   
-                num--;
-                if(num==0) break;
-            }
+            if(mpp[arr[i]]==0) continue;
+            for(int j=0;j<groupSize;j++){
+                if(mpp[arr[i]+j]==0) return 0;
+                mpp[arr[i]+j]--;
+            }   
         }
         return 1;
     }

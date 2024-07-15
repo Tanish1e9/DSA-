@@ -1,0 +1,24 @@
+LC link: https://leetcode.com/problems/find-k-pairs-with-smallest-sums/
+
+// GFG wale me n>=k de rakha tha yaha bas bola ki k pairs ban sakenge that's why pura array daalna pada
+
+    typedef pair<int,int> p;
+    vector<vector<int>> kSmallestPairs(vector<int>& a, vector<int>& b, int k) {
+        auto comp = [&a,&b](p&x,p&y)->bool{
+            return a[x.first]+b[x.second] > a[y.first]+b[y.second];
+        };
+        priority_queue<p,vector<p>,decltype(comp)>pq(comp);
+        for(int i=0;i<a.size();i++){
+            pq.push({i,0});
+        }
+        vector<vector<int>> ans;
+        while(ans.size()<k){
+            p curr = pq.top();
+            pq.pop();
+            int id1 = curr.first;
+            int id2 = curr.second;
+            ans.push_back({a[id1],b[id2]});
+            if(id2+1<b.size())pq.push({id1,id2+1});
+        }
+        return ans;
+    }

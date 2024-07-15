@@ -1,0 +1,25 @@
+GFG link: https://www.geeksforgeeks.org/problems/maximum-sum-combination/1
+
+// isme na realise krna ki ye question to merge k sorted arrays type ka hi h 
+// bas ek ek index kam krte rhna h 
+// to fir easily ho jayega
+
+    typedef pair<int,pair<int,int>>p;
+    vector<int> maxCombinations(int n, int k, vector<int> &a, vector<int> &b){
+        sort(a.begin(),a.end());
+        sort(b.begin(),b.end());
+        
+        priority_queue<p>pq;
+        for(int i=n-1;i>=n-k;i--) pq.push({a[i]+b[n-1],{i,n-1}});
+        
+        vector<int>ans;
+        while(ans.size()<k){
+            p curr = pq.top();
+            pq.pop();
+            ans.push_back(curr.first);
+            int id1 = curr.second.first;
+            int id2 = curr.second.second-1;
+            pq.push({a[id1]+b[id2],{id1,id2}});
+        }
+        return ans;
+    }

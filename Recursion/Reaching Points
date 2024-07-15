@@ -1,0 +1,31 @@
+LC link: https://leetcode.com/problems/reaching-points/description/
+
+// yaha key was to think in reverse
+// tx,ty jo h wo tx-ty,ty ya fir tx,ty-tx se hi pahuch skta h
+// now negative to nahi hi hoga so islie jo bada h uske hisab se ek unique move decide ho gya
+// now ek ek krke ghatate rhe to still time out kr skta to sx ko spare rakh ke baaki ghata denge % krke
+// ab maan le mod jiska ho rha wo divisor se chota ho gya then same hi rh jayega na yani dead end aa gya
+// to bas waha se false kr die
+
+    bool reachingPoints(int sx, int sy, int tx, int ty) {
+        // if(tx==sx && ty==sy) return true;
+        // if(tx>ty) {
+        //     if(tx-sx < ty) return false;
+        //     return reachingPoints(sx,sy,sx+(tx-sx)%ty,ty);
+        // }
+        // if(ty-sy < tx) return false;
+        // return reachingPoints(sx,sy,tx,sy+(ty-sy)%tx);
+
+        while(tx>=sx && ty>=sy){
+            if(tx==sx && ty==sy) return true;
+            if(tx>ty){
+                if(tx-sx<ty) return false;
+                tx = sx+(tx-sx)%ty;
+            }
+            else{
+                if(ty-sy<tx) return false;
+                ty = sy+(ty-sy)%tx;
+            }
+        } 
+        return false;
+    }

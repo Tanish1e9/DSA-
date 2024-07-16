@@ -1,0 +1,16 @@
+GFG link: https://www.geeksforgeeks.org/problems/bbt-counter4914/1?itm_source=geeksforgeeks&itm_medium=article&itm_campaign=bottom_sticky_on_article
+
+    vector<int>memo;
+    int mod=1e9+7;
+    long long f(int h){
+        if(h==1) return 1;
+        if(h==2) return 3;
+        if(memo[h]!=-1) return memo[h];
+        long long a = f(h-1)%mod;
+        long long b = f(h-2)%mod;
+        return memo[h]=(2*a*b+a*a)%mod;
+    }
+    long long int countBT(int h) { 
+        memo=vector<int>(h+1,-1);
+        return f(h);
+    }

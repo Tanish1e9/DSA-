@@ -1,0 +1,32 @@
+GFG link: https://www.geeksforgeeks.org/problems/shortest-uncommon-subsequence5746/0
+
+// Dekh concept ye h ki s[i] ko hmlog search krenge 0 to j me in t
+// agar mila hi ni suppose kro iska mtlb ye character le lo and we are done
+// but agar mil gya to like hmlog ko j ko full advantage dena h islie rightmost occurrence ko uthana h if we decide to pick this character
+// else if we decide not to pick this character then keep j as it is
+// and end me suppose kro i khatam ho gya iska mtlb haar gye na chahe j khatam hua ho ya nahi ab tk to match kra hi chuka h
+// but agar i bach gya and j khatam ho gya that means ki ek aur character lenge and we will be done
+// order ka dhyan rakhna base case ka reverse order pe galat ho jayega for the case jab dono strings equal ho
+// that's it thoda tricky laga but implementation is easy only
+
+    int f(int i,int j,string&s,string&t,vector<vector<int>>&memo){
+        if(i<0) return 1e9;
+        if(j<0) return 1;
+        if(memo[i][j]!=-1) return memo[i][j];
+        for(int k=j;k>=0;k--){
+            if(s[i]==t[k]){
+                int ans=1+f(i-1,k-1,s,t,memo);
+                ans=min(ans,f(i-1,j,s,t,memo));
+                return memo[i][j]=ans;
+            }
+        }
+        return memo[i][j]=1;
+    }
+    int shortestUnSub(string s, string t){
+        int m=s.size();
+        int n=t.size();
+        vector<vector<int>>memo(m,vector<int>(n,-1));
+        int ans= f(m-1,n-1,s,t,memo);
+        if(ans>=1e9) return -1;
+        return ans;
+    }

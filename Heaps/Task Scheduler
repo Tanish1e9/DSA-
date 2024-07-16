@@ -1,0 +1,32 @@
+LC link: https://leetcode.com/problems/task-scheduler/
+
+    int leastInterval(vector<char>& tasks, int n) {
+        vector<int>freq(26,0);
+        vector<int>last_done(26,-n);
+        
+        int tasks_rem = tasks.size();
+        for(int i=0;i<tasks.size();i++){
+            freq[tasks[i]-'A']++;
+        }
+    
+        int ans=0;
+        while(tasks_rem>0){
+            ans++;
+            int max_ind = -1;
+            int freq_found = 0;
+            for(int i=0;i<26;i++){
+                if(freq[i]>0 && ans-last_done[i]>n){
+                    if(freq[i]>freq_found){
+                        freq_found = freq[i];
+                        max_ind = i;
+                    }
+                }
+            }
+            if(max_ind!=-1){
+                last_done[max_ind]=ans;
+                freq[max_ind]--;
+                tasks_rem--;
+            }
+        }
+        return ans;
+    }

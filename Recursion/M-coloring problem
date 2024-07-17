@@ -1,0 +1,46 @@
+GFG link: https://www.geeksforgeeks.org/problems/m-coloring-problem-1587115620/1
+
+// dekh bipartite wale me na sirf ek hi possibility hota tha to agar wo fail kia to we would simply return false
+// waha backtrack kr hi ni rhe the
+// ya to true hoga ya to false ho jayega that's it 
+// but yaha pe galat approach ek dekhna submissions me usme we are just locking the first true value and then usko backtrack nahi kr rhe
+// that created a problem
+// this is a wrong testcase for that
+8
+3
+12
+1 8
+4 6
+1 2
+2 8
+3 5
+3 7
+3 6
+6 7
+3 4
+4 8
+5 8
+5 7
+
+    bool isvalid(int i,int col,bool graph[][101],vector<int>&vis,int n,int m){
+        for(int j=0;j<n;j++){
+            if(i==j || !graph[i][j]) continue;
+            if(vis[j]==col) return false;
+        }
+        return true;
+    }
+    bool dfs(int i,bool graph[][101],vector<int>&vis,int n,int m){
+        if(i==n) return true;
+        for(int col=0;col<m;col++){
+            if(isvalid(i,col,graph,vis,n,m)){
+                vis[i]=col;
+                if(dfs(i+1,graph,vis,n,m)) return true;
+            }
+        }
+        vis[i]=-1;
+        return false;
+    }
+    bool graphColoring(bool graph[101][101], int m, int n) {
+        vector<int>vis(n,-1);
+        return dfs(0,graph,vis,n,m);
+    }

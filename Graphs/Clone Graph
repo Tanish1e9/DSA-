@@ -1,0 +1,42 @@
+LC link: https://leetcode.com/problems/clone-graph/description/
+
+// simple h dekh jo bhi nodes map me h wo ya to creation k process me h (ancestors) ya fir ban chuke h (children)
+// jo map me nhi h unhi k lie traverse krna h
+
+    Node*bfs(Node*node,auto&mpp){
+        queue<Node*>q;
+        q.push(node);
+        Node*ans=new Node(node->val);
+        mpp[node]=ans;
+
+        while(!q.empty()){
+            Node*curr=q.front();
+            q.pop();
+            for(int i=0;i<curr->neighbors.size();i++){
+                if(!mpp.contains(curr->neighbors[i])){
+                    Node*new_node = new Node(curr->neighbors[i]->val);
+                    mpp[curr->neighbors[i]]=new_node;
+                    q.push(curr->neighbors[i]);
+                }
+                mpp[curr]->neighbors.push_back(mpp[curr->neighbors[i]]);
+            }
+        }
+        return ans;
+    }
+    Node*dfs(Node*node,auto&mpp){
+        Node*ans=new Node(node->val);
+        mpp[node]=ans;
+
+        for(int i=0;i<node->neighbors.size();i++){
+            if(!mpp.contains(node->neighbors[i])){
+                dfs(node->neighbors[i],mpp);
+            }
+            ans->neighbors.push_back(mpp[node->neighbors[i]]);
+        }
+        return ans;
+    }
+    Node* cloneGraph(Node* node) {
+        if(node==0) return 0;
+        unordered_map<Node*,Node*>mpp;
+        return bfs(node,mpp);
+    }

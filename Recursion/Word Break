@@ -1,0 +1,19 @@
+LC link: https://leetcode.com/problems/word-break/
+
+    bool dfs(int i,string&word,auto&s,auto&memo){
+        if(i==word.size()) return true;
+        if(memo[i]!=-1) return memo[i];
+        string a;
+        for(int j=i;j<word.size();j++){
+            a.push_back(word[j]);
+            if(s.find(a)!=s.end()){
+                if(dfs(j+1,word,s,memo)) return memo[i]=true;
+            }
+        }
+        return memo[i]=false;
+    }
+    bool wordBreak(string word, vector<string>& wordDict) {
+        set<string>s(wordDict.begin(),wordDict.end());
+        vector<int>memo(word.size(),-1);
+        return dfs(0,word,s,memo);
+    }

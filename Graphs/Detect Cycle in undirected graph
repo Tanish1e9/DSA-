@@ -39,3 +39,25 @@ GFG link: https://www.geeksforgeeks.org/problems/detect-cycle-in-an-undirected-g
         }
         return false;
     }
+
+
+// using DSU bhi kr skte h
+
+bool isCycle(int V, vector<int> adj[]) {
+    DSU ds(V);
+    vector<pair<int,int>>edges;
+    for(int i=0;i<V;i++){
+        for(int el:adj[i]){
+            if(el>i) edges.push_back({i,el});
+        }
+    }
+    for(auto &edge:edges){
+        int u=edge.first;
+        int v=edge.second;
+        if(ds.find_par(u)!=ds.find_par(v)){
+            ds.union_by_size(u,v);
+        }
+        else return true;
+    }
+    return false;
+}

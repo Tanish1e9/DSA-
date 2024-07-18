@@ -1,0 +1,63 @@
+CodeStudio Link: https://www.naukri.com/code360/problems/complete-string_2687860?leftPanelTabValue=SUBMISSION
+
+#include <bits/stdc++.h> 
+class Trie {
+public:
+    Trie* arr[26];
+    bool flag;
+    Trie() {
+        flag=false;
+        for(int i=0;i<26;i++) arr[i]=0;
+    }
+    
+    bool insert(string word) {
+        Trie* curr = this;
+        bool ans=true;
+        for(int i=0;i<word.size();i++){
+            if(curr->arr[word[i]-'a']==0){
+                curr->arr[word[i]-'a'] = new Trie();
+            }
+            curr=curr->arr[word[i]-'a'];
+            if(!curr->flag && i!=word.size()-1) ans=false;
+        }
+        curr->flag=true;
+        return ans;
+    }
+    
+    bool search(string word) {
+        Trie* curr = this;
+        for(int i=0;i<word.size();i++){
+            if(curr->arr[word[i]-'a']==0){
+                return false;
+            }
+            curr=curr->arr[word[i]-'a'];
+        }
+        return curr->flag;
+    }
+    
+    bool startsWith(string prefix) {
+        Trie* curr = this;
+        for(int i=0;i<prefix.size();i++){
+            if(curr->arr[prefix[i]-'a']==0){
+                return false;
+            }
+            curr=curr->arr[prefix[i]-'a'];
+        }
+        return true;
+    }
+};
+string completeString(int n, vector<string> &a){
+    Trie t;
+    sort(a.begin(),a.end());
+    // If you don't want to sort first then we have to do 2 passes
+    // also keep in mind that if we get same length then pick the lexicographically smaller string
+    // to avoid all this I just sorted and we are done in one pass
+    string ans;
+    for(int i=0;i<n;i++){
+        if(t.insert(a[i]) && a[i].size()>ans.size()){
+            ans=a[i];
+        }
+    }
+    if(ans.size()==0) return "None";
+    return ans;
+}

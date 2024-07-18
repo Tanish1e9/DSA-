@@ -1,0 +1,69 @@
+LC link: https://leetcode.com/problems/longest-uncommon-subsequence-ii/
+
+// dekh isme constraints itna kam h ki we can generate all subsequences of all strings
+// and then we can use bitmasking to store at which which indices the subsequences occur
+// if they occur at only one index we can consider them as our answer
+
+// optimised version is we know any one whole string itself will be the answer so
+// just check for all strings if they are a subsequence of any other string
+// if not consider them as your answer
+// isme agar 2 hi strings ho jo ki iska part one me h
+// to wo to kaafi simple h jo bhi bada string hoga length wise wo answer ho jayega if (a!=b)
+// aur agar a==b ho gya tab to ans -1 hi h
+
+    void generate_sub(string &s,auto&mpp,int i){
+        int n=s.size();
+        for(int mask=1;mask<(1<<n);mask++){
+            string temp;
+            for(int j=0;j<n;j++){
+                if(mask & (1<<j)){
+                    temp.push_back(s[j]);
+                }
+            }
+            mpp[temp]|=(1ll<<i);
+        }
+    }
+    bool check_sub(string&a,string&b){
+        if(a.size()>b.size()) return 0;
+        if(a.size()==b.size()) return a==b;
+        int j=0;
+        for(int i=0;i<b.size();i++){
+            if(b[i]==a[j]) {
+                j++;
+                if(j==a.size()) break;
+            }
+        }
+        return j==a.size();
+    }
+    int findLUSlength(vector<string>& arr){
+        // int n=arr.size();
+        // int ans=-1;
+        // unordered_map<string,long> mpp;
+        // for(int i=0;i<n;i++){
+        //     generate_sub(arr[i],mpp,i);
+        // }
+        // for(auto it=mpp.begin();it!=mpp.end();it++){
+        //     int bits=__builtin_popcountl(it->second);
+        //     int len=it->first.size();
+        //     if(bits==1) {
+        //         ans=max(ans,len);
+        //     }
+        // }
+        // return ans;
+
+        int n=arr.size();
+        int ans=-1;
+        for(int i=0;i<n;i++){
+            bool flag=true;
+            int len=arr[i].size();
+            for(int j=0;j<n;j++){
+                if(j==i) continue;
+                if(check_sub(arr[i],arr[j])) {
+                    flag=false;
+                    break;
+                }
+            }
+            if(flag) ans=max(ans,len);
+        }
+        return ans;
+    }

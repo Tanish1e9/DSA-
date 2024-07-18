@@ -1,0 +1,49 @@
+LC link: https://leetcode.com/problems/implement-trie-prefix-tree/
+
+// simple h bhai dekh insert me na character by character traverse krte rhna h agar na exist kre to create kr dena
+// and end me bas flag=true kr dena jo ki yaha ek word end hua h aisa mark krega
+// search me ekdum same insert jaise chalna except ki agar kahi null link ho then return 0 and end me fir flag true hona chahye
+// startswith me to search jaisa hi h bas flag se mtlb nahi h usme
+
+class Trie {
+public:
+    Trie* arr[26];
+    bool flag;
+    Trie() {
+        flag=false;
+        for(int i=0;i<26;i++) arr[i]=0;
+    }
+    
+    void insert(string word) {
+        Trie* curr = this;
+        for(int i=0;i<word.size();i++){
+            if(curr->arr[word[i]-'a']==0){
+                curr->arr[word[i]-'a'] = new Trie();
+            }
+            curr=curr->arr[word[i]-'a'];
+        }
+        curr->flag=true;
+    }
+    
+    bool search(string word) {
+        Trie* curr = this;
+        for(int i=0;i<word.size();i++){
+            if(curr->arr[word[i]-'a']==0){
+                return false;
+            }
+            curr=curr->arr[word[i]-'a'];
+        }
+        return curr->flag;
+    }
+    
+    bool startsWith(string prefix) {
+        Trie* curr = this;
+        for(int i=0;i<prefix.size();i++){
+            if(curr->arr[prefix[i]-'a']==0){
+                return false;
+            }
+            curr=curr->arr[prefix[i]-'a'];
+        }
+        return true;
+    }
+};

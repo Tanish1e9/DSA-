@@ -3,8 +3,10 @@ LC link: https://leetcode.com/problems/subarrays-with-k-different-integers/
     // isme if we try to count exactly tab bhut saare subarrays chootenge
     eg k=3
     1 1 1 3 5 7 8 9
-    5 pe r pahuchte hi hmlog ko 3 add krna h but wo ni kr payenge
-    islie surity ni h ki left move kre ya right
+    // yaha if a subarray has k integers then it's not sure ki uske saara further subarrays me bhi k hoga (<k ho skta na)
+    // to yaha we will just add one by one
+    // but one by one me to bhut subarrays miss honge
+    // islie surity ni h ki left move kre ya right
     // that's why <=k Ke lie solve kia
 
     int func(vector<int>&nums,int k){

@@ -1,0 +1,34 @@
+LC link: https://leetcode.com/problems/reverse-words-in-a-string/
+
+// dekh first approach me khali agar space aa jaye to observe krna ki last==i rhega islie last!=i kr die h
+// also niche wale me bhi similar reason h 
+// i bas islie h ki wo aage badhke characters copy krata rhe
+
+    string reverseWords(string s) {
+        // int n=s.size();
+        // string ans;
+        // int last=0;
+        // for(int i=0;i<=n;i++){
+        //     if(i==n || s[i]==' '){
+        //         if(last!=i) ans=s.substr(last,i-last) + " " + ans;
+        //         last=i+1;
+        //     }
+        // }
+        // ans.pop_back();
+        // return ans;
+
+        reverse(s.begin(),s.end());
+        int n=s.size();
+        int l=0,r=0,i=0;
+        while(i<n){
+            while(i<n && s[i]!=' ') s[r++]=s[i++];
+            if(l!=r){
+                reverse(s.begin()+l,s.begin()+r);
+                s[r]=' ';
+                l=r+1;
+                r=r+1;
+            }
+            i++;
+        }
+        return s.substr(0,r-1);
+    }

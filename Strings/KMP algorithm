@@ -1,4 +1,5 @@
 GFG link: https://www.geeksforgeeks.org/problems/search-pattern0205/1
+LC link: https://leetcode.com/problems/find-the-index-of-the-first-occurrence-in-a-string/
 
     vector <int> search(string pat, string txt){
             vector<int>ans;

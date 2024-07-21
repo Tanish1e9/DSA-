@@ -1,0 +1,21 @@
+LC link: https://leetcode.com/problems/longest-happy-prefix/
+
+    string longestPrefix(string s) {
+        int m=s.size();
+        vector<int>hash(m,-1);
+        int i=1,j=0;
+        while(i<m){
+            if(s[i]==s[j]){
+                hash[i]=j;
+                i++;
+                j++;
+            }
+            else{
+                if(j>0) j=hash[j-1]+1;
+                else i++;
+            }
+        }
+        // int start = m-1-hash[m-1];
+        return s.substr(0,hash[m-1]+1);
+        // ya to end me se string nikaal lo ya shuru me se
+    }

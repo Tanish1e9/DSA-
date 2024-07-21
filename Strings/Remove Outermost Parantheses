@@ -1,0 +1,15 @@
+LC link: https://leetcode.com/problems/remove-outermost-parentheses/
+
+// isme to simple h hm observe kr lie ki jab bhi c==0 hoga to last closing bracket aaya hoga usko nahi daalna h 
+// then c==1 ho and current wala closing ho tab daalna h wrna current wala opening ho gya iska mtlb first opening bracket h na
+
+    string removeOuterParentheses(string s) {
+        string ans;
+        int c=0;
+        for(int i=0;i<s.size();i++){
+            if(s[i]=='(') c++;
+            else c--;
+            if(c!=0 && (c!=1 || s[i]==')')) ans.push_back(s[i]);
+        }
+        return ans;
+    }

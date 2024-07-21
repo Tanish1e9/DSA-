@@ -1,0 +1,17 @@
+LC link: https://leetcode.com/problems/isomorphic-strings/
+
+// it's like a one-one mapping for the characters of s to characters of t
+
+    bool isIsomorphic(string s, string t) {
+        unordered_map<char,char>mpp;
+        vector<int>vis(256,0);
+        for(int i=0;i<s.size();i++){
+            if(!mpp.contains(s[i])){
+                if(vis[t[i]]) return false;
+                mpp[s[i]]=t[i];
+                vis[t[i]]=1;
+            }
+            else if(mpp[s[i]]!=t[i]) return false;
+        }
+        return true;
+    }

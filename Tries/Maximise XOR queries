@@ -1,0 +1,56 @@
+LC link: https://leetcode.com/problems/maximum-xor-with-an-element-from-array/
+
+// isme na trie me wahi wahi element insert kr rhe jo ki eligible ho
+
+class Trie{
+    public:
+    Trie*arr[2];
+    Trie(){
+        arr[0]=arr[1]=0;
+    }
+    void insert(int s){
+        Trie*curr=this;
+        for(int i=30;i>=0;i--){
+            bool bit = s & (1<<i);
+            if(!curr->arr[bit]) curr->arr[bit]=new Trie();
+            curr=curr->arr[bit];
+        }
+    }
+    int max_xor(int x){
+        Trie*curr=this;
+        int ans=0;
+        for(int i=30;i>=0;i--){
+            int bit = bool(x & (1<<i));
+            if(curr->arr[!bit]){
+                curr=curr->arr[!bit];
+                ans|=(1<<i);
+            }
+            else curr=curr->arr[bit];
+        }
+        return ans;
+    }
+};
+class Solution {
+public:
+    static bool comp(vector<int>& a,vector<int>& b){
+        return a[1] < b[1];
+    }
+    vector<int> maximizeXor(vector<int>& nums, vector<vector<int>>& queries) {
+        int n=nums.size();
+        Trie t;
+        for(int i=0;i<queries.size();i++){
+            queries[i].push_back(i);
+        }
+        sort(queries.begin(),queries.end(),comp);
+        sort(nums.begin(),nums.end());
+        int i=0;
+        vector<int>ans(queries.size(),-1);
+        for(auto &query:queries){
+            for(;i<n && nums[i]<=query[1];i++){
+                t.insert(nums[i]);
+            }
+            if(i>0) ans[query[2]]=t.max_xor(query[0]);
+        }
+        return ans;
+    }
+};

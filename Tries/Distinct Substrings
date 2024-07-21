@@ -1,0 +1,39 @@
+CodeStudio link: https://www.naukri.com/code360/problems/count-distinct-substrings_985292
+
+// simply har substring upload kr rhe h 
+// and agar kahi bhi new Trie create krna pad gya iska mtlb wo pehe se ni tha in the Trie
+// to usko count kr lenge
+// aur yaha pe flag islie nahi banaye because har node pe hi koi na koi word end ho rha h
+
+class Trie{
+    Trie*arr[26];
+    public:
+    Trie(){
+        for(int i=0;i<26;i++) arr[i]=0;
+    }
+
+    bool insert(string &word){
+        Trie*curr=this;
+        bool ans=false;
+        for(int i=0;i<word.size();i++){
+            if(!curr->arr[word[i]-'a']){
+                curr->arr[word[i]-'a']=new Trie();
+                ans=true;
+            }
+            curr=curr->arr[word[i]-'a'];
+        }
+        return ans;
+    }
+};
+int countDistinctSubstrings(string &s){
+    Trie t;
+    int ans=0;
+    for(int i=0;i<s.size();i++){
+        string a;
+        for(int j=i;j<s.size();j++){
+            a.push_back(s[j]);
+            ans+=t.insert(a);
+        }
+    }
+    return ans+1;   // empty bhi to count krna
+}

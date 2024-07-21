@@ -1,0 +1,24 @@
+GFG link: https://www.geeksforgeeks.org/problems/count-number-of-substrings4528/1
+
+    long long func(string&s,int k){
+        if(k<=0) return 0;
+    	vector<int>freq(26,0);
+        int l=0,r=0;
+    	long long ans=0;
+    	int size=0;
+    	while(r<s.size()){
+    	    if(freq[s[r]-'a']==0) size++;
+    	    freq[s[r]-'a']++;
+    	    while(size>k){
+    	        freq[s[l]-'a']--;
+    	        if(freq[s[l]-'a']==0) size--;
+    	        l++;
+    	    }
+    	    ans+=r-l+1;
+    	    r++;
+    	}
+    	return ans;
+    }
+    long long int substrCount (string s, int k) {
+    	return func(s,k)-func(s,k-1);
+    }

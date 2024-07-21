@@ -1,0 +1,18 @@
+LC link: https://leetcode.com/problems/minimum-add-to-make-parentheses-valid/
+
+// isme graph image kro jo sabse minimum point h and wo negative h to hm ekdum starting me hi kuch opening laga denge
+// aur fir ye opening lagane k bad ekdum end me zero aana chahye na to jitna bhi diff ho usko aur add kr do because utna closing lagana hoga
+// ans+c na hmesha ya to positive ya zero hi hoga because ans tha kya minimum possible c that is negative
+
+    int minAddToMakeValid(string s) {
+        int ans=0;
+        int c=0;
+        for(int i=0;i<s.size();i++){
+            if(s[i]=='(') c++;
+            else c--;
+
+            if(c<0) ans=max(ans,-c);
+        }
+        ans+=abs(ans+c);
+        return ans;
+    }

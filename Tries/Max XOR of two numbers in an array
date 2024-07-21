@@ -1,0 +1,47 @@
+LC link: https://leetcode.com/problems/maximum-xor-of-two-numbers-in-an-array/
+
+class Trie{
+    public:
+    Trie* arr[2];
+    Trie(){
+        arr[0]=arr[1]=0;
+    }
+    void insert(int s){
+        Trie*curr=this;
+        for(int i=31;i>=0;i--){
+            int bit = bool(s & (1<<i));
+            if(!curr->arr[bit]){
+                curr->arr[bit]=new Trie();
+            }
+            curr=curr->arr[bit];
+        }
+    }
+    int max_xor(int x){
+        Trie*curr=this;
+        int ans=0;
+        for(int i=31;i>=0;i--){
+            int bit = bool(x & (1<<i));
+            if(curr->arr[!bit]){
+                curr=curr->arr[!bit];
+                ans|=(1<<i);
+            }
+            else curr=curr->arr[bit];
+        }
+        return ans;
+    }
+};
+class Solution {
+public:
+    int findMaximumXOR(vector<int>& nums) {
+        int n=nums.size();
+        Trie t;
+        for(int i=0;i<n;i++){
+            t.insert(nums[i]);
+        }
+        int ans=0;
+        for(int i=0;i<n;i++){
+            ans=max(ans,t.max_xor(nums[i]));
+        }
+        return ans;
+    }
+};

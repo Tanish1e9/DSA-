@@ -1,0 +1,42 @@
+LC link: https://leetcode.com/problems/longest-common-prefix/
+
+// dekh isme na normal tu pehla string pakad k baaki strings se compare kr le and bruteforce se ans de de
+// usme space O(1) hoga and TC O(m*n) hoga but tries me same TC and SC O(m*n) hoga to actually bruteforce is better yaha pe but tries bhi use ho skta
+
+class Trie{
+    public:
+    Trie* arr[26];
+    int ends_with,count_prefix;
+    Trie(){
+        for(int i=0;i<26;i++) arr[i]=0;
+        ends_with=count_prefix=0;
+    }
+    void insert(string&word){
+        Trie*curr=this;
+        for(int i=0;i<word.size();i++){
+            if(!curr->arr[word[i]-'a']){
+                curr->arr[word[i]-'a'] = new Trie();
+            }
+            curr=curr->arr[word[i]-'a'];
+            curr->count_prefix++;
+        }
+        curr->ends_with++;
+    }
+};
+class Solution {
+public:
+    string longestCommonPrefix(vector<string>& arr) {
+        Trie *t=new Trie();
+        for(int i=0;i<arr.size();i++){
+            t->insert(arr[i]);
+        }
+        Trie* curr=t;
+        string ans;
+        for(int i=0;i<arr[0].size();i++){
+            curr=curr->arr[arr[0][i]-'a'];
+            if(curr->count_prefix!=arr.size()) break;
+            ans.push_back(arr[0][i]);
+        }
+        return ans;
+    }
+};

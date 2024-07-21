@@ -1,0 +1,36 @@
+GFG link: https://www.geeksforgeeks.org/problems/search-pattern0205/1
+
+    vector <int> search(string pat, string txt){
+            vector<int>ans;
+            int m=pat.size();
+            int n=txt.size();
+            vector<int>hash(m,-1);
+            int i=1,j=0;
+            while(i<m){
+                if(pat[i]==pat[j]){
+                    hash[i]=j;
+                    i++;
+                    j++;
+                }
+                else{
+                    if(j>0) j=hash[j-1]+1;
+                    else i++;
+                }
+            }
+            i=0,j=0;
+            while(i<n){
+                if(txt[i]==pat[j]){
+                    i++;
+                    j++;
+                    if(j==m){
+                        ans.push_back(i-m+1);   // +1 for one based indexing
+                        j=hash[j-1]+1;
+                    }
+                }
+                else{
+                    if(j>0) j=hash[j-1]+1;
+                    else i++;
+                }
+            }
+            return ans;
+        }

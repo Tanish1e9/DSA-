@@ -1,0 +1,15 @@
+GFG link: https://www.geeksforgeeks.org/problems/check-if-two-strings-are-k-anagrams-or-not/1?itm_source=geeksforgeeks&itm_medium=article&itm_campaign=bottom_sticky_on_article
+
+    bool areKAnagrams(string str1, string str2, int k) {
+        if(str1.size()!=str2.size()) return false;
+        vector<int>freq(256,0);
+        int c=0;
+        for(int i=0;i<str1.size();i++){
+            freq[str1[i]]++;
+            freq[str2[i]]--;
+        }
+        for(int i=0;i<256;i++){
+            if(freq[i]!=0) c+=abs(freq[i]);
+        }
+        return c<=2*k;
+    }

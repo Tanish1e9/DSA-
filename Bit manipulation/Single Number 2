@@ -1,0 +1,31 @@
+LC link: https://leetcode.com/problems/single-number-ii/description/
+
+    int singleNumber(vector<int>& nums) {
+        // O(n*32),O(32)
+        // vector<int>bits(32,0);
+        // for(int el:nums){
+        //     for(int i=0;i<32;i++){
+        //         if(el & (1<<i)) bits[i]++;
+        //     }
+        // }
+        // int ans=0;
+        // for(int i=0;i<32;i++){
+        //     if(bits[i]%3==1) ans|=(1<<i);
+        // }
+        // return ans;
+
+        // O(nlogn),O(1)
+        // sort(nums.begin(),nums.end());
+        // for(int i=1;i<nums.size();i+=3){
+        //     if(nums[i]!=nums[i-1]) return nums[i-1];
+        // }
+        // return nums.back();
+
+        // O(n),O(1)
+        int ones=0,twos=0;
+        for(int el:nums){
+            ones = ones ^ (~twos & el);
+            twos = twos ^ (~ones & el);
+        }
+        return ones;
+    }

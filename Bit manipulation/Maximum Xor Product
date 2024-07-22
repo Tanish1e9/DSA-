@@ -1,0 +1,23 @@
+LC link: https://leetcode.com/problems/maximum-xor-product/
+
+// n k upar waale bits ko to copy krega na 
+
+    const int mod=1e9+7;
+    int maximumXorProduct(long long a, long long b, int n) {
+        if(a<b) return maximumXorProduct(b,a,n);
+
+        long x=a & ~((1ll<<n)-1);
+        long y=b & ~((1ll<<n)-1);
+        for(int i=n-1;i>=0;i--){
+            bool bit_a = a & (1ll<<i);
+            bool bit_b = b & (1ll<<i);
+            if(bit_a==bit_b){
+                x|=(1ll<<i);
+                y|=(1ll<<i);
+            }
+            else if(x>y) y|=(1ll<<i);
+            else x|=(1ll<<i);
+        }
+        int ans = ((x%mod) * (y%mod))%mod;
+        return ans;
+    }

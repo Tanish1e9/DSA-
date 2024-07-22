@@ -1,0 +1,23 @@
+LC link: https://leetcode.com/problems/counting-bits/
+
+// niche wale approach me na right shift krne par number chota ho gya aur chote number ka to ans calculated h
+// to bas last bit hi ka sochna h hmlog ko
+// wo even ya odd k mutaabik aa jayega
+
+    vector<int> countBits(int n) {
+        // vector<int>ans(n+1,0);
+        // int curr = 1;
+        // while(curr <= n){
+        //     for(int i=curr;i<curr<<1 && i<=n;i++){
+        //         ans[i]=ans[i-curr]+1;
+        //     }
+        //     curr<<=1;
+        // }
+        // return ans;
+
+        vector<int>ans(n+1,0);
+        for(int i=1;i<=n;i++){
+            ans[i]=ans[i>>1]+i%2;
+        }
+        return ans;
+    }

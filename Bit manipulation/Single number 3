@@ -1,0 +1,14 @@
+LC link: https://leetcode.com/problems/single-number-iii/
+
+    vector<int> singleNumber(vector<int>& nums) {
+        long xr = 0;
+        for(int i:nums) xr = xr ^ i;
+
+        long mask = xr & ~(xr-1);
+        int ones=0,twos=0;
+        for(int i:nums){
+            if(mask & i) ones = ones ^ i;
+            else twos = twos ^ i;
+        }
+        return {ones,twos};
+    }

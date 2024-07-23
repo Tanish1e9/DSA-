@@ -1,0 +1,15 @@
+LC link: https://leetcode.com/problems/container-with-most-water/
+
+// isme na dekh jab ek width ghatta to min(h1,h2)*1 hi ghatega ... yani kisi ko bhi shift kro paani same amount se ghatega
+// but shift krne k bad bhi agar bada mil jaye to wo tab na effective hoga jab dusra wala bada ho ... wrna agar wahi chota rha to fayda hi ni hoga
+
+    int maxArea(vector<int>& arr) {
+        int ans=0;
+        int l=0,r=arr.size()-1;
+        while(l<r){
+            ans=max(ans,min(arr[l],arr[r])*(r-l));
+            if(arr[l]<arr[r])l++;
+            else r--;
+        }
+        return ans;
+    }

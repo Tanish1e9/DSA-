@@ -1,5 +1,6 @@
 LC link: https://leetcode.com/problems/task-scheduler/
 
+    // ye to normal greedy se kr die h
     int leastInterval(vector<char>& tasks, int n) {
         vector<int>freq(26,0);
         vector<int>last_done(26,-n);
@@ -27,6 +28,36 @@ LC link: https://leetcode.com/problems/task-scheduler/
                 freq[max_ind]--;
                 tasks_rem--;
             }
+        }
+        return ans;
+    }
+
+    // ye pq wala approach
+    int leastInterval(vector<char>& tasks, int n) {
+        vector<int>freq(26,0);
+        for(int i=0;i<tasks.size();i++){
+            freq[tasks[i]-'A']++;
+        }
+        priority_queue<int>q;
+        for(int i=0;i<26;i++){
+            if(freq[i]>0) q.push(freq[i]);
+        }
+        int ans=0;
+        while(!q.empty()){
+            vector<int>temp;
+            for(int i=0;i<n+1;i++){
+                if(!q.empty()){
+                    int curr=q.top();
+                    q.pop();
+                    temp.push_back(curr-1);
+                }
+            }
+            for(int i:temp){
+                if(i>0)q.push(i);
+            }
+
+            if(q.empty()) ans+=temp.size();
+            else ans+=n+1;
         }
         return ans;
     }

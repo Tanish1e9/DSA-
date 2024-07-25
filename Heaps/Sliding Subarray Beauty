@@ -1,0 +1,24 @@
+LC link: https://leetcode.com/problems/sliding-subarray-beauty/description/
+
+// ye to simple hi approach h
+    vector<int> getSubarrayBeauty(vector<int>& arr, int k, int x) {
+        vector<int>freq(101,0);
+        vector<int>ans;
+        for(int i=0;i<k-1;i++){
+            freq[arr[i]+50]++;
+        }
+        for(int i=k-1;i<arr.size();i++){
+            freq[arr[i]+50]++;
+            int curr=0;
+            for(int j=0;j<101;j++){
+                if(curr+freq[j]>=x){
+                    if(j<50) ans.push_back(j-50);
+                    else ans.push_back(0);
+                    break;
+                }
+                else curr+=freq[j];
+            }
+            freq[arr[i-k+1]+50]--;
+        }
+        return ans;
+    }

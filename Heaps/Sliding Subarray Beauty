@@ -22,3 +22,54 @@ LC link: https://leetcode.com/problems/sliding-subarray-beauty/description/
         }
         return ans;
     }
+
+// the above approach takes adv of the fact that range is [-50,50]
+// but this one doesn't 
+// concept yahi h ki we will maintain lower x and upper k-x integers and then jab remove krenge 
+// suppose lower se remove hua to ho skta h higher ka lowest element lower elements me aa jaye islie lower me daal denge
+// then new element ko daalke jo bhi higher hoga wo higher me chala jayega
+// on the other hand agar higher se hata to bhi to lower me daalke fir judge krenge ki kon sa higher me bhejna h and that's it
+
+    void remove_val(map<int,int>&m,int val){
+        m[val]--;
+        if(m[val]==0) m.erase(val);
+    }
+    void push_ans(vector<int>&ans,int val){
+        if(val<0) ans.push_back(val);
+        else ans.push_back(0);
+    }
+    vector<int> getSubarrayBeauty(vector<int>& arr, int k, int x) {
+        map<int,int>lower,higher;
+
+        for(int i=0;i<k;i++){
+            lower[arr[i]]++;
+            if(i+1 <= x) continue;
+            higher[lower.rbegin()->first]++;
+            remove_val(lower,lower.rbegin()->first);
+        }
+        
+        vector<int>ans;
+        for(int i=k;i<arr.size();i++){
+            push_ans(ans,lower.rbegin()->first);
+
+            if(lower.contains(arr[i-k])){
+                remove_val(lower,arr[i-k]);
+                if(k-x>0){
+                    auto temp = higher.begin();
+                    lower[temp->first]++;
+                    remove_val(higher,temp->first);
+                }
+            }
+            else remove_val(higher,arr[i-k]);
+            
+            lower[arr[i]]++;
+            if(k-x>0){
+                auto curr=lower.rbegin();
+                higher[curr->first]++;
+                remove_val(lower,curr->first);
+            }
+        }
+        push_ans(ans,lower.rbegin()->first);
+
+        return ans;
+    }

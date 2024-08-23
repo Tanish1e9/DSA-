@@ -1,0 +1,56 @@
+LC link: https://leetcode.com/problems/stone-game/description/
+
+// dekh isme pots of gold wale DP se to kr hi skte ho
+// but if we observe 2 interesting conditions that sum of all piles is odd and number of piles is even
+// Then Alice always wins
+// How? Alice can force Bob to choose all odd or even indices
+// consider 1 based indexing... 1 to n where n is even
+// Like say if she picks n then bob has 1,n-1 both odd... no matter what he picks there will be one even choice made available
+// and Alice picks that
+// similarly for odd
+// and sum of all odd indices != sum of all even indices because total sum is odd
+// islie jo bhi jada ho uss hisab se Alice ya to even ya to odd indices pakadke game jiit skti h
+// Ha it may be possible ki wo maximum possible number of stones na collect kr paye
+// But Bob se to jada hoga iska guarentee h
+// Iska ye DP wala solution hi famous h ek linear solution koi 2010 me research paper nikala h usse dekh skte ho
+// http://www.mimuw.edu.pl/~idziaszek/termity/termity.pdf
+
+
+    int f(int i,int j,vector<int>&piles,auto&memo){
+        if(i>j) return 0;
+        if(memo[i][j]!=-1) return memo[i][j];
+
+        int left = piles[i]+min(f(i+1,j-1,piles,memo),f(i+2,j,piles,memo));
+        int right = piles[j]+min(f(i+1,j-1,piles,memo),f(i,j-2,piles,memo));
+        return memo[i][j]=max(left,right);
+    }
+    bool stoneGame(vector<int>& piles) {
+        int n=piles.size();
+        // vector<vector<int>>memo(n,vector<int>(n,-1));
+        // int alice = f(0,n-1,piles,memo);
+        // // int bob = min(f(1,n-1,piles,memo),f(0,n-2,piles,memo));
+        // int sum = accumulate(piles.begin(),piles.end(),0);
+        // // return alice > bob;
+        // return alice > sum/2;
+
+        // vector<vector<int>>memo(n,vector<int>(n,0));
+        // int sum=0;
+        // for(int i=n-1;i>=0;i--){
+        //     sum+=piles[i];
+        //     for(int j=i;j<n;j++){
+        //         int left = piles[i];
+        //         int right = piles[j];
+        //         int a = (i+1 <= j-1 && i+1<n && j-1>=0)? memo[i+1][j-1] : 0;
+        //         int b = (i+2 <= j && i+2<n && j>=0)? memo[i+2][j] : 0;
+        //         int c = (i <= j-2 && i<n && j-2>=0)? memo[i][j-2] : 0;
+
+        //         left += min(a,b);
+        //         right += min(a,c);
+
+        //         memo[i][j]=max(left,right);
+        //     }
+        // }
+        // return memo[0][n-1]>sum/2;
+
+        return true;
+    }

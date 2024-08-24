@@ -1,0 +1,59 @@
+CF link: https://codeforces.com/contest/2004/problem/E
+
+// Dekh isme Sprague grundy lagana tha ye to dikh hi gya tha
+// but fir grundy ka pattern dekhe to SPF se related h basically dekhna jinka bhi 
+// SPF 3 h unka grundy is 2
+// SPF 5 h unka grundy is 3
+// SPF 7 h unka grundy is 4
+... 0 grundy is for all even numbers
+... 1 grundy is only for 1
+
+#include<bits/stdc++.h>
+using namespace std;
+#define int long long
+vector<int> get_spf(){
+	vector<int> ans(1e7+1);
+	for(int i=1;i<=1e7;i++) {
+		ans[i]=i;
+		if(i%2==0) ans[i]=0;
+	}
+
+	int cnt = 2;
+	for(int i=3;i<=1e7;i++){
+		if(ans[i]!=i) continue;
+		ans[i] = cnt;
+        // dekh yaha pe na hmlog root n tk i ko chala dete jaise SPF me krte h
+        // But usme kya h na higher prime numbers ka jo  ans me fill krna h wo khud wo number hi hota h jisse
+        // initialise kr die h hmlog
+        // But yaha pe cnt daalna h islie root n tk nahi chala skte
+
+		for(int j=i*i;j<=1e7;j+=i){
+			if(ans[j]==j) ans[j]=cnt;
+		}
+		cnt++;
+	}
+	return ans;
+}
+
+signed main(){
+	ios_base::sync_with_stdio(0);
+	cin.tie(0);
+	cout.tie(0);
+
+	vector<int> ans = get_spf();
+	int t;
+	cin >> t;
+	while(t--){
+		int n;
+		cin >> n;
+		vector<int>arr(n);
+		for(int i=0;i<n;i++) cin >> arr[i];
+		int xr=0;
+		for(int i=0;i<n;i++){
+			xr^= ans[arr[i]];
+		}
+		if(!xr) cout << "Bob" << endl;
+		else cout << "Alice" << endl;
+	}
+	return 0;
+}

@@ -1,0 +1,53 @@
+LC link: https://leetcode.com/problems/stone-game-ii/
+
+    // M-1 simply difference method laga dia
+    // har possibility me apna score - dusre ka score ko maximise krte rhe
+    // actually dekho    khud - (dusre - khud)
+    // Agle call me na actually dusra wala apna samajh k maximise krega yani Alice ka minimise krega
+    // ans so this works
+
+    // int f(int i,int m,vector<int>&piles,auto&memo){
+    //     if(i>=piles.size()) return 0;
+    //     if(memo[i][m]!=-1) return memo[i][m];
+    //     int ans=-1e9;
+    //     int sum=0;
+    //     for(int j=i;j<min((int)piles.size(),i+2*m);j++){
+    //         sum+=piles[j];
+    //         ans=max(ans,sum - f(j+1,max(m,j-i+1),piles,memo));
+    //     }
+    //     return memo[i][m]= ans;
+    // }
+    // int stoneGameII(vector<int>& piles) {
+    //     int n=piles.size();
+    //     vector<vector<int>>memo(n,vector<int>(n+1,-1));
+    //     int diff = f(0,1,piles,memo);
+    //     int sum = accumulate(piles.begin(),piles.end(),0);
+    //     return (sum+diff)/2;
+    // }
+
+
+    // M-2 ye basically same kaam h bas thoda intuitively likha gya h
+    // isme f sirf Alice k lie h to Alice ka jab baari hoga to wo apna score maximise kr rhi hogi
+    // but jab Bob ka baari hoga to wo Alice ko minimise krke de rha hoga
+
+    int f(int i,int m,int person,vector<int>&piles,auto&memo){
+        if(i>=piles.size()) return 0;
+        if(memo[person][i][m]!=-1) return memo[person][i][m];
+
+        // 0 for Alice
+        int ans= (person==0) ? -1e9 : 1e9;
+        int sum=0;
+        for(int j=i;j<min((int)piles.size(),i+2*m);j++){
+            sum+=piles[j];
+            if(person==0)
+                ans = max(ans,sum+f(j+1,max(m,j-i+1),1,piles,memo));
+            else
+                ans = min(ans,f(j+1,max(m,j-i+1),0,piles,memo));
+        }
+        return memo[person][i][m]= ans;
+    }
+    int stoneGameII(vector<int>& piles) {
+        int n=piles.size();
+        vector<vector<vector<int>>>memo(2,vector<vector<int>>(n,vector<int>(n+1,-1)));
+        return f(0,1,0,piles,memo);;
+    }

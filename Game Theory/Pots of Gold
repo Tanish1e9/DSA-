@@ -1,34 +1,8 @@
 GFG link: https://www.geeksforgeeks.org/problems/pots-of-gold-game/1?category=
 
-    // M-1 originally I wrote this thoda sa messy DP h 
-    // yaha na as such koi pattern ni milega to DP lagana hi padega
-
-    pair<int,int> f(vector<int>&A,int i,int j,int player,vector<vector<pair<int,int>>>&memo){
-        if(i>j) return {0,0};
-        if(memo[i][j].first!=-1) return memo[i][j];
-        pair<int,int> left=f(A,i+1,j,!player,memo);
-        pair<int,int> right=f(A,i,j-1,!player,memo);
-        
-        if(player==0){
-            if(A[i]+left.first > A[j]+right.first){
-                return memo[i][j]={A[i]+left.first,left.second};
-            }
-            else{
-                return memo[i][j]={A[j]+right.first,right.second};
-            }
-        }
-        if(A[i]+left.second > A[j]+right.second){
-            return memo[i][j]={left.first,A[i]+left.second};
-        }
-        return memo[i][j]={right.first,A[j]+right.second};
-    }
-    int maxCoins(vector<int>&A,int n){
-        vector<vector<pair<int,int>>> memo(n,vector<pair<int,int>>(n,{-1,-1}));
-	    return f(A,0,n-1,0,memo).first;
-    }
-
-
-    // M-2 Cleaner
+    // Simply yaha alice k lie function likha gya h and subsequent move me Bob aisa hi chunega ki Alice ko next move me minimum mile
+    // Hence, yaha min krke kr dia
+    // M-1
     int f(vector<int>&A,int i,int j,vector<vector<int>>&memo){
         if(i>j) return 0;
         if(memo[i][j]!=-1) return memo[i][j];
@@ -39,4 +13,30 @@ GFG link: https://www.geeksforgeeks.org/problems/pots-of-gold-game/1?category=
     int maxCoins(vector<int>&A,int n){
         vector<vector<int>> memo(n,vector<int>(n,-1));
 	    return f(A,0,n-1,memo);
+    }
+
+    // M-2 
+    // Now yaha to sirf 2 hi possibilities thi islie aise likh paye 
+    // par suppose m choices hote to aise directly ni likh paate hmlog
+    // to uske lie ek difference method h jo ki har jagah chal jayega
+    // isme basically har player  khud ka - dusra ka  jo ye diff h usko maximise krna chahta h
+    // Also see Stone Game 2 
+
+    int f(int i,int j,vector<int>&piles,auto&memo){
+        if(i>j) return 0;
+        if(memo[i][j]!=-1) return memo[i][j];
+
+        int left = piles[i] - f(i+1,j,piles,memo);
+        int right = piles[j] - f(i,j-1,piles,memo);
+    
+        return memo[i][j] = max(left,right);
+    }
+    int maxCoins(vector<int>&piles,int n){
+        vector<vector<int>>memo(n,vector<int>(n,-1));
+        int diff = f(0,n-1,piles,memo);
+        int sum=0;
+        for(int i=0;i<n;i++){
+            sum += piles[i];
+        }
+        return (sum+diff)/2;
     }

@@ -1,0 +1,32 @@
+LC link: https://leetcode.com/problems/stone-game-vii/description/
+
+// simple difference method
+    int f(int i,int j,auto&stones,auto&memo,auto&pref){
+        if(i>j) return 0;
+        if(memo[i][j]!=-1) return memo[i][j];
+
+        int tot = pref[j]-pref[i]+stones[i];
+        return memo[i][j]=max(tot-stones[i]-f(i+1,j,stones,memo,pref),tot-stones[j]-f(i,j-1,stones,memo,pref));
+    }
+    int stoneGameVII(vector<int>& stones) {
+        int n=stones.size();
+        vector<int>pref(n,0);
+        pref[0]=stones[0];
+        for(int i=1;i<n;i++) pref[i] = pref[i-1]+stones[i];
+        vector<vector<int>> memo(n,vector<int>(n,-1));
+        return f(0,n-1,stones,memo,pref);
+
+        // vector<vector<int>> memo(n,vector<int>(n,0));
+        // for(int i=n-1;i>=0;i--){
+        //     for(int j=i;j<n;j++){
+        //         int a=0,b=0;
+        //         if(i+1<=j) {
+        //             a=memo[i+1][j];
+        //             b=memo[i][j-1];
+        //         }
+        //         int tot = pref[j]-pref[i]+stones[i];
+        //         memo[i][j] = max(tot-stones[i]-a,tot-stones[j]-b);
+        //     }
+        // }
+        // return memo[0][n-1];
+    }

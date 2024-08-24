@@ -1,0 +1,42 @@
+LC link: https://leetcode.com/problems/stone-game-v/
+
+// isme n^3 to complexity ja hi rha h to islie prefix sum krne se kuch khaas fark ni pad rha 
+// baki to dekho isme sirf Alice ke hi taraf se khelna h Bob ka kuch score as such h nahi
+// to bas jo likha h wo kr die
+
+    int f(int i,int j,vector<int>&stones,vector<int>&prefSum,auto&memo){
+        if(i>=j) return 0;
+        if(memo[i][j]!=-1) return memo[i][j];
+        int ans=0;
+        int right = accumulate(stones.begin()+i,stones.begin()+j+1,0);
+        int left = 0;
+        for(int k=i+1;k<=j;k++){
+            // int left = prefSum[k-1]-prefSum[i]+stones[i];
+            // int right = prefSum[j] - prefSum[k-1];
+            
+            left+=stones[k-1];
+            right-=stones[k-1];
+
+            if(left < right){
+                ans = max(ans,left+f(i,k-1,stones,prefSum,memo));
+            }
+            else if(left==right){
+                ans = max(ans,left+f(i,k-1,stones,prefSum,memo));
+                ans = max(ans,right+f(k,j,stones,prefSum,memo));
+            }
+            else{
+                ans = max(ans,right+f(k,j,stones,prefSum,memo));
+            }
+        }
+        return memo[i][j]=ans;
+    }
+    int stoneGameV(vector<int>& stones) {
+        int n=stones.size();
+        vector<int>prefSum(n,0);
+        // prefSum[0] = stones[0];
+        // for(int i=1;i<n;i++){
+        //     prefSum[i] = prefSum[i-1]+stones[i];
+        // }
+        vector<vector<int>>memo(n,vector<int>(n,-1));
+        return f(0,n-1,stones,prefSum,memo);
+    }

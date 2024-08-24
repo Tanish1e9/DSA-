@@ -40,10 +40,12 @@ LC link: https://leetcode.com/problems/stone-game/description/
         //     for(int j=i;j<n;j++){
         //         int left = piles[i];
         //         int right = piles[j];
-        //         int a = (i+1 <= j-1 && i+1<n && j-1>=0)? memo[i+1][j-1] : 0;
-        //         int b = (i+2 <= j && i+2<n && j>=0)? memo[i+2][j] : 0;
-        //         int c = (i <= j-2 && i<n && j-2>=0)? memo[i][j-2] : 0;
-
+        //         int a=0,b=0,c=0;
+        //         if(i+2<=j) {      // agar ye ho gya to kabhi out of bounds ni jayega try krke dekh lo
+        //             a = memo[i+1][j-1];
+        //             b = memo[i+2][j];
+        //             c = memo[i][j-2];
+        //         }
         //         left += min(a,b);
         //         right += min(a,c);
 

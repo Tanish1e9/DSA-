@@ -1,0 +1,24 @@
+LC link: https://leetcode.com/problems/stone-game-iii/
+
+// isko to ekdum simply Stone game 2 ki tarah kr die difference method se
+
+    int f(int i,vector<int>&piles,auto&memo){
+        if(i>=piles.size()) return 0;
+        if(memo[i]!=-1) return memo[i];
+
+        int ans=-1e9;
+        int sum=0;
+        for(int j=i;j<min((int)piles.size(),i+3);j++){
+            sum+=piles[j];
+            ans=max(ans,sum - f(j+1,piles,memo));
+        }
+        return memo[i]=ans;
+    }
+    string stoneGameIII(vector<int>& piles) {
+        int n=piles.size();
+        vector<int> memo(n+1,-1);
+        int diff = f(0,piles,memo);
+        if(diff==0) return "Tie";
+        else if(diff>0) return "Alice";
+        return "Bob";
+    }

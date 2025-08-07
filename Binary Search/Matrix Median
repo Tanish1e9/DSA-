@@ -1,0 +1,19 @@
+TUF link: https://takeuforward.org/plus/dsa/problems/matrix-median
+
+int findMedian(vector<vector<int>>&matrix) {
+    // log(1e9) n log m
+    int n = matrix.size();
+    int m = matrix[0].size();
+    int low = 1;
+    int high = 1e9;
+    while (low <= high) {
+      int mid = low + (high - low)/2;
+      int val = 0;
+      for(int i=0;i<matrix.size();i++){
+          val += upper_bound(matrix[i].begin(), matrix[i].end(), mid) - matrix[i].begin();
+      }
+      if (val <= (m*n)/2) low = mid + 1;
+      else high = mid - 1;
+    }
+    return low;
+  }

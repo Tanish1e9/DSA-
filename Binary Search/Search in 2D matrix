@@ -1,0 +1,37 @@
+LC link:  https://leetcode.com/problems/search-a-2d-matrix/
+
+// Brute is ki har row me jaake individual BS laga do TC - O(nlogm), SC - O(1)
+// isi me halka sa optimisation ye ki pehle row ki range check kr lo usme target aa bhi skta h ya nahi
+// isse thoda sa time save hoga still complexity remains the same
+// Better is ki right corner se start kro increase krna ho to down else left 
+// isme TC is O(m+n), SC is O(1)  -- large m, n ke lie thoda better h
+// but obviously pure matrix me ek single sorted array ka pattern dikh rha h
+// to bas pure me as a whole BS laga do TC O(log (mn)) and SC O(1)
+
+bool helper(vector<vector<int>>& matrix, int target) {
+      // int i = 0;
+      // int j = matrix[0].size() - 1;
+      int n = matrix.size();
+      int m = matrix[0].size();
+      // while (i<n && j>=0) {
+      //     if (matrix[i][j]==target) return true;
+      //     else if(matrix[i][j] > target) j--;
+      //     else i++;
+      // }
+      // return false;
+      int low = 0;
+      int high = n*m - 1;
+      while (low <= high) {
+          int mid = low + (high - low)/2;
+          int i = mid / m;
+          int j = mid % m;
+          int val = matrix[i][j];
+          if (val == target) return true;
+          else if (val < target) low = mid + 1;
+          else high = mid - 1;
+      }
+      return false;
+  }
+  bool searchMatrix(vector<vector<int>> &mat, int target){
+      return helper(mat, target);
+  }

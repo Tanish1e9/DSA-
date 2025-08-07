@@ -29,3 +29,39 @@ public:
         return ans;
     }
 };
+
+Above approach works but using a deque is cleaner here
+Also we can avoid that temporary level array by directly using answer 
+Imagine krte waqt na left side ko back, right side ko front maan hmesha
+normal queue me push hmesha back se hi hota pop hmesha front se hi hota
+
+    vector<vector<int>> zigzagLevelOrder(TreeNode* root) {
+        if (root == NULL) return {};
+        vector<vector<int>> ans;
+        deque<TreeNode*> dq;
+        dq.push_front(root);
+        bool reverse = false;
+        while(!dq.empty()){
+            int level_size = dq.size();
+            ans.push_back(vector<int>());
+            vector<int> &vec = ans.back();
+            while(level_size--){
+                TreeNode* curr;
+                if(reverse) {
+                    curr = dq.back();
+                    dq.pop_back();
+                    if(curr->right) dq.push_front(curr->right);
+                    if(curr->left) dq.push_front(curr->left);
+                }
+                else {
+                    curr = dq.front();
+                    dq.pop_front();
+                    if(curr->left) dq.push_back(curr->left);
+                    if(curr->right) dq.push_back(curr->right);
+                }
+                vec.push_back(curr->val);
+            }
+            reverse = !reverse;
+        }
+        return ans;
+    }

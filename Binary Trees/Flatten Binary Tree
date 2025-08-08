@@ -40,6 +40,10 @@ LC link: https://leetcode.com/problems/flatten-binary-tree-to-linked-list/
     //     }
     // }
 
+// iska intuition h na ki preorder ko reverse me travel krenge 
+// ab har last processed node ko store krte chalenge
+// to linked list ke order me hmesha mere pas next node hoga kisi bhi node k lie
+// to simply current node ka right ko next node krte chalenge
     // 3) Recursive Actual
     // TreeNode*prev=NULL;
     // void flatten(TreeNode* root) {
@@ -51,25 +55,26 @@ LC link: https://leetcode.com/problems/flatten-binary-tree-to-linked-list/
     //     prev=root;
     // }
 
+// yaha to simply stack me jaise preorder krte waise krte chalo
+// prev maintain krte rhna 
     4) Iterative by Stack Actual 
-    // void flatten(TreeNode* root) {
-    //     if(root==0) return ;
-    //     stack<TreeNode*> s;
-    //     s.push(root);
-    //     TreeNode*prev=0;
-    //     while(!s.empty()){
-    //         TreeNode*curr=s.top();
-    //         s.pop();
-    //         if(curr->right){
-    //             s.push(curr->right);
-    //         }
-    //         if(curr->left){
-    //             s.push(curr->left);
-    //         }
-    //         if(!s.empty()) curr->right=s.top();
-    //         curr->left=0;
-    //     }
-    // }
+    void flatten(TreeNode* root) {
+        if(root==0) return ;
+        stack<TreeNode*> st;
+        st.push(root);
+        TreeNode* prev = NULL;
+        while(!st.empty()){
+            TreeNode* curr = st.top();
+            st.pop();
+            if(prev) {
+                prev->right = curr;
+                prev->left = NULL;
+            }
+            prev = curr;
+            if(curr->right) st.push(curr->right);
+            if(curr->left) st.push(curr->left);
+        }
+    }
 
     5) Morris Actual O(n),O(1)
     void flatten(TreeNode*root){

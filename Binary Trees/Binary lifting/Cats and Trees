@@ -1,1 +1,60 @@
 Codechef link: https://www.codechef.com/problems/CATS
+
+// Dekho koshish kro ki saare nodes k lie hi wo populate_parent chala do,
+// root k lie apne aap hi handle ho jayega
+// this would prevent errors in cases jaha root != 1 ho jaise ki iss question me tha
+// baki intuition to simple LCA jaisa hi h ki tab tk jump krayenge jab tk cat na mile final position pe cat ruk jayega
+#include <bits/stdc++.h>
+using namespace std;
+
+void dfs(int root, vector<vector<int>>&adj, vector<vector<int>>&parent){
+    for(int i:adj[root]) {
+        parent[0][i] = root;
+        dfs(i, adj, parent);
+    }
+}
+void populate_parent(int n, vector<vector<int>>&parent){
+    int k = 1;
+    while((1<<k) < n) {
+        for(int i=1;i<=n;i++) {
+            int mid = parent[k-1][i];
+            if(mid!=-1) parent[k][i] = parent[k-1][mid];
+        }
+        k++;
+    }
+}
+int main() {
+	// your code goes here
+	int n;
+	cin >> n;
+	int powers = log2(n);
+	vector<vector<int>> parent(powers+1, vector<int>(n+1,-1));
+	vector<vector<int>> adj(n+1);
+	int root = -1;
+	for(int i=1;i<=n;i++) {
+	    int x;
+	    cin >> x;
+	    if(x==0) {root =i; continue;}
+	    adj[x].push_back(i);
+	}
+	dfs(root, adj, parent);
+	populate_parent(n, parent);
+	vector<bool> is_cat(n+1, false);
+	for(int i=1;i<=n;i++) {
+	    int c;
+	    cin >> c;
+	    if(is_cat[c]) {cout << 0 << endl;continue;}
+	    int ans = 1;
+	    for(int i=18;i>=0;i--) {
+	        if((1<<i)>=n) continue;
+	        int cp = parent[i][c];
+	        if(cp!=-1 && !is_cat[cp]) {
+	            c = cp;
+	            ans+=(1<<i);
+	        }
+	    }
+	    is_cat[c] = true;
+	    cout << ans << endl;
+	}
+    return 0;
+}

@@ -1,0 +1,85 @@
+CSES link: https://cses.fi/problemset/task/1688
+
+#include <bits/stdc++.h>
+using namespace std;
+#define int long
+void populate_parent(int n, auto &parent, auto &level){
+	for(int i=0;i<n-1;i++) {
+		int x;
+		cin >> x;
+		parent[0][i+2] = x;
+	}
+	for(int i=2;i<=n;i++){
+		level[i] = 1 + level[parent[0][i]];
+	}
+	int k = 1;
+	// O(nlog2n * 2)
+	while((1<<k) < n) {
+		parent[k] = vector<int>(n+1, -1);
+		for(int i=2;i<=n;i++) {
+			int mid = parent[k-1][i];
+			if(mid != -1) parent[k][i] = parent[k-1][mid];
+		}
+		k++;
+	}
+}
+// O(log2n)
+int find_parent(auto& parent, int node, int n, int l){
+	if(l==0) return node;
+	if(l>=n) return -1;
+	int ans = node;
+	for(int i=0;i<=17;i++){
+		if(ans==-1) break;
+		if((1<<i)&l){
+			ans = parent[i][ans];
+		}
+	}
+	return ans;
+}
+
+int find_lca(int a, int b, int n, auto &level, auto& parent){
+	int la = level[a];
+	int lb = level[b];
+	if(la>lb) return find_lca(b, a, n, level, parent);
+	int diff = lb-la;
+	b = find_parent(parent, b, n, diff);
+	if(a==b) return a;
+	// Ye binary search wala approach (log2n)*(log2n) hai socho!!!
+	// jabki niche wala sirf (log2n) that's why it's faster
+	// int low = 0, high = la;	
+	// int par_a = 1, par_b = 1;
+	// while(low<=high){
+	// 	int mid = low + (high - low)/2;
+	// 	par_a = find_parent(parent, a, n, mid);
+	// 	par_b = find_parent(parent, b, n, mid);
+	// 	if(par_a==par_b) high = mid - 1;
+	// 	else low = mid + 1;
+	// }
+	for(int i=17;i>=0;i--){
+		if((1<<i) >= n) continue;
+		int ap = parent[i][a];
+		int bp = parent[i][b];
+		if(ap!=bp){
+			a = ap;
+			b = bp;
+		}
+	}
+	return parent[0][a];
+}
+signed main(){
+	std::ios::sync_with_stdio(false);
+	cin.tie(nullptr);
+	int n,q;
+	cin >> n >> q;
+	// SC O(nlog2n)
+	int powers = log2(n);
+	vector<vector<int>> parent(powers+1, vector<int>(n+1, -1));
+	vector<int> level(n+1, 0);
+	populate_parent(n, parent, level);
+	while (q--){
+		int a, b;
+		cin >> a >> b;
+		cout << find_lca(a,b,n,level,parent) << endl;
+	}
+	return 0;
+}

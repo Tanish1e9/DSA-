@@ -5,6 +5,7 @@ https://www.codechef.com/problems/LGSEG
 // to ab soche ki k tho subsegment krna h
 // since we have to take longest to k ke pehle to chodenge nahi
 // islie go on every index and prefix sum pe BS krke find the index jaha pe sub segment khatam ho (yani sum <=S) ho 
+// (ye kaam islie kr skte ki prefix sum non-decreasing hoga bcz negative numbers nahi h)
 // ab aisa K baar krna hoga to O(nlogn*k) again no
 // par ab socho ki k ke hi powers me store krke rakh le tab to O(nlogk) me ho jayega na
 // store krne me O(nlogn) + O(nlogk) lagega time

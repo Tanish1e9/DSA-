@@ -5,6 +5,7 @@ CodeChef link:
 // (jo ki root to har node ka sum of weights store krega usko maintain krna hoga)
 // aur fir ek dusre path ke lie subtree me highest weighted path le lena h
 // 0 se bada hi lenge negative leke koi fayda nahi
+// Literally isme endl daal dene se TLE maar rha tha
 
 #include <bits/stdc++.h>
 using namespace std;
@@ -57,7 +58,6 @@ signed main() {
 	ios::sync_with_stdio(false);
 	cin.tie(nullptr);
 	cout.tie(nullptr);
-	ostringstream out;
 	int t;
 	cin >> t;
 	while(t--) {
@@ -82,9 +82,8 @@ signed main() {
 	        int u,v,x;
 	        cin >> u >> v >> x;
 	        int lc = lca(n,u,v,parent,level);
-	        out << max(weights[u] + weights[v] - 2*weights[lc], sub_weights[u] + sub_weights[v] + x) << "\n";
+	        cout << max(weights[u] + weights[v] - 2*weights[lc], sub_weights[u] + sub_weights[v] + x) << "\n";
 	    }
 	}
-    cout << out.str();
 	return 0;
 }

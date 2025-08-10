@@ -5,7 +5,7 @@ CodeChef link: https://www.codechef.com/problems/UPDOTR
 // shuru me hi check kr dia agar prefix_max[node] <= w then to ans 0
 // else ans >= 1 hi hoga
 // we are at the first position where he learns it
-// now hops[i] is the number of times he learnt when he started from root with initial tastiness as tastiness[root] (root = 1)
+// now hops[i] is the number of times he learnt when he started from root with initial tastiness as tastiness[root] till he reached node 'i' (root = 1)
 // suppose root se 'v' tk jaane me 'node' raaste me aaya
 // to fir jab node se aage badhenge tab initial tastiness = prefix_max[node] leke hi aage badhenge na
 // aur hmlog question me kaha pe initially logn time leke kuda die h? the topmost position where the prefix_max is greater than w

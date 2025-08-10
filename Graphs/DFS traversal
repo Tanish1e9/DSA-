@@ -1,5 +1,9 @@
 GFG link: https://www.geeksforgeeks.org/problems/depth-first-traversal-for-a-graph/1
 
+// Kabhi tree ko as adjacency list waghera store krna pad jaye
+// to usme dhyan rakhna ki visited array ki jroorat nahi hoti
+// sirf parent pass krte chalo and neighbour check kr lo
+// agar parent hi h to skip kr do usko
 
     void dfs(int i,vector<int> adj[],vector<int>&ans,vector<int>&visited){
         visited[i]=1;

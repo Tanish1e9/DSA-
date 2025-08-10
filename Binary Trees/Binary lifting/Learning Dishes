@@ -10,6 +10,9 @@ CodeChef link: https://www.codechef.com/problems/UPDOTR
 // to fir jab node se aage badhenge tab initial tastiness = prefix_max[node] leke hi aage badhenge na
 // aur hmlog question me kaha pe initially logn time leke kuda die h? the topmost position where the prefix_max is greater than w
 // to ab uss position pe prefix_max leke hi aage badha jayega
+// ab iss question me binary lifting kyu chahiye tha?
+// because topmost position find krne k lie given target node se hi upar ki taraf jaate na because root se to niche ke bhut saare paths h
+// islie hmlog ko upar hi query krna tha
 
 #include <bits/stdc++.h>
 using namespace std;

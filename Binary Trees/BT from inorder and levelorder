@@ -1,5 +1,7 @@
 CodeStudio link: https://www.naukri.com/code360/problems/construct-binary-tree-from-in-order-and-level-order_2824774?leftPanelTabValue=PROBLEM
 
+// TC: O(nlogn) + O(nlogn)
+// SC: O(n) + O(3*n)
 TreeNode* getTreeFromInorderAndLevelorder(int n, vector<int> &inOrder, vector<int> &levelOrder){
 	if(n==0) return NULL;
 	map<int,int> index;

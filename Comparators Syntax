@@ -32,5 +32,9 @@ is_sorted(vec.begin(),vec.end());    // krke use kr skte ho
 
 endl is slow kyunki wo buffer ko khaali krta h
 islie agar sirf new line deni ho bhut baar to \n use krna wrna TLE bhi aa skta h
+BTW, kabhi buffered output dena ho to 
+ostringstream out;
+out << "wgref" << "\n";
+cout << out.str(); (at the end)
 
 // also to optimise hashing we can write mpp.reserve(1<<20) isse utne keys k lie hashing optimise ho jayega

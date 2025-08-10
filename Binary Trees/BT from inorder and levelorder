@@ -1,20 +1,29 @@
 CodeStudio link: https://www.naukri.com/code360/problems/construct-binary-tree-from-in-order-and-level-order_2824774?leftPanelTabValue=PROBLEM
 
-TreeNode* helper(map<int,int>&index, vector<int>&inOrder, int istart, int iend, vector<int>&levelOrder, int lstart) {
-	if(istart > iend) return NULL;
-	TreeNode* root = new TreeNode(levelOrder[lstart]);
-	int idx_root = index[root->data];
-	root->left = helper(index, inOrder, istart, idx_root-1, levelOrder, 2*lstart+1);
-	root->right = helper(index, inOrder, idx_root+1, iend, levelOrder, 2*lstart+1+(root->left!=nullptr));
-	return root;
-}
-TreeNode* getTreeFromInorderAndLevelorder(int n, vector<int> &inOrder, vector<int> &levelOrder)
-{
-	// Write your code here.
-	if(n==0) return nullptr;
+TreeNode* getTreeFromInorderAndLevelorder(int n, vector<int> &inOrder, vector<int> &levelOrder){
+	if(n==0) return NULL;
 	map<int,int> index;
 	for(int i=0;i<inOrder.size();i++) {
 		index[inOrder[i]] = i;
 	}
-	return helper(index, inOrder, 0, inOrder.size()-1, levelOrder, 0);
+	int lstart = 0;
+	TreeNode* root = new TreeNode(levelOrder[lstart++]);
+	queue<pair<TreeNode*,pair<int,int>>> q;
+	q.push({root,{0,inOrder.size()-1}});	
+	while(!q.empty()) {
+		TreeNode* curr = q.front().first;
+		int istart = q.front().second.first;
+		int iend = q.front().second.second;
+		q.pop();
+		int idx_curr = index[curr->data];
+		if(istart <= idx_curr-1) {
+			curr->left = new TreeNode(levelOrder[lstart++]);
+			q.push({curr->left, {istart, idx_curr - 1}});
+		}
+		if(idx_curr + 1 <= iend) {
+			curr->right = new TreeNode(levelOrder[lstart++]);
+			q.push({curr->right, {idx_curr+1, iend}});
+		}
+	}
+	return root;
 }

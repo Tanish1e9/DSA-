@@ -1,5 +1,7 @@
 GFG link: https://www.geeksforgeeks.org/problems/binary-tree-representation/1
 
+// Dono hi methods me complete binary tree assume kia gya h
+// M-1
 void create_tree(node* root, vector<int> &vec){
       queue<node*> q;
       q.push(root);
@@ -15,3 +17,23 @@ void create_tree(node* root, vector<int> &vec){
           q.push(curr->right);
       }
   }
+
+// M-2
+void create_tree(node* root0, vector<int>& vec) {
+    	// Your code goes here
+    	queue<pair<node*,int>> q;
+    	q.push({root0,0});
+    	while(!q.empty()) {
+    		node* curr = q.front().first;
+    		int i = q.front().second;
+    		q.pop();
+    		if(2*i+1<vec.size()) {
+    			curr->left = newNode(vec[2*i+1]);
+    			q.push({curr->left,2*i+1});
+    		}
+    		if(2*i+2<vec.size()) {
+    			curr->right = newNode(vec[2*i+2]);
+    			q.push({curr->right,2*i+2});
+    		}
+    	}
+    }

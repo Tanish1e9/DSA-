@@ -1,0 +1,76 @@
+CodeChef link: https://www.codechef.com/problems/UPDOTR
+
+// Intuition:
+// hmlog ke paas prefix maximas h to we will try to find the first position where the chef learns a dish
+// shuru me hi check kr dia agar prefix_max[node] <= w then to ans 0
+// else ans >= 1 hi hoga
+// we are at the first position where he learns it
+// now hops[i] is the number of times he learnt when he started from root with initial tastiness as tastiness[root] (root = 1)
+// suppose root se 'v' tk jaane me 'node' raaste me aaya
+// to fir jab node se aage badhenge tab initial tastiness = prefix_max[node] leke hi aage badhenge na
+// aur hmlog question me kaha pe initially logn time leke kuda die h? the topmost position where the prefix_max is greater than w
+// to ab uss position pe prefix_max leke hi aage badha jayega
+
+#include <bits/stdc++.h>
+using namespace std;
+void dfs(int node, vector<vector<int>>&adj, vector<int>& tastiness, vector<int> &prefix_max, vector<int> &hops, vector<vector<int>> &parent){
+    int n = hops.size() - 1;
+    int k = 1;
+    while((1<<k) < n){
+        int mid = parent[k-1][node];
+        if(mid!=-1) parent[k][node] = parent[k-1][mid];
+        k++;
+    }
+    for(int i:adj[node]){
+        prefix_max[i] = max(tastiness[i], prefix_max[node]);
+        hops[i] = hops[node] + (prefix_max[node] < tastiness[i]);
+        dfs(i, adj, tastiness, prefix_max, hops, parent);
+    }
+}
+int solve(int node, int w, vector<int> &prefix_max, vector<int> &hops, vector<vector<int>> &parent) {
+    if(prefix_max[node] <= w) return 0;
+    int orig = node;
+    for(int i=19;i>=0;i--) {
+        int vp = parent[i][node];
+        if(vp != -1 && prefix_max[vp] > w){
+            node = vp;
+        }
+    }
+    return 1 + hops[orig] - hops[node];
+}
+int main() {
+	// your code goes here
+    int t;
+    cin >> t;
+    while(t--) {
+        int n;
+        cin >> n;
+        vector<int> tastiness(n+1);
+        for(int i=1;i<=n;i++) cin >> tastiness[i];
+        vector<vector<int>> parent(20,vector<int>(n+1, -1));
+        vector<vector<int>> adj(n+1);
+        for(int i=2;i<=n;i++) {
+            int x;
+            cin >> x;
+            adj[x].push_back(i);
+            parent[0][i] = x;
+        }
+        vector<int> prefix_max(n+1);
+        prefix_max[1] = tastiness[1];
+        vector<int> hops(n+1, 0);
+        dfs(1, adj, tastiness, prefix_max, hops, parent);
+        // populate_parent mat likhna TLE ho ja rha since O(n) ka dfs and O(nlogn) ka pop_parent
+        // islie dfs ko hi O(nlogn) bana die
+        int q;
+        cin >> q;
+        int prev = 0;
+        while(q--) {
+            int v;cin >> v;
+            int w;cin >> w;
+            v = v ^ prev;
+            w = w ^ prev;
+            prev = solve(v,w,prefix_max,hops,parent);
+            cout << prev << endl;
+        }
+    }
+}

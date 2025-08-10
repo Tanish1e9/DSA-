@@ -31,7 +31,6 @@ void dfs(int node, vector<vector<int>>&adj, vector<int>& tastiness, vector<int> 
     }
 }
 int solve(int node, int w, vector<int> &prefix_max, vector<int> &hops, vector<vector<int>> &parent) {
-    if(prefix_max[node] <= w) return 0;
     int orig = node;
     for(int i=19;i>=0;i--) {
         int vp = parent[i][node];
@@ -42,7 +41,9 @@ int solve(int node, int w, vector<int> &prefix_max, vector<int> &hops, vector<ve
     return 1 + hops[orig] - hops[node];
 }
 int main() {
-	// your code goes here
+	ios::sync_with_stdio(false);
+	cin.tie(nullptr);
+	cout.tie(nullptr);
     int t;
     cin >> t;
     while(t--) {
@@ -72,7 +73,8 @@ int main() {
             int w;cin >> w;
             v = v ^ prev;
             w = w ^ prev;
-            prev = solve(v,w,prefix_max,hops,parent);
+            if(prefix_max[v] <= w) prev = 0;
+            else prev = solve(v,w,prefix_max,hops,parent);
             cout << prev << endl;
         }
     }

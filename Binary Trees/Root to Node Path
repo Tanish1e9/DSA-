@@ -1,6 +1,6 @@
 Code Studio Link: https://www.naukri.com/code360/problems/path-in-a-tree_3843990?leftPanelTabValue=SUBMISSION
 
-
+M-1
 bool preorder(TreeNode<int>*root,int x,vector<int>&ans){
 	if(root==0) return false;
 	ans.push_back(root->data);
@@ -19,4 +19,23 @@ vector<int> pathInATree(TreeNode<int> *root, int x)
 	vector<int> ans;
 	preorder(root,x,ans);
 	return ans;
+}
+
+M-2
+vector<int>final_ans;
+void helper(TreeNode<int>*root, int x, vector<int>&ans){
+	if(root==NULL) return;
+	ans.push_back(root->data);
+	if(root->data == x) {
+		final_ans = ans;
+		return;
+	}
+	helper(root->left, x, ans);
+	helper(root->right, x, ans);
+	ans.pop_back();
+}
+vector<int> pathInATree(TreeNode<int> *root, int x){
+    vector<int> ans;
+	helper(root, x, ans);
+	return final_ans;
 }

@@ -52,3 +52,40 @@ signed main(){
     cout << func(n,adj) << endl;
     return 0;
 }
+
+// M-2 (Cleaner)
+// simply a node's white = product of (white + black) of all children
+// a node's black = product of (white) of all children
+#include<bits/stdc++.h>
+using namespace std;
+#define int long long
+int mod = 1e9+7;
+void dfs(int root, int par, auto &adj, auto &dp) {
+	for(int el:adj[root]){
+		if(el==par) continue;
+		dfs(el, root, adj, dp);
+		dp[root][0] = (dp[root][0] * ((dp[el][0] + dp[el][1])%mod))%mod;
+		dp[root][1] = (dp[root][1] * dp[el][0])%mod;
+	}
+}
+signed main() {
+	ios::sync_with_stdio(false);
+	cin.tie(nullptr);
+	cout.tie(nullptr);
+	int n;
+	cin >> n;
+	vector<vector<int>> adj(n+1);
+	// 0 is white
+	// 1 is black
+	vector<vector<int>> dp(n+1, vector<int>(2, 1));
+	for(int i=0;i<n-1;i++) {
+		int a, b;
+		cin >> a >> b;
+		adj[a].push_back(b);
+		adj[b].push_back(a);
+	}
+	dfs(1, -1, adj, dp);
+	cout << (dp[1][0] + dp[1][1])%mod << endl;
+	return 0;
+}
+\\

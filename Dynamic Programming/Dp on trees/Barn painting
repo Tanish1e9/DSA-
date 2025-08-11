@@ -1,0 +1,49 @@
+USACO link: https://usaco.org/index.php?page=viewproblem2&cpid=766
+
+// simple wo P-independent set h na waisa hi intuition h
+
+#include<bits/stdc++.h>
+using namespace std;
+#define int long 
+int mod = 1e9+7;
+void dfs(int root, int par, vector<vector<int>> &adj, vector<vector<int>> &dp, vector<int> &colours) {
+	if(colours[root]!=-1) {
+		for(int c=0;c<3;c++) {
+			if(c==colours[root]) continue;
+			dp[root][c] = 0;
+		}
+	}
+	for(int el:adj[root]){
+		if(el==par) continue;
+		dfs(el, root, adj, dp, colours);
+		dp[root][0] = (dp[root][0] * ((dp[el][1]+dp[el][2])%mod))%mod;
+		dp[root][1] = (dp[root][1] * ((dp[el][0]+dp[el][2])%mod))%mod;
+		dp[root][2] = (dp[root][2] * ((dp[el][0]+dp[el][1])%mod))%mod;
+	}
+}
+signed main() {
+	ios::sync_with_stdio(false);
+	cin.tie(nullptr);
+	cout.tie(nullptr);
+	freopen("barnpainting.in", "r", stdin);   // read from file
+    freopen("barnpainting.out", "w", stdout); // write to file
+	int n, k;
+	cin >> n >> k;
+	vector<vector<int>> adj(n+1);
+	vector<vector<int>> dp(n+1, vector<int>(3, 1));
+	vector<int>colours(n+1, -1);
+	for(int i=0;i<n-1;i++) {
+		int a, b;
+		cin >> a >> b;
+		adj[a].push_back(b);
+		adj[b].push_back(a);
+	}
+	for(int i=0;i<k;i++) {
+		int b, c;
+		cin >> b >> c;
+		colours[b] = c-1;
+	}
+	dfs(1, -1, adj, dp, colours);
+	cout << (dp[1][0] + dp[1][1] + dp[1][2])%mod << endl;
+	return 0;
+}

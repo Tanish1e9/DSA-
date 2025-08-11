@@ -1,5 +1,10 @@
 GFG link: https://www.geeksforgeeks.org/problems/top-view-of-binary-tree/1
 
+// ye top view islie nahi ho skta dfs se because
+// we want ki minimum level ka node hi ek column ko pehle touch kre
+// that is only possible in bfs because dfs me to left me ghus jayega aur ho skta ki koi dusra column touch kr de
+// jiske lie current level pe ek dusra node tha
+// similarly bottom view me we would want ki maximum level wala kre then also bfs
 vector<int> topView(Node *root)
     {
         if(root==0) return {};

@@ -1,0 +1,57 @@
+CF link: https://codeforces.com/contest/161/problem/D
+
+// Dekh yaha pe yahi intuition tha ki har node ke lie uske subtree me [1,k] distances waale kitne nodes h
+// once we have all this info then har ek node ko LCA maanke we can calculate cross children too jo ki k distance par honge
+// to ya to sab kuch hone k baad krna h to dekho commented part me waise kr skte ho
+// par optimised way k lie socho ki ek child pe krke aaye dfs aur uska contribution abhi gine nahi h
+// iska mtlb piche wale children ka hi contribution abhi tk aaya hua h array me
+// to ek tarah se jitne bhi pairs ban rhe wo har child subtree ka piche wale child subtrees se hi ban rha h 
+// so no repition here 
+// par yaha ye dhyan rakhna ki k tk jaana padega
+// pura hone k baad krte to k/2 tk hi jaana padta
+
+#include<bits/stdc++.h>
+using namespace std;
+#define int long long
+int final_ans = 0;
+void dfs(int root, int par, auto &adj, auto &num_vertices, int k) {
+	num_vertices[root][0] = 1;
+	for(int el:adj[root]) {
+		if(el == par) continue;
+		dfs(el, root, adj, num_vertices, k);
+		for(int x=1;x<=k;x++) {
+			final_ans+= num_vertices[el][x-1] * num_vertices[root][k-x];
+		}
+		for(int i=1;i<=k;i++) {
+			num_vertices[root][i] += num_vertices[el][i-1];
+		}
+	}
+	// final_ans+= num_vertices[root][k];
+	// for(int x=1;x<=k/2;x++) {
+	// 	int tobe = 0;
+	// 	for(int el:adj[root]) {
+	// 		if(el==par) continue;
+	// 		tobe += num_vertices[el][x-1] * (num_vertices[root][k-x] - num_vertices[el][k-x-1]);
+	// 	}
+	// 	if(x==k/2 && k%2==0) final_ans+=tobe/2;
+	// 	else final_ans+= tobe;
+	// }
+}
+signed main() {
+	ios::sync_with_stdio(false);
+	cin.tie(nullptr);
+	cout.tie(nullptr);
+	int n,k;
+	cin >> n >> k;
+	vector<vector<int>> adj(n+1);
+	vector<vector<int>> num_vertices(n+1, vector<int>(k+1, 0));
+	for(int i=0;i<n-1;i++) {
+		int a, b;
+		cin >> a >> b;
+		adj[a].push_back(b);
+		adj[b].push_back(a);
+	}
+	dfs(1, -1, adj, num_vertices, k);
+	cout << final_ans << "\n";
+	return 0;
+}

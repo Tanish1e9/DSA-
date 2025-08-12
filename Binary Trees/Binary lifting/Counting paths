@@ -1,0 +1,101 @@
+CSES link: https://cses.fi/problemset/task/1136/
+
+// dekh isme na difference array technique use hua h which is useful jab bhut saare range updates krne ho
+// but final result ek bar hi end me chahye hota
+// turant agar result chahye ho to segment tree use hota
+// to difference array me start with a difference array of the same size as the concerned array with all 0s
+// ab suppose bola gya [a,b] index me sabme +3 kr do to diff[a]+=3, diff[b+1]-=3 kr do
+// then aise krte chalo
+// end me prefix_sum array bana lo diff ka
+// to ye prefix_sum array final updates honge to the concerned array (add it to the array to get the updated array)
+
+// ab iss question me na for any node na uske lie array is the path till the root
+// to jaise hi [a,b] path aaya, turant diff[a]++, diff[b]++
+// then lca diff[lca(a,b)]-- , diff[parent(lca(a,b))]-- krna h
+// draw the tree to samajh aayega ye sab kyu kia
+// to bas ye krte chalo end me har node k lie subtree sum add kr dena uske diff me we will get the final ans
+
+#include<bits/stdc++.h>
+using namespace std;
+#define int long
+void dfs(int root, int par, int lvl, auto &adj, auto &parent, auto &level) {
+	parent[0][root] = par;
+	level[root] = lvl;
+	for(int el:adj[root]) {
+		if(el==par)continue;
+		dfs(el, root, lvl+1, adj, parent, level);
+	}
+}
+void build(int n, auto &parent){
+	int k= 1;
+	while((1<<k) < n) {
+		for(int i=1;i<=n;i++){
+			int mid = parent[k-1][i];
+			if(mid!=-1) parent[k][i] = parent[k-1][mid];
+		}
+		k++;
+	}
+}
+int find_lca(int a, int b, auto &parent, auto &level) {
+	int la = level[a];
+	int lb = level[b];
+	if(la > lb) return find_lca(b, a, parent, level);
+	int diff = lb - la;
+	for(int i=17;i>=0;i--) {
+		if((1<<i)&diff) {
+			b = parent[i][b];
+		}
+	}
+	if(a==b) return a;
+	for(int i=17;i>=0;i--) {
+		int ap = parent[i][a];
+		int bp = parent[i][b];
+		if(ap!=bp){
+			a = ap;
+			b = bp;
+		}
+	}
+	return parent[0][a];
+}
+void dfs2(int root, int par, auto &adj, auto &diff) {
+	for(int el:adj[root]) {
+		if(el==par) continue;
+		dfs2(el, root, adj, diff);
+		diff[root]+= diff[el];
+	}
+}
+signed main(){
+	ios::sync_with_stdio(false);
+	cin.tie(nullptr);
+	cout.tie(nullptr);
+	int n, m;
+	cin >> n >> m;
+	vector<vector<int>> adj(n+1);
+	for(int i=0;i<n-1;i++) {
+		int a, b;
+		cin >> a >> b;
+		adj[a].push_back(b);
+		adj[b].push_back(a);
+	}
+	vector<vector<int>> parent(18, vector<int>(n+1, -1));
+	vector<int>level(n+1, 0);
+	dfs(1, -1, 0, adj, parent, level);
+	build(n, parent);
+	vector<int> diff(n+1, 0);
+	for(int i=0;i<m;i++) {
+		int a, b;
+		cin >> a >> b;
+		diff[a]++;
+		diff[b]++;
+		int lc = find_lca(a,b,parent,level);
+		diff[lc]--;
+		int par = parent[0][lc];
+		if(par!=-1) diff[par]--;
+	}
+	dfs2(1, -1, adj, diff);
+	for(int i=1;i<=n;i++) {
+		cout << diff[i] << " ";
+	}
+	cout << endl;
+	return 0;
+}

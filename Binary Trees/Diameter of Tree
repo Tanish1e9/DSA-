@@ -1,6 +1,7 @@
 LC link: https://leetcode.com/problems/diameter-of-binary-tree/
+CSES link: https://cses.fi/problemset/result/14102655/
 
-//Dekh ye sab me har node pe traverse krke alag se height nikalne ka dimag me aata h but wo O(n2) ho jata
+// Dekh ye sab me har node pe traverse krke alag se height nikalne ka dimag me aata h but wo O(n2) ho jata
 // height nikalte waqt already har node ka left and right height nikal hi rhe hote h to wahi pe merge kr do diameter k code ko
 
     int ans=-1;
@@ -17,3 +18,42 @@ LC link: https://leetcode.com/problems/diameter-of-binary-tree/
         height(root);
         return ans;
     }
+
+
+// M-2 
+// koi bhi ek node pakdo travel to the furthest node and then uss node se furthest distance hi diameter hoga
+// diameter ko ek horizontal line ki tarah imagine krna h
+
+#include<bits/stdc++.h>
+using namespace std;
+#define int long 
+int dfs(int root, int par, auto &adj, auto &ans, int level, bool take_max=false) {
+	if(take_max) ans[root] = max(ans[root], level);
+	else ans[root] = level;
+	int opt = root;
+	for(int el:adj[root]){
+		if (el == par) continue;
+		int val = dfs(el, root, adj, ans, level + 1, take_max);
+		if(ans[val] > ans[opt]) opt = val;
+	}
+	return opt;
+}
+signed main() {
+	ios::sync_with_stdio(false);
+	cin.tie(nullptr);
+	cout.tie(nullptr);
+	int n;
+	cin >> n;
+	vector<vector<int>> adj(n+1);
+	vector<int> ans(n+1,-1);
+	for(int i=0;i<n-1;i++) {
+		int a, b;
+		cin >> a >> b;
+		adj[a].push_back(b);
+		adj[b].push_back(a);
+	}
+	int dia_a = dfs(1, -1, adj, ans, 0);
+	int dia_b = dfs(dia_a, -1, adj, ans, 0);
+	cout << *max_element(ans.begin(), ans.end()) << endl;
+	return 0;
+}

@@ -1,0 +1,47 @@
+CF link: https://codeforces.com/contest/1387/problem/B1
+
+// simple greedy problem tha basically aise socho na ki jo leaves h unke paas to ek hi parent h 
+// to leaves ko pehle dena start kro and bas ho jayega
+
+#include<bits/stdc++.h>
+using namespace std;
+#define int long
+int final_ans = 0;
+void dfs(int root, int par, auto &adj, auto &houses) {
+	for(int el:adj[root]) {
+		if(el==par) continue;
+		dfs(el, root, adj, houses);
+	}
+	if(houses[root]==root && par!=-1){
+		swap(houses[par], houses[root]);
+		final_ans+=2;
+	}
+}
+signed main(){
+	ios::sync_with_stdio(false);
+	cin.tie(nullptr);
+	cout.tie(nullptr);
+	int n;
+	cin >> n;
+	vector<vector<int>> adj(n+1);
+	vector<int>houses(n+1, 0);
+	houses[n] =n;
+	for(int i=0;i<n-1;i++) {
+		houses[i+1] = i+1;
+		int a, b;
+		cin >> a >> b;
+		adj[a].push_back(b);
+		adj[b].push_back(a);
+	}
+	dfs(1, -1, adj, houses);
+	if(houses[1]==1) {
+		swap(houses[1], houses[adj[1][0]]);
+		final_ans+=2;
+	}
+	cout << final_ans << "\n";
+	for(int i=1;i<=n;i++) {
+		cout << houses[i] << " ";
+	}
+	cout << endl;
+	return 0;
+}

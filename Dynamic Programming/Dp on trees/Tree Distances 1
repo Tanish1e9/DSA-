@@ -42,20 +42,33 @@ int dfs(int root, int par, auto &adj, auto &ans) {
 void dfs2(int root, int par, auto &adj, auto &ans) {
 	for(int el:adj[root]) {
 		if(el==par) continue;
-		if(1+ans[root].maxi > ans[el].maxi){
-			if(ans[root].child != el) {
-				ans[el].smaxi = ans[el].maxi;
-				ans[el].maxi = 1 + ans[root].maxi;
-				ans[el].child = root;	// yaha -1 bhi kr denge to chalega because we are sure ki iska max path ab iske bachho k through to nahi hi jayega to -1 hi rakh do kya fark h
-			}
-			else if(1+ans[root].smaxi>ans[el].maxi) {
-				ans[el].smaxi = ans[el].maxi;
-				ans[el].maxi = 1 + ans[root].smaxi;
-				ans[el].child = root;	// yaha -1 bhi kr denge to chalega because we are sure ki iska max path ab iske bachho k through to nahi hi jayega to -1 hi rakh do kya fark h
-			} else if(1+ans[root].smaxi>ans[el].smaxi) {
-				ans[el].smaxi = 1 + ans[root].smaxi;
-			}
+		// parent ka jo max h wo child k max se jaada hi hoga 
+		// because child to abhi tk apne hi subtree me explore kia h na
+		// but parent jo h wo idhar udhar bhi explore kr rakha h including the child's subtree 
+		// but parent ka smax child k smax + 1 se kam bhi ho skta h because max aur smax na parent ensure krta
+		// ki different children k ho 
+		// to ho skta h kisi child me bhut bada smax h but still parent ka wo smax nahi hoga
+		// islie we need to check ki parent ka jada h agar tabhi update kro
+		// also agar child ka maxi update ho rha h then child ka smaxi is not even needed 
+		// because uske kisi bhi child se collision hoga hi nahi
+		// since max ka neighbour to dusre subtree me chala gya na
+		// islie dekho sidhe -1 kr die h
+		// yaha root bhi krna equivalent hi h -1 k jagah (no collisions in further subtrees)
+
+		if(ans[root].child != el) {
+			// ans[el].smaxi = ans[el].maxi;	// this line is not needed (explained above)
+			ans[el].maxi = 1 + ans[root].maxi;
+			ans[el].child = -1;		// yaha -1 or root dono hi kr skte h because we are sure ki iska max path ab 
+									// iske bachho k through to nahi hi jayega to -1 hi rakh do kya fark h
+		}
+		else if(1+ans[root].smaxi>ans[el].maxi) {
+			// ans[el].smaxi = ans[el].maxi;	// this line is not needed (explained above)
+			ans[el].maxi = 1 + ans[root].smaxi;
+			ans[el].child = -1; 	// yaha -1 or root dono hi kr skte h because we are sure ki iska max path ab 
+									// iske bachho k through to nahi hi jayega to -1 hi rakh do kya fark h
 		} 
+		else if(1+ans[root].smaxi>ans[el].smaxi) ans[el].smaxi = 1 + ans[root].smaxi;
+		
 		dfs2(el, root, adj, ans);
 	}
 }
@@ -81,7 +94,6 @@ signed main() {
 	cout << "\n";
 	return 0;
 }
-
 
 // M-2
 // Dekh diameter nikalne ka na do algorithm ek to simple h ki har child ka height nikal lo

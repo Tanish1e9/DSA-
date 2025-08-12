@@ -1,0 +1,83 @@
+CSES link: https://cses.fi/problemset/task/1132
+
+// M-1 (I thought it originally)
+// isme simple aisa h ki hmlog pehle subtree me jo bhi furthest node h uss hisab se kr lo dfs 
+// saath me smaxi aur child (jiske through max wala path ja rha wo bhi store kro aage pata chalega kyu)
+// fir ek dusra dfs krenge ki parent k through ab kya max distance h 
+// agar to parent ka jo max path h wo uss child k through ni ja rha hoga then simply update kr denge child ka maxi
+// else smaxi se dekhenge na
+// also agar ye bhi ni chala to child ka smaxi bhi update krna hoga na
+// smaxi hmesha hi max waale path jis neighbour se jayega usse nahi jayega 
+
+#include<bits/stdc++.h>
+using namespace std;
+#define int long 
+int mod = 1e9+7;
+class info{
+	public:
+	int maxi = -1;
+	int child = -1;
+	int	smaxi = -1;
+};
+int dfs(int root, int par, auto &adj, auto &ans) {
+	int maxi = 0;
+	int smaxi = 0;
+	int child = -1;
+	for(int el:adj[root]) {
+		if(el==par) continue;
+		int val = dfs(el, root, adj, ans);
+		if(val>=maxi) {
+			smaxi = maxi;
+			maxi = val;
+			child = el;
+		} else if(val>smaxi) {
+			smaxi=val;
+		}
+	}
+	ans[root].maxi = maxi;
+	ans[root].child = child;
+	ans[root].smaxi = smaxi;
+	return maxi + 1;
+}
+void dfs2(int root, int par, auto &adj, auto &ans) {
+	for(int el:adj[root]) {
+		if(el==par) continue;
+		if(1+ans[root].maxi > ans[el].maxi){
+			if(ans[root].child != el) {
+				ans[el].smaxi = ans[el].maxi;
+				ans[el].maxi = 1 + ans[root].maxi;
+				ans[el].child = root;	// yaha -1 bhi kr denge to chalega because we are sure ki iska max path ab iske bachho k through to nahi hi jayega to -1 hi rakh do kya fark h
+			}
+			else if(1+ans[root].smaxi>ans[el].maxi) {
+				ans[el].smaxi = ans[el].maxi;
+				ans[el].maxi = 1 + ans[root].smaxi;
+				ans[el].child = root;	// yaha -1 bhi kr denge to chalega because we are sure ki iska max path ab iske bachho k through to nahi hi jayega to -1 hi rakh do kya fark h
+			} else if(1+ans[root].smaxi>ans[el].smaxi) {
+				ans[el].smaxi = 1 + ans[root].smaxi;
+			}
+		} 
+		dfs2(el, root, adj, ans);
+	}
+}
+signed main() {
+	ios::sync_with_stdio(false);
+	cin.tie(nullptr);
+	cout.tie(nullptr);
+	int n;
+	cin >> n;
+	vector<vector<int>> adj(n+1);
+	vector<info> ans(n+1);
+	for(int i=0;i<n-1;i++) {
+		int a, b;
+		cin >> a >> b;
+		adj[a].push_back(b);
+		adj[b].push_back(a);
+	}
+	dfs(1, -1, adj, ans);
+	dfs2(1, -1, adj, ans);
+	for(int i=1;i<=n;i++) {
+		cout << ans[i].maxi << " ";
+	}
+	cout << "\n";
+	return 0;
+}

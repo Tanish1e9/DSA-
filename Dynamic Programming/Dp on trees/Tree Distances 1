@@ -84,6 +84,16 @@ signed main() {
 
 
 // M-2
+// Dekh diameter nikalne ka na do algorithm ek to simple h ki har child ka height nikal lo
+// max + smax height is the diameter 
+// dusra algo h ki koi bhi node se dfs start kro and furthest node pe pahucho (suppose b)
+// then b se dfs kro and furthest node c pe pahucho
+// (b,c) is a diamter 
+// now diameter ko na pura horizontally rakho and let the other nodes hang from it
+// dikhega ki har node ka max distance wala node ya to b h ya to c h
+// to bas (jab b se dfs kr rhe the to level nikalte rhna jisse b se distances nikal jayenge)
+// and jab c se kr rhe hoge to max le lena
+
 #include<bits/stdc++.h>
 using namespace std;
 #define int long 

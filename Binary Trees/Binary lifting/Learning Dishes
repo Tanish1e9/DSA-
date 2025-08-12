@@ -13,21 +13,30 @@ CodeChef link: https://www.codechef.com/problems/UPDOTR
 // ab iss question me binary lifting kyu chahiye tha?
 // because topmost position find krne k lie given target node se hi upar ki taraf jaate na because root se to niche ke bhut saare paths h
 // islie hmlog ko upar hi query krna tha
+// hmesha na yar populate_parent alag se hi likhna
+// yaha ek constraint h ki 1<=pi<=i-1 islie na dfs me bhi agar kroge to chal jayega kaam
+// but baaki jagah ni chalega simple reason ki kisi bhi node ka kth row ke lie (k-1th) wala to hona chahye na available
+// to wo available kaise hoga agar dfs hi ni hua h abhi tk waha
+// aur same reason se hi k wala loop hmesha bahar rhega.... pehle k wala position sabka populate hoga
+// then only k+1 ka hoga
 
 #include <bits/stdc++.h>
 using namespace std;
 void dfs(int node, vector<vector<int>>&adj, vector<int>& tastiness, vector<int> &prefix_max, vector<int> &hops, vector<vector<int>> &parent){
-    int n = hops.size() - 1;
-    int k = 1;
-    while((1<<k) < n){
-        int mid = parent[k-1][node];
-        if(mid!=-1) parent[k][node] = parent[k-1][mid];
-        k++;
-    }
     for(int i:adj[node]){
         prefix_max[i] = max(tastiness[i], prefix_max[node]);
         hops[i] = hops[node] + (prefix_max[node] < tastiness[i]);
         dfs(i, adj, tastiness, prefix_max, hops, parent);
+    }
+}
+void populate_parent(int n, auto &parent) {
+    int k = 1;
+    while((1<<k) < n) {
+        for(int i=1;i<=n;i++) {
+            int mid = parent[k-1][i];
+            if(mid!=-1) parent[k][i] = parent[k-1][mid];
+        }
+        k++;
     }
 }
 int solve(int node, int w, vector<int> &prefix_max, vector<int> &hops, vector<vector<int>> &parent) {
@@ -63,8 +72,7 @@ int main() {
         prefix_max[1] = tastiness[1];
         vector<int> hops(n+1, 0);
         dfs(1, adj, tastiness, prefix_max, hops, parent);
-        // populate_parent mat likhna TLE ho ja rha since O(n) ka dfs and O(nlogn) ka pop_parent
-        // islie dfs ko hi O(nlogn) bana die
+        populate_parent(n, parent);
         int q;
         cin >> q;
         int prev = 0;
@@ -75,7 +83,7 @@ int main() {
             w = w ^ prev;
             if(prefix_max[v] <= w) prev = 0;
             else prev = solve(v,w,prefix_max,hops,parent);
-            cout << prev << endl;
+            cout << prev << "\n";
         }
     }
 }

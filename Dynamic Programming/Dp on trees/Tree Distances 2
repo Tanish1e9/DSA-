@@ -1,0 +1,48 @@
+CSES link: https://cses.fi/problemset/result/14102214/
+
+// isme bhi pichla question wala hi funda lag rha h pehle sabka sirf subtree ko consider krke solve kra lena
+// isme pehle child ka hone dena h fir apna update krna h
+// then next time me pehle child ko update krna then uska dfs call krna h
+// taki wo apne children ka take care kr sake
+
+#include<bits/stdc++.h>
+using namespace std;
+#define int long
+int n;
+void dfs(int root, int par, auto &adj, auto &ans, auto &count) {
+	for(int el:adj[root]) {
+		if(el==par) continue;
+		dfs(el, root, adj, ans, count);
+		count[root]+=count[el];
+		ans[root]+=ans[el]+count[el];
+	}
+}
+void dfs2(int root, int par, auto &adj, auto &ans, auto &count) {
+	for(int el:adj[root]) {
+		if(el==par) continue;
+		ans[el] += ans[root] - ans[el] - count[el] + (n - count[el]);
+		dfs2(el, root, adj, ans, count);
+	}
+}
+signed main(){
+	ios::sync_with_stdio(false);
+	cin.tie(nullptr);
+	cout.tie(nullptr);
+	cin >> n;
+	vector<vector<int>> adj(n+1);
+	vector<int>ans(n+1, 0);
+	vector<int>count(n+1, 1);
+	for(int i=0;i<n-1;i++) {
+		int a, b;
+		cin >> a >> b;
+		adj[a].push_back(b);
+		adj[b].push_back(a);
+	}
+	dfs(1, -1, adj, ans, count);
+	dfs2(1, -1, adj, ans, count);
+	for(int i=1;i<=n;i++) {
+		cout << ans[i] << " ";
+	}
+	cout << endl;
+	return 0;
+}

@@ -1,0 +1,97 @@
+CSES link: https://cses.fi/problemset/task/1138/
+
+// isme na dekh agar koi bhi node pe kuch delta aayega to wo apne subtree wale nodes ke lie bhi same delta laayega
+// aur subtree me to bhut saare nodes h sabpe kaise update krenge
+// aur fir turant kisi bhi node ka accumulated delta bhi chahye hoga
+// agar somehow subtree ek array me kisi range ki tarah aa jata to hmlog segment tree laga skte the
+// ab samajh aa gya na euler tour ka intuition
+
+#include<bits/stdc++.h>
+using namespace std;
+#define int long long
+void dfs(int root, int par, int &time, auto &adj, auto &values, auto &time_start, auto &time_end, auto &weights){
+	time_start[root] = time;
+	for(int el:adj[root]) {
+		if(el==par) continue;
+		time++;
+		weights[el] += weights[root];
+		dfs(el, root, time, adj, values, time_start, time_end, weights);
+	}
+	time_end[root] = time;
+}
+class seg_tree{
+	public:
+	vector<int> seg, lazy;
+	// seg[ind] denotes ki uss ind pe jo low to high range hai
+	// usme har ek individual node pe "individually" kya change aaya h
+	// for eg agar seg[ind] = 3 hai to arr[low..high] ke har ek , weights(n+1)element me +3 hua h
+	seg_tree(int n) {
+		seg = vector<int>(4*n+1, 0);
+		lazy = vector<int>(4*n+1, 0);
+	}
+	void range_update(int ind, int low, int high, int l, int r, int diff) {
+		if(high < l || low > r) return;
+		if(lazy[ind]!=0) {
+			seg[ind] += lazy[ind];
+			if(2*ind+1 < seg.size()) lazy[2*ind + 1] += lazy[ind];
+			if(2*ind+2 < seg.size()) lazy[2*ind + 2] += lazy[ind];
+			lazy[ind] = 0;
+		}
+		if(l<=low && high<=r) {
+			seg[ind] += diff;
+			if(2*ind+1 < seg.size()) lazy[2*ind+1] += diff;
+			if(2*ind+2 < seg.size()) lazy[2*ind+2] += diff;
+			return;
+		}
+		int mid = low + (high-low)/2;
+		range_update(2*ind+1, low, mid, l, r, diff);
+		range_update(2*ind+2, mid+1, high, l, r, diff);
+	}
+	int query(int ind, int low, int high, int k) {
+		if(k<low || k>high) return 0;
+		if(lazy[ind]!=0) {
+			seg[ind] += lazy[ind];
+			if(2*ind+1 < seg.size()) lazy[2*ind + 1] += lazy[ind];
+			if(2*ind+2 < seg.size()) lazy[2*ind + 2] += lazy[ind];
+			lazy[ind] = 0;
+		}
+		if(low == high && low == k) {return seg[ind];}
+		int mid = low + (high - low)/2;
+		int left = query(2*ind+1, low, mid, k);
+		int right = query(2*ind+2, mid+1, high, k);
+		return left + right;
+	}
+};
+signed main(){
+	int n, q;
+	cin >> n >> q;
+	vector<int>values(n+1), time_start(n+1), time_end(n+1);
+	vector<vector<int>> adj(n+1);
+	for(int i=1;i<=n;i++) cin >> values[i];
+	vector<int> weights = values;
+	for(int i=0;i<n-1;i++) {
+		int a, b;
+		cin >> a >> b;
+		adj[a].push_back(b);
+		adj[b].push_back(a);
+	}
+	int time = 0;
+	dfs(1, -1, time, adj, values, time_start, time_end, weights);
+	
+	seg_tree s1(n);
+	while(q--) {
+		int type;
+		cin >> type;
+		if(type == 1) {
+			int s, x;
+			cin >> s >> x;
+			s1.range_update(0, 0, n-1, time_start[s], time_end[s], x - values[s]);
+			values[s] = x;
+		} else if (type == 2) {
+			int k;
+			cin >> k;
+			cout << weights[k] + s1.query(0, 0, n-1, time_start[k]) << "\n";
+		}
+	}
+	return 0;
+}

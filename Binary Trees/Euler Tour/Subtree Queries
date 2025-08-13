@@ -1,0 +1,91 @@
+CSES link: https://cses.fi/problemset/task/1137/
+
+// isme dekh time na bas record krte rho node entry aur exit ka aur normal dfs krna h
+// time_start[root] se time_end[root] tk ka index in tour represents the subtree of 'root'
+// bas to values daalte rhna iss tour array me then to standard segment tree ka sawaal ho gya
+
+#include<bits/stdc++.h>
+using namespace std;
+#define int long
+void dfs(int root, int par, auto &adj, int &time, auto &tour, auto &time_start, auto &time_end, auto &values) {
+	time++;
+	tour[time] = values[root];
+	time_start[root] = time;
+	for(int el:adj[root]) {
+		if(el==par) continue;
+		dfs(el, root, adj, time, tour, time_start, time_end, values);
+	}
+	time_end[root] = time;
+}
+class seg_tree{
+	public:
+	vector<int> seg;
+	seg_tree(int n) {
+		seg = vector<int>(4*n, 0);
+	}
+	void build(vector<int>&arr,int ind, int low, int high) {
+		if(low == high) {
+			seg[ind] = arr[low];
+			return;
+		}
+		int mid = low + (high - low)/2;
+		build(arr, 2*ind+1, low, mid);
+		build(arr, 2*ind+2, mid+1, high);
+		seg[ind] = seg[2*ind+1] + seg[2*ind+2];
+	}
+	void update(int ind, int low, int high, int upd, int val) {
+		if(upd < low || upd > high) return;
+		if(low == high && low == upd) {
+			seg[ind] = val;
+			return;
+		} 
+		int mid = low + (high-low)/2;
+		update(2*ind+1, low, mid, upd, val);
+		update(2*ind+2, mid+1, high, upd, val);
+		seg[ind] = seg[2*ind+1] + seg[2*ind+2];
+	}
+	int query(int ind, int low, int high, int l, int r) {
+		if(high < l || low > r) return 0;
+		if(l<=low && high <=r) return seg[ind];
+		int mid = low + (high-low)/2;
+		int left = query(2*ind+1, low, mid, l, r);
+		int right = query(2*ind+2, mid+1, high, l, r);
+		return left + right;
+	}
+};
+signed main(){
+	ios::sync_with_stdio(false);
+	cin.tie(nullptr);
+	cout.tie(nullptr);
+	int n, q;
+	cin >> n >> q;
+	vector<int>values(n+1);
+	for(int i=1;i<=n;i++) cin >> values[i];
+	vector<vector<int>> adj(n+1);
+	for(int i=0;i<n-1;i++) {
+		int a, b;
+		cin >> a >> b;
+		adj[a].push_back(b);
+		adj[b].push_back(a);
+	}
+	vector<int>tour(n);
+	vector<int>time_start(n+1), time_end(n+1);
+	int time = -1;
+	dfs(1, -1, adj, time, tour, time_start, time_end, values);
+	seg_tree s1(n);
+	s1.build(tour, 0, 0, n-1);
+	while(q--) {
+		int type;
+		cin >> type;
+		if(type == 1) {
+			int a, b;
+			cin >> a >> b;
+			s1.update(0, 0, n-1, time_start[a], b);
+		} else if(type == 2) {
+			int s;
+			cin >> s;
+			cout << s1.query(0, 0, n-1, time_start[s], time_end[s]) << "\n";
+		}
+	}
+	return 0;
+}

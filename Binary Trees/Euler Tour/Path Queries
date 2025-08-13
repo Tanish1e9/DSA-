@@ -30,13 +30,13 @@ class seg_tree{
 		lazy = vector<int>(4*n+1, 0);
 	}
 	void range_update(int ind, int low, int high, int l, int r, int diff) {
-		if(high < l || low > r) return;
 		if(lazy[ind]!=0) {
 			seg[ind] += lazy[ind];
 			if(2*ind+1 < seg.size()) lazy[2*ind + 1] += lazy[ind];
 			if(2*ind+2 < seg.size()) lazy[2*ind + 2] += lazy[ind];
 			lazy[ind] = 0;
 		}
+		if(high < l || low > r) return;
 		if(l<=low && high<=r) {
 			seg[ind] += diff;
 			if(2*ind+1 < seg.size()) lazy[2*ind+1] += diff;
@@ -48,13 +48,13 @@ class seg_tree{
 		range_update(2*ind+2, mid+1, high, l, r, diff);
 	}
 	int query(int ind, int low, int high, int k) {
-		if(k<low || k>high) return 0;
 		if(lazy[ind]!=0) {
 			seg[ind] += lazy[ind];
 			if(2*ind+1 < seg.size()) lazy[2*ind + 1] += lazy[ind];
 			if(2*ind+2 < seg.size()) lazy[2*ind + 2] += lazy[ind];
 			lazy[ind] = 0;
 		}
+		if(k<low || k>high) return 0;
 		if(low == high && low == k) {return seg[ind];}
 		int mid = low + (high - low)/2;
 		int left = query(2*ind+1, low, mid, k);

@@ -7,15 +7,14 @@ CSES link: https://cses.fi/problemset/task/1137/
 #include<bits/stdc++.h>
 using namespace std;
 #define int long
-void dfs(int root, int par, auto &adj, int &time, auto &tour, auto &time_start, auto &time_end, auto &values) {
-	time++;
-	tour[time] = values[root];
-	time_start[root] = time;
+void dfs(int root, int par, auto &adj, auto &tour, auto &time_start, auto &time_end, auto &values) {
+	time_start[root] = tour.size();
+	tour.push_back(values[root]);
 	for(int el:adj[root]) {
 		if(el==par) continue;
-		dfs(el, root, adj, time, tour, time_start, time_end, values);
+		dfs(el, root, adj, tour, time_start, time_end, values);
 	}
-	time_end[root] = time;
+	time_end[root] = tour.size() - 1;
 }
 class seg_tree{
 	public:
@@ -68,10 +67,9 @@ signed main(){
 		adj[a].push_back(b);
 		adj[b].push_back(a);
 	}
-	vector<int>tour(n);
+	vector<int>tour;
 	vector<int>time_start(n+1), time_end(n+1);
-	int time = -1;
-	dfs(1, -1, adj, time, tour, time_start, time_end, values);
+	dfs(1, -1, adj, tour, time_start, time_end, values);
 	seg_tree s1(n);
 	s1.build(tour, 0, 0, n-1);
 	while(q--) {

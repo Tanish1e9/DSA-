@@ -62,10 +62,10 @@ class seg_tree{
 		seg[ind] = seg[2*ind+1] | seg[2*ind+2];
 	}
 	int query(int ind, int low, int high, int l, int r) {
-		// ye lazy updates na pehle hi krna jroooooooooooooooooooooooori hai
-		// because ki ho skta h partial overlap ho aur aise child me aa gye jiska ki requested range se mtlb nhi h
-		// par isme kuch lazy pada ho to usko to update krna hoga na
-		// kyunki fir usse upar wale ka ans affect hoga
+		// query me lazy updates pehle krna jroori nahi h because jo non-overlap h
+		// wo ans ko to waise hi affect nahi krega
+		// jab child update ho to parent bhi update ho jaye accordingly ye na update me take care krna jroori h
+		if(l>high || r <low) return 0;
 		if(lazy[ind]!=0) {
 			seg[ind] = lazy[ind];
 			if(low!=high) {
@@ -74,7 +74,6 @@ class seg_tree{
 			}
 			lazy[ind] = 0;
 		}
-		if(l>high || r <low) return 0;
 		if(l<=low && high<=r) return seg[ind];
 		int mid = low + (high - low)/2;
 		int left = query(2*ind+1, low, mid, l, r);

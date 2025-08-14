@@ -122,17 +122,15 @@ signed main(){
 #include<bits/stdc++.h>
 using namespace std;
 #define int long long
-void dfs(int root, int par, int &time, auto &adj, auto &tour, auto &time_start, auto &time_end, auto &values) {
-	time++;
-	time_start[root] = time;
-	tour[time] = values[root];
+void dfs(int root, int par, auto &adj, auto &tour, auto &time_start, auto &time_end, auto &values) {
+	time_start[root] = tour.size();
+	tour.push_back(values[root]);
 	for(int el:adj[root]) {
 		if(el==par) continue;
-		dfs(el, root, time, adj, tour, time_start, time_end, values);
+		dfs(el, root, adj, tour, time_start, time_end, values);
 	}
-	time++;
-	time_end[root] = time;
-	tour[time] = -values[root];
+	time_end[root] = tour.size();
+	tour.push_back(-values[root]);
 }
 class seg_tree{
 	public:
@@ -179,7 +177,7 @@ signed main() {
 	int n, q;
 	cin >> n >> q;
 	vector<vector<int>> adj(n+1);
-	vector<int> values(n+1), time_start(n+1), time_end(n+1), tour(2*n);
+	vector<int> values(n+1), time_start(n+1), time_end(n+1), tour;
 	for(int i=1;i<=n;i++) {
 		cin >> values[i];
 	}
@@ -189,8 +187,7 @@ signed main() {
 		adj[a].push_back(b);
 		adj[b].push_back(a);
 	}
-	int time = -1;
-	dfs(1, -1, time, adj, tour, time_start, time_end, values);
+	dfs(1, -1, adj, tour, time_start, time_end, values);
 	seg_tree s1(tour);
 	while(q--) {
 		int type;

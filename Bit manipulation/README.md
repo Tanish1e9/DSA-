@@ -1,3 +1,3 @@
 - Turn off the rightmost set bit of a number: val  = val & (val-1)  
 - Turn off the leftmost set bit of a number: val -= val & (-val);   (minus islie h ki koi bhi 2 ka power le lo suppose 8 dikh jayega)
-    - ye val & (-val) position laake dega leftmost set bit ka
+    - ye val & (-val) jo h wo (1<<position) laake dega leftmost set bit ka

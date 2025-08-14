@@ -4,6 +4,8 @@
   - Ek aur h ki like ek subtree explore krke aaye to fir se node ko daalenge. This is used in LCA.
   - Aur ek h ki edges ko sidha record krte chalo kaise kaise traverse kia. vector<pair<int,int>> ban jayega
 
-- Also, Euler tour me 'time' variable ki jroorat sirf uss case me hai jaha sirf ek bar node ko record krte h
+- Also, Euler tour me 'time' variable ki jroorat kahi nahi h
 - time is nothing but basically the index jaha se subtree of a node start ho rha
-- so agar start aur end dono pe node ko daal hi rhe to we know the start and end index waise hi 
+- so agar start aur end dono pe node ko daal hi rhe to we know the start and end index waise hi
+- aur agar nahi bhi daal rhe to bhi we know ki kaha dalta wo we can calculate time from that
+- subtree queries me dekhna time nahi h, but new year tree wale me time se kia hua h both for reference

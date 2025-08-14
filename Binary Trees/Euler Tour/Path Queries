@@ -5,6 +5,11 @@ CSES link: https://cses.fi/problemset/task/1138/
 // aur fir turant kisi bhi node ka accumulated delta bhi chahye hoga
 // agar somehow subtree ek array me kisi range ki tarah aa jata to hmlog segment tree laga skte the
 // ab samajh aa gya na euler tour ka intuition
+// isme na segment tree me dhyan do update to ek range me hoga na (agar node ka value change krke kuch delta aaya
+// to wo pure subtree me aayega)
+// aur fir query ek single node ka kr rhe h
+// to my point is ki dekho yaha build bhi ni hua h to ek range me kya delta h wo uske do child subranges pe nahi directly depend krta 
+// wo lazy propagation k through hi update kia jayega
 
 #include<bits/stdc++.h>
 using namespace std;
@@ -97,6 +102,108 @@ signed main(){
 			int k;
 			cin >> k;
 			cout << weights[k] + s1.query(0, 0, n-1, time_start[k]) << "\n";
+		}
+	}
+	return 0;
+}
+
+
+
+
+// M-2 a bit cleaner with a different Euler tour variant
+// isme simple na node jab end ho tab bhi tour me daal dete h
+// so observe ki [0 to kisi bhi node v ka start] tk me jo node start hi rhe wo saare v ke ancestors hi honge
+// wrna wo end ho jate
+// to simple end pe negative values rakh ke agar prefix sum nikal de to ho jayega
+// ab yaha dekhna seg_tree me ki prefix_sum nikalna h to ek range ka value change hoga agar uske subrange me affect hua
+// islie build bhi h aur update me bhi end me dekho update hua h
+
+
+#include<bits/stdc++.h>
+using namespace std;
+#define int long long
+void dfs(int root, int par, int &time, auto &adj, auto &tour, auto &time_start, auto &time_end, auto &values) {
+	time++;
+	time_start[root] = time;
+	tour[time] = values[root];
+	for(int el:adj[root]) {
+		if(el==par) continue;
+		dfs(el, root, time, adj, tour, time_start, time_end, values);
+	}
+	time++;
+	time_end[root] = time;
+	tour[time] = -values[root];
+}
+class seg_tree{
+	public:
+	vector<int> seg;
+	seg_tree(vector<int>&tour) {
+		int m = tour.size();
+		seg = vector<int> (4*m);
+		build(0,0,m-1,tour);
+	}
+	void build(int ind, int low, int high, auto &tour){
+		if(low == high) {
+			seg[ind] = tour[low];
+			return;
+		}
+		int mid = low + (high-low)/2;
+		build(2*ind+1, low, mid, tour);
+		build(2*ind+2, mid+1, high, tour);
+		seg[ind] = seg[2*ind+1] + seg[2*ind+2];
+	}
+	void update(int ind, int low, int high, int k, int val) {
+		if(k<low || k>high) return;
+		if(low == high && low == k) {
+			seg[ind] = val;
+			return;
+		}
+		int mid = low + (high-low)/2;
+		update(2*ind+1, low, mid, k, val);
+		update(2*ind+2, mid+1, high, k, val);
+		seg[ind] = seg[2*ind+1] + seg[2*ind+2];
+	}
+	int query(int ind, int low, int high, int l, int r) {
+		if(r<low || l>high) return 0;
+		if(l<=low && high<=r) return seg[ind];
+		int mid = low + (high - low)/2;
+		int left = query(2*ind+1, low, mid, l, r);
+		int right = query(2*ind+2, mid+1, high, l, r);
+		return left + right;
+	}
+};
+signed main() {
+	ios::sync_with_stdio(false);
+	cin.tie(nullptr);
+	cout.tie(nullptr);
+	int n, q;
+	cin >> n >> q;
+	vector<vector<int>> adj(n+1);
+	vector<int> values(n+1), time_start(n+1), time_end(n+1), tour(2*n);
+	for(int i=1;i<=n;i++) {
+		cin >> values[i];
+	}
+	for(int i=0;i<n-1;i++) {
+		int a, b;
+		cin >> a >> b;
+		adj[a].push_back(b);
+		adj[b].push_back(a);
+	}
+	int time = -1;
+	dfs(1, -1, time, adj, tour, time_start, time_end, values);
+	seg_tree s1(tour);
+	while(q--) {
+		int type;
+		cin >> type;
+		if(type ==1) {
+			int s, x;
+			cin >> s >> x;
+			s1.update(0,0,2*n-1,time_start[s],x);
+			s1.update(0,0,2*n-1,time_end[s],-x);
+		} else {
+			int k;
+			cin >> k;
+			cout << s1.query(0,0,2*n-1,0,time_start[k]) << "\n";
 		}
 	}
 	return 0;

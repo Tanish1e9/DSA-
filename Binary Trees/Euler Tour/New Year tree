@@ -41,15 +41,19 @@ class seg_tree{
 		// kyunki fir usse upar wale ka ans affect hoga
 		if(lazy[ind]!=0) {
 			seg[ind] = lazy[ind];
-			if(2*ind+1 < seg.size())lazy[2*ind+1] = lazy[ind];
-			if(2*ind+2 < seg.size())lazy[2*ind+2] = lazy[ind];
+			if(low!=high) {
+				lazy[2*ind + 1] = lazy[ind];
+				lazy[2*ind + 2] = lazy[ind];
+			}
 			lazy[ind] = 0;
 		}
 		if(r<low || l>high) return;
 		if(l <= low && high <= r) {
 			seg[ind] = (1ll << c);
-			if(2*ind+1 < seg.size()) lazy[2*ind+1] = (1ll << c);
-			if(2*ind+2 < seg.size()) lazy[2*ind+2] = (1ll << c);
+			if(low!=high) {
+				lazy[2*ind + 1] = 1ll << c;
+				lazy[2*ind + 2] = 1ll << c;
+			}
 			return;
 		}
 		int mid = low + (high - low)/2;
@@ -64,8 +68,10 @@ class seg_tree{
 		// kyunki fir usse upar wale ka ans affect hoga
 		if(lazy[ind]!=0) {
 			seg[ind] = lazy[ind];
-			if(2*ind+1 < seg.size())lazy[2*ind+1] = lazy[ind];
-			if(2*ind+2 < seg.size())lazy[2*ind+2] = lazy[ind];
+			if(low!=high) {
+				lazy[2*ind+1] = lazy[ind];
+				lazy[2*ind+2] = lazy[ind];
+			}
 			lazy[ind] = 0;
 		}
 		if(l>high || r <low) return 0;

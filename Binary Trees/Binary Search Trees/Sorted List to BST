@@ -3,26 +3,23 @@ LC link: https://leetcode.com/problems/convert-sorted-list-to-binary-search-tree
 
     // ye optimal h yaha leaves to root bana rhe ek bar count kr lie total nodes then
     // left subtree pehle bana denge sath sath head move krte rhenge
-    TreeNode*helper(ListNode*&head,int n){
-        if(n==0) return 0;
-        TreeNode*left=helper(head,n/2);
-        TreeNode*root=new TreeNode(head->val);
-        root->left=left;
-        head=head->next;
-        root->right=helper(head,n-n/2-1);
+    TreeNode* helper(ListNode* &head, int low, int high) {
+        if(low>high) return NULL;
+        int mid = (low + high + 1)/2;
+        TreeNode* left = helper(head, low, mid-1);
+        TreeNode* root = new TreeNode(head->val, left, 0);
+        head = head->next;
+        root->right = helper(head, mid+1, high);
         return root;
     }
-    int count(ListNode*head){
-        int ans=0;
-        while(head){
-            head=head->next;
-            ans++;
+    TreeNode* sortedListToBST(ListNode* head) {
+        int n= 0;
+        ListNode* curr = head;
+        while(curr) {
+            curr = curr->next;
+            n++;
         }
-        return ans;
-    }
-    TreeNode* sortedListToBST(ListNode*head){
-        int n=count(head);
-        return helper(head,n);
+        return helper(head, 0, n-1);
     }
 
     // brute array me jaise krte h mid element ko root banake fir left and right subtree waha pe actually we are

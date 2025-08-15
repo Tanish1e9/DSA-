@@ -1,4 +1,7 @@
 GFG link: https://www.geeksforgeeks.org/problems/predecessor-and-successor/1
+// Dekh isme Morris traversal kro to O(N), O(1) me to kr hi loge
+// isko O(logN), O(1) me krna h
+
 
     // M-1    // isme jo commented portion h wo bhi likh skte ho aur pure recursion bhi
     void findPreSuc(Node* root, Node*& pre, Node*& suc, int key)

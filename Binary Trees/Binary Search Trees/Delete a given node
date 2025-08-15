@@ -119,26 +119,23 @@ LC link: https://leetcode.com/problems/delete-node-in-a-bst/description/
 
     // Full recursion
     TreeNode* deleteNode(TreeNode* root, int key) {
-        if(root==0)return 0;
-        if(root->val == key){
-            if(root->left==0 && root->right==0){
-                delete root;
-                return 0;
-            }
-            else if(root->left){
-                TreeNode*max_el = maxi(root->left);
-                root->val = max_el->val;
-                root->left=deleteNode(root->left,root->val);
-            }
+        //your code goes here
+        if(root==NULL) return NULL;
+        TreeNode* ans = root;
+        if(root->val == key) {
+            if(root->left == NULL) ans = root->right;
+            else if(root->right == NULL) ans = root->left;
             else{
-                TreeNode*min_el = mini(root->right);
-                root->val = min_el->val;
-                root->right = deleteNode(root->right,root->val);
+                ans = root->right;
+                TreeNode* temp = root->right;
+                while(temp->left) temp = temp->left;
+                temp->left = root->left;
             }
+            delete root;
+        } else if(root->val > key) {
+            root->left = deleteNode(root->left, key);
+        } else {
+            root->right = deleteNode(root->right, key);
         }
-        else if(root->val < key){
-            root->right = deleteNode(root->right,key);
-        }
-        root->left = deleteNode(root->left,key);
-        return root;
+        return ans;
     }

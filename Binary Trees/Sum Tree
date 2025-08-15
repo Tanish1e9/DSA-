@@ -1,0 +1,18 @@
+GFG link: https://www.geeksforgeeks.org/problems/sum-tree/1
+
+pair<bool,int> helper(Node*root) {
+      if(root==NULL) return {true, 0};
+      if(root->left == NULL && root->right == NULL) {
+          return {true, root->data};
+      }
+      pair<bool,int> left = helper(root->left);
+      if(left.first == false) return {false,-1};
+      pair<bool,int> right = helper(root->right);
+      if(right.first == false) return {false,-1};
+      if(left.second + right.second != root->data) return {false, -1};
+      return {true, left.second + right.second + root->data};
+  }
+  bool isSumTree(Node* root) {
+      // Your code here
+      return helper(root).first;
+  }

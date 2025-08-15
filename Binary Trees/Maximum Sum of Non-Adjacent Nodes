@@ -1,0 +1,13 @@
+GFG link: https://www.geeksforgeeks.org/problems/maximum-sum-of-non-adjacent-nodes/1
+
+pair<int,int> helper(Node* root) {
+    if(root==NULL) return {0,0};
+    pair<int,int> left = helper(root->left);
+    pair<int,int> right = helper(root->right);
+    return {left.second + right.second + root->data, max(left.first, left.second)+max(right.first, right.second)};
+}
+int getMaxSum(Node *root) {
+    // code here
+    pair<int,int> ans = helper(root);
+    return max(ans.first, ans.second);
+}

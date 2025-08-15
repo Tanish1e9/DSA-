@@ -4,42 +4,54 @@ LC link: https://leetcode.com/problems/recover-binary-search-tree/
     // Then again travel inorder and exchange the values from your stored data structure
 
     // Optimal Solution O(N),O(1)
+    // recursive bhi likha hua h
+    // we just need 2 variables thoda sa dry run kro you will get it
+    TreeNode *prev=0, *a=0, *b=0;
+    void helper(TreeNode* root) {
+        if(root==NULL) return;
+        helper(root->left);
+        if(prev && prev->val > root->val) {
+            if(!a) {a = prev;b=root;}
+            else b = root;
+        }
+        prev = root;
+        helper(root->right);
+    }
     void recoverTree(TreeNode* root) {
-        if(root==0) return ;
-        TreeNode*a=0,*b=0,*c=0;
-        TreeNode*curr=root;
-        TreeNode*prev=0;
-        while(curr){
-            if(curr->left==0){
-                if(prev && curr->val < prev->val){
-                    if(a==0 && b==0){
-                        a=prev;
-                        b=curr;
-                    }else c=curr;
+        // helper(root);
+        // swap(a->val, b->val);
+        TreeNode* curr = root;
+        while(curr) {
+            if(curr->left) {
+                TreeNode* temp = curr->left;
+                while(temp->right && temp->right!=curr)  temp= temp->right;
+                if(temp->right) {
+                    if(prev && prev->val > curr->val) {
+                        if(!a) {
+                            a = prev;
+                            b = curr;
+                        }
+                        else b = curr;
+                    }
+                    temp->right = 0;
+                    prev = curr;
+                    curr = curr->right;
+                } else {
+                    temp->right = curr;
+                    curr = curr->left;
                 }
-                prev=curr;
-                curr=curr->right;
             }
             else {
-                TreeNode*temp=curr->left;
-                while(temp->right && temp->right!=curr) temp=temp->right;
-                if(temp->right==curr){
-                    if(prev && curr->val < prev->val){
-                        if(a==0 && b==0){
-                            a=prev;
-                            b=curr;
-                        }else c=curr;
+                if(prev && prev->val > curr->val) {
+                    if(!a) {
+                        a = prev;
+                        b = curr;
                     }
-                    temp->right=0;
-                    prev=curr;
-                    curr=curr->right;
+                    else b = curr;
                 }
-                else{
-                    temp->right=curr;
-                    curr=curr->left;
-                }
+                prev = curr;
+                curr = curr->right;
             }
         }
-        if(c==0) swap(a->val,b->val);
-        else swap(a->val,c->val);
+        swap(a->val, b->val);
     }

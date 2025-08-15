@@ -14,30 +14,31 @@ int kthSmallest(TreeNode* root, int k) {
     return ans;
 }
 
-// TC O(N),SC O(1)
-// Morris inorder
-// int kthSmallest(TreeNode* root, int k) {
-//     TreeNode*curr=root;
-//     int count=0;
-//     int ans=-1;
-//     while(curr){
-//         if(curr->left==0){
-//             if(count++==k-1) ans=curr->val;
-//             curr=curr->right;
-//         }
-//         else{
-//             TreeNode*temp=curr->left;
-//             while(temp->right && temp->right!=curr) temp=temp->right;
-//             if(temp->right==curr){
-//                 temp->right=0;
-//                 if(count++==k-1) ans=curr->val;
-//                 curr=curr->right;
-//             }
-//             else{
-//                 temp->right=curr;
-//                 curr=curr->left;
-//             }
-//         }
-//     }
-//     return ans;
-// }
+// TC O(N), SC O(1)
+int kthSmallest(TreeNode* root, int k) {
+    TreeNode* curr = root;
+    int count = 0;
+    int ans = -1;
+    while(curr) {
+        if(curr->left) {
+            TreeNode* temp =curr->left;
+            while(temp->right && temp->right!=curr) temp = temp->right;
+            if(temp->right) {
+                temp->right = NULL;
+                count++;
+                if(count == k) ans = curr->val;
+                curr = curr->right;
+            }
+            else{
+                temp->right = curr;
+                curr = curr->left;
+            }
+        }
+        else {
+            count++;
+            if(count == k) ans = curr->val;
+            curr = curr->right;
+        }
+    }
+    return ans;
+}

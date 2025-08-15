@@ -1,0 +1,30 @@
+GFG link: https://www.geeksforgeeks.org/problems/kth-largest-element-in-bst/1
+
+int kthLargest(Node *root, int k) {
+    // Your code here
+    Node* curr = root;
+    int count = 0;
+    int ans = -1;
+    while(curr) {
+        if(curr->right) {
+            Node* temp =curr->right;
+            while(temp->left && temp->left!=curr) temp = temp->left;
+            if(temp->left) {
+                temp->left = NULL;
+                count++;
+                if(count == k) ans = curr->data;
+                curr = curr->left;
+            }
+            else{
+                temp->left = curr;
+                curr = curr->right;
+            }
+        }
+        else {
+            count++;
+            if(count == k) ans = curr->data;
+            curr = curr->left;
+        }
+    }
+    return ans;
+}

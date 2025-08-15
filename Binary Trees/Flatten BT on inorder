@@ -1,0 +1,44 @@
+GFG link: https://www.geeksforgeeks.org/problems/flatten-bst-to-sorted-list--111950/1
+
+Node* next = 0;
+void helper(Node* root) {
+  if(root==NULL) return;
+  helper(root->right);
+  root->right = next;
+  next = root;
+  helper(root->left);
+  root->left = 0;
+}
+Node *flattenBST(Node *root) {
+  // helper(root);
+  // return next;
+  Node* prev = 0;
+  Node* curr = root;
+  Node* ans = 0;
+  while(curr) {
+      if(curr->left) {
+          Node* temp = curr->left;
+          while(temp->right && temp->right != curr) temp = temp->right;
+          if(temp->right) {
+              temp->right = NULL;
+              if(prev) {
+                  prev->right = curr;
+              }
+              curr->left = 0;
+              prev = curr;
+              curr = curr->right;
+          } else {
+              temp->right = curr;
+              curr = curr->left;
+          }
+      }
+      else {
+          if(!ans) ans = curr;
+          if(prev) prev->right = curr;
+          prev = curr;
+          curr = curr->right;
+          
+      }
+  }
+  return ans;
+}

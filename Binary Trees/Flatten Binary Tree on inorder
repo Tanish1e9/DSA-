@@ -21,6 +21,12 @@ Node *flattenBST(Node *root) {
           while(temp->right && temp->right != curr) temp = temp->right;
           if(temp->right) {
               temp->right = NULL;
+              // Yaha prev->left = 0 kyu ni kr skte?
+              // islie ki dry run krke dekhna left child ka rightmost pe jaana hota h na
+              // Agar prev ka krte chalenge to dikkkat ho jayega
+              // islie curr->left = 0 tabhi kro jab right move kro 
+              // ab niche wala else me to curr->left already 0 hai na
+              // to yaha pe bas kr die and we are done
               if(prev) {
                   prev->right = curr;
               }

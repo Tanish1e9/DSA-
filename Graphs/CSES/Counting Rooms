@@ -1,0 +1,62 @@
+CSES link: https://cses.fi/problemset/task/1192
+
+// simple bfs ya dfs se kaam ho jayega
+// bfs me just remember to mark visited while pushing into the queue only else TLE aa jayega
+
+#include<bits/stdc++.h>
+using namespace std;
+#define int long long
+void dfs(int i, int j, auto &board) {
+	board[i][j] = '#';
+	int dx[] = {-1,1,0,0};
+	int dy [] = {0,0,1,-1};
+	for(int k=0;k<4;k++){
+		int row = i+dx[k];
+		int col = j+dy[k];
+		if(row>=board.size() || row<0 || col>=board[0].size() || col<0 || board[row][col]=='#') continue;
+		dfs(i+dx[k], j+dy[k], board);
+	}
+}
+void bfs(int i, int j, auto &board) {
+	queue<pair<int,int>> q;
+	q.push({i,j});
+	board[i][j] = '#';
+	while(!q.empty()) {
+		pair<int,int> curr = q.front();
+		q.pop();
+		i = curr.first;
+		j = curr.second;
+		int dx[] = {-1,1,0,0};
+		int dy [] = {0,0,1,-1};
+		for(int k=0;k<4;k++){
+			int row = i+dx[k];
+			int col = j+dy[k];
+			if(row>=board.size() || row<0 || col>=board[0].size() || col<0 || board[row][col]=='#') continue;
+			board[row][col] = '#';
+			q.push({row, col});
+		}
+	}
+}
+signed main() {
+	ios::sync_with_stdio(false);
+	cin.tie(nullptr);
+	cout.tie(nullptr);
+	int n, m;
+	cin >> n >> m;
+	vector<vector<char>> board(n, vector<char>(m));
+	for(int i=0;i<n;i++) {
+		for(int j=0;j<m;j++) {
+			cin >> board[i][j];
+		}
+	}
+	int ans = 0;
+	for(int i=0;i<n;i++) {
+		for(int j=0;j<m;j++) {
+			if(board[i][j]=='#') continue;
+			ans++;
+			bfs(i,j,board);
+		}
+	}
+	cout << ans << endl;
+	return 0;
+}

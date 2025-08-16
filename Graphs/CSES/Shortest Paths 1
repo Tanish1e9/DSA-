@@ -1,0 +1,52 @@
+CSES link: https://cses.fi/problemset/task/1671/
+
+// standard Dijkstra ka set implementation h
+// pq use krne par 2-3 jagah TLE aa rha tha
+// one interesting thing is ki exact isi implementation me agar set me comparator daal do na
+// to TLE ho jayega
+
+#include<bits/stdc++.h>
+using namespace std;
+#define int long long
+typedef pair<int,int> p;
+void bfs(int n, int m, auto &adj, auto &distances) {
+	// priority_queue<p, vector<p>, greater<p>> pq;
+	// pq.push({0,1});
+	set<p> s;
+	s.insert({0,1});
+	distances[1] = 0;
+	while(!s.empty()) {
+		auto curr = *s.begin();
+		s.erase(s.begin());
+		// auto curr = pq.top();
+		// pq.pop();
+		for(auto &el:adj[curr.second]) {
+			if(distances[el.first] > curr.first + el.second) {
+				if(distances[el.first]!=1e18) s.erase({distances[el.first], el.first});
+				distances[el.first] = curr.first + el.second;
+				// pq.push({distances[el.first], el.first});
+				s.insert({distances[el.first], el.first});
+			}
+		}
+	}
+}
+signed main() {
+	ios::sync_with_stdio(false);
+	cin.tie(nullptr);
+	cout.tie(nullptr);
+	int n, m;
+	cin >> n >> m;
+	vector<vector<pair<int,int>>> adj(n+1);
+	for(int j=0;j<m;j++) {
+		int a,b,c;
+		cin >> a >> b >> c;
+		adj[a].push_back({b,c});
+	}
+	vector<int>distances(n+1, 1e18);
+	bfs(n,m,adj,distances);
+	for(int i=1;i<=n;i++) {
+		cout << distances[i] << " ";
+	}
+	cout << endl;
+	return 0;
+}

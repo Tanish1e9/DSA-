@@ -15,7 +15,22 @@ int main(){
     return 0;
 }
 
- Or we can do through lambda functions
+// Agar koi aur variable capture krna ho to aise krna
+class comp{
+	public:
+	vector<int> distances;
+	comp(vector<int>&d) {
+		distances = d;
+	}
+	bool operator()(int a, int b) const {
+		return distances[a] > distances[b];
+	}
+};
+// dhyan se parantheses dekh lo aise hi teen lagenge
+priority_queue<T,vector<T>,comp>pq((comp(distances)));
+
+
+Or we can do through lambda functions
 
 auto comp = [](T&a,T&b)->bool{
     return a->val < b->val;

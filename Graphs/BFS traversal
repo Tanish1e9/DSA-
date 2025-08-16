@@ -1,5 +1,8 @@
 GFG link: https://www.geeksforgeeks.org/problems/bfs-traversal-of-graph/1
 
+// bfs me push krte waqt hi visited mark kr dena... else TLE ho skta h
+// because ek vertex ko multiple log touch kr skte na
+
     void bfs(int i,vector<int>&visited,vector<int>adj[],vector<int>&ans){
         queue<int> q;
         q.push(i);

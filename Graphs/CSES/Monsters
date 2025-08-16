@@ -1,0 +1,81 @@
+CSES link: https://cses.fi/problemset/task/1194
+
+#include<bits/stdc++.h>
+using namespace std;
+#define int long long
+int dx[4] = {-1,1,0,0};
+int dy[4] = {0,0,-1,1};
+void bfs(int n, int m, auto &board) {
+	int start;
+	queue<pair<int,char>> q;
+	for(int i=0;i<n;i++) {
+		for(int j=0;j<m;j++) {
+			if(board[i][j]=='A') {
+				start = i*m+j;
+			}
+			if(board[i][j]=='M') {
+				q.push({i*m+j, 'M'});
+			}
+		}
+	}
+	q.push({start,'A'});
+	vector<int>parent(n*m, -1);
+	int end = -1;
+	while(!q.empty()) {
+		auto curr = q.front();
+		q.pop();
+		int i=curr.first/m;
+		int j=curr.first%m;
+		if(curr.second=='A' && (i==0 || j==0 || i==n-1 || j==m-1)) {
+			end = curr.first;
+			break;
+		}
+		for(int k=0;k<4;k++) {
+			int row = i + dx[k];
+			int col = j + dy[k];
+			if(row<0 || col<0 || row>=n || col>=m || board[row][col]=='#' || board[row][col]==curr.second) continue;
+			if(curr.second == 'A' && board[row][col]=='M') continue;
+			q.push({row*m+col, curr.second});
+			board[row][col] = curr.second;
+			if(curr.second == 'A') parent[row*m+col] = curr.first;
+		}
+	}
+	if(end==-1) cout << "NO\n";
+	else {
+		int p = parent[end];
+		int e = end;
+		string ans;
+		while(p!=-1) {
+			int px = p/m;
+			int py = p%m;
+			int ex = e/m;
+			int ey = e%m;
+			if(px == ex+1) ans.push_back('U');
+			else if(px == ex-1) ans.push_back('D');
+			else if(py == ey+1) ans.push_back('L');
+			else ans.push_back('R');
+			e = p;
+			p = parent[e];
+		}
+		reverse(ans.begin(), ans.end());
+		cout << "YES\n";
+		cout << ans.size() << "\n";
+		cout << ans << "\n";
+	}
+}
+signed main() {
+	ios::sync_with_stdio(false);
+	cin.tie(nullptr);
+	cout.tie(nullptr);
+	int n, m;
+	cin >> n >> m;
+	vector<vector<char>> board(n, vector<char>(m));
+	int start;
+	for(int i=0;i<n;i++) {
+		for(int j=0;j<m;j++) {
+			cin >> board[i][j];
+		}
+	}
+	bfs(n,m,board);
+	return 0;
+}

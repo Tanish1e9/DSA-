@@ -1,5 +1,14 @@
 CSES link: https://cses.fi/problemset/task/1194
 
+// Dekh isme na USACO pe solution dekhe to wo log basically har monster ko queue me daalke pehle BFS kra rha
+// jisse har cell ka nearest monster distance mil jaye
+// fir bad me Alice se BFS krayega and har cell pe check hoga ki Alice jitne distance pe pahuchi h utna ya usse kam pe
+// koi monster to nahi pahuch gya h
+// ab mere solution me I am simulating the above only
+// agar koi monster pehle se pahuchne wala hoga to wo cell me 'M' marked hoga already
+// to ek tarah se ek hi BFS traversal me maine merge kr dia h that too I didn't take any storage
+// so this is better
+
 #include<bits/stdc++.h>
 using namespace std;
 #define int long long

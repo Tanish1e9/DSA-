@@ -1,0 +1,54 @@
+CSES link: https://cses.fi/problemset/task/1668/
+
+// Standard bipartite graph ka sawaal
+
+#include<bits/stdc++.h>
+using namespace std;
+#define int long long
+bool bfs(int start, auto &adj, auto &colours) {
+	queue<int> q;
+	q.push(start);
+	colours[start] = 0;
+	while(!q.empty()) {
+		int curr = q.front();
+		q.pop();
+		for(int el:adj[curr]) {
+			if(colours[el]==-1) {
+				colours[el] = (colours[curr] + 1)%2;
+				q.push(el);
+			} else if(colours[el]==colours[curr]) {
+				return false;
+			}
+		}
+	}
+	return true;
+}
+signed main() {
+	ios::sync_with_stdio(false);
+	cin.tie(nullptr);
+	cout.tie(nullptr);
+	int n, m;
+	cin >> n >> m;
+	vector<vector<int>> adj(n+1);
+	for(int i=0;i<m;i++) {
+		int a,b;
+		cin >> a >> b;
+		adj[a].push_back(b);
+		adj[b].push_back(a);
+	}
+	vector<int>colours(n+1,-1);
+	bool ans = true;
+	for(int i=1;i<=n;i++) {
+		if(colours[i]!=-1) continue;
+		bool flag = bfs(i, adj, colours);
+		if(!flag) {ans = false;break;}
+	}
+	if(!ans) cout << "IMPOSSIBLE";
+	else {
+		for(int i=1;i<colours.size();i++) {
+			cout << colours[i] + 1 << " ";
+		}
+	}
+	cout << "\n";
+	return 0;	
+}

@@ -1,0 +1,92 @@
+CSES link: https://cses.fi/problemset/task/1193
+
+// since yaha saare unit distances h to priority_queue ki jroorat hi nahi h
+// distances apne aap hi sorted honge
+// modified visited array use krna (i.e. kam distance wala koi aaye to daal do else mat daalo)
+// aur again jaise hi push kro usi waqt minimum distance set kr do taaki baad me aur repetitions na aaye
+
+#include<bits/stdc++.h>
+using namespace std;
+#define int long long
+class comp{
+	public:
+	vector<int> distances;
+	comp(vector<int>&d) {
+		distances = d;
+	}
+	bool operator()(int a, int b) const {
+		return distances[a] > distances[b];
+	}
+};
+string bfs(int start, int end, auto &board, int n, int m) {
+	int dx[] = {-1,1,0,0};
+	int dy[] = {0,0,1,-1};
+	vector<int> distances(n*m+1, 1e9), parent(n*m+1, -1);
+	queue<int> q;
+	q.push(start);
+	distances[start] = 0;
+	while(!q.empty()){
+		int curr = q.front();
+		q.pop();
+		if(curr == end) break;
+		int i = curr/m;
+		int j = curr%m;
+		for(int k=0;k<4;k++) {
+			int row = i+dx[k];
+			int col = j+dy[k];
+			if(row<0 || col<0 || row>=n || col>=m || board[row][col]=='#') continue;
+			if(distances[row*m+col] > distances[curr] + 1){
+				q.push(row*m+ col);
+				distances[row*m+col] = distances[curr] + 1;
+				parent[row*m + col] = curr;
+			}
+		}
+	}
+	if(distances[end] == 1e9) return "";
+	int e = end;
+	int p = parent[end];
+	string ans;
+	while(p!=-1) {
+		int px = p/m;
+		int py = p%m;
+		int ex = e/m;
+		int ey = e%m;
+		if(px == ex+1) ans.push_back('U');
+		else if(px == ex-1) ans.push_back('D');
+		else if(py == ey+1) ans.push_back('L');
+		else ans.push_back('R');
+		e = p;
+		p = parent[e];
+	}
+	reverse(ans.begin(), ans.end());
+	return ans;
+}
+signed main() {
+	ios::sync_with_stdio(false);
+	cin.tie(nullptr);
+	cout.tie(nullptr);
+	int n, m;
+	cin >> n >> m;
+	vector<vector<char>> board(n, vector<char>(m));
+	int start, end;
+	for(int i=0;i<n;i++) {
+		for(int j=0;j<m;j++) {
+			cin >> board[i][j];
+			if(board[i][j]=='A') {
+				start = i*m+j;
+			} 
+			else if(board[i][j]=='B') {
+				end = i*m+j;
+			}
+		}
+	}
+	string ans = bfs(start, end, board, n, m);
+	if(ans.size()>0) {
+		cout << "YES\n";
+		cout << ans.size() << "\n";
+		cout << ans << "\n";
+	} else {
+		cout << "NO\n";
+	}
+	return 0;
+}

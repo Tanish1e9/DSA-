@@ -1,0 +1,51 @@
+CSES link: https://cses.fi/problemset/task/1666/
+
+// isme to simple connected components ka khela hai
+
+#include<bits/stdc++.h>
+using namespace std;
+#define int long long
+void bfs(int start, auto &adj, auto &vis) {
+	queue<int> q;
+	q.push(start);
+	vis[start] = true;
+	while(!q.empty()) {
+		int curr = q.front();
+		q.pop();
+		for(int el:adj[curr]) {
+			if(vis[el]) continue;
+			vis[el] = true;
+			q.push(el);
+		}
+	}
+}
+signed main() {
+	ios::sync_with_stdio(false);
+	cin.tie(nullptr);
+	cout.tie(nullptr);
+	int n, m;
+	cin >> n >> m;
+	vector<vector<int>> adj(n+1);
+	for(int i=0;i<m;i++) {
+		int a,b;
+		cin >> a >> b;
+		adj[a].push_back(b);
+		adj[b].push_back(a);
+	}
+	vector<bool> vis(n+1, false);
+	vector<pair<int,int>> ans;
+	int last = -1;
+	for(int i=1;i<=n;i++) {
+		if(vis[i]) continue;
+		bfs(i,adj,vis);
+		if(last!=-1) {
+			ans.push_back({i,last});
+		}
+		last = i;
+	}
+	cout << ans.size() << "\n";
+	for(int i=0;i<ans.size();i++) {
+		cout << ans[i].first << " " << ans[i].second << "\n";
+	}
+	return 0;	
+}

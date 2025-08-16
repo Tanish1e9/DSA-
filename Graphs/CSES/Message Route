@@ -1,0 +1,60 @@
+CSES link: https://cses.fi/problemset/task/1667/
+
+// ye to same hi question ho gya wo unit distances waale jaisa
+
+#include<bits/stdc++.h>
+using namespace std;
+#define int long long
+vector<int> bfs(int start, int end, auto &adj, auto &distances) {
+	queue<int> q;
+	q.push(start);
+	distances[start] = 0;
+	vector<int>parent(end+1, -1);
+	while(!q.empty()) {
+		int curr = q.front();
+		q.pop();
+		for(int el:adj[curr]) {
+			if(distances[el] > distances[curr] + 1) {
+				parent[el] = curr;
+				distances[el] = distances[curr] + 1;
+				q.push(el);
+			}
+		}
+	}
+	if(distances[end]==1e9) return {};
+	vector<int>ans = {end};
+	int p = parent[end];
+	int e = end;
+	while(p!=-1) {
+		ans.push_back(p);
+		e = p;
+		p = parent[e];
+	}
+	reverse(ans.begin(), ans.end());
+	return ans;
+}
+signed main() {
+	ios::sync_with_stdio(false);
+	cin.tie(nullptr);
+	cout.tie(nullptr);
+	int n, m;
+	cin >> n >> m;
+	vector<vector<int>> adj(n+1);
+	for(int i=0;i<m;i++) {
+		int a,b;
+		cin >> a >> b;
+		adj[a].push_back(b);
+		adj[b].push_back(a);
+	}
+	vector<int>distances(n+1,1e9);
+	vector<int> ans = bfs(1, n, adj, distances);
+	if(ans.size()==0) cout << "IMPOSSIBLE\n";
+	else {
+		cout << ans.size() << "\n";
+		for(int i:ans) {
+			cout << i << " ";
+		}
+	}
+	cout << "\n";
+	return 0;	
+}

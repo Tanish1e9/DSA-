@@ -1,0 +1,59 @@
+CSES link: https://cses.fi/problemset/task/1196/
+
+// Dekh isme idea to simple hi Dijkstra ka hi h constraints dekhke
+// the thing is ki agar to koi node h jo ki apne top k distances me nahi aata to usko explore krke koi point nahi h
+// to bas islie continue wala line likh die h and that's it
+// baki to sochke likh skte ho 
+
+#include<bits/stdc++.h>
+using namespace std;
+#define int long long
+void dijk(int n, int m, int k, auto &adj, auto &distances) {
+	priority_queue<vector<int>, vector<vector<int>>, greater<vector<int>>> pq;
+	pq.push({0,1});
+	distances[1].push(0);
+	while(!pq.empty()) {
+		auto curr = pq.top();
+		pq.pop();
+		int dist = curr[0];
+		int node = curr[1];
+		if(dist > distances[node].top()) continue;
+		for(auto &el:adj[node]) {
+			auto &q = distances[el.first];
+			if(q.size() < k){
+				q.push(el.second + dist);
+				pq.push({dist+el.second, el.first});
+			} else if(q.top() > dist+el.second){
+				q.pop();
+				q.push(dist + el.second);
+				pq.push({dist+el.second, el.first});
+			}
+		}
+	}
+}
+signed main() {
+	ios::sync_with_stdio(false);
+	cin.tie(nullptr);
+	cout.tie(nullptr);
+	int n, m, k;
+	cin >> n >> m >> k;
+	vector<vector<pair<int,int>>> adj(n+1);
+	for(int i=0;i<m;i++) {
+		int a,b,c;
+		cin >> a >> b >> c;
+		adj[a].push_back({b,c});
+	}
+	vector<priority_queue<int>> distances(n+1);
+	dijk(n,m,k,adj,distances);
+	vector<int> ans;
+	while(!distances[n].empty()) {
+		ans.push_back(distances[n].top());
+		distances[n].pop();
+	}
+	reverse(ans.begin(), ans.end());
+	for(int i:ans) {
+		cout << i << " ";
+	}
+	cout << endl;
+	return 0;
+}

@@ -1,7 +1,8 @@
 CSES link: https://cses.fi/problemset/task/1671/
 
 // standard Dijkstra ka set implementation h
-// pq use krne par 2-3 jagah TLE aa rha tha
+// pq use krne par bhi accept hoga 
+// bas dont forget to add that 'continue' wala line to not explore any further if the distance doesn't match
 // one interesting thing is ki exact isi implementation me agar set me comparator daal do na
 // to TLE ho jayega
 
@@ -20,6 +21,7 @@ void bfs(int n, int m, auto &adj, auto &distances) {
 		s.erase(s.begin());
 		// auto curr = pq.top();
 		// pq.pop();
+		// if(distances[curr.second]!=curr.first) continue;
 		for(auto &el:adj[curr.second]) {
 			if(distances[el.first] > curr.first + el.second) {
 				if(distances[el.first]!=1e18) s.erase({distances[el.first], el.first});

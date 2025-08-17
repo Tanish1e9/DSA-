@@ -5,13 +5,13 @@ using namespace std;
 #define int long long
 void floyd(int n, int m, auto &distances) {
 	for(int k=1;k<=n;k++) {
-		distances[k][k] = 0;
 		for(int i=1;i<=n;i++) {
 			for(int j=1;j<=n;j++) {
 				distances[i][j] = min(distances[i][j], distances[i][k] + distances[k][j]);
 			}
 		}
 	}
+	// yaha par you can check ki koi bhi distances[i][i] negative hua h kya that detects negative cycles
 }
 signed main() {
 	ios::sync_with_stdio(false);
@@ -26,6 +26,7 @@ signed main() {
 		distances[a][b] = min(c, distances[a][b]);
 		distances[b][a] = min(c, distances[b][a]);
 	}
+	for(int i=1;i<=n;i++) distances[i][i] = 0;
 	floyd(n,m,distances);
 	while(q--) {
 		int a, b;

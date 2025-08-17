@@ -10,3 +10,6 @@
 - Optimisations in dijkstra
   - Set use kr skte h. Extra line-> agar neighbour me check krte waqt koi kam distance mil gya then original distance, uss node ke pair ko remove kr dena set se
   - In PQ, agar pq se pair pop kie and we get a different distance as compared to the one in distances vector then just skip that node
+- Dijsktra for negative weight cycles to infinite loop me jayega
+- For negative undirected edges, it's like a cycle only so can't use it
+- But directed negative edges me we can use it I believe, but waha na fir ye jo assumption pe chalte h ki minimum distance wala pehle explore kre kind of wohi violate ho rha to bellman ford hi laga lo

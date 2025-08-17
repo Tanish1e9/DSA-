@@ -1,0 +1,68 @@
+CSES link: https://cses.fi/problemset/task/1680/
+
+// isme na topo sort ka intuition aaya since normal queue waghera se kie the to TLE aa gya tha
+// to saare nodes ko topological order k hisab se process krenge and maximal distance lete jaayenge neighbours ka
+// isme ek chiz dhyan rakhna h ki ho skta h 1 se n unreachable ho
+// isi case ko handle krne k lie distance[curr]>0 wala condition laga h
+// this ensures ki only 1 can start the chain
+
+#include<bits/stdc++.h>
+using namespace std;
+#define int long long
+typedef pair<int,int> p;
+void dijk(int n, int m, auto &adj) {
+	vector<int> distances(n+1, 0), indegree(n+1, 0);
+	vector<int> parent(n+1, -1);
+	for(int i=1;i<=n;i++) {
+		for(int j:adj[i]) {
+			indegree[j]++;
+		}
+	}
+	queue<int> q;
+	for(int i=1;i<=n;i++) {
+		if(indegree[i]==0) {q.push(i);}
+	}
+	distances[1] = 1;
+	while(!q.empty()) {
+		int curr = q.front();
+		q.pop();
+		for(int el:adj[curr]) {
+			indegree[el]--;
+			if(indegree[el]==0) q.push(el);
+			if(distances[curr]>0 && distances[el] < distances[curr]+1){
+				distances[el] = distances[curr]+1;
+				parent[el] = curr;
+			}
+		}
+	}
+	if(distances[n]==0) cout << "IMPOSSIBLE\n";
+	else {
+		int start = n;
+		vector<int> ans;
+		while(parent[start]!=-1) {
+			ans.push_back(start);
+			start = parent[start];
+		}
+		ans.push_back(1);
+		cout << ans.size() << endl;
+		for(int i=ans.size()-1;i>=0;i--) {
+			cout << ans[i] << " ";
+		}
+		cout << endl;
+	}
+}
+signed main() {
+	ios::sync_with_stdio(false);
+	cin.tie(nullptr);
+	cout.tie(nullptr);
+	int n, m;
+	cin >> n >> m;
+	vector<vector<int>> adj(n+1);
+	for(int i=0;i<m;i++) {
+		int a, b;
+		cin >> a >> b;
+		adj[a].push_back(b);
+	}
+	dijk(n,m,adj);
+	return 0;
+}

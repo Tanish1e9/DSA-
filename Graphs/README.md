@@ -7,3 +7,6 @@
 - cycle detection in directed graph
   - we need path_vis array but no par is required. think about 1->2->3 and also 1->4->3. If we dont use path_vis, then iss case pe bhi cycle aa jayega which is wrong
   - dfs se kr skte h easily, but bfs me kahn's algo lagega. In kahn's also, we dont require another vis array (since indegree hi kind of kaam kr dega)
+- Optimisations in dijkstra
+  - Set use kr skte h. Extra line-> agar neighbour me check krte waqt koi kam distance mil gya then original distance, uss node ke pair ko remove kr dena set se
+  - In PQ, agar pq se pair pop kie and we get a different distance as compared to the one in distances vector then just skip that node

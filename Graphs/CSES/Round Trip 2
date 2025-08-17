@@ -1,0 +1,60 @@
+CSES link: https://cses.fi/problemset/task/1678/
+
+// Round Trip 1 jaise hi dfs krte krte path ko populate kr die
+
+#include<bits/stdc++.h>
+using namespace std;
+#define int long long
+int dfs(int node, auto &path_vis, auto &vis, auto &adj, auto &path) {
+	vis[node] = true;
+	path_vis[node] = true;
+	for(int el:adj[node]) {
+		if(!vis[el]) {
+			int val = dfs(el, path_vis, vis, adj, path);
+			if(val == 0) return 0;
+			if(val == -1) continue;
+			path.push_back(node);
+			if(val != node) {
+				return val;
+			} else {
+				return 0;
+			}
+		}
+		else if(path_vis[el]) {
+			path.push_back(el);
+			path.push_back(node);
+			return el;
+		}
+	}
+	path_vis[node] = false;
+	return -1;
+}
+signed main() {
+	ios::sync_with_stdio(false);
+	cin.tie(nullptr);
+	cout.tie(nullptr);
+	int n, m;
+	cin >> n >> m;
+	vector<vector<int>> adj(n+1);
+	for(int i=0;i<m;i++) {
+		int a,b;
+		cin >> a >> b;
+		adj[a].push_back(b);
+	}
+	vector<int>vis(n+1, false), path_vis(n+1, false);
+	vector<int>path;
+	for(int i=1;i<=n;i++) {
+		if(vis[i]) continue;
+		if(dfs(i,path_vis, vis,adj,path) == 0) {
+			cout << path.size() << endl;
+			reverse(path.begin(), path.end());
+			for(int i:path) {
+				cout << i << " ";
+			}
+			cout << endl;
+			return 0;
+		}
+	}
+	cout << "IMPOSSIBLE\n";
+	return 0;
+}

@@ -1,0 +1,56 @@
+CSES link: https://cses.fi/problemset/task/1202/
+
+#include<bits/stdc++.h>
+using namespace std;
+#define int long long
+int mod = 1e9+7;
+typedef pair<int,int> p;
+void bfs(int n, int m, auto &adj) {
+	vector<int> num_ways(n+1, 0);
+	vector<int> num_flights_max(n+1,-1e18);
+	vector<int> num_flights_min(n+1,1e18);
+	vector<int> distances(n+1, 1e18);
+	distances[1] = 0;
+	num_ways[1] = 1;
+	num_flights_max[1] = 0;
+	num_flights_min[1] = 0;
+	priority_queue<p, vector<p>, greater<p>> pq;
+	pq.push({0,1});
+	while(!pq.empty()) {
+		auto curr = pq.top();
+		pq.pop();
+		int node = curr.second;
+		int dist = curr.first;
+		if(distances[node] < dist) continue;
+		for(auto &el:adj[node]) {
+			if(distances[el.first] > dist + el.second) {
+				num_ways[el.first] = num_ways[node];
+				num_flights_max[el.first] = num_flights_max[node] + 1;
+				num_flights_min[el.first] = num_flights_min[node] + 1;
+				distances[el.first] = dist + el.second;
+				pq.push({distances[el.first], el.first});
+			}
+			else if(distances[el.first] == dist + el.second) {
+				num_ways[el.first] = (num_ways[el.first] + num_ways[node])%mod;
+				num_flights_max[el.first] = max(num_flights_max[el.first], num_flights_max[node] + 1);
+				num_flights_min[el.first] = min(num_flights_min[el.first], num_flights_min[node] + 1);
+			}
+		}
+	}
+	cout << distances[n] << " " << num_ways[n] << " " << num_flights_min[n] << " " << num_flights_max[n] << endl;
+}
+signed main() {
+	ios::sync_with_stdio(false);
+	cin.tie(nullptr);
+	cout.tie(nullptr);
+	int n, m;
+	cin >> n >> m;
+	vector<vector<p>> adj(n+1);
+	for(int i=0;i<m;i++) {
+		int a,b,c;
+		cin >> a >> b >> c;
+		adj[a].push_back({b,c});
+	}
+	bfs(n,m,adj);
+	return 0;
+}

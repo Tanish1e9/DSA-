@@ -13,3 +13,4 @@
 - Dijsktra for negative weight cycles to infinite loop me jayega
 - For negative undirected edges, it's like a cycle only so can't use it
 - But directed negative edges me we can use it I believe, but waha na fir ye jo assumption pe chalte h ki minimum distance wala pehle explore kre kind of wohi violate ho rha to bellman ford hi laga lo
+- Kabhi bhi directed graph me check krna ho ki ek set of nodes se koi particular node q pahuch skte ya nahi, to reversed_adj list krke q se traversal chala dena and check kr lena ki wo jaha jaha pahucha

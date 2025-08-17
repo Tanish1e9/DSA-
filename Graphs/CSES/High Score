@@ -1,0 +1,68 @@
+CSES link: https://cses.fi/problemset/task/1673/
+
+// Dekh isme na -1e18 se initialise kie aur pehle check krna padega ki jis edge ko process kr rhe
+// uska pehle wala node abhi tk reach bhi hua h ya nahi
+// wrna ho skta h ki koi unreachable node ko bhi tm badha ke mark kr do and end me conclusion aa jayega ki wo reachable h
+// at the end, we are concerned ki jo jo nodes ka distance change hua h wo wo nodes se kya hm n pahuch skte
+// kabhi bhi aisa kuch krna ho directed graphs me to adj list ko reverse krke destination se chala dena
+// Some intuition is ki 1 kahi bhi jaake ghum ke n tk to pahuchega na
+// mtlb ki cycle ke hi kisi point se bahar nikalke n ki taraf aayega
+// to reversed me n bhi uss point tk pahuch payega aur uss cycle me koi na koi to marked hoga hi
+// that's why it works
+
+#include<bits/stdc++.h>
+using namespace std;
+#define int long long
+typedef pair<int,int> p;
+bool dfs(int node, auto &adj, auto &vis, auto &marked) {
+	if(marked.find(node)!=marked.end()) return true;
+	vis[node] = true;
+	for(int el:adj[node]) {
+		if(vis[el]) continue;
+		if(dfs(el,adj,vis,marked)) return true;
+	}
+	return false;
+}
+int bfs(int n, int m, auto &edges, auto &rev_adj) {
+	vector<int>distances(n+1, -1e18);
+	distances[1] = 0;
+	for(int i=0;i<n-1;i++) {
+		for(int j=0;j<m;j++) {
+			int a = edges[j][0];
+			int b = edges[j][1];
+			int c = edges[j][2];
+			if(distances[a]!=-1e18 && distances[a]+c>distances[b]) distances[b] = distances[a]+c;
+		}
+	}
+	set<int> marked;
+	for(int j=0;j<m;j++) {
+		int a = edges[j][0];
+		int b = edges[j][1];
+		int c = edges[j][2];
+		if(distances[a]!=-1e18 && distances[a]+c>distances[b]) {
+			distances[b] = distances[a]+c;
+			marked.insert(b);
+		}
+	}
+	if(marked.size()==0) return distances[n];
+	vector<int>vis(n+1, false);
+	if(dfs(n,rev_adj,vis,marked)) return  -1;
+	return distances[n];
+}
+signed main() {
+	ios::sync_with_stdio(false);
+	cin.tie(nullptr);
+	cout.tie(nullptr);
+	int n, m;
+	cin >> n >> m;
+	vector<vector<int>> edges;
+	vector<vector<int>> rev_adj(n+1);
+	for(int j=0;j<m;j++) {
+		int a,b,c;
+		cin >> a >> b >> c;
+		edges.push_back({a,b,c});
+		rev_adj[b].push_back(a);
+	}
+	cout << bfs(n,m,edges,rev_adj) << endl; 
+	return 0;
+}

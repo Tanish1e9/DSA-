@@ -1,0 +1,51 @@
+CSES link: https://cses.fi/problemset/task/1195/
+
+// isme simple DP hi lagaya h 
+// har node ke 2 variant ek coupon use krke ek na use krke
+
+#include<bits/stdc++.h>
+using namespace std;
+#define int long long
+typedef pair<int,int> p;
+int dijk(int n, int m, auto &adj) {
+	priority_queue<vector<int>, vector<vector<int>>, greater<vector<int>>> pq;
+	pq.push({0,1,0});
+	vector<vector<int>>distances(n+1, vector<int>(2,1e18));
+	distances[1][0] = distances[1][1] = 0;
+	while(!pq.empty()) {
+		auto curr = pq.top();
+		pq.pop();
+		int dist = curr[0];
+		int node = curr[1];
+		int is_coup = curr[2];
+		if(distances[node][is_coup] != dist) continue;
+		for(auto &el: adj[node]) {
+			if(is_coup==0) {
+				if(distances[el.first][1] > dist + el.second/2) {
+					distances[el.first][1] = dist + el.second/2;
+					pq.push({distances[el.first][1], el.first, 1});
+				}
+			}
+			if(distances[el.first][is_coup] > dist + el.second) {
+				distances[el.first][is_coup] = dist + el.second;
+				pq.push({distances[el.first][is_coup], el.first, is_coup});
+			}
+		}
+	}
+	return distances[n][1];
+}
+signed main() {
+	ios::sync_with_stdio(false);
+	cin.tie(nullptr);
+	cout.tie(nullptr);
+	int n, m;
+	cin >> n >> m;
+	vector<vector<p>> adj(n+1);
+	for(int i=0;i<m;i++) {
+		int a, b, c;
+		cin >> a >> b >> c;
+		adj[a].push_back({b,c});
+	}
+	cout << dijk(n,m,adj) << endl;
+	return 0;
+}

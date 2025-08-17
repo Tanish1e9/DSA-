@@ -3,19 +3,19 @@ CSES link: https://cses.fi/problemset/task/1669
 #include<bits/stdc++.h>
 using namespace std;
 #define int long long
-bool dfs(int start, int par, auto &adj, auto &path, auto &vis) {
-	vis[start] = true;
-	path.push_back(start);
-	for(int el:adj[start]) {
+int dfs(int node, auto &adj, auto &vis, auto &parent) {
+	vis[node] = true;
+	for(int el:adj[node]) {
 		if(!vis[el]) {
-			if(dfs(el, start, adj, path, vis)) return true;
-		} else if(el!=par) {
-			path.push_back(el);
-			return true;
+			parent[el] = node;
+			int val = dfs(el, adj, vis, parent);
+			if(val!=-1) return val;
+		} else if(el != parent[node]) {
+			parent[el] = node;
+			return el;
 		}
 	}
-	path.pop_back();
-	return false;
+	return -1;
 }
 signed main() {
 	ios::sync_with_stdio(false);
@@ -30,31 +30,26 @@ signed main() {
 		adj[a].push_back(b);
 		adj[b].push_back(a);
 	}
-	vector<int> path;
 	vector<int>vis(n+1,false);
+	vector<int>parent(n+1, -1);
+	int ans = -1;
 	for(int i=1;i<=n;i++) {
 		if(vis[i]) continue;
-		bool ans = dfs(i, -1, adj, path, vis);
-		vector<int> final_path;
-		if(ans) {
-			int first = path.back();
-			final_path.push_back(first);
-			for(int i=path.size()-2;i>=0;i--) {
-				final_path.push_back(path[i]);
-				if(path[i]==first) {
-					break;
-				}
-			}
-			cout << final_path.size() << "\n";
-			for(int i:final_path) {
-				cout << i << " ";
-			}
-			cout << "\n";
-			return 0;
-		}
+		ans = dfs(i,adj,vis,parent);
+		if(ans != -1) break;
 	}
-
-	
-	cout << "IMPOSSIBLE\n";
+	if(ans==-1) cout << "IMPOSSIBLE\n";
+	else {
+		int start = parent[ans];
+		vector<int> path = {ans};
+		while(start!=ans) {
+			path.push_back(start);
+			start = parent[start];
+		}
+		path.push_back(start);
+		cout << path.size() << endl;
+		for(int i:path) cout << i << " ";
+		cout << endl;
+	}
 	return 0;	
 }

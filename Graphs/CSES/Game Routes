@@ -1,0 +1,46 @@
+CSES link: https://cses.fi/problemset/task/1681/
+
+#include<bits/stdc++.h>
+using namespace std;
+#define int long long
+int mod = 1e9+7;
+typedef pair<int,int> p;
+int bfs(int n, int m, auto &adj) {
+	vector<int> num_ways(n+1, 0);
+	vector<int> indegree(n+1, 0);
+	num_ways[1] = 1;
+	for(int i=1;i<=n;i++) {
+		for(int j:adj[i]) {
+			indegree[j]++;
+		}
+	}
+	queue<int> q;
+	for(int i=1;i<=n;i++) {
+		if(indegree[i]==0) q.push(i);
+	}
+	while(!q.empty()) {
+		int curr = q.front();
+		q.pop();
+		for(int el:adj[curr]) {
+			indegree[el]--;
+			if(indegree[el]==0) q.push(el);
+			num_ways[el] = (num_ways[el] + num_ways[curr])%mod;
+		}
+	}
+	return num_ways[n];
+}
+signed main() {
+	ios::sync_with_stdio(false);
+	cin.tie(nullptr);
+	cout.tie(nullptr);
+	int n, m;
+	cin >> n >> m;
+	vector<vector<int>> adj(n+1);
+	for(int i=0;i<m;i++) {
+		int a,b;
+		cin >> a >> b;
+		adj[a].push_back(b);
+	}
+	cout << bfs(n,m,adj) << endl;
+	return 0;
+}

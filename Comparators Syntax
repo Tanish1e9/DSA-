@@ -1,5 +1,7 @@
 class comp{
     public:
+	// ye jo args k pehle const h na (set aur map me jroori h since keys must not change, but PQ me aisa ni h)
+	// Nevertheless, sab jagah const likhna faydemand hi h
     bool operator()(const T&a,const T&b)const{
         return a->val < b->val;
     }//Note that priority queue me comparator min heap implementation me hi jata h to yaha soch rhe hoge increasing order me ayega but 

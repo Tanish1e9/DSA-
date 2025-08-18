@@ -13,6 +13,8 @@ int main(){
     // baaki normal static bool function to bana hi skte ho wo to malum hi h sort k lie
     priority_queue<T,vector<T>,comp>pq;
     map<T,V,comp> mp;
+	// set/map ke case me comparator dhyan se likhna since keys waha pe unique hote h
+	// to agar sirf a.first < b.first kr dia to (5,3), (5,4) ko same maanke ek ko hata dia jayega which we dont want
     set<T,comp> s;
     return 0;
 }

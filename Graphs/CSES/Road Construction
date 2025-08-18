@@ -1,0 +1,59 @@
+CSES link: https://cses.fi/problemset/task/1676/
+
+// Standard DSU ka sawaal h
+
+#include<bits/stdc++.h>
+using namespace std;
+#define int long long
+class DSU{
+	public:
+	vector<int> sizes, parent;
+	DSU(int n) {
+		sizes = vector<int>(n+1,1);
+		parent = vector<int>(n+1);
+		for(int i=0;i<=n;i++) parent[i] = i;
+	}
+	int add(int a, int b) {
+		int ult_a = find_par(a);
+		int ult_b = find_par(b);
+		if(ult_a == ult_b) return sizes[ult_a];
+		if(sizes[ult_a] > sizes[ult_b]) {
+			parent[ult_b] = ult_a;
+			sizes[ult_a] += sizes[ult_b];
+			return sizes[ult_a];
+		}
+		parent[ult_a] = ult_b;
+		sizes[ult_b] += sizes[ult_a];	
+		return sizes[ult_b];
+	}
+	int find_par(int node) {
+		if(parent[node]==node) return node;
+		int p = parent[node];
+		while(parent[p]!=p) {
+			p = parent[p];
+		}
+		return parent[node]=p;
+	}
+};
+signed main() {
+	ios::sync_with_stdio(false);
+	cin.tie(nullptr);
+	cout.tie(nullptr);
+	int n, m;
+	cin >> n >> m;
+	int comp = n;
+	int maxi = 1;
+	DSU ds(n);
+	while(m--) {
+		int a, b;
+		cin >> a >> b;
+		int par_a = ds.find_par(a);
+		int par_b = ds.find_par(b);
+		if(par_a!=par_b) {
+			comp--;
+			maxi = max(maxi, ds.add(a, b));
+		}
+		cout << comp << " " << maxi << "\n";
+	}
+	return 0;
+}

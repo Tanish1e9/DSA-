@@ -1,0 +1,53 @@
+CSES link: https://cses.fi/problemset/task/1682/
+
+// Kosaraju ka thoda variant lagaya h
+// dekh agar kosaraju lagake ye to pata ho jayega ki 1 SCC h ya multiple
+// par ek aisa pair dena h ki a to b nahi ja skte
+// wo kaise laoge islie isme thoda jugaad lagake kr dia
+
+#include<bits/stdc++.h>
+using namespace std;
+#define int long long
+void dfs(int node, auto &adj, auto &vis) {
+	vis[node] = true;
+	for(int el:adj[node]) {
+		if(vis[el]) continue;
+		dfs(el, adj, vis);
+	}
+}
+signed main() {
+	ios::sync_with_stdio(false);
+	cin.tie(nullptr);
+	cout.tie(nullptr);
+	int n, m;
+	cin >> n >> m;
+	vector<vector<int>> adj(n+1);
+	vector<vector<int>> rev_adj(n+1);
+	for(int i=0;i<m;i++) {
+		int a, b;
+		cin >> a >> b;
+		adj[a].push_back(b);
+		rev_adj[b].push_back(a);
+	}
+	
+	vector<bool> vis(n+1, false);
+	vector<bool> vis2(n+1, false);
+	dfs(1, adj, vis);
+	for(int i=1;i<=n;i++) {
+		if(!vis[i]) {
+			cout << "NO\n";
+			cout << 1 << " " << i << "\n";
+			return 0;
+		}
+	}
+	dfs(1, rev_adj, vis2);
+	for(int i=1;i<=n;i++) {
+		if(!vis2[i]) {
+			cout << "NO\n";
+			cout << i << " " << 1 << "\n";
+			return 0;
+		}
+	}
+	cout << "YES\n";
+	return 0;
+}

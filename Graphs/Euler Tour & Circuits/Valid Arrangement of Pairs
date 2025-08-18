@@ -1,0 +1,36 @@
+LC link: https://leetcode.com/problems/valid-arrangement-of-pairs/description/
+
+// simple directed edge wala hai
+// Observe ki isme path reverse krna jroori hota h
+// since yaha directed edges h to we don't need to keep visited array of edges alag se
+
+void dfs(int node, auto &adj, auto &path) {
+    while(adj[node].size()>0) {
+        int el = adj[node].back();
+        adj[node].pop_back();
+        dfs(el, adj, path);
+    }
+    path.push_back(node);
+}
+vector<vector<int>> validArrangement(vector<vector<int>>& pairs) {
+    unordered_map<int,vector<int>> adj;
+    unordered_map<int,int> indegree, outdegree;
+    for(int i=0;i<pairs.size();i++) {
+        auto &pair = pairs[i];
+        adj[pair[0]].push_back(pair[1]);
+        indegree[pair[1]]++;
+        outdegree[pair[0]]++;
+    }
+    int start = pairs[0][0];
+    for(auto &it:outdegree) {
+        int node = it.first;
+        if(outdegree[node] == indegree[node]+1) {start = node;break;}
+    }
+    vector<int> path;
+    dfs(start, adj, path);
+    vector<vector<int>> ans;
+    for(int i=path.size()-1;i>=1;i--) {
+        ans.push_back({path[i], path[i-1]});
+    }
+    return ans;
+}

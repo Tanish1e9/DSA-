@@ -36,3 +36,5 @@
   - Exactly one vertex has outdegree = indegree + 1 → this is the start.
   - Exactly one vertex has indegree = outdegree + 1 → this is the end.
   - All other vertices satisfy indegree = outdegree.
+
+- Hierholzer's Algo na eulerian path and circuit both in directed and undirected graph ke lie kaam aata h

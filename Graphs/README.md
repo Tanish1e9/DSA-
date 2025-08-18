@@ -17,7 +17,8 @@
 - Kabhi maximum distance nikalna pade to saare distances ko negate krke minimum distance nikal lena. Fir yaha agar negative cycle mil gya iska mtlb originally positive cycle tha to arbitrarily large distances nikal skte
 - Kabhi path waghera kuch nikalna ho na to hmesha parent array ka use krna h
 - Minimum Spanning Tree ka concept is only for undirected graphs, whereas euler path, circuit, hamiltonian path, circuit ka concepts dono ke lie h. We will study for undirected only as of now.
-- Euler Circuit(undirected) - Existence criteria
+- Euler me each edge exactly once ka chalta, hamiltonian me each vertex exactly once chalta
+- Euler Circuit (undirected) - Existence criteria
   - All nodes have even degree
   - All non-zero degree nodes belong to the same connected component
 - Euler Path (undirected) - Existence criteria

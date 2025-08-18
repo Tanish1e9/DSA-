@@ -1,5 +1,9 @@
 CSES link: https://cses.fi/problemset/task/1681/
 
+// Yaha na sirf 1 se chain start kr paye aisi dikkat hi nahi aati since sabhi zero hi h
+// to koi unreachable path agar badhana bhi chahega to nahi badha payega kyunki khud 0 h aur 0 se hi badhayega
+// but 1 hi aisa hoga jo >0 numbers create kr payega islie no problem
+
 #include<bits/stdc++.h>
 using namespace std;
 #define int long long

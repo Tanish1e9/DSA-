@@ -3,6 +3,7 @@ CSES link: https://cses.fi/problemset/task/1675/
 // Isme make sure ki agar comparator use kro to '=' mat daalna usme
 // wrna {c,a,b} store krke to kr hi skte ho bina kisi comparator ke
 
+// Kruskal's
 #include<bits/stdc++.h>
 using namespace std;
 #define int long long
@@ -63,5 +64,53 @@ signed main() {
 	// basically we are finding the number of included edges should be n-1
 	if(nodes_in_tree==n) cout << cost << endl;		
 	else cout << "IMPOSSIBLE\n";
+	return 0;
+}
+
+
+// Prim's
+#include<bits/stdc++.h>
+using namespace std;
+#define int long long
+typedef pair<int,int> p;
+signed main() {
+	ios::sync_with_stdio(false);
+	cin.tie(nullptr);
+	cout.tie(nullptr);
+	int n, m;
+	cin >> n >> m;
+	vector<vector<p>> adj(n+1);
+	for(int i=0;i<m;i++) {
+		int a, b, c;
+		cin >> a >> b >> c;
+		adj[a].push_back({b,c});
+		adj[b].push_back({a,c});
+	}
+	
+	vector<bool> vis(n+1, false);
+	priority_queue<vector<int>, vector<vector<int>>, greater<vector<int>>> pq;
+	pq.push({0,-1,1});	// dist par node
+	int cost = 0;
+	while(!pq.empty()) {
+		auto curr = pq.top();
+		pq.pop();
+		int dist = curr[0];
+		int par = curr[1];
+		int node = curr[2];
+		if(vis[node]) continue;
+		vis[node] = true;
+		if(par!=-1) cost += dist;
+		for(auto &el:adj[node]) {
+			if(vis[el.first]) continue;
+			pq.push({el.second, node, el.first});
+		}	
+	}
+	for(int i=1;i<=n;i++) {
+		if(!vis[i]) {
+			cout << "IMPOSSIBLE\n";
+			return 0;
+		}
+	}
+	cout << cost << endl;
 	return 0;
 }

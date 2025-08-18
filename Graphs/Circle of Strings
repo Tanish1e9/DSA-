@@ -4,6 +4,8 @@ GFG link: https://www.geeksforgeeks.org/problems/circle-of-strings4530/1
 // to unn characters ko vertex maanne ka intuition aaya
 // and then graph ki ek tarah se transform kr die a,b,c...z tk nodes maanke and given strings ko edges maanke
 // fir to standard eulerian circuit ka check laga dia
+// Yaha par hmlog undirected graph me transform kie h jo ki simple bhi h
+// directed me bhi kra ja skta tha
 
 void dfs(int node, auto &adj, auto &vis) {
     vis[node] = true;

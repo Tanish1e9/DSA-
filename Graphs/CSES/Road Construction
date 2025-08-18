@@ -28,11 +28,7 @@ class DSU{
 	}
 	int find_par(int node) {
 		if(parent[node]==node) return node;
-		int p = parent[node];
-		while(parent[p]!=p) {
-			p = parent[p];
-		}
-		return parent[node]=p;
+		return parent[node]=find_par(parent[node]);
 	}
 };
 signed main() {

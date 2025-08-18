@@ -1,0 +1,92 @@
+CSES link: https://cses.fi/problemset/task/1686/
+
+// Isme na initially hi DP nahi laga skte because of cycles
+// say 1->2->3->4->5 and then 5->3 hota to during traversal of 1 we should have stopped before 3 only
+// but during traversal starting from 4 also we stopped before 3 which is wrong
+// so we can apply DP for acyclic graphs only
+// now to convert the given graph into acyclic graph we used the SCC concept
+
+#include<bits/stdc++.h>
+using namespace std;
+#define int long long
+void dfs1(int node, auto &adj, auto &vis, auto &st) {
+	vis[node] = 1;
+	for(int el:adj[node]) {
+		if(vis[el]!=-1) continue;
+		dfs1(el, adj, vis, st);
+	}
+	st.push(node);
+}
+void dfs2(int node, auto &adj, auto &vis, auto &scc_coins, auto &coins, auto &scc_adj, int scc) {
+	vis[node] = scc;
+	scc_coins[scc]+= coins[node];
+	for(int el:adj[node]) {
+		if(vis[el]==-1) dfs2(el, adj, vis, scc_coins, coins, scc_adj, scc);
+		else if(vis[el]!=scc) {
+			scc_adj[vis[el]].push_back(scc);
+		}
+	}
+}
+int dfs3(int node, auto &adj, auto &coins, auto &memo) {
+	if(memo[node]!=-1) return memo[node];
+	int ans = 0;
+	for(int el:adj[node]) {
+		int val = dfs3(el, adj, coins, memo);
+		ans = max(ans, val);
+	}
+	return memo[node] = ans + coins[node];
+}
+signed main() {
+	ios::sync_with_stdio(false);
+	cin.tie(nullptr);
+	cout.tie(nullptr);
+	int n, m;
+	cin >> n >> m;
+	vector<int> coins(n+1);
+	for(int i=1;i<=n;i++) cin >> coins[i];
+	vector<vector<int>> adj(n+1);
+	vector<vector<int>> rev_adj(n+1);
+	for(int i=0;i<m;i++) {
+		int a, b;
+		cin >> a >> b;
+		adj[a].push_back(b);
+		rev_adj[b].push_back(a);
+	}
+	stack<int>st;
+	vector<int>vis(n+1, -1);
+	for(int i=1;i<=n;i++) {
+		if(vis[i]==-1) {
+			dfs1(i,adj,vis,st);
+		}
+	}
+	// We will use vis itself to store the scc components to which the nodes belong
+	// this will help us in creating the edges
+	vis = vector<int>(n+1, -1);
+	int scc = 0;
+	vector<int> scc_coins;
+	vector<vector<int>> scc_adj;
+	while(!st.empty()) {
+		int node = st.top();
+		st.pop();
+		if(vis[node]!=-1) continue;
+		scc_adj.push_back(vector<int>());
+		scc_coins.push_back(0);
+		// While finding out which nodes belong to which SCC itself, 
+		// we will create the scc graph
+		dfs2(node, rev_adj, vis, scc_coins, coins, scc_adj, scc);
+		scc++;
+	}
+	vector<int>memo(scc, -1);
+	int ans = 0;
+	for(int i=0;i<scc;i++) {
+		// We dont need vis here (using vis will give Wrong ans)
+		// suppose graph is like 1<-0->2, and we started from 1 explored the 1 path
+		// Then we started from 0 we will skip the 1 part if we use vis which we dont want
+		// The scc graph is guarenteed to be acyclic so there is no problem
+		// also, since we are using memoization, TLE won't happen
+		int val = dfs3(i,scc_adj,scc_coins,memo);
+		ans = max(ans, val);
+	}
+	cout << ans << endl;
+	return 0;
+}

@@ -3,8 +3,12 @@ CSES link: https://cses.fi/problemset/task/1671/
 // standard Dijkstra ka set implementation h
 // pq use krne par bhi accept hoga 
 // bas dont forget to add that 'continue' wala line to not explore any further if the distance doesn't match
-// one interesting thing is ki exact isi implementation me agar set me comparator daal do na
-// to TLE ho jayega
+// halanki yaha comparator use krna nahi necessary h but still batate h
+// maanlo a.first < b.first likha (= likhega to TLE aayega) 
+// set me na comparator se hi unique keys decide hota h... so agar 2 elements aise aa gye jiska first element same h
+// but second different to bhi set unko same maan ke ek ko delete kr dega
+// which we dont want to islie accha se comparator likho ki agar pehla wala same h then dusre wale k hisab se order kr lo
+// THIS will be accepted.
 
 #include<bits/stdc++.h>
 using namespace std;

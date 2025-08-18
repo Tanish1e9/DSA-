@@ -18,9 +18,20 @@
 - Kabhi path waghera kuch nikalna ho na to hmesha parent array ka use krna h
 - Minimum Spanning Tree ka concept is only for undirected graphs, whereas euler path, circuit, hamiltonian path, circuit ka concepts dono ke lie h. We will study for undirected only as of now.
 - Euler me each edge exactly once ka chalta, hamiltonian me each vertex exactly once chalta
+  
 - Euler Circuit (undirected) - Existence criteria
   - All nodes have even degree
   - All non-zero degree nodes belong to the same connected component
 - Euler Path (undirected) - Existence criteria
   - Either 0 or 2 nodes can have odd degree, else every node should have even degree
   - All non-zero degree nodes belong to the same connected component
+
+- Eulerian Circuit (directed)
+  - Strong connectivity: every vertex with nonzero degree is in the same strongly connected component.
+  - In-degree = Out-degree for every vertex.
+
+- Eulerian Path (directed)
+  - Weak connectivity: when you ignore edge directions, all vertices with nonzero degree are connected.
+  - Exactly one vertex has outdegree = indegree + 1 → this is the start.
+  - Exactly one vertex has indegree = outdegree + 1 → this is the end.
+  - All other vertices satisfy indegree = outdegree.

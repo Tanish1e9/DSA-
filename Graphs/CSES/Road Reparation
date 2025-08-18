@@ -1,0 +1,67 @@
+CSES link: https://cses.fi/problemset/task/1675/
+
+// Isme make sure ki agar comparator use kro to '=' mat daalna usme
+// wrna {c,a,b} store krke to kr hi skte ho bina kisi comparator ke
+
+#include<bits/stdc++.h>
+using namespace std;
+#define int long long
+class DSU{
+	public:
+	vector<int> sizes, parent;
+	DSU(int n) {
+		sizes = vector<int>(n+1,1);
+		parent = vector<int>(n+1);
+		for(int i=0;i<=n;i++) parent[i] = i;
+	}
+	void add(int a, int b) {
+		int ult_a = find_par(a);
+		int ult_b = find_par(b);
+		if(ult_a == ult_b) return;
+		if(sizes[ult_a] > sizes[ult_b]) {
+			parent[ult_b] = ult_a;
+			sizes[ult_a] += sizes[ult_b];
+		}
+		else {
+			parent[ult_a] = ult_b;
+			sizes[ult_b] += sizes[ult_a];	
+		}
+	}
+	int find_par(int node) {
+		if(parent[node]==node) return node;
+		return parent[node]=find_par(parent[node]);
+	}
+};
+signed main() {
+	ios::sync_with_stdio(false);
+	cin.tie(nullptr);
+	cout.tie(nullptr);
+	int n, m;
+	cin >> n >> m;
+	vector<vector<int>> edges;
+	for(int i=0;i<m;i++) {
+		int a, b, c;
+		cin >> a >> b >> c;
+		edges.push_back({c,a,b});
+	}
+	sort(edges.begin(), edges.end());
+	DSU ds(n);
+	int nodes_in_tree = 1;
+	int cost = 0;
+	for(int i=0;i<m;i++) {
+		int c = edges[i][0];
+		int a = edges[i][1];
+		int b = edges[i][2];
+		int par_a = ds.find_par(a);
+		int par_b = ds.find_par(b);
+		if(par_a!=par_b) {
+			ds.add(a,b);
+			cost += c;
+			nodes_in_tree++;
+		}
+	}
+	// basically we are finding the number of included edges should be n-1
+	if(nodes_in_tree==n) cout << cost << endl;		
+	else cout << "IMPOSSIBLE\n";
+	return 0;
+}

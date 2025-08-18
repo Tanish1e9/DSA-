@@ -1,0 +1,59 @@
+CSES link: https://cses.fi/problemset/task/1691
+
+// Dekh yaha undirected edges hai to ek ke adj list se pop krne k bad bhi dusre k list me ho skti na
+// islie alag se ek visited array maintain krna pad rha for edges
+// Also, end me jo path mila h uska reverse bhi to ek valid Eulerian tour hoga na undirected graph me
+// islie reverse kro chahe mat kro accepted hoga
+// Directed ke case me reverse krna hi padta h
+
+
+#include<bits/stdc++.h>
+using namespace std;
+#define int long long
+void dfs(int node, auto &adj, auto &vis, auto &path) {
+	while(adj[node].size()>0) {
+		auto el = adj[node].back();
+		adj[node].pop_back();
+		if(vis[el.second]) continue;
+		vis[el.second] = true;
+		dfs(el.first, adj, vis, path);
+	}
+	path.push_back(node);
+}
+signed main() {
+	ios::sync_with_stdio(false);
+	cin.tie(nullptr);
+	cout.tie(nullptr);
+	int n, m;
+	cin >> n >> m;
+	vector<vector<pair<int,int>>> adj(n+1);
+	vector<int> degree(n+1, 0);
+	for(int i=0;i<m;i++) {
+		int a, b;
+		cin >> a >> b;
+		adj[a].push_back({b,i});
+		adj[b].push_back({a,i});
+		degree[a]++;
+		degree[b]++;
+	}
+	for(int i=1;i<=n;i++) {
+		if(degree[i]&1) {
+			cout << "IMPOSSIBLE\n";
+			return 0;
+		}
+	}
+	
+	vector<int> path;
+	vector<bool> vis(m+1, false);
+	dfs(1, adj, vis, path);
+	if(path.size()!=m+1) {
+		cout << "IMPOSSIBLE\n";
+		return 0;
+	}
+	// reverse(path.begin(), path.end());
+	for(int i:path) {
+		cout << i << " ";
+	}
+	cout << endl;
+	return 0;
+}

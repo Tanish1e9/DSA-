@@ -38,3 +38,5 @@
   - All other vertices satisfy indegree = outdegree.
 
 - Hierholzer's Algo na eulerian path and circuit both in directed and undirected graph ke lie kaam aata h
+- Also kisi bhi Euler path ka size m+1 hota h pretty obviously
+

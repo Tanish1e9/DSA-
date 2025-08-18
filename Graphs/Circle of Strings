@@ -1,0 +1,37 @@
+GFG link: https://www.geeksforgeeks.org/problems/circle-of-strings4530/1
+
+// isme na simple kyunki starting and ending characters common common chal rhe the 
+// to unn characters ko vertex maanne ka intuition aaya
+// and then graph ki ek tarah se transform kr die a,b,c...z tk nodes maanke and given strings ko edges maanke
+// fir to standard eulerian circuit ka check laga dia
+
+void dfs(int node, auto &adj, auto &vis) {
+    vis[node] = true;
+    for(int el:adj[node]) {
+        if(vis[el]) continue;
+        dfs(el, adj, vis);
+    }
+}
+int isCircle(vector<string> &arr) {
+    vector<vector<int>> adj(26);
+    vector<int> degree(26,0);
+    for(string &s:arr) {
+        int a = s[0] - 'a';
+        int b = s.back() - 'a';
+        adj[a].push_back(b);
+        adj[b].push_back(a);
+        degree[a]++;
+        degree[b]++;
+    }
+    int start = -1;     // arbitrary starting point
+    for(int i=0;i<26;i++) {
+        if(degree[i]&1) return 0;
+        if(degree[i]>0) start = i;
+    }
+    vector<bool>vis(26, false);
+    dfs(start, adj, vis);
+    for(int i=0;i<26;i++) {
+        if(!vis[i] && degree[i]>0) return 0;
+    }
+    return 1;
+}

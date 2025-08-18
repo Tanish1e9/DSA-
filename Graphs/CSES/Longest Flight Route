@@ -3,15 +3,14 @@ CSES link: https://cses.fi/problemset/task/1680/
 // isme na topo sort ka intuition aaya since normal queue waghera se kie the to TLE aa gya tha
 // to saare nodes ko topological order k hisab se process krenge and maximal distance lete jaayenge neighbours ka
 // isme ek chiz dhyan rakhna h ki ho skta h 1 se n unreachable ho
-// isi case ko handle krne k lie distance[curr]>0 wala condition laga h
-// this ensures ki only 1 can start the chain
+// to bhi na koi aur node agar badha bhi dega na number to negative me rhega only 1 k through waale hi asli me positive kr payenge
 
 #include<bits/stdc++.h>
 using namespace std;
 #define int long long
 typedef pair<int,int> p;
 void dijk(int n, int m, auto &adj) {
-	vector<int> distances(n+1, 0), indegree(n+1, 0);
+	vector<int> distances(n+1, -1e18), indegree(n+1, 0);
 	vector<int> parent(n+1, -1);
 	for(int i=1;i<=n;i++) {
 		for(int j:adj[i]) {
@@ -29,13 +28,13 @@ void dijk(int n, int m, auto &adj) {
 		for(int el:adj[curr]) {
 			indegree[el]--;
 			if(indegree[el]==0) q.push(el);
-			if(distances[curr]>0 && distances[el] < distances[curr]+1){
+			if(distances[el] < distances[curr]+1){
 				distances[el] = distances[curr]+1;
 				parent[el] = curr;
 			}
 		}
 	}
-	if(distances[n]==0) cout << "IMPOSSIBLE\n";
+	if(distances[n]<0) cout << "IMPOSSIBLE\n";
 	else {
 		int start = n;
 		vector<int> ans;

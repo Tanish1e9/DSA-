@@ -2,28 +2,26 @@ GFG link: https://www.geeksforgeeks.org/problems/hamiltonian-path2522/1
 
 // simple recursion hi likha h brute force way me
 
-  bool dfs(int node, auto &adj, auto &path_vis, int n) {
-      path_vis[node] = true;
-      for(int el:adj[node]) {
-          if(path_vis[el]) continue;
-          if(dfs(el,adj,path_vis,n)) return true;
-      }
-      path_vis[node] = false;
-      for(int i=1;i<=n;i++) {
-          if(i!=node && !path_vis[i]) return false;
-      }
-      return true;
-  }
-  bool check(int n, int m, vector<vector<int>> edges) {
-      // code here
-      vector<vector<int>> adj(n+1);
-      for(auto &edge:edges) {
-          adj[edge[0]].push_back(edge[1]);
-          adj[edge[1]].push_back(edge[0]);
-      }
-      vector<bool>path_vis(n+1, false);
-      for(int i=1;i<n;i++) {
-          if(dfs(i,adj,path_vis,n)) return true;
-      }
-      return false;
-  }
+bool dfs(int node, auto &adj, auto &path_vis, int n) {
+    path_vis[node] = true;
+    for(int el:adj[node]) {
+        if(path_vis[el]) continue;
+        if(dfs(el,adj,path_vis,n-1)) return true;
+    }
+    path_vis[node] = false;
+    if(n==1) return true;
+    return false;
+}
+bool check(int n, int m, vector<vector<int>> edges) {
+    // code here
+    vector<vector<int>> adj(n+1);
+    for(auto &edge:edges) {
+        adj[edge[0]].push_back(edge[1]);
+        adj[edge[1]].push_back(edge[0]);
+    }
+    vector<bool>path_vis(n+1, false);
+    for(int i=1;i<n;i++) {
+        if(dfs(i,adj,path_vis,n)) return true;
+    }
+    return false;
+}

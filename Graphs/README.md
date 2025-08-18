@@ -22,6 +22,7 @@
 - Euler Circuit (undirected) - Existence criteria
   - All nodes have even degree
   - All non-zero degree nodes belong to the same connected component
+- Agar aisa ho ki koi undirected graph ko directed banana ho such that it is a single SCC, then Eulerian circuit nikalna original undirected graph me and assign edges 2 - 2 ko pakad ke -> Eulerian Orientation
 - Euler Path (undirected) - Existence criteria
   - Either 0 or 2 nodes can have odd degree, else every node should have even degree
   - All non-zero degree nodes belong to the same connected component

@@ -16,3 +16,10 @@
 - Kabhi bhi directed graph me check krna ho ki ek set of nodes se koi particular node q pahuch skte ya nahi, to reversed_adj list krke q se traversal chala dena and check kr lena ki wo jaha jaha pahucha
 - Kabhi maximum distance nikalna pade to saare distances ko negate krke minimum distance nikal lena. Fir yaha agar negative cycle mil gya iska mtlb originally positive cycle tha to arbitrarily large distances nikal skte
 - Kabhi path waghera kuch nikalna ho na to hmesha parent array ka use krna h
+- Minimum Spanning Tree ka concept is only for undirected graphs, whereas euler path, circuit, hamiltonian path, circuit ka concepts dono ke lie h. We will study for undirected only as of now.
+- Euler Circuit(undirected)
+  - All nodes have even degree
+  - All non-zero degree nodes belong to the same connected component
+- Euler Path (undirected)
+  - Either 0 or 2 nodes can have odd degree, else every node should have even degree
+  - All non-zero degree nodes belong to the same connected component

@@ -29,6 +29,14 @@ class comp{
 // dhyan se parantheses dekh lo aise hi teen lagenge
 priority_queue<T,vector<T>,comp>pq((comp(distances)));
 
+// comparator ke kuch rules h
+- comp(a, a) must be false
+- if comp(a, b) is true => comp(b, a) is false
+- comp is transitive
+
+------------- islie kabhi bhi a<=b type ka comparator mat likhna (a<b) hi likho bas
+(This can make difference between TLE and accepted)
+
 
 Or we can do through lambda functions
 

@@ -1,0 +1,128 @@
+CSES link: https://cses.fi/problemset/task/1684/
+
+In general, SAT problems that involve finding whether a CNF formula is satisfiable or not are not solvable in polynomial time
+but 2-SAT problems are possible
+
+
+#include<bits/stdc++.h>
+using namespace std;
+#define int long long
+int ulta(int node, int m) {
+	if(node>m) return node-m;
+	return node+m;
+}
+void dfs(int node, auto&vis, auto &adj, auto &st) {
+	vis[node] = 1;
+	for(int el:adj[node]) {
+		if(vis[el]!=-1) continue;
+		dfs(el, vis, adj, st);
+	}
+	st.push(node);
+}
+void dfs2(int node, auto &adj, auto &vis, auto &scc_map, int scc, auto &scc_adj) {
+	scc_map[scc].push_back(node);
+	vis[node] = scc;
+	for(int el:adj[node]) {
+		if(vis[el]==-1) dfs2(el, adj, vis, scc_map, scc, scc_adj);
+		else if(vis[el]!=scc) {
+			scc_adj[vis[el]].push_back(scc);
+		}
+	}
+}
+void topo(int node, auto &adj, auto &vis, auto &path) {
+	vis[node] = 1;
+	for(int el:adj[node]) {
+		if(vis[el]!=-1) continue;
+		topo(el, adj, vis, path);
+	}
+	path.push_back(node);
+}
+signed main() {
+	ios::sync_with_stdio(false);
+	cin.tie(nullptr);
+	cout.tie(nullptr);
+	int n, m;
+	cin >> n >> m;
+	// 1 to m normal nodes
+	// m+1 to 2m negated nodes
+	vector<vector<int>> adj(2*m+1);
+	vector<vector<int>> rev_adj(2*m+1);
+	for(int i=0;i<n;i++) {
+		char a,c;
+		int b,d;
+		cin >> a >> b >> c >> d;
+		if(a=='-') b+=m;	// negating b if - is there
+		if(c=='-') d+=m;
+		// Not required in this question but if there exists a single-literal clause
+		// then we can make it (a u a) which is (~a => a)
+		adj[ulta(b, m)].push_back(d);
+		adj[ulta(d, m)].push_back(b);
+		rev_adj[d].push_back(ulta(b, m));
+		rev_adj[b].push_back(ulta(d, m));
+	}
+	// Now we have to find the SCCs
+	vector<int>vis(2*m+1, -1);
+	stack<int>st;
+	for(int i=1;i<=2*m;i++) {
+		if(vis[i]==-1) dfs(i, vis, adj, st);
+	}
+	vis = vector<int>(2*m+1, -1);
+	vector<vector<int>> scc_map;	// stores list of nodes in a particular scc
+	vector<vector<int>> scc_adj;
+	int scc = 0;
+	while(!st.empty()) {
+		int node = st.top();
+		st.pop();
+		// Here vis itself will store the scc number of each node
+		if(vis[node]!=-1) continue;
+		scc_map.push_back(vector<int>());
+		scc_adj.push_back(vector<int>());
+		dfs2(node, rev_adj, vis, scc_map, scc, scc_adj);
+		scc++;
+	}
+	// Now we have our scc graph ready
+
+	// Now we have to check for every node whether that node and its negation are in different SCCs or not
+	for(int i=1;i<=m;i++) {
+		if(vis[i]==vis[i+m]) {
+			cout << "IMPOSSIBLE\n";
+			return 0;
+		}
+	}
+
+	// Now we are sure that a solution exists
+	// So we will traverse the SCC graph in reverse topological order and keep assigning true to the SCCs
+	// Once all variables are done we break
+	// In an SCC, all must have same value else agar T,F hua to F->T path exist kr jayega(since SCC h)
+	// Also, har ek SCC jo true hoga uske lie ek false SCC bhi exist krega na
+	// to F->F->T->T->T hi ek valid tarika h mixed SCCs ko arrange krne ka
+	// T->F->T and F->T->F me to dekho T->F aa gya h
+	// This is kind of an intuition
+
+	// It is guarenteed to be acyclic therefore just do the reverse Topo
+	vis = vector<int>(scc, -1);
+	vector<int> path;		// this will store the reverse topological order
+	for(int i=0;i<scc;i++) {
+		if(vis[i]==-1) topo(i, scc_adj, vis, path);
+	}
+	// Now we have to just find the final answer
+	vector<char> ans(m+1, 'x');
+	for(int i=0;i<path.size();i++) {
+		for(int node:scc_map[path[i]]) {
+			if(node>m) {
+				// continue if the node is already assigned
+				if(ans[node-m]!='x') continue;
+				ans[node-m] = '-';
+			}
+			else {
+				if(ans[node]!='x') continue;
+				ans[node] = '+';
+			}
+		}
+	}
+	for(int i=1;i<=m;i++) {
+		cout << ans[i] << " ";
+	}
+	cout << endl;
+	return 0;
+}

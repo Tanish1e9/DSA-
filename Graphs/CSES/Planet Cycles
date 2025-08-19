@@ -1,0 +1,77 @@
+CSES link: https://cses.fi/problemset/task/1751/
+
+// Ye to subset problem hai planet queries 2 ka.
+// Same concepts lag rhe infact yaha we dont need level array and DSU.
+// baki saara to same hi concept laga h
+
+#include<bits/stdc++.h>
+using namespace std;
+#define int long long
+void populate(int n, auto &next){
+	int k=1;
+	while((1<<k) <= n) {
+		for(int i=1;i<=n;i++) {
+			int mid = next[k-1][i];
+			next[k][i] = next[k-1][mid];
+		}
+		k++;
+	}
+}
+pair<int,int> find_dist(int node, auto &next, auto &cycle_size) {
+	if(cycle_size[node]!=-1) return {0, node};	// in the cycle only
+	int dist = 1;
+	for(int i=17;i>=0;i--) {
+		int p = next[i][node];
+		if(p!=-1 && cycle_size[p]==-1) {
+			dist += (1<<i);
+			node = p;
+		}
+	}
+	// sath me nearest cycle wala node bhi return krte
+	return {dist, next[0][node]};
+}
+int solve(int a, auto &next, auto &cycle_size)  {
+	auto a_info = find_dist(a, next, cycle_size);
+    return a_info.first + cycle_size[a_info.second];
+}
+signed main(){
+	ios::sync_with_stdio(false);
+	cin.tie(nullptr);
+	cout.tie(nullptr);
+	int n;
+	cin >> n;
+	vector<vector<int>> next(18, vector<int>(n+1, -1));
+	for(int i=1;i<=n;i++) {
+		cin >> next[0][i];
+	}
+	populate(n, next);
+	vector<int> vis(n+1, -1);
+	vector<int> cycle_size(n+1, -1);
+	for(int i=1;i<=n;i++) {
+		if(vis[i]!=-1) continue;
+		int start = i;
+		int l = 0;
+		vector<bool>path_vis(n+1, false);
+		while(vis[start]==-1) {
+			vis[start] = l++;
+			path_vis[start] = true;
+			start = next[0][start];
+		}
+		// path_vis islie ki pata kr ske ki wo jo node already visited aaya h wo same path me h 
+		// agar to cycle banana hoga
+		// Also, vis[i] me levels store krna pada to find out cycle size just in case
+		// and fir wapas se chalke we populated the levels in all the cyclic nodes
+		int size = l - vis[start];
+		if(!path_vis[start]) continue;
+		while(cycle_size[start]==-1) {
+			cycle_size[start] = size;
+			start = next[0][start];
+		}
+	}
+
+    for(int i=1;i<=n;i++) {
+        cout << solve(i, next, cycle_size) << " ";
+    }
+    cout << endl;
+	return 0;
+}

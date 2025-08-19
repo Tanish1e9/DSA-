@@ -65,3 +65,4 @@ out << "wgref" << "\n";
 cout << out.str(); (at the end)
 
 // also to optimise hashing we can write mpp.reserve(1<<20) isse utne keys k lie hashing optimise ho jayega
+// mod ke lie ya to const int ya MACRO ..... dont declare it as normal int wrna TLE aa skta

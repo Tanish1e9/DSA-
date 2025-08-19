@@ -1,27 +1,35 @@
 GFG link: https://www.geeksforgeeks.org/problems/hamiltonian-path2522/1
 
 // simple recursion hi likha h brute force way me
+// Memoize kr dia h taaki complexity reduce ho sake
 
-bool dfs(int node, auto &adj, auto &path_vis, int n) {
-    path_vis[node] = true;
+int memo[1<<11][11];
+int dfs(int node, auto &adj, int vis, int n) {
+    if(n==1) return 1;
+    if(memo[vis][node]!=-1) return memo[vis][node];
+    vis ^= (1<<node);
+    int ans = 0;
     for(int el:adj[node]) {
-        if(path_vis[el]) continue;
-        if(dfs(el,adj,path_vis,n-1)) return true;
+        if((1<<el) & vis) continue;
+        if(dfs(el,adj,vis,n-1)==1) {
+            ans = 1;
+            break;
+        }
     }
-    path_vis[node] = false;
-    if(n==1) return true;
-    return false;
+    vis ^= (1<<node);
+    return memo[vis][node] = ans;
 }
 bool check(int n, int m, vector<vector<int>> edges) {
     // code here
     vector<vector<int>> adj(n+1);
+    memset(memo, -1, sizeof(memo));
     for(auto &edge:edges) {
         adj[edge[0]].push_back(edge[1]);
         adj[edge[1]].push_back(edge[0]);
     }
-    vector<bool>path_vis(n+1, false);
+
     for(int i=1;i<n;i++) {
-        if(dfs(i,adj,path_vis,n)) return true;
+        if(dfs(i,adj,0,n)==1) return true;
     }
     return false;
 }

@@ -1,0 +1,43 @@
+CSES link: https://cses.fi/problemset/task/1690/
+
+#include<bits/stdc++.h>
+using namespace std;
+#define int long long
+// Yaha na sirf int mod = 1e9+7 matttttttttttttttttttt likhna TLE aa jata h
+// ya to const int krke likho ya fir MACRO jaise 
+// const int MOD = 1e9+7;
+#define MOD 1000000007
+int memo[1<<21][21];
+int n, m;
+int dfs(int node, auto &adj, int vis, int nodes_left) {
+	if(nodes_left==1) return node==n;
+	if(node==n) return 0;
+	// nodes_left can be derived from vis only so it's not an independent parameter
+	// There are self loops in this graph so visited me khud ko mark krlo fir neighbour ko check kro
+	// path_vis ki tarah islie kr rhe h because we want to backtrack
+	if(memo[vis][node]!=-1) return memo[vis][node];
+	vis^=(1<<node);
+	int ans = 0;
+	for(int el:adj[node]) {
+		if((1<<el) & vis) continue;
+		int val = dfs(el, adj, vis, nodes_left-1);
+		ans = (ans + val)%MOD;
+	}
+	vis^=(1<<node);
+	return memo[vis][node]=ans;
+}
+signed main() {
+	ios::sync_with_stdio(false);
+	cin.tie(nullptr);
+	cout.tie(nullptr);
+	cin >> n >> m;
+	memset(memo, -1, sizeof(memo));
+	vector<vector<int>> adj(n+1);
+	for(int i=0;i<m;i++) {
+		int a, b;
+		cin >> a >> b;
+		adj[a].push_back(b);
+	}
+	cout << dfs(1, adj, 0, n) << "\n";
+	return 0;
+}

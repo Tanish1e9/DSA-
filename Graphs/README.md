@@ -15,7 +15,8 @@
 - But directed negative edges me we can use it I believe, but waha na fir ye jo assumption pe chalte h ki minimum distance wala pehle explore kre kind of wohi violate ho rha to bellman ford hi laga lo
 - Kabhi bhi directed graph me check krna ho ki ek set of nodes se koi particular node q pahuch skte ya nahi, to reversed_adj list krke q se traversal chala dena and check kr lena ki wo jaha jaha pahucha
 - Kabhi maximum distance nikalna pade to saare distances ko negate krke minimum distance nikal lena. Fir yaha agar negative cycle mil gya iska mtlb originally positive cycle tha to arbitrarily large distances nikal skte
-- Kabhi path waghera kuch nikalna ho na to hmesha parent array ka use krna h
+- Kabhi path waghera kuch nikalna ho na to hmesha parent array ka use krna h (agar koi ek path nikalna ho to)
+- Agar saare possible shortest paths nikalne ho then levels ka use krna hoga ya parents ka and ensure ki move krte waqt ek level upar hi ja rhe
 - Minimum Spanning Tree ka concept is only for undirected graphs, whereas euler path, circuit, hamiltonian path, circuit ka concepts dono ke lie h. We will study for undirected only as of now.
 - Euler me each edge exactly once ka chalta, hamiltonian me each vertex exactly once chalta
   

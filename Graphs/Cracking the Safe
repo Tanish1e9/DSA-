@@ -1,0 +1,31 @@
+LC link: https://leetcode.com/problems/cracking-the-safe/
+
+// Standard De Bruijn Sequence ka sawaal hai
+
+void dfs(string node, auto &adj, auto &path, int k) {
+    while(adj[node] < k) {
+        char next = adj[node] + '0';
+        adj[node]++;
+        dfs(node.substr(1, node.size())+next, adj, path, k);
+    }
+    path.push_back(node);
+}
+string crackSafe(int n, int k) {
+    if(n==1) {
+        string ans;
+        for(int i=0;i<k;i++) {
+            ans.push_back(i+'0');
+        }
+        return ans;
+    }
+    string start(n-1,'0');
+    map<string,int> adj;
+    vector<string>path;
+    dfs(start, adj, path, k);
+    reverse(path.begin(), path.end());
+    string ans = path[0];
+    for(int i=1;i<path.size();i++) {
+        ans.push_back(path[i].back());
+    }
+    return ans;
+}

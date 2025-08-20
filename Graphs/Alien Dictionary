@@ -1,66 +1,81 @@
 GFG link: https://www.geeksforgeeks.org/problems/alien-dictionary/1?itm_source=geeksforgeeks&itm_medium=article&itm_campaign=bottom_sticky_on_article
 
-    // Topo sort krna h using DFS or Kahn's dono chalega
-    // M-1 BFS
-    string findOrder(string dict[], int n, int k) {
-        vector<int> indegree(k,0);
-        vector<vector<int>> adj(k);
-        for(int i=0;i<n-1;i++){
-            int t1=0,t2=0;
-            while(t1<dict[i].size() && t2<dict[i+1].size()){
-                if(dict[i][t1]!=dict[i+1][t2]){
-                    adj[dict[i][t1] - 'a'].push_back(dict[i+1][t2]-'a');
-                    indegree[dict[i+1][t2]-'a']++;
-                    break;
-                }
-                t1++;t2++;
-            }
-        }
-        queue<int>q;
-        for(int i=0;i<k;i++){
-            if(indegree[i]==0) q.push(i);
-        }
-        string ans;
-        while(!q.empty()){
-            int curr=q.front();
-            q.pop();
-            ans+=string(1,curr+'a');
-            for(auto el:adj[curr]){
-                indegree[el]--;
-                if(indegree[el]==0) q.push(el);
-            }
-        }
-        return ans;
-    }
+// Standard topo sort ka sawaal h
+// We have some constraints over the characters ki ye uske pehle aana chahye and so on
+// And we find a order that respects all these constraints
 
-    // M-2 DFS
+bool dfs(int node, auto &adj, auto &vis, auto &path_vis, auto &ans) {
+    vis[node] = true;
+    path_vis[node] = true;
+    for(int el:adj[node]) {
+        if(!vis[el]) {
+            if(dfs(el, adj, vis, path_vis, ans)) return true;
+        }
+        else if(path_vis[el]) return true;
+    }
+    path_vis[node] = false;
+    ans.push_back(char(node + 'a'));
+    return false;
+}
+string topo(auto &adj) {
     string ans;
-    void dfs(int i,vector<vector<int>>&adj,vector<int>&vis){
-        vis[i]=1;
-        for(auto el:adj[i]){
-            if(!vis[el]){
-                dfs(el,adj,vis);
-            }
-        }
-        ans = char(i+'a') + ans;        // ye work krta h dekh lo dhyan se
+    vector<bool>vis(26,false);
+    vector<bool>path_vis(26, false);
+    for(int i=0;i<26;i++) {
+        if(vis[i]) continue;
+        if(dfs(i,adj,vis,path_vis,ans)) return "";
     }
-    string findOrder(string dict[], int n, int k) {
-        vector<int>vis(k,0);
-        vector<vector<int>> adj(k);
-        for(int i=0;i<n-1;i++){
-            int t1=0,t2=0;
-            while(t1<dict[i].size() && t2<dict[i+1].size()){
-                if(dict[i][t1]!=dict[i+1][t2]){
-                    adj[dict[i][t1] - 'a'].push_back(dict[i+1][t2]-'a');
-                    break;
-                }
-                t1++;t2++;
-            }
+    reverse(ans.begin(), ans.end());
+    return ans;
+}
+string topo_bfs(auto &adj) {
+    queue<int> q;
+    vector<int> indegree(26, 0);
+    for(int i=0;i<26;i++) {
+        for(int el:adj[i]) {
+            indegree[el]++;
         }
-        for(int i=0;i<k;i++){
-            if(!vis[i]){
-                dfs(i,adj,vis);
-            }
-        }
-        return ans;
     }
+    for(int i=0;i<26;i++) {
+        if(indegree[i]==0) q.push(i);
+    }
+    string ans;
+    while(!q.empty()) {
+        int curr = q.front();
+        q.pop();
+        ans.push_back(char(curr + 'a'));
+        for(int el:adj[curr]) {
+            indegree[el]--;
+            if(indegree[el]==0) q.push(el);
+        }
+    }
+    if(ans.size()==26) return ans;
+    return "";
+}
+string findOrder(vector<string> &words) {
+    // code here
+    vector<vector<int>> adj(26);
+    set<char> chars;
+    for(int i=0;i<words.size()-1;i++) {
+        chars.insert(words[i].begin(), words[i].end());
+        int len = min(words[i].size(), words[i+1].size());
+        int j = 0;
+        for(;j<len;j++) {
+            if(words[i][j]!=words[i+1][j]) {
+                adj[words[i][j]-'a'].push_back(words[i+1][j]-'a');
+                break;
+            }
+        }
+        if(j==len && words[i].size() > len) return "";
+    }
+    chars.insert(words.back().begin(), words.back().end());
+    string ans = topo_bfs(adj);
+    // string ans = topo(adj);
+    // chars ko pass krake sidha ans ke creation ke samay hi filter out kr skte h
+    // par abhi ke lie aise kr dia h
+    string final_ans;
+    for(char c:ans) {
+        if(chars.count(c)) final_ans.push_back(c);
+    }
+    return final_ans;
+}

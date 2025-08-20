@@ -1,0 +1,40 @@
+CSES link: https://cses.fi/problemset/task/1692/
+
+// Dekh n-1 length ke saare substrings ko as node maan le
+// There exists a directed edge from node 'a' to node 'b' if the last n-1 characters of 'a' match those of 'b'
+// So just get a Euler path in this graph and now except for the first node, for every other node just store the back of it
+// Because the mid n-1 characters are overlapping na
+
+#include<bits/stdc++.h>
+using namespace std;
+#define int long long
+void dfs(string node, auto &adj, auto &path) {
+	while(adj[node]<2){
+		char next = adj[node] + '0';
+		adj[node]++;
+		dfs(node.substr(1,node.size())+next, adj, path);
+	}
+	path.push_back(node);
+}
+signed main() {
+	ios::sync_with_stdio(false);
+	cin.tie(nullptr);
+	cout.tie(nullptr);
+	int n;
+	cin >> n;
+	if(n==1) {
+		cout << "10" << endl;
+		return 0;
+	}
+	map<string,int>adj;
+	vector<string>path;
+	string start(n-1, '0');
+	dfs(start,adj, path);
+	reverse(path.begin(), path.end());
+	for(int i=0;i<path.size();i++) {
+		if(i==0) cout << path[i];
+		else cout << path[i].back();
+	}
+	cout << endl;
+	return 0;
+}

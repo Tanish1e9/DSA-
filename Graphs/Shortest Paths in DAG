@@ -46,38 +46,64 @@ GFG link: https://www.geeksforgeeks.org/problems/shortest-path-in-undirected-gra
 
 
      // M-3 Optimal using Topo Sort to avoid redundancies
-     void topo(int i,vector<vector<pair<int,int>>>&adj,vector<int>&vis,stack<int>&st){
-         vis[i]=1;
-         for(auto el:adj[i]){
-             if(!vis[el.first]){
-                 topo(el.first,adj,vis,st);
-             }
-         }
-         st.push(i);
-     }
-     vector<int> shortestPath(int N,int M, vector<vector<int>>& edges){
-        vector<vector<pair<int,int>>>adj(N);
-        for(auto edge:edges){
-            adj[edge[0]].push_back({edge[1],edge[2]});
+     // dfs se bhi aur bfs se bhi
+     // Just the trick is to traverse in Topo Order and just relax the edges
+     // Undirected graphs me to dijkstra lagana hi padega but DAG me topo se kaam ho skta
+
+     void dfs(int node, auto &adj, auto &vis, auto &st) {
+        vis[node] = true;
+        for(auto el:adj[node]) {
+            if(vis[el.first]) continue;
+            dfs(el.first, adj, vis, st);
         }
-        vector<int>ans(N,-1);
-        ans[0]=0;
-        stack<int>st;
-        vector<int>vis(N,0);
+        st.push(node);
+    }
+    void bfs(int N, auto &adj, auto &distances) {
+        vector<int> indegree(N, 0);
         for(int i=0;i<N;i++) {
-            if(!vis[i])
-                topo(i,adj,vis,st);
-        }
-        while(!st.empty()){
-            int curr=st.top();st.pop();
-            if(ans[curr]==-1) continue;    // skip for nodes whose distances are yet uncalculated
-            for(auto el:adj[curr]){
-                if(ans[el.first]==-1 || ans[el.first]>ans[curr]+el.second){
-                    ans[el.first] = ans[curr]+el.second;
-                }
+            for(auto el:adj[i]) {
+                indegree[el.first]++;
             }
         }
-        return ans;
+        queue<int> q;
+        for(int i=0;i<N;i++) {
+            if(indegree[i]==0) q.push(i);
+        }
+        while(!q.empty()) {
+            int curr = q.front();
+            q.pop();
+            for(auto el:adj[curr]) {
+                indegree[el.first]--;
+                if(indegree[el.first]==0) q.push(el.first);
+                distances[el.first] = min(distances[el.first], distances[curr] + el.second);
+            }
+        }
+    }
+    vector<int> shortestPath(int N, int M, vector < vector < int >> & edges) {
+        vector<int> distances(N, 1e9);
+        distances[0] = 0;
+        vector<vector<pair<int,int>>> adj(N);
+        for(auto &edge:edges) {
+            adj[edge[0]].push_back({edge[1], edge[2]});
+        }
+        bfs(N, adj, distances);
+        // stack<int> st;
+        // vector<bool> vis(N, false);
+        // for(int i=0;i<N;i++) {
+        //     if(vis[i]) continue;
+        //     dfs(i,adj,vis, st);
+        // }
+        // while(!st.empty()) {
+        //     int curr = st.top();
+        //     st.pop();
+        //     for(auto el:adj[curr]) {
+        //         distances[el.first] = min(distances[el.first], distances[curr] + el.second);
+        //     }
+        // }
+        for(int i=0;i<N;i++) {
+            if(distances[i]==1e9) distances[i] = -1;
+        }
+        return distances;
     }
     // Jaise jaha pe unit weights hote ya distance uniformly level wise increase krta h na waha pe alag se visited array banake
     // we can do BFS aur fir jab node visit ho tab distance update kr skte ... kyunki waha surity thi ki already visited node ko koi dubara visit

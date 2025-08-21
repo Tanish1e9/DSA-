@@ -96,6 +96,7 @@ GFG link: https://www.geeksforgeeks.org/problems/shortest-path-in-undirected-gra
         // while(!st.empty()) {
         //     int curr = st.top();
         //     st.pop();
+        //     if(distances[curr] == 1e9) continue;
         //     for(auto el:adj[curr]) {
         //         distances[el.first] = min(distances[el.first], distances[curr] + el.second);
         //     }

@@ -2,35 +2,57 @@ LC link: https://leetcode.com/problems/find-eventual-safe-states/
 
     // TC O(V+E)+O(VlogV)
     // SC O(E)+O(V)
-    void reverse_edges(vector<vector<int>>&graph,vector<vector<int>>&ans,vector<int>&indegree){
-        for(int i=0;i<graph.size();i++){
-            for(auto el:graph[i]){
-                ans[el].push_back(i);
-                indegree[i]++;
+    // One method is to just reverse the edges and do topo sort, whichever nodes are touched they are safe
+    // Else we can follow a DP approach too (that will be a lot faster, O(V) + O(E) without even reversing the edges)
+    vector<int> topo(int n, auto &adj) {
+        vector<int> indegree(n, 0);
+        for(int i=0;i<n;i++) {
+            for(int el:adj[i]) {
+                indegree[el]++;
             }
         }
-    }
-    vector<int> eventualSafeNodes(vector<vector<int>>& graph) {
-        int v=graph.size();
-        vector<vector<int>> reverse_graph(v);
-        vector<int>indegree(v,0);
-        reverse_edges(graph,reverse_graph,indegree);
-        queue<int>q;
-        for(int i=0;i<v;i++){
-            if(indegree[i]==0){
-                q.push(i);
-            }
+        queue<int> q;
+        for(int i=0;i<n;i++) {
+            if(indegree[i]==0) q.push(i);
         }
-        vector<int>ans;
-        while(!q.empty()){
-            int curr=q.front();
+        vector<int> ans;
+        while(!q.empty()) {
+            int curr = q.front();
             q.pop();
             ans.push_back(curr);
-            for(auto el:reverse_graph[curr]){
+            for(int el:adj[curr]) {
                 indegree[el]--;
                 if(indegree[el]==0) q.push(el);
             }
         }
-        sort(ans.begin(),ans.end());
+        return ans;
+    }
+    int safe(int node, auto &adj, auto &memo, auto &path_vis) {
+        if(memo[node]!=-1) return memo[node];
+        path_vis[node] = true;
+        for(int el:adj[node]) {
+            if(path_vis[el]) return memo[node] = 0;
+            if(safe(el, adj, memo, path_vis) == 0) return memo[node] = 0;
+        }
+        path_vis[node] = false;
+        return memo[node] = 1;
+    }
+    vector<int> eventualSafeNodes(vector<vector<int>>& graph) {
+        int n = graph.size();
+        // vector<vector<int>> rev_adj(n);
+        // for(int i=0;i<n;i++) {
+        //     for(int el:graph[i]) {
+        //         rev_adj[el].push_back(i);
+        //     }
+        // }
+        // vector<int> ans = topo(n, rev_adj);
+        // sort(ans.begin(), ans.end());
+        // return ans;
+        vector<int> ans;
+        vector<int> memo(n, -1);
+        vector<bool> path_vis(n, false);
+        for(int i=0;i<n;i++) {
+            if(safe(i,graph,memo,path_vis) == 1) ans.push_back(i);
+        }
         return ans;
     }

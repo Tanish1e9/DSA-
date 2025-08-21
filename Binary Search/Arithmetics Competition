@@ -1,0 +1,64 @@
+CF link: https://codeforces.com/contest/2132/problem/E
+
+// Agar aisa kabhi search krna ho ki jab tk increasing ho tab tk right badho wrna left
+// To ek index piche jaake mid ke value nikalke and we can do it with Binary Search
+// Original tarika isko krne ka to ternary search hai par thik h BS se bhi ho jayega
+
+#include<bits/stdc++.h>
+using namespace std;
+#define int long long
+int find_sum(auto &pre_a, auto &pre_b, int mid, int z) {
+	int sum_a = 0;
+	if(mid>=1) sum_a = pre_a[mid-1];
+	int sum_b = 0;
+	if(z-mid>=1) sum_b = pre_b[z-mid-1];
+	return sum_a + sum_b;
+}
+signed main() {
+	ios::sync_with_stdio(false);
+	cin.tie(nullptr);
+	cout.tie(nullptr);
+	int t;
+	cin >> t;
+	while(t--) {
+		int n, m, q;
+		cin >> n >> m >> q;
+		vector<int> a(n);
+		vector<int> b(m);
+		for(int i=0;i<n;i++) cin >> a[i];
+		for(int i=0;i<m;i++) cin >> b[i];
+		sort(a.begin(), a.end(), greater<int>());
+		sort(b.begin(), b.end(), greater<int>());
+		vector<int> pre_a(n,0);
+		vector<int> pre_b(m,0);
+		pre_a[0] = a[0];
+		pre_b[0] = b[0];
+		for(int i=1;i<n;i++) {
+			pre_a[i] = pre_a[i-1] + a[i];
+		}
+		for(int i=1;i<m;i++) {
+			pre_b[i] = pre_b[i-1] + b[i];
+		}
+		while(q--) {
+			int x,y,z;
+			cin >> x >> y >> z;
+			int low = max(z-y,0ll);
+			int high = min(z, x);
+			int sum1 = find_sum(pre_a, pre_b, low, z);
+			int sum2 = find_sum(pre_a, pre_b, high, z);
+			int ans = max(sum1, sum2);
+			low++;
+			high--;
+			while(low <= high) {
+				int mid = low + (high-low)/2;
+				int sum = find_sum(pre_a, pre_b, mid, z);
+				ans = max(sum, ans);
+				int prev = find_sum(pre_a, pre_b, mid-1, z);
+				if(sum>=prev) low = mid + 1;
+				else high = mid - 1;
+			}
+			cout << ans << endl;
+		}
+	}
+	return 0;
+}

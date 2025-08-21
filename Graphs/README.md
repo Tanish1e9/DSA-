@@ -1,6 +1,7 @@
 - In BFS, queue me node daalte waqt hi usko visited mark kr dena h wrna unnecessarily queue ka size bada hoke TLE dega
 - dfs me dfs call krne k pehle mark kro chahe baad me fark ni padta
 - if all the edges have weight 1 and we have to find shortest path, we don't need priority queue, queue se hi kaam ho jayega
+- Also DAG me shortest path nikalne k lie na Dijkstra nahi chahye normal queue rakhna and traverse the nodes in topological order
 - cycle detection in undirected graph
   - vis array and par is required. agar koi already visited node 'p' kisi node 'q' k neighbour me aa jaye and it is not q's parent then cycle is there
   - can be implemented using dfs and bfs easily

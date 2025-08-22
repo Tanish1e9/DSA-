@@ -1,0 +1,40 @@
+LC link: https://leetcode.com/problems/critical-connections-in-a-network/description/
+
+void dfs(int node, int par, int &time, auto &adj, auto &time_start, auto &low, auto &ans) {
+    time++;
+    time_start[node] = time;
+    low[node] = time;
+    for(int el:adj[node]) {
+        // na low update hoga parent se hi, na hi hm [parent, node] edge check krenge (parent krega ye)
+        // aur na hi hmko uspe dfs krna h islie continue hi kr do
+        if(el == par) continue;
+        // agar node non-visited hai tab dfs kra lo
+        // ab agar node already visited tha iska mtlb ki wo edge to ek cycle create kregi 
+        // to wo kabhi bridge ho hi ni skta
+        // islie sirf unvisited wale case me bridge check kia h
+        // baki low ka updation to dono hi case me krna h
+        if(time_start[el]==-1) {
+            dfs(el, node, time, adj, time_start, low, ans);
+            if(low[el] > time_start[node]) ans.push_back({node, el});
+        } 
+        low[node] = min(low[node], low[el]);
+    }
+}
+vector<vector<int>> criticalConnections(int n, vector<vector<int>>& connections) {
+    vector<int> time_start(n,-1);
+    vector<int> low(n,1e9);
+    vector<vector<int>> ans;
+    vector<vector<int>> adj(n);
+    for(auto &edge: connections) {
+        adj[edge[0]].push_back(edge[1]);
+        adj[edge[1]].push_back(edge[0]);
+    }
+    int t = -1;
+    // for(int i=0;i<n;i++) {
+        // if(time_start[i]!=-1) continue;
+        // dfs(0, -1, t, adj, time_start, low, ans);
+    // }
+    // It's given that the graph is connected
+    dfs(0, -1, t, adj, time_start, low, ans);
+    return ans;
+}

@@ -5,6 +5,9 @@ GFG link: https://www.geeksforgeeks.org/problems/articulation-point-1/1
 // so child agar parent k upar pahuch skta h then only parent is safe otherwise AP ho gya
 // Dusra ki starting node ke lie different conditions h wo to dikh hi jayega
 // Teesra ki low ke updation me bhi change hai dry run krke dekhoge purane condition pe to samajh aayega dikkat
+// Also ek articulation point multiple baar discover ho skta h
+// to ek vector bana lo sabhi nodes ka and T/F mark krte jao end me gin lena
+// ya fir set bhi bana skte ho jaisa yaha banaya
 
 void dfs(int node, int par, int &t, auto&adj, auto &low, auto &time_start, auto &ans) {
       t++;

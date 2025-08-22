@@ -1,9 +1,9 @@
 CF link: https://codeforces.com/contest/2132/problem/E
 
+// M-1
 // Agar aisa kabhi search krna ho ki jab tk increasing ho tab tk right badho wrna left
 // To ek index piche jaake mid ke value nikalke and we can do it with Binary Search
 // Original tarika isko krne ka to ternary search hai par thik h BS se bhi ho jayega
-
 #include<bits/stdc++.h>
 using namespace std;
 #define int long long
@@ -61,4 +61,92 @@ signed main() {
 		}
 	}
 	return 0;
+}
+
+
+// M-2
+// isme na merged array maanke kis index tk kitna card a se aaya h aur kitna b se aaya h
+// wo calculate kr le 
+// and fir ab jitna limit exceed hua utna dusre se hi lena padega
+// to aise ekdum linear complexity me ho jayega bina binary search ke bhi
+
+#include<bits/stdc++.h>
+using namespace std;
+#define int long long
+vector<pair<int,int>> merge(auto &a, auto &b) {
+    vector<pair<int,int>> ans;
+    int i=0, j=0;
+    int n = a.size();
+    int m = b.size();
+    int count_a = 0, count_b = 0;
+    while(i<n && j<m) {
+        if(a[i] > b[j]) {
+            ans.push_back({++count_a, count_b});
+            i++;
+        } else {
+            ans.push_back({count_a, ++count_b});
+            j++;
+        }
+    }
+    while(i<n) {
+        ans.push_back({++count_a, count_b});
+        i++;
+    }
+    while(j<m) {
+        ans.push_back({count_a, ++count_b});
+        j++;
+    }
+    return ans;
+}
+signed main() {
+    ios::sync_with_stdio(false);
+    cin.tie(nullptr);
+    cout.tie(nullptr);
+    int t;
+    cin >> t;
+    while(t--) {
+        int n, m, q;
+        cin >> n >> m >> q;
+        vector<int> a(n), b(m);
+        for(int i=0;i<n;i++) cin >> a[i];
+        for(int i=0;i<m;i++) cin >> b[i];
+        sort(a.begin(), a.end(), greater<int>());
+        sort(b.begin(), b.end(), greater<int>());
+        vector<int> pre_a(n,0), pre_b(m,0);
+        pre_a[0] = a[0];
+        pre_b[0] = b[0];
+        vector<pair<int,int>> merged = merge(a,b);
+        for(int i=1;i<n;i++) pre_a[i] = pre_a[i-1] + a[i];
+        for(int i=1;i<m;i++) pre_b[i] = pre_b[i-1] + b[i];
+        while(q--) {
+            int x, y, z;
+            cin >> x >> y >> z;
+            if(z==0) {
+                cout << 0 << "\n";
+                continue;
+            }
+            int count_a = merged[z-1].first;
+            int count_b = merged[z-1].second;
+            if(count_a <= x && count_b <= y) {
+                int sum_a = 0;
+                if(count_a>=1) sum_a += pre_a[count_a - 1];
+                int sum_b = 0;
+                if(count_b>=1) sum_a += pre_b[count_b - 1];
+                cout << sum_a + sum_b << "\n";
+            } else if(count_a > x) {
+                int sum_a = 0;
+                if(x>=1) sum_a += pre_a[x-1];
+                int sum_b = 0;
+                if(z-x>=1) sum_b += pre_b[z-x-1];
+                cout << sum_a + sum_b << "\n";
+            } else {
+                int sum_b = 0;
+                if(y>=1) sum_b += pre_b[y-1];
+                int sum_a = 0;
+                if(z-y>=1) sum_a += pre_a[z-y-1];
+                cout << sum_a + sum_b << "\n";
+            }
+        }
+    }
+    return 0;
 }

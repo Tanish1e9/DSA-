@@ -1,0 +1,38 @@
+GFG link: https://www.geeksforgeeks.org/problems/articulation-point-1/1
+
+// Kuch differences h bridges se
+// ek to ki ab child ko parent tk pahuchne se kaam nahi chalega because we are testing if parent is an AP wrt child
+// so child agar parent k upar pahuch skta h then only parent is safe otherwise AP ho gya
+// Dusra ki starting node ke lie different conditions h wo to dikh hi jayega
+// Teesra ki low ke updation me bhi change hai dry run krke dekhoge purane condition pe to samajh aayega dikkat
+
+void dfs(int node, int par, int &t, auto&adj, auto &low, auto &time_start, auto &ans) {
+      t++;
+      time_start[node] = t;
+      low[node] = t;
+      int num_child = 0;
+      for(int el:adj[node]) {
+          if(el==par) continue;
+          if(time_start[el]==-1) {
+              dfs(el, node, t, adj, low, time_start, ans);
+              if(low[el] >= time_start[node] && par!=-1) ans.insert(node);
+              low[node] = min(low[node], low[el]);
+              num_child++;
+          } else {
+              low[node] = min(low[node], time_start[el]);
+          }
+      }
+      if(par==-1 && num_child>1) ans.insert(node);
+  }
+  vector<int> articulationPoints(int V, vector<int> adj[]) {
+      // Code here
+      vector<int> low(V, 1e9);
+      vector<int> time_start(V, -1);
+      set<int> ans;
+      int t = -1;
+      //given that graph is connected
+      dfs(0,-1,t,adj,low,time_start, ans);
+      if(ans.size()==0) return {-1};
+      vector<int>res(ans.begin(), ans.end());
+      return res;
+  }

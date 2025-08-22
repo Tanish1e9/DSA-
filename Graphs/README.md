@@ -41,4 +41,5 @@
 
 - Hierholzer's Algo na eulerian path and circuit both in directed and undirected graph ke lie kaam aata h
 - Also kisi bhi Euler path ka size m+1 hota h pretty obviously
-
+- Koi bhi edge agar kisi cycle ka part hai to Bridge nahi hoga else hoga
+- Articulation point ke jitne bhi neighbours hai, agar wo kisi same cycle ke part hai, to concerned point is not an articulation point

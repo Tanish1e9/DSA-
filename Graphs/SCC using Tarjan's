@@ -1,0 +1,49 @@
+GFG link: https://www.geeksforgeeks.org/problems/strongly-connected-component-tarjanss-algo-1587115621/1
+
+// Dekh yaha na low ki jagah time_start bhi use kr lega to chal jayega
+// but agar thoda idiomatic jaana h
+// to visited wale se time_start, and unvisited waale se low
+// visited here means inStack, Art point, bridge me to normal hi
+// isse sab ho jayega 
+
+int timer = -1;
+vector<vector<int>> ans;
+void dfs(int node, vector<int> adj[], vector<bool> &path_vis, vector<int> &time_start, vector<int> &low, stack<int> &st) {
+    timer++;
+    time_start[node] = low[node] = timer;
+    path_vis[node] = true;
+    st.push(node);
+    for(int el:adj[node]) {
+        if(time_start[el]==-1) {
+            dfs(el, adj, path_vis, time_start, low, st);
+            low[node] = min(low[node], low[el]);
+        } else if(path_vis[el]) {
+            low[node] = min(low[node], time_start[el]);
+        }
+    }
+    if(low[node] == time_start[node]) {
+        ans.push_back(vector<int>());
+        while(st.top()!=node) {
+            path_vis[st.top()] = false;
+            ans.back().push_back(st.top());
+            st.pop();
+        }
+        path_vis[st.top()] = false;
+        ans.back().push_back(st.top());
+        st.pop();
+        sort(ans.back().begin(), ans.back().end());
+    }
+}
+vector<vector<int>> tarjans(int n, vector<int> adj[]) {
+    // code here
+    vector<int> time_start(n, -1);
+    vector<int> low(n, 1e9);
+    vector<bool> path_vis(n, false);
+    stack<int> st;
+    for(int i=0;i<n;i++) {
+        if(time_start[i]!=-1) continue;
+        dfs(i, adj, path_vis, time_start, low, st);
+    }
+    sort(ans.begin(), ans.end());
+    return ans;   
+}

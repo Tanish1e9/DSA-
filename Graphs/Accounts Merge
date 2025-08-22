@@ -33,3 +33,35 @@ public:
         return ans;
     }
 };
+
+
+// M-2 
+vector<vector<string>> accountsMerge(vector<vector<string>>& accounts) {
+        DSU ds(accounts.size());
+        map<string, int> email_owners;
+        for(int i=0;i<accounts.size();i++) {
+            auto &vec = accounts[i];
+            for(int j=1;j<vec.size();j++) {
+                if(email_owners.contains(vec[j])) {
+                    ds.unionbysize(i, email_owners[vec[j]]);
+                } else {
+                    email_owners[vec[j]] = i;
+                }
+            }
+        }
+        vector<vector<string>> ans;
+        unordered_map<int,int> mpp;
+        for(auto &it:email_owners) {
+            int ult = ds.find_par(it.second);
+            int idx = ans.size();
+            if(mpp.contains(ult)) {
+                idx = mpp[ult];
+            } else {
+                ans.push_back(vector<string>());
+                mpp[ult] = idx;
+                ans.back().push_back(accounts[ult][0]);
+            }
+            ans[idx].push_back(it.first);
+        }
+        return ans;
+    }

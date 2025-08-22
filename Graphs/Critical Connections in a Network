@@ -13,10 +13,15 @@ void dfs(int node, int par, int &time, auto &adj, auto &time_start, auto &low, a
         // to wo kabhi bridge ho hi ni skta
         // islie sirf unvisited wale case me bridge check kia h
         // baki low ka updation to dono hi case me krna h
+        // Articulation point me na different low update krne ka conditions h
+        // Wo yaha bhi work kr jayega
+
         if(time_start[el]==-1) {
             dfs(el, node, time, adj, time_start, low, ans);
             if(low[el] > time_start[node]) ans.push_back({node, el});
+            // low[node] = min(low[node], low[el]);
         } 
+        // else low[node] = min(low[node], time_start[el]);
         low[node] = min(low[node], low[el]);
     }
 }

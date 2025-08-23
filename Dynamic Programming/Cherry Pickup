@@ -1,6 +1,8 @@
 LC link: https://leetcode.com/problems/cherry-pickup/
 
 // cherry pickup2 is same as chocolate pickup problem of GFG
+// Ye problem ko na aise model krna h ki 2 log (0,0) to (n-1,n-1) jaana chah rhe bas ho jayega fir
+
 class Solution {
 public:
     int f(int i,int j1,int j2,auto&grid,auto&memo){

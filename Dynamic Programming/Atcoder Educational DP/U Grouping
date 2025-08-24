@@ -47,6 +47,60 @@ signed main() {
         }
     }
 
+
+
+// M-2
+// Upar wala to dekh optimal hai hi 
+// but agar algorithm nahi bhi aata h na
+// to bhi thoda try krte to ye accept ho jata 
+// simply available rabbits ko ek vector me push krke fir uske subsets generate kra lo na
+// isse ekdum 1.6s tk time chala gya limit 2s ka tha but still ye accept hua 
+// Upar wala better h 50ms hi time gya h
+
+#include<bits/stdc++.h>
+using namespace std;
+#define int long long
+signed main() {
+    ios::sync_with_stdio(false);
+    cin.tie(nullptr);
+    cout.tie(nullptr);
+    int n;
+    cin >> n;
+    vector<vector<int>> arr(n, vector<int>(n));
+    for(int i=0;i<n;i++) {
+        for(int j=0;j<n;j++) {
+            cin >> arr[i][j];
+        }
+    }
+    vector<int> memo(1<<n, 0);
+    for(int m=0;m<(1<<n);m++) {
+        int score = 0;
+        vector<int> available;
+        for(int i=0;i<n;i++) {
+            if(!((1<<i) & m)) continue;
+            available.push_back(i);
+            for(int j=i+1;j<n;j++) {
+                if(!((1<<j) & m)) continue;
+                score += arr[i][j];
+            }
+        }
+        memo[m] = max(memo[m], score);
+        
+        int limit = (1<<available.size());
+        for(int s=0;s<limit;s++) {
+            int sub = 0;
+            for(int j=0;j<available.size();j++) {
+                if(s & (1<<j)) sub |= (1<<available[j]);
+            }
+            memo[m] = max(memo[m], memo[sub] + memo[m^sub]);
+        }
+    }
+
+    cout << memo[(1<<n) - 1] << endl;
+
+    return 0;
+}
+
     cout << memo[(1<<n) - 1] << endl;
 
     return 0;

@@ -1,0 +1,62 @@
+Atcoder link: https://atcoder.jp/contests/abc420/tasks/abc420_d
+
+// Dekh yaha na ek cell 2 bar visit ho skta h par different closing states yani 'x' ya 'o' ke sath
+// same hi state pe 2 bar visit nahi hoga to isko maintain krenge bas
+// baki to bfs lagega since unit distances se increase ho rha
+
+#include<bits/stdc++.h>
+using namespace std;
+#define int long long
+int dx[4] = {-1,1,0,0};
+int dy[4] = {0,0,-1,1};
+char temp[2] = {'x', 'o'};
+
+int bfs(int i, int j, int ex, int ey, auto &grid) {
+    queue<vector<int>> q;
+    int n = grid.size();
+    int m = grid[0].size();
+    bool vis[n][m][2];
+    memset(vis,0,sizeof(vis));
+    q.push({i,j,0});
+    vis[i][j][0] = true;
+    int level = 0;
+    while(!q.empty()) {
+        int level_size = q.size();
+        while(level_size--) {
+            auto curr = q.front();
+            q.pop();
+            if(curr[0]==ex && curr[1]==ey) return level;
+            for(int k=0;k<4;k++) {
+                int row = curr[0] + dx[k];
+                int col = curr[1] + dy[k];
+                if(row<0 || col<0 || row>=n || col>=m || grid[row][col] == '#' || grid[row][col] == temp[curr[2]] || vis[row][col][curr[2]]) continue;
+                
+                if(grid[row][col] == '?') q.push({row, col, (curr[2] + 1)%2});
+                else q.push({row, col, curr[2]});
+                
+                vis[row][col][curr[2]] = true;
+            }
+        }
+        level++;
+    }  
+    return -1;
+}
+signed main() {
+	ios::sync_with_stdio(false);
+	cin.tie(nullptr);
+	cout.tie(nullptr);
+	int n, m;
+    cin >> n >> m;
+    vector<vector<char>> grid(n, vector<char>(m));
+    pair<int,int> start,end;
+    for(int i=0;i<n;i++) {
+        for(int j=0;j<m;j++) {
+            cin >> grid[i][j];
+            if(grid[i][j]=='S') start = {i,j};
+            else if(grid[i][j]=='G') end = {i,j};
+        }
+    }
+    cout << bfs(start.first, start.second, end.first, end.second, grid) << endl;
+
+	return 0;
+}

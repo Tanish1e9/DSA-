@@ -5,49 +5,49 @@
 // now dekho uske baad ka jo loop h na wo jo commented h wo original h jo ki 4^n complexity chala jata
 // kyunki we want to iterate over all possible submasks of all the masks
 // to iss chiz ka ek beautiful optimisation h 3^n me cp algo pe jaake padhna wahi kr die h and boom accepted
+// Isme na 'm' denotes the available rabbits (who have not yet been chosen) 
+// Fir uska submask banake unko chun lie aisa h
+// Kam se kam score 0 to ho hi skta h agar sabhi rabbits ko different groups me rakh die
+// islie 0 maara h initialisation
+// ab har mask m ke lie bhi agar wo pura ek group k tarah behave kre then uska score chahye hoga na we should not do this for all submasks
+// rather masks k lie kr lo
+// to precomputation kr skte ho but jroorat nahi h (agar submasks ko compute krna chah rhe hote then precomputation chahye but masks ke lie to nahi)
+// Aur har ek mask m ka answer usse 2 chote masks par hi depend krta h
+// islie increasing order me process kr rhe h
+// memo[m] denotes ki m me jo bhi available rabbits h unke lie max score kya ban skta
 
 #include<bits/stdc++.h>
 using namespace std;
 #define int long long
-signed main(){
-    ios_base::sync_with_stdio(0);
-    cin.tie(0);
-    cout.tie(0);
+signed main() {
+    ios::sync_with_stdio(false);
+    cin.tie(nullptr);
+    cout.tie(nullptr);
     int n;
-  	cin >> n;
-  	vector<vector<int>> grid(n,vector<int>(n,0));
-  	for(int i=0;i<n;i++){
-  		for(int j=0;j<n;j++){
-  			cin >> grid[i][j];
-  		}
-  	}
-    vector<int>computed(1<<n);
-    computed[0]=0;
-    for(int mask = 1;mask < (1<<n);mask++){
-        int score=0;
-        for(int i=0;i<n;i++){
-            if(!((1<<i) & mask)) continue;
-            for(int j=0;j<n;j++){
-                if(1<<j & mask) score+=grid[i][j];
+    cin >> n;
+    vector<vector<int>> arr(n, vector<int>(n));
+    for(int i=0;i<n;i++) {
+        for(int j=0;j<n;j++) {
+            cin >> arr[i][j];
+        }
+    }
+    vector<int> memo(1<<n, 0);
+    for(int m=0;m<(1<<n);m++) {
+        int score = 0;
+        for(int i=0;i<n;i++) {
+            if(!((1<<i) & m)) continue;
+            for(int j=i+1;j<n;j++) {
+                if(!((1<<j) & m)) continue;
+                score += arr[i][j];
             }
         }
-        computed[mask] = score;
-    }
-    vector<int>memo(1<<n);
-    memo[(1<<n) - 1] = 0;
-    for(int vis=(1<<n)-2;vis>=0;vis--){
-        int ans=0;
-        // for(int mask=1;mask<(1<<n);mask++){
-        //     if(mask & vis)continue;
-
-        int m = ((1<<n) -1)^vis;
-        for(int mask=m;mask>0;mask=(mask-1)&m){
-            // dry run krne ka koshish you will se all possible submasks of available rabbits (jo vis me nhi h) getting iterated in descending order
-            // aur bas ye optimisation k kaaran hi ruka hua tha ye sawaal
-            ans = max(ans,computed[mask]+memo[mask|vis]);
+        memo[m] = max(memo[m], score);
+        for(int s = m; s>0; s = (s-1)&m) {
+            memo[m] = max(memo[m], memo[s] + memo[m^s]);
         }
-        memo[vis] = ans;
     }
-    cout << memo[0] << endl;
+
+    cout << memo[(1<<n) - 1] << endl;
+
     return 0;
 }

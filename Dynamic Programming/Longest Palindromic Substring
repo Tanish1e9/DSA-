@@ -2,6 +2,8 @@ LC link: https://leetcode.com/problems/longest-palindromic-substring/
 
 // Agar lag rha h ki longest common substring between string and its reverse nikal denge to ho jayega 
 // then see this "aacabdkacaa" <- iska ans aaca aa jayega jo ki galat h
+// Again DP ka to yahi intuition tha na ki substring me agar endpoints fix kr de to kyunki substring consecutive hota h
+// we can directly decide
 
 
 // 1) DP solution h O(n^2), O(n^2) me

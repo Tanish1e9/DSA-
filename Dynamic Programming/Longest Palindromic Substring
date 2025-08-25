@@ -4,6 +4,10 @@ LC link: https://leetcode.com/problems/longest-palindromic-substring/
 // then see this "aacabdkacaa" <- iska ans aaca aa jayega jo ki galat h
 
 
+// 1) DP solution h O(n^2), O(n^2) me
+// 2) Space-orbit also O(n^2), O(1) me
+// 3) Manacher's Algo, O(n), O(n) me
+
 
     void func(string&s,int start,int end,int &ans,int &st_idx){
         int n=s.size();
@@ -22,7 +26,6 @@ LC link: https://leetcode.com/problems/longest-palindromic-substring/
     }
     string longestPalindrome(string s) {
         int n=s.size();
-        // 1) ye to DP solution h O(n^2),O(n^2) me
         // vector<vector<bool>> memo(n,vector<bool>(n,0));
         // int ans=0;
         // int start=-1;
@@ -47,7 +50,6 @@ LC link: https://leetcode.com/problems/longest-palindromic-substring/
         // }
         // return s.substr(start,ans); 
 
-        2) Ye space-orbit algo O(n^2),O(1)
         int ans=0,st_idx=-1;
         for(int i=0;i<n;i++){
             func(s,i-1,i+1,ans,st_idx);

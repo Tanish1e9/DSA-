@@ -1,5 +1,6 @@
-LC link: https://leetcode.com/problems/longest-palindromic-substring/submissions/1328272242/
+LC link: https://leetcode.com/problems/longest-palindromic-substring/description/
 
+// Ye space - orbit algorithm hai
     string longestPalindrome(string s) {
         int n=s.size();
         int ans=0;

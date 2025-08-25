@@ -1,5 +1,13 @@
 GFG link: https://www.geeksforgeeks.org/problems/longest-common-substring1452/1
 
+// Yaha pe wo pick not pick jaise subsequence me kie the waise kyu ni kie? well kr skte the but ek aur state ka jroorat padta
+// Yaha ka intuition hai ki kahi na kahi se to longest common substring start hoga na
+// to har i,j pe maan lie ki yahi se ho rha h
+// ab agar to characters at i,j equal hai tab memo[i][j] = 1 + memo[i+1][j+1] krenge
+// else memo[i][j] = 0 kr denge
+// ye same chiz subsequence me kyu ni kr skte? waha bhi to kisi na kisi i,j se start hoga hi?
+// ha hoga par agar characters equal hai to jroori nahi agla i+1, j+1 hi ho kuch aur bhi ho skta h that's why
+
     int longestCommonSubstr (string s, string t, int n, int m){
         // vector<vector<int>> memo(n,vector<int>(m,0));
         // int ans=0;

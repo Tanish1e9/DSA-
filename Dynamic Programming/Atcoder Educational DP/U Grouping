@@ -15,6 +15,10 @@
 // Aur har ek mask m ka answer usse 2 chote masks par hi depend krta h
 // islie increasing order me process kr rhe h
 // memo[m] denotes ki m me jo bhi available rabbits h unke lie max score kya ban skta
+// And also this works is ki suppose k groups me baatna optimal h for some mask
+// now koi to submask aisa exist krta hoga na jo x groups ke saare rabbits ko lele
+// and bache rabbits k-x groups ke ho
+// yani ek tarah se groups ko disjointly baant de bas islie chal rha
 
 #include<bits/stdc++.h>
 using namespace std;

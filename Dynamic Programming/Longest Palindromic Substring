@@ -8,7 +8,7 @@ LC link: https://leetcode.com/problems/longest-palindromic-substring/
 
 // 1) DP solution h O(n^2), O(n^2) me
 // 2) Space-orbit also O(n^2), O(1) me
-// 3) Manacher's Algo, O(n), O(n) me
+// 3) Manacher's Algo, O(n), O(n) me   <- refer to strings folder for this
 
 
     void func(string&s,int start,int end,int &ans,int &st_idx){

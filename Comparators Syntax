@@ -76,3 +76,16 @@ cout << out.str(); (at the end)
 // this is handled automatically by the constructor of reverse iterator to bas decltype(l) se kr die 
 // decltype(l) is map<int,int>::reverse_iterator
 l = decltype(l)( a.erase(next(l).base()) );
+
+
+
+string ke end me ek character daalna ho to 
+- s.push_back('c')    
+- s += 'c'
+dono hi O(1) hai par push_back use krna best h
+
+string ke end me string append krna ho to 
+s+= "hello" or s+=t
+ye jo h O(t) hoga s ke lie in place rhta
+but agar s = s+t kr dia to pura s copy hota ek temporary string banta h and wapas assign hota
+to n^2 chala ja skta h agar baar baar kro to islie +=

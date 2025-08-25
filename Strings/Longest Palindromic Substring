@@ -1,31 +1,105 @@
 LC link: https://leetcode.com/problems/longest-palindromic-substring/description/
 
 // Ye space - orbit algorithm hai
-    string longestPalindrome(string s) {
-        int n=s.size();
-        int ans=0;
-        int start=1;
-        for(int i=0;i<n;i++) {
-            int l=i,r=i;
-            while(l>=0 && r<n){
-                if(s[l]!=s[r]) break;
-                l--;
-                r++;
-            }
-            if(r-l-1>ans){
-                ans=r-l-1;
-                start=l+1;
-            }
-            l=i,r=i+1;
-            while(l>=0 && r<n){
-                if(s[l]!=s[r]) break;
-                l--;
-                r++;
-            }
-            if(r-l-1>ans){
-                ans=r-l-1;
-                start=l+1;
+// O(n^2), O(1)
+string longestPalindrome(string s) {
+    int n=s.size();
+    int ans=0;
+    int start=1;
+    for(int i=0;i<n;i++) {
+        int l=i,r=i;
+        while(l>=0 && r<n){
+            if(s[l]!=s[r]) break;
+            l--;
+            r++;
+        }
+        if(r-l-1>ans){
+            ans=r-l-1;
+            start=l+1;
+        }
+        l=i,r=i+1;
+        while(l>=0 && r<n){
+            if(s[l]!=s[r]) break;
+            l--;
+            r++;
+        }
+        if(r-l-1>ans){
+            ans=r-l-1;
+            start=l+1;
+        }
+    }
+    return s.substr(start,ans);
+}
+
+
+// Manacher's Algorithm 
+CSES link: https://cses.fi/problemset/task/1111/
+
+#include<bits/stdc++.h>
+using namespace std;
+#define int long long
+class manacher{
+    private:
+    string add_hashes(string &s) {
+        string t;
+        for(char c:s) {
+            t.push_back('#');
+            t.push_back(c);
+        }
+        t.push_back('#');
+        return t;
+    }
+    public:
+    vector<int> p;
+    string orig;
+    manacher(string &s) {
+        orig = s;
+        string t = add_hashes(s);
+        int n = t.size();
+        p = vector<int> (n,1);
+        // p[i] denotes ki kitna right jaa skte and kitna left jaa skte 
+        // it will store the exact length of the palindrome centred at ith index + 1
+        // For eg.  # b # ke lie b wale jagah pe 2 store hoga
+        build(t);
+    }
+    void build(string &t) {
+        int n = p.size();
+        // l and r are not inclusive
+        // l and r denotes the endpoints +-1 of the palindrome with the farthest
+        // rightmost end
+        int l = -1, r = 1;
+        for(int i=1;i<n;i++) {
+            // ye aise aaya ki l...r ke centre k around mirror images hai na
+            // to l..i...c...l+r-i...r   kyunki c ka coordinate (l+r)/2 hai
+            int j = l+r-i;
+            // Dekh j-p[j]+1 > l hone pe to p[j] hi copy ho jayega
+            // but maan le aisa nahi h
+            // then p[j] ka kuch portion to le hi skte h na jitna range me aa rha
+            // to islie r-i ka cap lag gya h
+            // Nahi kroge ye to TLE aayega
+            if(i<r) p[i] = min(r-i, p[j]);
+
+            while(i+p[i]<n && i-p[i]>=0 && t[i-p[i]] == t[i+p[i]]) p[i]++;
+            if(i+p[i] > r) {
+                r = i+p[i];
+                l = i-p[i];
             }
         }
-        return s.substr(start,ans);
     }
+    string get_longest() {
+        int idx = max_element(p.begin(), p.end()) - p.begin();
+        // palindrome ka starting point in original string aise nikalna
+        int l = (idx - p[idx]+1)/2;
+        return orig.substr(l, p[idx]-1);
+    }
+};
+signed main() {
+    ios::sync_with_stdio(false);
+    cin.tie(nullptr);
+    cout.tie(nullptr);
+    string s;
+    cin >> s;
+    manacher m(s);
+    cout << m.get_longest() << endl;
+    return 0;
+}

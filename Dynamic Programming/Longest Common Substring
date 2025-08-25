@@ -8,32 +8,43 @@ GFG link: https://www.geeksforgeeks.org/problems/longest-common-substring1452/1
 // ye same chiz subsequence me kyu ni kr skte? waha bhi to kisi na kisi i,j se start hoga hi?
 // ha hoga par agar characters equal hai to jroori nahi agla i+1, j+1 hi ho kuch aur bhi ho skta h that's why
 
-    int longestCommonSubstr (string s, string t, int n, int m){
-        // vector<vector<int>> memo(n,vector<int>(m,0));
-        // int ans=0;
-        // for(int i=0;i<n;i++){
-        //     for(int j=0;j<m;j++){
-        //         if(s[i]==t[j]){
-        //             memo[i][j]=1;
-        //             if(i>=1 && j>=1) memo[i][j]+=memo[i-1][j-1];
-        //             ans=max(ans,memo[i][j]);
-        //         }
-        //         else memo[i][j]=0;
-        //     }
-        // }
-        // return ans;
-        
-        vector<int>prev(m,0);
-        int ans=0;
-        for(int i=0;i<n;i++){
-            for(int j=m-1;j>=0;j--){
-                if(s[i]==t[j]){
-                    prev[j]=1;
-                    if(i>=1 && j>=1) prev[j]+=prev[j-1];
-                    ans=max(ans,prev[j]);
-                }
-                else prev[j]=0;
-            }
+int longestCommonSubstr (string &str1, string &str2){
+    int n = str1.size();
+    int m = str2.size();
+    // vector<vector<int>> memo(n+1, vector<int>(m+1,0));  
+    // int ans = 0;
+    // for(int i=n-1;i>=0;i--) {
+    //     for(int j=m-1;j>=0;j--) {
+    //         if(str1[i]==str2[j]) memo[i][j] = 1 + memo[i+1][j+1];
+    //         else memo[i][j] = 0;
+    //         ans = max(ans, memo[i][j]);
+    //     }
+    // }
+    // return ans;
+
+
+    // vector<int> next(m+1, 0);
+    // vector<int> curr(m+1, 0);
+    // int ans = 0;
+    // for(int i=n-1;i>=0;i--) {
+    //     for(int j=m-1;j>=0;j--) {
+    //         if(str1[i]==str2[j]) curr[j] = 1 + next[j+1];
+    //         else curr[j] = 0;
+    //         ans = max(ans, curr[j]);
+    //     }
+    //     next = curr;
+    // }
+    // return ans;
+    
+    
+    vector<int> next(m+1, 0);
+    int ans = 0;
+    for(int i=n-1;i>=0;i--) {
+        for(int j=0;j<m;j++) {
+            if(str1[i]==str2[j]) next[j] = 1 + next[j+1];
+            else next[j] = 0;     
+            ans = max(ans, next[j]);
         }
-        return ans;
     }
+    return ans;
+}

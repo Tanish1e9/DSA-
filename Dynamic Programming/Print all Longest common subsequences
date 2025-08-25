@@ -13,49 +13,48 @@ GFG link: https://www.geeksforgeeks.org/problems/print-all-lcs-sequences3413/1
 	// for eg dekh abc, abac me b ko dhundega to ab,ab substrings me max len to 2 milega which is not lcs ... to b ko
 	// leke aage jaake skip krne se behtar h call hi na kre that's why we check 
 
-    void helper(int e1,int e2,string& temp,vector<vector<int>>&memo,int lcs_len,string&s,string&t){
-	        if(temp.size()==lcs_len){
-	            reverse(temp.begin(),temp.end());
-	            ans.push_back(temp);
-	            reverse(temp.begin(),temp.end());
-	            return;
-	        }
-	        
-	        if(e1<0 || e2<0) return;
-	        for(char ch='a';ch<='z';ch++){
-	            bool done=false;
-	            for(int i=e1;i>=0;i--){
-	                if(s[i]!=ch) continue;
-	                for(int j=e2;j>=0;j--){
-	                    if(t[j]!=ch) continue;
-	                    if(temp.size() + memo[i+1][j+1] == lcs_len){
-	                        temp.push_back(ch);
-	                        helper(i-1,j-1,temp,memo,lcs_len,s,t);
-	                        temp.pop_back();
-	                        done=true;
-	                        break;
-	                    }
-	                }
-	                if(done) break;
-	            }
-	        }
-	    }
-		vector<string> all_longest_common_subsequences(string s, string t){
-		    int m=s.size();
-		    int n=t.size();
-		    vector<vector<int>> memo(m+1,vector<int>(n+1,0));
-            for(int i=1;i<=m;i++){
-                for(int j=1;j<=n;j++){
-                    if(s[i-1]==t[j-1]) memo[i][j]=1+memo[i-1][j-1];
-                    else{
-                        int pick = memo[i-1][j];
-                        int npick = memo[i][j-1];
-                        memo[i][j] = max(pick,npick);
-                    }
-                }
+    void create_memo(string &str1, string &str2, auto &memo) {
+        int n = str1.size();
+        int m = str2.size();
+        
+        for(int i=n-1;i>=0;i--) {
+            for(int j=m-1;j>=0;j--) {
+                if(str1[i] == str2[j]) memo[i][j] = 1 + memo[i+1][j+1];
+                else memo[i][j] = max(memo[i+1][j], memo[i][j+1]);
             }
-            string temp;
-            helper(m-1,n-1,temp,memo,memo[m][n],s,t);
-            sort(ans.begin(),ans.end());
-            return ans;
-		}
+        }
+    }
+    
+    void helper(int i, int j, string &str1, string &str2, string &temp, auto &ans, auto &memo) {
+        if(temp.size() == memo[0][0]) {
+            ans.push_back(temp);
+            return;
+        }
+        for(char c='a';c<='z';c++) {
+            int l1=i, l2=j;
+            for(;l1<str1.size();l1++) {
+                if(str1[l1] == c) break;
+            }
+            for(;l2<str2.size();l2++) {
+                if(str2[l2] == c) break;
+            }
+            if(l1 < str1.size() && l2<str2.size() && memo[l1][l2] + temp.size() == memo[0][0]) {
+                temp.push_back(c);
+                helper(l1+1, l2+1, str1, str2, temp, ans, memo);
+                temp.pop_back();
+            }
+        }
+    }
+    
+    vector<string> allLCS(string &str1, string &str2) {
+        int n = str1.size();
+        int m = str2.size();
+        vector<vector<int>> memo(n+1, vector<int>(m+1,0));
+        create_memo(str1, str2, memo);
+        if(memo[0][0] == 0) return {};
+        string temp;
+        vector<string> ans;
+        helper(0,0,str1,str2,temp,ans,memo);
+        sort(ans.begin(), ans.end());
+        return ans;
+    }

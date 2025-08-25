@@ -1,5 +1,9 @@
 GFG link: https://www.geeksforgeeks.org/problems/print-all-lcs-sequences3413/1
 
+	// ye niche wala intuition right to left jaa rhe aisa DP maanke likha gya h
+	// but code niche wala left to right maanke likh rhe waisa h
+	// but padh ke samajh aa jayega
+
 	// dekh isme na pehle approach dimag me aata h ki jaise any one LCS print kr rhe the na usi me
 	// we will check ki left and up wale agar equal ho memo me to dono paths ko traverse kre through recursion
 	// aur jab s[i-1]=t[j-1] ho tab to ye equal character aayega hi end me
@@ -12,6 +16,13 @@ GFG link: https://www.geeksforgeeks.org/problems/print-all-lcs-sequences3413/1
 	// if Yes then we are done for that character and just call the recurrence
 	// for eg dekh abc, abac me b ko dhundega to ab,ab substrings me max len to 2 milega which is not lcs ... to b ko
 	// leke aage jaake skip krne se behtar h call hi na kre that's why we check 
+
+	// Why does this work and jo pehle soch rhe the memo[i+1][j] and memo[i][j+1] dono pe chale jayenge doesnt?
+	// because there can be many starting points with the same character and the same LCS length
+	// to bhut redundancies hai
+	// but agar character fix krke leftmost se aage badhe
+	// then we are going character by character ... to ho skta h bhut sare starting points ho uss character ke but hmlog
+	// leftmost pakad ke aage badhte because that doesn't hurt anyone
 
     void create_memo(string &str1, string &str2, auto &memo) {
         int n = str1.size();

@@ -66,3 +66,13 @@ cout << out.str(); (at the end)
 
 // also to optimise hashing we can write mpp.reserve(1<<20) isse utne keys k lie hashing optimise ho jayega
 // mod ke lie ya to const int ya MACRO ..... dont declare it as normal int wrna TLE aa skta
+
+// Kabhi reverse iterator(map) se delete krna ho
+// then ye line likho 
+// basically reverse iterator pe .base() krne se next element aata "forward" sense me
+// so next(l).base() krne se wahi element aa jayega jispe l point kr rha tha par forward iterator hoga wo
+// now we call erase 
+// ab forward iterator mila usko wapas reverse iterator banana h aur ek pehle wale element ka banana h
+// this is handled automatically by the constructor of reverse iterator to bas decltype(l) se kr die 
+// decltype(l) is map<int,int>::reverse_iterator
+l = decltype(l)( a.erase(next(l).base()) );

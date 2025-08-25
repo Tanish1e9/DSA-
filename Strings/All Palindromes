@@ -1,0 +1,65 @@
+CSES link: https://cses.fi/problemset/task/3138/
+
+// Dekh ye to bhut simple h
+// like we need the farthest centre jiska ki jo palindrome ho wo mereko cross kre
+// to suppose kisi index i ke lie ye farthest centre c mil gya
+// ab ye c optimal hoga i ke aage unsab k lie jaha tk iska boundary jayega
+// because aage ka koi centre agar ho bhi to length kam aayega na
+// and jaise hi fir c exhaust ho gya we will move forward
+// So ek left pointer rakh lenge
+// also ye left pointer kabhi current index se to aage nahi ja payega because current pe hi centre rakhke
+// to ans minimum 1 aata hi h islie we dont need to check the bounds
+
+#include<bits/stdc++.h>
+using namespace std;
+#define int long long
+class manacher{
+    private:
+    void add_hashes(string &s) {
+        for(char c:s) {
+            t.push_back('#');
+            t.push_back(c);
+        }
+        t.push_back('#');
+    }
+    public:
+    vector<int> p;
+    string t;
+    manacher(string &s) {
+        add_hashes(s);
+        int n = t.size();
+        p = vector<int>(n,1);
+        build();
+    }
+    void build() {
+        int n = t.size();
+        int l = -1, r = 1;
+        for(int i=1;i<n;i++) {
+            int j = l+r-i;
+            if(i<r) p[i] = min(r-i, p[j]);
+
+            while(i+p[i]<n && i-p[i]>=0 && t[i+p[i]]==t[i-p[i]]) p[i]++;
+            if(i+p[i]>r) {
+                r = i+p[i];
+                l = i-p[i];
+            }
+        }
+    }
+};
+signed main() {
+    ios::sync_with_stdio(false);
+    cin.tie(nullptr);
+    cout.tie(nullptr);
+
+    string s;
+    cin >> s;
+    manacher m(s);
+    vector<int> &p = m.p;
+    int l = 0;
+    for(int i=0;i<s.size();i++) {
+        while(l+p[l]-1<2*i+1) l++;
+        cout << 2*i+2-l << " ";
+    }
+    cout << endl;
+    return 0;
+}

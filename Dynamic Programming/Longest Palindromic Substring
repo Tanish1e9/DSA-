@@ -1,5 +1,10 @@
 LC link: https://leetcode.com/problems/longest-palindromic-substring/
 
+// Agar lag rha h ki longest common substring between string and its reverse nikal denge to ho jayega 
+// then see this "aacabdkacaa" <- iska ans aaca aa jayega jo ki galat h
+
+
+
     void func(string&s,int start,int end,int &ans,int &st_idx){
         int n=s.size();
         while(start>=0 && end<n){

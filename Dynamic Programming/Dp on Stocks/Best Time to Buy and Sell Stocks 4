@@ -1,0 +1,16 @@
+LC link: https://leetcode.com/problems/best-time-to-buy-and-sell-stock-iv/description/
+
+// Sidhe Space optimised solution pichla wala se hi kr lie 
+// bas pichle wale me 2 ki jagah ek general k use krna h
+int maxProfit(int K, vector<int>& prices) {
+    int n = prices.size();
+    vector<int> next(2*K+1,0), curr(2*K+1,0);
+    for(int i=n-1;i>=0;i--) {
+        for(int k=2*K;k>=1;k--) {
+            if(k%2 == 1) curr[k] = max(prices[i] + next[k-1], next[k]);
+            else curr[k] = max(-prices[i] + next[k-1], next[k]);
+        }
+        next = curr;
+    }
+    return next[2*K];
+}

@@ -1,0 +1,13 @@
+LC link: https://leetcode.com/problems/best-time-to-buy-and-sell-stock-with-transaction-fee/description/
+
+// Space Optimised since very very simple h
+int maxProfit(vector<int>& prices, int fee) {
+    int n = prices.size();
+    vector<int> next(2,0), curr(2,0);
+    for(int i=n-1;i>=0;i--) {
+        curr[1] = max(prices[i] - fee + next[0], next[1]);
+        curr[0] = max(-prices[i] + next[1], next[0]);
+        next = curr;
+    }
+    return next[0];
+}

@@ -1,0 +1,45 @@
+LC link: https://leetcode.com/problems/best-time-to-buy-and-sell-stock-iii/description/
+
+// Memoization
+int helper(int i, int k, auto &prices, auto &memo) {
+    if(i==prices.size()) return 0;
+    if(k<0) return 0;
+    if(memo[i][k]!=-1) return memo[i][k];
+    if(k%2==0) {
+        return memo[i][k] = max(prices[i] + helper(i+1, k-1, prices, memo), helper(i+1, k, prices, memo));
+    }
+    return memo[i][k] = max(-prices[i] + helper(i+1, k-1, prices, memo), helper(i+1, k, prices, memo));
+}
+int maxProfit(vector<int>& prices) {
+    int n = prices.size();
+    vector<vector<int>> memo(n, vector<int>(4,-1));
+    return helper(0,3,prices,memo);
+}
+
+// Tabulation
+int maxProfit(vector<int>& prices) {
+    int n = prices.size();
+    vector<vector<int>> memo(n+1, vector<int>(5,0));
+    for(int i=n-1;i>=0;i--) {
+        for(int k=4;k>=1;k--) {
+            if(k%2 == 1) memo[i][k] = max(prices[i] + memo[i+1][k-1], memo[i+1][k]);
+            else memo[i][k] = max(-prices[i] + memo[i+1][k-1], memo[i+1][k]);
+        }
+    }
+    return memo[0][4];
+}
+
+// Space Optimisation
+int maxProfit(vector<int>& prices) {
+    int n = prices.size();
+    vector<int> next(5,0), curr(5,0);
+    for(int i=n-1;i>=0;i--) {
+        for(int k=4;k>=1;k--) {
+            if(k%2 == 1) curr[k] = max(prices[i] + next[k-1], next[k]);
+            else curr[k] = max(-prices[i] + next[k-1], next[k]);
+        }
+        next = curr;
+    }
+    return next[4];
+}
+

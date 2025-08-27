@@ -70,10 +70,16 @@ LC link: https://leetcode.com/problems/number-of-longest-increasing-subsequence/
 
 
     // Above approach ko hi optimise kie h
-    // ye to O(nlog^2(n)), O(n) h
+    // ye to O(nlogn), O(n) h
     // because har index ek hi bar store hoga inserted_at, prefix_sum array me
     // kyunki har inserted_at[i] ek non-increasing vector tha, so we skipped the part of iterating
     // and bas prefix_sum store kra ke optimise kr die
+    // Also, max_len so far ka agar ans store krte jayenge to final ans aa jayega na
+    // islie jab bhi arr me push_back ho rha iska mtlb ki LIS length badha h, in that case we reset the ans
+    // aur baki jab bhi arr.size() - 1 ke jagah nums[i] jaa rha, we add that into our ans
+    // isko chahte to vector<pair<int,int>> krke first inserted_at ka kaam krta, second prefix_sum ka
+    // par wo thoda unclean lagega islie nahi kie h, space complexity to same hi hoga
+
     // Ek GFG pe article h O(nlogn), O(n) me krne ka using segment trees, dekh lena kabhi
 
     int bin_search(vector<int>&vec, int el, vector<int> &nums) {

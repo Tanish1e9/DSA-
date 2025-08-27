@@ -1,5 +1,6 @@
 GFG link: https://www.geeksforgeeks.org/problems/longest-bitonic-subsequence0824/1
 
+    // O(n^2) time, O(n) space
     int LongestBitonicSequence(int n, vector<int> &arr) {
         vector<int>inc(n,1),dec(n,1);
         // inc ko end k hisab se and dec ko start k hisab se banayenge
@@ -23,4 +24,27 @@ GFG link: https://www.geeksforgeeks.org/problems/longest-bitonic-subsequence0824
             if(inc[i]>1 && dec[i]>1)maxi = max(maxi,inc[i]+dec[i]-1);
         }
         return maxi;
+    }
+
+
+    // O(nlogn) time, O(n) space
+    int LongestBitonicSequence(int n, vector<int> &nums) {
+        vector<int> inc(n);
+        int ans = 0;
+        vector<int> arr;
+        for(int i=0;i<n;i++) {
+            int idx = lower_bound(arr.begin(), arr.end(), nums[i]) - arr.begin();
+            if(idx == arr.size()) arr.push_back(nums[i]);
+            else arr[idx] = nums[i];
+            inc[i] = idx + 1;
+        }
+        arr.assign(0,0);
+        for(int i=n-1;i>=0;i--) {
+            int idx = lower_bound(arr.begin(), arr.end(), nums[i]) - arr.begin();
+            if(idx == arr.size()) arr.push_back(nums[i]);
+            else arr[idx] = nums[i];
+            if(idx+1>1 && inc[i]>1) ans = max(ans, inc[i]+idx);
+            inc[i] += idx + 1;
+        }
+        return ans;
     }

@@ -35,29 +35,26 @@ GFG link: https://www.geeksforgeeks.org/problems/printing-longest-increasing-sub
 // index wise lexicographically smallest k lie thoda mehnat kie h like map bana lie aur fir end se chalte ja rhe h
 // ab jab bhi element daal sake that is uska next index allow kre to daal dena h because we are choosing lower index elements
 // aur ye jo lower bound waale ka intuition h na ye yahi h ki at a given length sabse minimum se minimum value rakha jaye taaki there is more room for expansion
-// aur ye yaad rakhna ki seq is not the LIS rather it is the smallest values for every possible length yaani there will be some inc subsequence
-// of the length ending with that value which is in seq
-    vector<int> longestIncreasingSubsequence(int n, vector<int>& arr) {
-        vector<int>seq;
-        map<int,int> mpp;
-        int maxi = 0;
-        for(int i=0;i<n;i++){
-            auto lb = lower_bound(seq.begin(),seq.end(),arr[i]);
-            if(lb==seq.end()) {
-                seq.push_back(arr[i]);
-                mpp[i] = seq.size();
-            }
-            else {
-                *lb=arr[i];
-                mpp[i] = lb-seq.begin()+1;
-            }
-            maxi = max(maxi,(int)seq.size());
+// aur ye yaad rakhna ki arr is not the LIS rather it is the smallest values for every possible length yaani there will be some inc subsequence
+// of the length ending with that value which is in arr
+// Aur ek baat ki nums me repitition ho skta h na values ka to map agar banake usme nums[i] ko key rakh ke idx + 1 store krte 
+// to galat ho skta h islie i ko hi key rakhke store krna h ab jab aisa h hi to vector bana die
+
+    vector<int> getLIS(vector<int>& nums) {
+        vector<int> arr;
+        vector<int> inserted_at(nums.size());
+        for(int i=0;i<nums.size();i++) {
+            int idx = lower_bound(arr.begin(), arr.end(), nums[i]) - arr.begin();
+            if(idx == arr.size()) arr.push_back(nums[i]);
+            else arr[idx] = nums[i];
+            inserted_at[i] = idx + 1;
         }
-        vector<int>ans(maxi,-1);
-        for(int i=n-1;i>=0;i--){
-            if(mpp[i]==maxi || ans[mpp[i]] > arr[i]){
-                ans[mpp[i]-1]=arr[i];
+        vector<int> seq(arr.size(), -1);
+        for(int i=nums.size()-1;i>=0;i--) {
+            if(inserted_at[i] == arr.size() || seq[inserted_at[i]] > nums[i]) {
+                seq[inserted_at[i] - 1] = nums[i];
             }
         }
-        return ans;
+        
+        return seq;
     }

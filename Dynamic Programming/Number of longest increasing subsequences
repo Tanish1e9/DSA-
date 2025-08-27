@@ -2,6 +2,7 @@ LC link: https://leetcode.com/problems/number-of-longest-increasing-subsequence/
 
     // yaha same hi efficient tabulation wala approach use kie h aur dekh num ko initially 1 se initialise krna bhut jroori  h
     // because jaha se bhi inherit krne ka shuruwat hoga waha 1 hona chahye na atleast inherit krne ko
+    // O(n^2), O(n)
     int findNumberOfLIS(vector<int>& arr) {
         int n=arr.size();
         vector<int>seq(n,1);
@@ -25,4 +26,97 @@ LC link: https://leetcode.com/problems/number-of-longest-increasing-subsequence/
             if(seq[i]==maxi) ans+=num[i];
         }
         return ans;
+    }
+
+
+    // Ye O(n^2), O(n) !!!! TC thoda kam ho jayega usse best and average case me
+    // Mtlb wahi printing LIS in nlogn wala approach lie h
+    // har index pe kon kon aa chuka h usko store krte ja rhe
+    int findNumberOfLIS(vector<int>& nums) {
+        int n = nums.size();
+        vector<int> num_lis(n, 0);
+        vector<int> arr;
+        vector<vector<int>> inserted_at;
+        int max_len = 0;
+        int res = 0;
+        for(int i=0;i<n;i++) {
+            int idx = lower_bound(arr.begin(), arr.end(), nums[i]) - arr.begin();
+            if(idx == arr.size()) {
+                arr.push_back(nums[i]);
+                inserted_at.push_back({i});
+            }
+            else {
+                inserted_at[idx].push_back(i);
+                arr[idx] = nums[i];
+            }
+            if(idx > 0) {
+                auto &vec = inserted_at[idx-1];
+                for(int j = vec.size()-1; j>=0; j--) {
+                    int el = vec[j];
+                    if(nums[el] < nums[i]) num_lis[i] += num_lis[el];
+                    else break;
+                }
+            } else num_lis[i] = 1;
+            
+            if(idx + 1 > max_len) {
+                max_len = idx + 1;
+                res = num_lis[i];
+            } else if (idx + 1 == max_len) {
+                res += num_lis[i];
+            }
+        }
+        return res;
+    }
+
+
+    // Above approach ko hi optimise kie h
+    // ye to O(nlog^2(n)), O(n) h
+    // because har index ek hi bar store hoga inserted_at, prefix_sum array me
+    // kyunki har inserted_at[i] ek non-increasing vector tha, so we skipped the part of iterating
+    // and bas prefix_sum store kra ke optimise kr die
+    // Ek GFG pe article h O(nlogn), O(n) me krne ka using segment trees, dekh lena kabhi
+
+    int bin_search(vector<int>&vec, int el, vector<int> &nums) {
+        // vec is in decreasing order
+        // keep in mind that vec stores the indices of nums
+        // we have to find last element >= el 
+        int low = 0;
+        int high = vec.size()-1;
+        while(low<=high) {
+            int mid = low + (high-low)/2;
+            if(nums[vec[mid]] >= el) low = mid+1;
+            else high = mid - 1;
+        }
+        return high;
+    }
+    int findNumberOfLIS(vector<int>& nums) {
+        int n = nums.size();
+        vector<int> num_lis(n, 0);
+        vector<int> arr;
+        vector<vector<int>> inserted_at;
+        vector<vector<int>> prefix_sum;
+        int res = 0;
+        for(int i=0;i<n;i++) {
+            int idx = lower_bound(arr.begin(), arr.end(), nums[i]) - arr.begin();
+
+            if(idx > 0) {
+                int index = bin_search(inserted_at[idx-1], nums[i], nums);
+                auto &vec = prefix_sum[idx-1];
+                num_lis[i] += vec.back() - (index>=0 ? vec[index] : 0);
+            } else num_lis[i] = 1;
+
+            if(idx == arr.size()) {
+                inserted_at.push_back({i});
+                prefix_sum.push_back({num_lis[i]});
+                arr.push_back(nums[i]);
+                res = num_lis[i];
+            }
+            else {
+                inserted_at[idx].push_back(i);
+                prefix_sum[idx].push_back(prefix_sum[idx].back() + num_lis[i]);
+                arr[idx] = nums[i];
+                if(idx == arr.size()-1) res += num_lis[i];
+            }
+        }
+        return res;
     }

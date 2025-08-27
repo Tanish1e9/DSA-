@@ -10,7 +10,8 @@ LC link: https://leetcode.com/problems/minimum-cost-to-cut-a-stick/description/
         return memo[i][j] = ans;
     }
     int minCost(int n, vector<int>& cuts) {
-        cuts.insert(cuts.begin(),0);
+        // sort to kr hi rhe h 0 apne aap aage aa jayega
+        cuts.push_back(0);
         cuts.push_back(n);
         sort(cuts.begin(),cuts.end());
         int k=cuts.size();

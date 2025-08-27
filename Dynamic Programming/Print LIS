@@ -1,33 +1,38 @@
 GFG link: https://www.geeksforgeeks.org/problems/printing-longest-increasing-subsequence/1
 
-    // yaha seq[i] denotes LIS length starting at arr[i]
+    // yaha lis_ending[i] denotes LIS length ending at arr[i]
     // aur fir to backtrack kr rhe samajh aa hi rha h
     // lexicographically smallest index waala LIS chahye islie dekho jitna shuru ka element le sake wo lia gya h har jagah
-    vector<int> longestIncreasingSubsequence(int n, vector<int>& arr) {
-        vector<int> seq(n,1);
-        vector<int> child(n);
-        for(int i=0;i<n;i++) child[i]=i;
-        
-        int max_ind=-1,maxi=0;
-        for(int i=n-1;i>=0;i--){
-            for(int j=i+1;j<n;j++){
-                if(arr[j]>arr[i] && seq[j]+1>seq[i]){
-                    seq[i]=seq[j]+1;
-                    child[i]=j;
-                }
+    // dekho prev ko 0 se aage iterate kra rhe
+    // to islie lexicographically smallest aa hi jayega because jo first prev satisfy kra dega wo hi ayega (since > hai >= nahi)
+
+    vector<int> getLIS(vector<int>& nums) {
+    	int n = nums.size();
+    	vector<int> lis_ending(n, 1);
+    	vector<int> parent(n, -1);
+    	int max_val = 0;
+    	int last_ind = -1;
+    	for(int i=0;i<n;i++) {
+    	    for(int prev = 0;prev < i;prev++) {
+    	        if(nums[prev] < nums[i] && lis_ending[prev] + 1 > lis_ending[i]) {
+    	            lis_ending[i] = lis_ending[prev] + 1;
+    	            parent[i] = prev;
+    	        }
+    	    }
+            // ye yaha par hi likhna wrna agar i=0 hua to andar jayega hi nahi
+            if(lis_ending[i] > max_val) {
+                max_val = lis_ending[i];
+                last_ind = i;
             }
-            if(seq[i]>=maxi){
-                maxi=seq[i];
-                max_ind=i;
-            }
-        }
-        vector<int>ans={arr[max_ind]};
-        int i=max_ind;
-        while(child[i]!=i){
-            ans.push_back(arr[child[i]]);
-            i=child[i];
-        }
-        return ans;
+    	}
+    	vector<int> ans;
+    	while(parent[last_ind]!=-1) {
+    	    ans.push_back(nums[last_ind]);
+    	    last_ind = parent[last_ind];
+    	}   
+        ans.push_back(nums[last_ind]);
+        reverse(ans.begin(), ans.end());
+    	return ans;
     }
 
 // Ye rha O(nlogn) me printing

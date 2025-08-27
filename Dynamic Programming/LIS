@@ -47,13 +47,20 @@ LC link: https://leetcode.com/problems/longest-increasing-subsequence/
         return prev[n];
     }
 
-    // Here is the optimal Nlog n approach
+    // Here is the optimal Nlog n approach with printing of any valid 
+    // Longest increasing subsequence
     int lengthOfLIS(vector<int>& arr) {
     	vector<int> arr;
+        unordered_map<int,int> inserted_at;
         for(int i=0;i<nums.size();i++) {
             int idx = lower_bound(arr.begin(), arr.end(), nums[i]) - arr.begin();
             if(idx == arr.size()) arr.push_back(nums[i]);
             else arr[idx] = nums[i];
+            inserted_at[idx+1] = nums[i];
         }
-    	return arr.size();
+        for(int i=1;i<=arr.size();i++) {
+            cout << inserted_at[i] << " ";
+        }
+        cout << endl;
+        return arr.size();
     }

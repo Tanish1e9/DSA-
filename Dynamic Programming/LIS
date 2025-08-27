@@ -49,16 +49,11 @@ LC link: https://leetcode.com/problems/longest-increasing-subsequence/
 
     // Here is the optimal Nlog n approach
     int lengthOfLIS(vector<int>& arr) {
-    	vector<int>seq;
-    	int ans=0;
-    	for(int i=0;i<arr.size();i++){
-    		if(seq.empty() || seq.back()<arr[i]) seq.push_back(arr[i]);
-    		else{
-    			auto lb = lower_bound(seq.begin(),seq.end(),arr[i]);
-    			*lb = arr[i];
-    		}
-    		int s=seq.size();
-    		ans = max(ans,s);
-    	}
-    	return ans;
+    	vector<int> arr;
+        for(int i=0;i<nums.size();i++) {
+            int idx = lower_bound(arr.begin(), arr.end(), nums[i]) - arr.begin();
+            if(idx == arr.size()) arr.push_back(nums[i]);
+            else arr[idx] = nums[i];
+        }
+    	return arr.size();
     }

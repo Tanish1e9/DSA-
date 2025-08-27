@@ -1,32 +1,33 @@
 GFG link: https://www.geeksforgeeks.org/problems/printing-longest-increasing-subsequence/1
 
-    // yaha arr me apna ans store hoga
-    // memo[i][last] denotes length of LIS considering only nums[i...n-1] with the index of the last element picked as 'last'
-    // to shuru se hi chal rhe h aur jaha bhi le skte waha le le rhe
-    // kyunki shuru se chal rhe h to lexicographically smallest hi ayega
-    vector<int> getLIS(vector<int>& nums) {
-    	vector<int> arr;
-    	int n = nums.size();
-    	vector<vector<int>> memo(n+1, vector<int>(n+1, 0));
-    
-    	for(int i=n-1;i>=0;i--) {
-    		memo[i][n] = max(1+memo[i+1][i], memo[i+1][n]);
-    		for(int last=i-1;last>=0;last--) {
-    			if(nums[i] > nums[last]) memo[i][last] = max(memo[i+1][last], 1 + memo[i+1][i]);
-    			else memo[i][last] = memo[i+1][last];
-    		}
-    	}
-    
-    	int max_len = memo[0][n];
-    	int last = n;
-    	for(int i=0;i<n;i++) {
-    		if(memo[i+1][i] == max_len - arr.size() - 1) {
-    			arr.push_back(nums[i]);
-    			last = i;
-    		}
-    	}
-    
-    	return arr;
+    // yaha seq[i] denotes LIS length starting at arr[i]
+    // aur fir to backtrack kr rhe samajh aa hi rha h
+    // lexicographically smallest index waala LIS chahye islie dekho jitna shuru ka element le sake wo lia gya h har jagah
+    vector<int> longestIncreasingSubsequence(int n, vector<int>& arr) {
+        vector<int> seq(n,1);
+        vector<int> child(n);
+        for(int i=0;i<n;i++) child[i]=i;
+        
+        int max_ind=-1,maxi=0;
+        for(int i=n-1;i>=0;i--){
+            for(int j=i+1;j<n;j++){
+                if(arr[j]>arr[i] && seq[j]+1>seq[i]){
+                    seq[i]=seq[j]+1;
+                    child[i]=j;
+                }
+            }
+            if(seq[i]>=maxi){
+                maxi=seq[i];
+                max_ind=i;
+            }
+        }
+        vector<int>ans={arr[max_ind]};
+        int i=max_ind;
+        while(child[i]!=i){
+            ans.push_back(arr[child[i]]);
+            i=child[i];
+        }
+        return ans;
     }
 
 // Ye rha O(nlogn) me printing

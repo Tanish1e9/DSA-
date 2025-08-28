@@ -1,0 +1,37 @@
+LC link: https://leetcode.com/problems/maximal-square/description/
+
+// Maximal rectangle h na
+// bas waha square lene ka koshish kia gya h slight condition me change h and we are done
+
+int max_area(vector<int> &arr) {
+    int n = arr.size();
+    int ans = 0;
+    stack<int> st;
+    for(int i=0;i<=n;i++) {
+        while(!st.empty() && (i==n || arr[st.top()] >= arr[i])) {
+            int ht = arr[st.top()];
+            int wd = i;
+            st.pop();
+            if(!st.empty()) wd = i-st.top()-1;
+            
+            int area = min(ht, wd) * min(ht, wd);
+            ans = max(ans, area);
+        }
+        if(i<n) st.push(i);
+    }
+    return ans;
+}
+int maximalSquare(vector<vector<char>>& matrix) {
+    int n = matrix.size();
+    int m = matrix[0].size();
+    int ans = 0;
+    vector<int>next(m,0);
+    for(int i=n-1;i>=0;i--) {
+        for(int j=0;j<m;j++) {
+            if(matrix[i][j] == '1') next[j]++;
+            else next[j] = 0;
+        }
+        ans = max(ans, max_area(next));
+    }
+    return ans;
+}

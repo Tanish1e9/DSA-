@@ -82,7 +82,8 @@ LC link: https://leetcode.com/problems/number-of-longest-increasing-subsequence/
     // aur baki jab bhi arr.size() - 1 ke jagah nums[i] jaa rha, we add that into our ans
     // isko chahte to vector<pair<int,int>> krke first inserted_at ka kaam krta, second prefix_sum ka
     // par wo thoda unclean lagega islie nahi kie h, space complexity to same hi hoga
-
+    // sirf current i ka hi na num_lis alag se calculate krna h fir usko to prefix sum me daal denge aage jroorat hi ni padega
+    // islie num_lis array banane ki bhi jroorat nahi h
     // Ek GFG pe article h O(nlogn), O(n) me krne ka using segment trees, dekh lena kabhi
 
     int bin_search(vector<int>&vec, int el, vector<int> &nums) {

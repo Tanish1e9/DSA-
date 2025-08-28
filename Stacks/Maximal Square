@@ -52,8 +52,7 @@ int maximalSquare(vector<vector<char>>& matrix) {
                 int right = memo[i][j+1];
                 int down = memo[i+1][j];
                 int diag = memo[i+1][j+1];
-                int curr = min({down, right, diag}) + 1;
-                memo[i][j] = max(1, curr);
+                memo[i][j] = min({down, right, diag}) + 1;
             }
             final_ans = max(final_ans, memo[i][j]*memo[i][j]);
         }

@@ -1,5 +1,6 @@
 LC link: https://leetcode.com/problems/maximal-square/description/
 
+// O(n*m*m)  <- Not optimal
 // Maximal rectangle h na
 // bas waha square lene ka koshish kia gya h slight condition me change h and we are done
 
@@ -34,4 +35,28 @@ int maximalSquare(vector<vector<char>>& matrix) {
         ans = max(ans, max_area(next));
     }
     return ans;
+}
+
+
+// Ye optimal h TC wise ab space optimisation krte rhna
+int maximalSquare(vector<vector<char>>& matrix) {
+    int n = matrix.size();
+    int m = matrix[0].size();
+    // memo[i][j] denotes the largest square "side length" from [(i,j)...(n-1,m-1)]
+    vector<vector<int>> memo(n+1, vector<int>(m+1,0));
+    int final_ans = 0;
+    for(int i=n-1;i>=0;i--) {
+        for(int j=m-1;j>=0;j--) {
+            if(matrix[i][j]=='0') memo[i][j] = 0;
+            else {
+                int right = memo[i][j+1];
+                int down = memo[i+1][j];
+                int diag = memo[i+1][j+1];
+                int curr = min({down, right, diag}) + 1;
+                memo[i][j] = max(1, curr);
+            }
+            final_ans = max(final_ans, memo[i][j]*memo[i][j]);
+        }
+    }
+    return final_ans;
 }

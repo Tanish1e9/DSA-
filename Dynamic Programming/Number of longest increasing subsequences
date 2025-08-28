@@ -32,6 +32,9 @@ LC link: https://leetcode.com/problems/number-of-longest-increasing-subsequence/
     // Ye O(n^2), O(n) !!!! TC thoda kam ho jayega usse best and average case me
     // Mtlb wahi printing LIS in nlogn wala approach lie h
     // har index pe kon kon aa chuka h usko store krte ja rhe
+    // aur jo bhi aage aane wale element se chota h usko ginte ja rhe
+    // final ans ke lie to saath me hi maximum wale ka lete jaa rhe sum
+
     int findNumberOfLIS(vector<int>& nums) {
         int n = nums.size();
         vector<int> num_lis(n, 0);
@@ -97,31 +100,31 @@ LC link: https://leetcode.com/problems/number-of-longest-increasing-subsequence/
     }
     int findNumberOfLIS(vector<int>& nums) {
         int n = nums.size();
-        vector<int> num_lis(n, 0);
+        
         vector<int> arr;
         vector<vector<int>> inserted_at;
         vector<vector<int>> prefix_sum;
         int res = 0;
         for(int i=0;i<n;i++) {
             int idx = lower_bound(arr.begin(), arr.end(), nums[i]) - arr.begin();
-
+            int num_lis = 0;
             if(idx > 0) {
                 int index = bin_search(inserted_at[idx-1], nums[i], nums);
                 auto &vec = prefix_sum[idx-1];
-                num_lis[i] += vec.back() - (index>=0 ? vec[index] : 0);
-            } else num_lis[i] = 1;
+                num_lis += vec.back() - (index>=0 ? vec[index] : 0);
+            } else num_lis = 1;
 
             if(idx == arr.size()) {
                 inserted_at.push_back({i});
-                prefix_sum.push_back({num_lis[i]});
+                prefix_sum.push_back({num_lis});
                 arr.push_back(nums[i]);
-                res = num_lis[i];
+                res = num_lis;
             }
             else {
                 inserted_at[idx].push_back(i);
-                prefix_sum[idx].push_back(prefix_sum[idx].back() + num_lis[i]);
+                prefix_sum[idx].push_back(prefix_sum[idx].back() + num_lis);
                 arr[idx] = nums[i];
-                if(idx == arr.size()-1) res += num_lis[i];
+                if(idx == arr.size()-1) res += num_lis;
             }
         }
         return res;

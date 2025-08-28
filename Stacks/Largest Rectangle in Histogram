@@ -1,65 +1,36 @@
 LC link: https://leetcode.com/problems/largest-rectangle-in-histogram/
 
-// ye to ekdum subarray minimums jaisa sawaal ho gya same tarike se ho bhi gya h 
-// but we can do it in single pass check the optimal solution also below
+// Dekh brute force me to simple hai
+// point ye hai ki har bar se jitna ho sake left jaayenge, height minimise krte hue to area saara cover ho jayega
 
     int largestRectangleArea(vector<int>& arr) {
-        // int n=arr.size();
-        // int ans=0;
-        // for(int i=0;i<n;i++){
-        //     int len=1;
-        //     for(int j=i-1;j>=0;j--){
-        //         if(arr[j]>=arr[i]) len++;
-        //         else break;
-        //     }
-        //     for(int j=i+1;j<n;j++){
-        //         if(arr[j]>=arr[i]) len++;
-        //         else break;
-        //     }
-        //     ans = max(ans,arr[i]*len);
+        int n = arr.size();
+        int ans = 0;
+        // for(int i=0;i<n;i++) {
+        //     int ht = 1e9;
+        //     for(int j=i;j>=0;j--) {
+        //         ht = min(ht, arr[j]);
+        //         ans = max(ans, ht * (i-j+1));
+        //     } 
         // }
-        // return ans;
 
-        int n=arr.size();
-        vector<int>left(n),right(n);
-        stack<int>s;
-        for(int i=0;i<n;i++){
-            while(!s.empty() && arr[s.top()]>=arr[i]) s.pop();
-            if(s.empty()) left[i]=i+1;
-            else left[i]=i-s.top();
-            s.push(i);
-        }
-        s=stack<int>();
-        for(int i=n-1;i>=0;i--){
-            while(!s.empty() && arr[s.top()]>arr[i]) s.pop();
-            if(s.empty()) right[i]=n-i;
-            else right[i]=s.top()-i;
-            s.push(i);
-        }
-        int ans=0;
-        for(int i=0;i<n;i++){
-            int area = (left[i]+right[i]-1)*arr[i];
-            ans=max(ans,area);
-        }
-        return ans;
-    }
+// Optimal ke lie observe krna ki agar ek lamba bar ke baad chota bar aa gya to kya uss lambe baar ka kaam h
+// to bas uss lambe baar ke lie rightmost index mil hi chuka h
+// left index nikalwana h
+// to increasing order me agar store hoga stack me to aa jayega na
 
-// ye wala optimisation to sum of subarray mins aur ranges me bhi laga die h
-// just insight ye lena tha ki we can maintain only ek side ka and dusre side ka pop krate time mil jata h
 
-    int largestRectangleArea(vector<int>& arr) {
-        int n=arr.size();
-        int ans=0;
-        stack<int>s;
-        for(int i=0;i<=n;i++){
-            while(!s.empty() && (i==n || arr[s.top()] > arr[i])){
-                int el = s.top();s.pop();
-                int right = i-el;
-                int left = el+1;
-                if(!s.empty()) left = el-s.top();
-                ans = max(ans,(right+left-1)*arr[el]);
+        stack<int> st;
+        for(int i=0;i<=n;i++) {
+            while(!st.empty() && (i==n || arr[st.top()] >= arr[i])) {
+                int curr = st.top(); 
+                st.pop();
+                
+                if(!st.empty()) ans = max(ans, arr[curr] * (i-st.top()-1));
+                else ans = max(ans, arr[curr] * i);
             }
-            s.push(i);
+            if(i<n) st.push(i);
         }
+
         return ans;
     }

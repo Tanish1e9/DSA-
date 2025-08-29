@@ -1,0 +1,27 @@
+LC link: https://leetcode.com/problems/count-paths-that-can-form-a-palindrome-in-a-tree/description/
+
+long long ans = 0;
+void dfs(int node, auto &adj, auto &levels, string &s,auto &mpp) {
+    for(int k=0;k<=25;k++) {
+        if(mpp.contains(levels[node] ^ (1<<k))) ans += mpp[levels[node] ^ (1<<k)];
+    }
+    if(mpp.contains(levels[node])) ans += mpp[levels[node]];
+    mpp[levels[node]]++;
+
+    for(auto el:adj[node]) {
+        levels[el.first] = (1<<el.second) ^ levels[node];
+        dfs(el.first, adj, levels, s, mpp);
+    }
+}
+long long countPalindromePaths(vector<int>& parent, string s) {
+    int n = parent.size();
+    vector<int> levels(n, 0);
+    vector<vector<pair<int,int>>> adj(n);
+    for(int i=1;i<n;i++) {
+        adj[parent[i]].push_back({i, s[i]-'a'});
+    }
+    unordered_map<int,long long> mpp;
+    dfs(0,adj,levels,s,mpp);
+
+    return ans;
+}

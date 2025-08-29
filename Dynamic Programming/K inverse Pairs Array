@@ -103,3 +103,25 @@ LC link: https://leetcode.com/problems/k-inverse-pairs-array/
             }
         }
         return next[0];
+
+
+// Jaise upar inv ko increase krte jaa rhe and maan rhe ki end me k ke barabar ho gya to sahi wrna galat na
+// yaha pe inv ko decrease krte bhi ja skte
+// To bas ulta DP sochoge to kuch fayda nahi hoga bas ek hi loop me convert kr skte ho
+
+const int mod = 1e9+7;
+int kInversePairs(int n, int k) {
+    vector<int> next(k+1, 0);
+    next[0] = 1;
+    vector<int> next_pre_sum(k+1, 1);
+    for(int i=n;i>=1;i--) {
+        for(int inv=0;inv<=k;inv++) {
+            next_pre_sum[inv] = next[inv];
+            if(inv>=1) next_pre_sum[inv] = (next_pre_sum[inv] + next_pre_sum[inv-1])%mod;
+            int limit = min(i-1, inv);
+            next[inv] = next_pre_sum[inv];
+            if(inv-limit>=1) next[inv] = (next[inv] - next_pre_sum[inv-limit-1] + mod)%mod;
+        }
+    }
+    return next[k];
+}

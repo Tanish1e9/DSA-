@@ -28,3 +28,59 @@ LC link: https://leetcode.com/problems/count-the-number-of-inversions/
         memset(dp,-1,sizeof(dp));
         return f(0,0,n,requirements,0);
     }
+
+
+// Ulta DP hai ye
+// yaha if(i==1) return inv==0 kyu nahi kie? kyunki 1 number se bhi to sirf 0 hi inversions bante?
+// islie ki ho skta h req faltu si de de ki 1 number se aapko 1 banana h usme 0 return krna h na
+// agar inv maan lete h 0 aa gya to 0 return hona chahye since requirement satisfied nahi h
+// islie i==0 pe kie jab saara requirement poora ho chuka hoga
+// fir tabulate kr die h dekho, aur prefix_sum laga die waise hi bhut fast ho chuka h
+
+    const int mod = 1e9+7;
+    int memo[301][401];
+    int helper(int i, int j, int inv, auto &req) {
+        if(i==0) return inv==0;
+        if(memo[i][inv]!=-1) return memo[i][inv];
+        bool flag = false;
+        if(j>=0 && i == req[j][0] + 1) {
+            if(inv != req[j][1]) return 0;
+            flag = true;
+        }
+        int limit = min(i-1, inv);
+        int ans = 0;
+        for(int k=0;k<=limit;k++) {
+            ans = (ans + helper(i-1, j-flag, inv-k, req))%mod;
+        }
+        return memo[i][inv] = ans;
+    }
+    int numberOfPermutations(int n, vector<vector<int>>& req) {
+        sort(req.begin(), req.end());
+        // memset(memo, -1, sizeof(memo));
+        // return helper(n, req.size() - 1, req.back()[1], req);
+
+        memset(memo, 0, sizeof(memo));
+        int pre_sum[401];
+        memo[0][0] = 1;
+        int j=0;
+        for(int i=1;i<=n;i++) {
+            pre_sum[0] = memo[i-1][0];
+            for(int j=1;j<=400;j++) {
+                pre_sum[j] = (pre_sum[j-1] + memo[i-1][j])%mod;
+            }
+            if(i==req[j][0]+1) {
+                int inv = req[j][1];
+                int limit = min(i-1, inv);
+                memo[i][inv] = pre_sum[inv];
+                if(inv-limit>=1) memo[i][inv] = (memo[i][inv] + mod - pre_sum[inv-limit-1])%mod;
+                j++;
+            } else {
+                for(int inv=req[j][1];inv>=0;inv--) {
+                    int limit = min(i-1, inv);
+                    memo[i][inv] = pre_sum[inv];
+                    if(inv-limit>=1) memo[i][inv] = (memo[i][inv] + mod - pre_sum[inv-limit-1])%mod;
+                }
+            }
+        }
+        return memo[n][req.back()[1]];
+    }

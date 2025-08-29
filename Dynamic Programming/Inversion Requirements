@@ -84,3 +84,37 @@ LC link: https://leetcode.com/problems/count-the-number-of-inversions/
         }
         return memo[n][req.back()[1]];
     }
+
+
+// Space optimised
+const int mod = 1e9+7;
+int numberOfPermutations(int n, vector<vector<int>>& req) {
+    sort(req.begin(), req.end());
+
+    vector<int> prev(req.back()[1]+1, 0);
+    vector<int> pre_sum(req.back()[1]+1, 0);
+    prev[0] = 1;
+    int j=0;
+    for(int i=1;i<=n;i++) {
+        pre_sum[0] = prev[0];
+        for(int j=1;j<=req.back()[1];j++) {
+            pre_sum[j] = (pre_sum[j-1] + prev[j])%mod;
+        }
+        if(i==req[j][0]+1) {
+            int inv = req[j][1];
+            int limit = min(i-1, inv);
+            prev.assign(req.back()[1]+1, 0);
+
+            prev[inv] = pre_sum[inv];
+            if(inv-limit>=1) prev[inv] = (prev[inv] + mod - pre_sum[inv-limit-1])%mod;
+            j++;
+        } else {
+            for(int inv=req[j][1];inv>=0;inv--) {
+                int limit = min(i-1, inv);
+                prev[inv] = pre_sum[inv];
+                if(inv-limit>=1) prev[inv] = (prev[inv] + mod - pre_sum[inv-limit-1])%mod;
+            }
+        }
+    }
+    return prev[req.back()[1]];
+}

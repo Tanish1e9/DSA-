@@ -1,0 +1,126 @@
+CF link: https://codeforces.com/contest/2135/problem/C
+
+// 2 edge connected component mtlb ki iss component me jitne bhi edges h unme se koi bhi bridge nahi h
+// to basically bridges nikal ke unko hata do to ye 2ECC ban jaate h
+// actual graph can be imagined as a tree of nodes jisme nodes are the 2ECC
+// Iss question me thoda analysis krna h
+// (a,b) me >=2 paths ka exist krna is possible only through cycles
+// to fir cycles explore kro, to like any cycle of length l me l-2 consecutive nodes ka xor 0 hona chahye
+// to like p,q pakad lie and baakio ka xor zero aa gya na
+// now q, dusra node ko pakdo and same chiz lagake... we will get ki dusre node ka value p hoga
+// aur fir kuch aur paths consider krke we will get p^q=0 => p=q
+// also, odd length cycles me to p=q, so p=0 aa jayega
+// bas we are done to 2ECC me baant denge and to check whether it has odd cycle or not, we can use bipartite algorithm
+// and saath me ye bhi dekhna hoga ki already koi value aa gya h kya
+// koi 2 different values aa gye kya component me to uske lie bipartite me hi kr dia h
+// bipartite me ek aur modification h, hmlog chahte ki saare nodes visit ho jaye to return false, krne k bajay sab explore kro
+// bas ans store kr lo aisa kr dia h
+
+#include<bits/stdc++.h>
+using namespace std;
+#define int long long
+const int mod = 998244353;
+void dfs(int node, int par,auto &adj, auto &bridges, auto &time_start, auto &low, auto &vis, int &timer) {
+	timer++;
+	time_start[node] = timer;
+	low[node] = timer;
+	vis[node] = true;
+	for(int el:adj[node]) {
+		if(el == par) continue;
+		if(!vis[el]) {
+			dfs(el, node, adj, bridges, time_start, low, vis, timer);
+			low[node] = min(low[node], low[el]);
+			if(low[el] > time_start[node]) {
+				bridges.push_back({node, el});
+			}
+		} else {
+			low[node] = min(low[node], time_start[el]);
+		}
+	}
+}
+void find_bridges(int n, int m, auto &adj, auto &bridges) {
+	// given that the graph is connected so only one node dfs
+	vector<int> time_start(n+1,1e18), low(n+1,1e18);
+	vector<bool> vis(n+1, false);
+	int timer = -1;
+	dfs(1,-1,adj,bridges,time_start,low,vis,timer);
+}
+
+bool isBipartite(int node, int par, int col, auto &adj, auto &colours, int &num_nodes_empty, int &val, auto &weights) {
+	colours[node] = col;
+	if(val!=-2 && weights[node]!=-1) {
+		if(val==-1) val = weights[node];
+		else if(val != weights[node]) val = -2;
+	}
+	if(weights[node]==-1) num_nodes_empty++;
+
+	bool ans = true;
+	for(int el:adj[node]) {
+		if(colours[el]==-1) {
+			if(!isBipartite(el, node, (col+1)%2, adj, colours, num_nodes_empty, val, weights)) ans = false;
+		} else if(el!=par) {
+			if(colours[el] == col) ans = false;
+		}
+	}
+	return ans;
+}
+signed main() {
+	ios::sync_with_stdio(false);
+	cin.tie(nullptr);
+	cout.tie(nullptr);
+	int t;
+	cin >> t;
+	while(t--) {
+		int n, m, V;
+		cin >> n >> m >> V;
+		vector<int> weights(n+1);
+		for(int i=1;i<=n;i++) cin >> weights[i];
+		vector<vector<int>> adj(n+1);
+		for(int i=0;i<m;i++) {
+			int a, b;
+			cin >> a >> b;
+			adj[a].push_back(b);
+			adj[b].push_back(a);
+		}
+		vector<pair<int,int>> bridges;
+		find_bridges(n,m,adj,bridges);
+		for(auto &it:bridges) {
+			int a = it.first;
+			int b = it.second;
+			int idx = find(adj[a].begin(), adj[a].end(), b) - adj[a].begin();
+			swap(adj[a][idx], adj[a].back());
+			adj[a].pop_back();
+			idx = find(adj[b].begin(), adj[b].end(), a) - adj[b].begin();
+			swap(adj[b][idx], adj[b].back());
+			adj[b].pop_back();
+		}
+		// Now we have divided into 2 edge connected components
+		vector<int> colours(n+1, -1);
+		int ans = 1;
+		for(int i=1;i<=n;i++) {
+			if(colours[i]!=-1) continue;
+			int num_nodes_empty = 0;
+			int val = -1;
+			bool noOdd = isBipartite(i, -1, 0, adj, colours, num_nodes_empty, val, weights);
+			// isBipartite true => no odd length cycle
+			// two different values
+			if(val==-2) {
+				ans = 0;
+				break;
+			} 
+			if(!noOdd && val!=-1 && val!=0) {
+				ans = 0;
+				break;
+			}
+
+			if(num_nodes_empty == 0) continue;
+			
+			if(noOdd && val==-1) {
+				// even cycle all must be same
+				ans = (ans * V)%mod;
+			} 
+		}
+		cout << ans << endl;
+	}
+	return 0;
+} 

@@ -1,0 +1,78 @@
+CSES link: https://cses.fi/problemset/task/1748/
+
+#include<bits/stdc++.h>
+using namespace std;
+#define int long long
+const int mod = 1e9+7;
+class seg_tree{
+	public:
+	vector<int> seg;
+	seg_tree(int n) {
+		seg = vector<int>(4*n, 0);
+	}
+	int query(int ind, int low, int high, int l, int r) {
+		if(low>r || high<l) return 0;
+		if(l<=low && high<=r) return seg[ind];
+		int mid = low + (high-low)/2;
+		int left = query(2*ind+1, low, mid, l, r);
+		int right = query(2*ind+2, mid+1, high, l, r);
+		return (left + right)%mod;
+	}
+	void point_update(int ind, int low, int high, int k, int val) {
+		if(low>k || high<k) return;
+		if(low == high && low == k) {
+			seg[ind] = (seg[ind] + val)%mod;
+			return;
+		}
+		int mid = low + (high-low)/2;
+		point_update(2*ind+1, low, mid, k, val);
+		point_update(2*ind+2, mid+1, high, k, val);
+		seg[ind] = (seg[2*ind+1] + seg[2*ind+2])%mod;
+	}
+};
+static bool comp(const pair<int,int> &a, const pair<int,int> &b) {
+	return a.first < b.first;
+}
+signed main() {	
+	ios::sync_with_stdio(false);
+	cin.tie(nullptr);
+	cout.tie(nullptr);
+ 
+	int n;
+	cin >> n;
+	vector<pair<int,int>> nums(n);
+
+	for(int i=0;i<n;i++) {
+		cin >> nums[i].first;
+		nums[i].second = i;
+	}
+
+	sort(nums.begin(), nums.end());
+	vector<int> jagah(n);
+	for(int i=0;i<n;i++) {
+		jagah[nums[i].second] = i;
+	}
+
+	// mera simply intuition ye aa gya tha ki kisi index i ke lie
+	// 0 to i-1 me jitne bhi nums[i] se chote elements h unka sum krna h + 1 (apna khud ke lie)
+	// ab prefix_sum to laga nahi skte na because yaha range ko update krna padega
+	// also like map use krte to we dont know na kaha jaake insert hoga
+	// islie hmlog pehle hi sabhi elements ka kya jagah hoga ye pata kr lie
+	// aur fir hmlog bas iss jagah ke pehle waale tk ka prefix sum le lenge
+	// kyunki order me process krenge to ho skta h kuch chote elements ho jo aage ke index ke ho
+	// but unka to processing hua nahi hoga na to islie piche wale indices ke hisab se hi ans ayega
+	// aur yaha pe lower_bound kyu kie jagah[i] - 1 kyu nahi?
+	// kyunki elements duplicate bhi ho skte na to hmlog ko to chote tk chahye tha islie
+
+	seg_tree stree(n);
+	int ans = 0;
+	for(int i=0;i<n;i++) {
+		int sum = 1;
+		int idx = lower_bound(nums.begin(), nums.end(), make_pair(nums[jagah[i]].first, -1), comp) - nums.begin();
+		if(idx>=1) sum = (1 + stree.query(0,0,n-1,0,idx-1))%mod;
+		ans = (ans + sum)%mod;
+		stree.point_update(0,0,n-1,jagah[i],sum);
+	}
+	cout << ans << endl;
+	return 0;
+}

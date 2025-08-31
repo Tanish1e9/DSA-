@@ -1,0 +1,93 @@
+CSES link: https://cses.fi/problemset/task/3314/
+
+// Dekh yaha na question na a->b jaaoge na to a, b hi visited maana gya h 
+// aur dono taraf ja skte h
+// eg  20 15 17 35 25 40 12 19 13 12
+// 40->35->20->17->15  ... ye path ke kaaran 5 hai
+// ha to yaha har index ke lie we will find nearest greater than or equal element to the left and right
+// to ye to monotonic stack se aa jayega
+// now har ek index ke lie ek range aa jayega usme se maximum + 1 hi to ans hoga
+// ab main crux ki kis order me computation kre
+
+
+// ans is increasing order of elements me...
+// to bas fir to range maximas nikalte jana h... segment tree lag jayega
+
+
+#include<bits/stdc++.h>
+using namespace std;
+#define int long long
+class seg_tree{
+	public:
+	vector<int> seg;
+	seg_tree(int n) {
+		seg = vector<int>(4*n, 0);
+	}
+	int query(int ind, int low, int high, int l, int r) {
+		if(l>high || r<low) return -1;
+		if(l<=low && high<=r) return seg[ind];
+		int mid = low + (high-low)/2;
+		int left = query(2*ind+1, low, mid, l, r);
+		int right = query(2*ind+2, mid+1, high, l, r);
+		return max(left, right);
+	}
+	void point_update(int ind, int low, int high, int k, int val) {
+		if(k<low || high<k) return;
+		if(low==high && low==k)  {
+			seg[ind] = val;
+			return;
+		}
+		int mid = low + (high-low)/2;
+		point_update(2*ind+1, low, mid, k, val);
+		point_update(2*ind+2, mid+1, high, k, val);
+		seg[ind] = max(seg[2*ind+1], seg[2*ind+2]);
+	}
+};
+signed main() {
+	ios::sync_with_stdio(false);
+	cin.tie(nullptr);
+	cout.tie(nullptr);
+	int n;
+	cin >> n;
+	vector<pair<int,int>>arr(n);
+	for(int i=0;i<n;i++) {
+		cin >> arr[i].first;
+		arr[i].second = i;
+	}
+	seg_tree stree(n);
+	
+	vector<int> left(n), right(n);
+	stack<int> st;
+	for(int i=0;i<n;i++) {
+		while(!st.empty() && arr[st.top()].first < arr[i].first) {
+			right[st.top()] = i;
+			st.pop();
+		}
+		if(!st.empty()) left[i] = st.top();
+		else left[i] = -1;
+
+		if(!st.empty() && arr[st.top()].first == arr[i].first) {
+			right[st.top()] = i;
+			st.pop();
+		}
+
+		st.push(i);
+	}
+
+	while(!st.empty()) {
+		right[st.top()] = n;
+		st.pop();
+	}
+
+	sort(arr.begin(), arr.end());
+	vector<int> memo(n);
+	int res = 0;
+	for(int i=0;i<n;i++) {
+		int ans = stree.query(0,0,n-1,left[arr[i].second]+1, right[arr[i].second]-1);
+		memo[arr[i].second] = ans + 1;
+		res = max(res, ans + 1);
+		stree.point_update(0,0,n-1,arr[i].second,ans + 1);
+	}
+	cout << res << endl;
+	return 0;
+}

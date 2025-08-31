@@ -78,6 +78,12 @@ cout << out.str(); (at the end)
 l = decltype(l)( a.erase(next(l).base()) );
 
 
+// Aise likhte h lower bound me comparator ... const lagana hoga ... aur jis type ke array me elements h
+// usi type ka banake daalna hoga ... to dummy values daal do aur comparator sahi se likh do
+static bool comp(const pair<int,int> &a, const pair<int,int> &b) {
+	return a.first < b.first;
+}
+int idx = lower_bound(nums.begin(), nums.end(), make_pair(nums[jagah[i]].first, -1), comp) - nums.begin();
 
 string ke end me ek character daalna ho to 
 - s.push_back('c')    

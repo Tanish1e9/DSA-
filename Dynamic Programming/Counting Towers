@@ -1,0 +1,40 @@
+CSES link: https://cses.fi/problemset/task/2413
+
+// Dekh ye na bhut mathematical question hai 
+// sabse pehle sirf 1 width ko consider kro ... usme recurrence likhoge ki like i=1;i<=height tk sabke lie dp[height-i] ka sum
+// isko fir thik se observe kroge to pata chalega ye to 2 ke powers hi h
+// ab fir 2 width ke lie dekho... aisa sochna hi padega ki har 1<=i<=height ke lie some 0<=j<i khojna hoga jaha
+// j tk split rhenge blocks fir baaki jagah ek complete block rhega... aisa nahi kroge to double counting hota rhega
+// ab fir ye bhi observe kroge ki j wala loop me to sirf 1 width wale ka squares ka sum hi ho rha h...2 ke powers wala lagake
+// you can get that in one loop now... ab isko copy pe likho and just solve ... you will reach the final recurrence
+// ye jo final recurrence hai usme >=3 ke lie hi valid h ... infact CSES ka solution tk wrong answer deta h
+
+
+#include<bits/stdc++.h>
+using namespace std;
+#define int long long
+const int mod = 1e9+7;
+ 
+int dp2[1000001];
+ 
+signed main() {	
+	ios::sync_with_stdio(false);
+	cin.tie(nullptr);
+	cout.tie(nullptr);
+	
+	dp2[1] = 2;
+	dp2[2] = 8;
+	for(int i=3;i<=(int)1e6;i++) {
+		dp2[i] = ((6ll*dp2[i-1])%mod - (7ll*dp2[i-2])%mod + mod)%mod;
+	}
+ 
+	int t;
+	cin >> t;
+	while(t--) {
+		int n;
+		cin >> n;
+		cout << dp2[n] << "\n";
+	}
+ 
+	return 0;
+}

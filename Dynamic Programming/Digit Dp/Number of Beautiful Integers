@@ -2,6 +2,7 @@ LC link: https://leetcode.com/problems/number-of-beautiful-integers-in-the-range
 
     // dekh isme flag daalna islie h na because number agar abhi tk start hi ni hua to 0 as even digit ni count hoga na
     // ye galti mat krna baaki similar hi h question kuch khaas nhi
+    // hmesha dhyan dena left to right hi jayenge because limit/restricted ka concept hi tabhi valid hoga
 
     int dp[12][2][30][20][2];
     int f(string&s,int idx,int restricted,int cnt,int div,int flag,int k){
@@ -27,3 +28,33 @@ LC link: https://leetcode.com/problems/number-of-beautiful-integers-in-the-range
         memset(dp,-1,sizeof(dp));
         return right - f(l,0,1,0,0,0,k);
     }
+
+
+// M-2: count_even aur count_odd ko alag store kr lo
+
+int dp[11][2][11][11][21][2];
+int helper(string &s, int id, bool tight, int count_even, int count_odd, int modulo, bool flag, int k) {
+    if(id == s.size()) return (count_even == count_odd) && (modulo == 0);
+    if(dp[id][tight][count_even][count_odd][modulo][flag]!=-1) return dp[id][tight][count_even][count_odd][modulo][flag];
+    int ans = 0;
+    int limit = tight ? (s[id]-'0') : 9;
+    for(int i=0;i<=limit;i++) {
+        int curr = pow(10,s.size()-1-id);
+        curr = (curr * i)%k;
+        int updated_even = count_even;
+        if((flag || i>0) &&  (i%2==0)) updated_even++;
+        int updated_odd = count_odd + (i%2==1);
+        ans += helper(s, id+1, tight && (i==s[id]-'0'), updated_even, updated_odd, (curr + modulo)%k, flag || (i>0), k);
+
+    }
+    return dp[id][tight][count_even][count_odd][modulo][flag] = ans;
+}
+int numberOfBeautifulIntegers(int low, int high, int k) {
+    string s = to_string(high);
+    memset(dp, -1, sizeof(dp));
+    int ans = helper(s, 0, 1, 0, 0, 0, 0, k);
+    s = to_string(low-1);
+    memset(dp, -1, sizeof(dp));
+    ans -= helper(s, 0, 1, 0, 0, 0, 0, k);
+    return ans;
+}

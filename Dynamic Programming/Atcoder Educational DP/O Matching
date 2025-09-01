@@ -1,4 +1,11 @@
 // ye dhyan rakhna ki 64 tk hi ho agar elements to ek single integer hi vis array ki tarah kaam kr skta 
+// Yaha i ko bhi dp me daal doge to accept ho jayega no problem but ni jroorat hai kyunki
+// Yaha men hmesha increasing order me hi assign ho rhe h
+// to kisi bhi waqt vis ko dekhke (usme jitne bhi set bits hai), unse we can determine ki kitne men visited honge
+// aur wo men shuruwat waale hi honge because recursion aise work kr rha h
+// mtlb first man ko assign kie bina to aage hi ni badhenge na
+// similarly second ko assign kie bina aage hi ni badhenge na
+// to aisa ho ni skta ki kuch set of visited women ho with different sets of visited men, wo hmesha shuruwat waale hi honge
 
 #include<bits/stdc++.h>
 using namespace std;

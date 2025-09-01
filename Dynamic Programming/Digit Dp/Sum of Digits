@@ -1,5 +1,8 @@
 Atcoder Dp contest question S- Digit Sum
 
+// Isme dhyan dena ki input itna bada ho skta h ki integer me aayega hi nahi
+// direct string hi input lena hoga
+
 #include<bits/stdc++.h>
 using namespace std;
 #define int long long

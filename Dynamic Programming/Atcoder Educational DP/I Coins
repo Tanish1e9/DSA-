@@ -1,5 +1,6 @@
 // Target sum jaisa hi h ab isko tabulation space optimisation sab kr lena but basic idea dekh le yahi h
 
+// M-1: Yaha exact heads ke hisab se code likha gya h
 #include<bits/stdc++.h>
 using namespace std;
 #define int long long
@@ -35,3 +36,43 @@ signed main(){
 	cout << fixed << setprecision(9) << func(arr) << endl;
     return 0;
 }
+
+
+
+// M-2 Yaha atleast heads ke hisab se code likhe h
+#include<bits/stdc++.h>
+using namespace std;
+#define int long long
+double dp[3000][3000];
+double helper(int i, int heads, vector<double> &arr) {
+	if(i==arr.size()) {
+		if(heads<=0) return 1;
+		return 0;
+	}
+	if(dp[i][heads]!=-1) return dp[i][heads];
+
+	double pick = arr[i] * helper(i+1, heads-1, arr);
+	double npick = (1-arr[i]) * helper(i+1, heads, arr);
+	return dp[i][heads] = pick + npick;
+}
+signed main() {
+	ios::sync_with_stdio(false);
+	cin.tie(nullptr);
+	cout.tie(nullptr);
+	for(int i=0;i<3000;i++) {
+		fill(dp[i], dp[i]+3000, -1);
+	}
+	int n;
+	cin >> n;
+	vector<double> arr(n);
+	for(int i=0;i<n;i++) {
+		cin >> arr[i];
+	}
+	
+	cout << fixed << setprecision(9) << helper(0,n/2+1, arr); << endl;
+	return 0;
+}
+
+
+
+

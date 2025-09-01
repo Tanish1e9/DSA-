@@ -1,0 +1,68 @@
+CSES link: https://cses.fi/problemset/task/3359/
+
+// Dekh yaha initially to socha ki memo me string store kr denge but wo MLE ho jayega
+// Fir socha ki visited mark kr skte but problem laga ki koi ho skta h chote path se kisi visited cell pe pahuche
+// Fir ek realisation kro ki koi bhi cell ho wo (i+j)th position hi ban skta h ans ka aur koi position nahi ban skta
+// to bas agar ek cell pe visit kre to ans ke ye wale position ko uss cell ke value rakh skte (minimum waghera dekh lena)
+// to vis rakha ja skta h fir
+// aur yahi crux tha iss question ka
+// har ek level pe next level pe jo bhi minimum possible character aa rha na usko store kr lo
+// fir jab next level ka processing kr rhe hoge to unhi nodes ko lena jinka value ye minimum possible character ho
+// and boom done
+
+
+#include<bits/stdc++.h>
+using namespace std;
+#define int long long
+signed main(){
+    ios_base::sync_with_stdio(0);
+    cin.tie(0);
+    cout.tie(0);
+	int n;
+	cin >> n;
+	vector<vector<char>> grid(n, vector<char>(n));
+	for(int i=0;i<n;i++) {
+		for(int j=0;j<n;j++) {
+			cin >> grid[i][j];
+		}
+	}
+
+	vector<vector<bool>> vis(n, vector<bool>(n, false));
+
+	char mini = grid[0][0];
+	string ans;
+
+	queue<pair<int,int>> q;
+	q.push({0,0});
+	vis[0][0] = 1;
+	while(!q.empty()) {
+		int level_size = q.size();
+		char next = 'a';
+		
+		while(level_size--) {
+			auto curr = q.front();
+			q.pop();
+			int i = curr.first;
+			int j = curr.second;
+			if(grid[i][j] != mini) continue;
+			
+			if(i+1 < n && !vis[i+1][j]) {
+				vis[i+1][j] = 1;
+				next = min(next, grid[i+1][j]);
+				q.push({i+1, j});
+			}
+			
+			if(j+1 < n && !vis[i][j+1]) {
+				vis[i][j+1] = 1;
+				next = min(next, grid[i][j+1]);
+				q.push({i, j+1});
+			}
+		}
+		ans += mini;
+		mini = next;
+	}
+
+	cout << ans << "\n";
+
+    return 0;
+}

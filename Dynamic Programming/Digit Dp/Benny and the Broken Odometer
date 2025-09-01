@@ -1,6 +1,40 @@
 Hackerearth Link: https://www.hackerearth.com/problem/algorithm/benny-and-the-broken-odometer/?purpose=login&source=problem-page&update=google
 
-// isme simply numbers count kie h jinme 3 digit naa ho
+// M-1: Kitne number skip krne h wo nikal lo... joki wohi honge jinme 3 aata
+// Fir end me subtract kr dena ans ke lie
+#include<bits/stdc++.h>
+using namespace std;
+#define int long long
+int dp[11][2][2];
+int helper(string &s, int id, bool tight, bool three) {
+	if(id==s.size()) return three;
+	if(dp[id][tight][three]!=-1) return dp[id][tight][three];
+	int limit = tight ? (s[id]-'0') : 9;
+	int ans = 0;
+	for(int i=0;i<=limit;i++) {
+		ans += helper(s, id+1, tight && (i==s[id]-'0'), three || (i==3));
+	}
+	return dp[id][tight][three] = ans;
+}
+signed main() {
+	ios::sync_with_stdio(false);
+	cin.tie(0);
+	cout.tie(0);
+	int t;
+	cin >> t;
+	while(t--) {
+		memset(dp, -1, sizeof(dp));
+		int n;
+		cin >> n;
+		string s;
+		s = to_string(n);
+		cout << n - helper(s,0,1,0) << endl;
+	}
+	return 0;
+}
+
+
+// M-2: Sidhe numbers count kr lo jinme 3 digit naa ho
 
 #include<bits/stdc++.h>
 using namespace std;

@@ -44,3 +44,6 @@
 - Also kisi bhi Euler path ka size m+1 hota h pretty obviously
 - Koi bhi edge agar kisi cycle ka part hai to Bridge nahi hoga else hoga
 - Articulation point ke jitne bhi neighbours hai, agar wo kisi same cycle ke part hai, to concerned point is not an articulation point <- Ye GALAAAAAAAAAAAAAAAAATTTTTTTTTTTTTTTT hai
+
+- Kabhi a->b me k length ke kitne paths present h by traversing the same edges agar count krna ho, to simply adjacency matrix ka power k nikal lena
+

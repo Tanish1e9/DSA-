@@ -1,3 +1,8 @@
+// M-1: Simple
+// losing aur winning pe hi categorise krenge base case is dp[0] which is a losing state
+// now har jagah transition kro, if you find even one losing state, then the current is a winning state
+// else current is losing
+
 #include<bits/stdc++.h>
 using namespace std;
 #define int long long
@@ -25,4 +30,40 @@ signed main(){
 	sort(arr.begin(),arr.end());
 	f(arr,k);
     return 0;
+}
+
+
+// M-2 : Sprague Grundy theorem: this also works mex nikalna hota h bas
+// kabhi multiple games ho aise to bas sabka xor kr dena h
+#include<bits/stdc++.h>
+using namespace std;
+#define int long long
+signed main() {
+	ios::sync_with_stdio(false);
+	cin.tie(nullptr);
+	cout.tie(nullptr);
+	
+	int n, k;
+	cin >> n >> k;
+	vector<int> moves(n);
+	for(int i=0;i<n;i++) cin >> moves[i];
+
+	vector<int> dp(k+1);
+	dp[0] = 0;
+	for(int i=1;i<=k;i++) {
+		set<int> s;
+		for(int j:moves) {
+			if(i>=j) s.insert(dp[i-j]);
+		}
+		int start = 0;
+		while(s.count(start) > 0) {
+			start++;
+		}
+		dp[i] = start;
+	}
+
+	if(dp[k]==0) cout << "Second" << endl;
+	else cout << "First" << endl;
+
+	return 0;
 }

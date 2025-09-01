@@ -5,6 +5,9 @@ CSES link: https://cses.fi/problemset/task/2220/
 // unko adjacent me thodi ginenge but aisa bhi ni h ki zero ko ignore kr de because bich me zero aa gya to
 // islie flag bana dia h 
 // aur raaste me hi invalid numbers ko avoid kr de rhe iska mtlb jo bhi s.size() tk pahuch rha wo valid hi h islie 1 return kr do
+// basically har number na ek ek krke gina jaata h
+// id==s.size() pe pahuche iska mtlb koi ek number abhi gina gya h iske lie yes ya no bolna h based on the available data
+// jaise count digit one me end me cnt return kie the... kyunki uss ek number ke lie jo consider ho rha tha, uska ans cnt tha
 
 #include<bits/stdc++.h>
 using namespace std;

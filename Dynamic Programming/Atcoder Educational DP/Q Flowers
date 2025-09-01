@@ -1,3 +1,77 @@
+// M-1
+// Yaha na heights agar N se bounded na bhi ho to chalega
+// isko index compression kehte h segment tree me
+// Yaha heights ka distinct hona jroor use kia gya h waise agar wo na bhi ho to simply we can do a binary search 
+// and get around it ... Increasing subsequences 2 dekh lo CSES ka
+
+#include<bits/stdc++.h>
+using namespace std;
+#define int long long
+class seg_tree{
+	public:
+	vector<int> seg;
+	seg_tree(int n) {
+		seg = vector<int>(4*n, 0);
+	}
+	int query(int ind, int low, int high, int l, int r) {
+		if(r < low || high < l) return -1;
+		if(l<=low && high<=r) return seg[ind];
+		int mid = low + (high-low)/2;
+		int left = query(2*ind+1, low, mid, l, r);
+		int right = query(2*ind+2, mid+1, high, l, r);
+		return max(left, right);
+	}
+	
+	void point_update(int ind, int low, int high, int k, int val) {
+		if(k<low || high<k) return;
+		if(low == high && low == k) {
+			seg[ind] = val;
+			return;
+		}
+		int mid = low + (high-low)/2;
+		point_update(2*ind+1, low, mid, k, val);
+		point_update(2*ind+2, mid+1, high, k, val);
+		seg[ind] = max(seg[2*ind+1], seg[2*ind+2]);
+	}
+};
+
+signed main() {
+	ios::sync_with_stdio(false);
+	cin.tie(nullptr);
+	cout.tie(nullptr);
+	
+	int n;	
+	cin >> n;
+	vector<pair<int, int>> heights(n);
+	vector<int> beauty(n);
+	for(int i=0;i<n;i++) {
+		cin >> heights[i].first;
+		heights[i].second = i;
+	}
+	for(int i=0;i<n;i++) cin >> beauty[i];
+	vector<int> jagah(n);
+	sort(heights.begin(), heights.end());
+	for(int i=0;i<n;i++) {
+		jagah[heights[i].second] = i;
+	}
+
+	seg_tree stree(n);
+	int res = 0;
+	for(int i=0;i<n;i++) {
+		int ans = beauty[i];
+		if(jagah[i]>=1) ans += stree.query(0,0,n-1,0,jagah[i]-1);
+		res = max(ans, res);
+		stree.point_update(0,0,n-1,jagah[i],ans);
+	}
+	cout << res << endl;
+
+	return 0;
+}
+
+// M-2
+// Yaha we have used the fact ki height bounded hai aur distinct hai
+// to height ko as index lia ja skta h beauty ke lie to wahi kia gya h
+
 #include<bits/stdc++.h>
 using namespace std;
 #define int long long
@@ -45,7 +119,7 @@ int func(int n,auto&height,auto&beauty){
 	seg_tree s(n);
 	int ans=0;
 	for(int i=0;i<n;i++){
-		// dekh since all heights are distinct to curr height to 0 hi hoga hmesha
+		// dekh since all heights are distinct to curr height wala ind pe to 0 hi hoga hmesha
 		// to include krne se koi dikkat nhi h
 		// but agar exclude hi kre to ek jagah dikkat aayega bas 
 		// ki like height maan le 1 rha to (0,-1) k lie call ho jayega

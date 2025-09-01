@@ -1,5 +1,76 @@
 Spoj link: https://www.spoj.com/problems/LUCIFER/
 
+// M-1
+// Negative numbers ke lie ek mast flag bana lia h jisse negative bhi kr pa rhe store
+// isme soch rhe hoge ki if(isneg) then return 0 kr dete h pehle hi
+// this will be wrong kyunki ho skta h na ki bich me sum negative ho but end tk positive ho jaye
+// also yaha signed difference lena h to ye nagtive ka panga krna hi padega
+// common mistake ki sum ka sign nahi consider krna while calculating updated_sum
+// also iss chakkar me sum ko hi update mat kr dena, ... niche dp me kaam ayega
+// islie dekh lo kaise kie h
+
+#include<bits/stdc++.h>
+using namespace std;
+#define int long long
+bool sieve[100];
+int dp[12][2][100][2];
+void compute() {
+	memset(sieve, 1, sizeof(sieve));
+	sieve[0] = sieve[1] = 0;
+	for(int i=2;i<=99;i++) {
+		if(!sieve[i]) continue;
+		for(int j=i*i;j<=99;j+=i) {
+			sieve[j] = false;
+		}
+	}
+}
+int helper(string &s, int id, bool tight, int sum, bool isneg) {
+	if(id == s.size()) {
+		if(sum==0 || isneg) return 0;
+		return sieve[sum];
+	}
+	if(dp[id][tight][sum][isneg]!=-1) return dp[id][tight][sum][isneg];
+	int limit = tight ? (s[id]-'0') : 9;
+	int ans = 0;
+	for(int i=0;i<=limit;i++) {
+		bool isEven = (s.size() - id)%2 == 0;
+		int updated_sum = sum * (isneg ? -1 : 1);
+
+		if(isEven) updated_sum += i;
+		else updated_sum -= i;
+		
+		ans += helper(s, id+1, tight && (i==s[id]-'0'), abs(updated_sum), updated_sum < 0);
+	}
+	return dp[id][tight][sum][isneg] = ans;
+}
+int call(int n) {
+	string s = to_string(n);
+	return helper(s,0,1,0,0);
+}
+signed main() {
+	ios::sync_with_stdio(false);
+	cin.tie(nullptr);
+	cout.tie(nullptr);
+	compute();
+	int t;
+	cin >> t;
+	while(t--) {
+		int l, r;
+		cin >> l >> r;
+		int ans = 0;
+		memset(dp, -1, sizeof(dp));
+		ans = call(r);
+		memset(dp, -1, sizeof(dp));
+		if(l>=1) ans -= call(l-1);
+		cout << ans << endl; 
+	}
+	
+	return 0;
+}
+
+
+
+// M-2
 // isme right se 1 based indexing k hisab se signed difference lena h
 // negative sums are not considered even if their absolute is prime
 // 200+cnt islie kie h ki kahi negative ho jaye to negative indexing na chala jaye aur isi chiz me safe rhne k lie

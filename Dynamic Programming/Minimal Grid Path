@@ -1,5 +1,6 @@
 CSES link: https://cses.fi/problemset/task/3359/
 
+// Rather DP it is more of a good graph problem
 // Dekh yaha initially to socha ki memo me string store kr denge but wo MLE ho jayega
 // Fir socha ki visited mark kr skte but problem laga ki koi ho skta h chote path se kisi visited cell pe pahuche
 // Fir ek realisation kro ki koi bhi cell ho wo (i+j)th position hi ban skta h ans ka aur koi position nahi ban skta

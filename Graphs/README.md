@@ -1,4 +1,5 @@
 - In BFS, queue me node daalte waqt hi usko visited mark kr dena h wrna unnecessarily queue ka size bada hoke TLE dega
+- BFS me na saare nodes visit ho skte h (infact point hi yahi h BFS ka), but ek hi node multiple bar visit nahi hona chahye, i.e., ek hi node multiple baar queue me na dale we have to ensure this. 
 - dfs me dfs call krne k pehle mark kro chahe baad me fark ni padta
 - if all the edges have weight 1 and we have to find shortest path, we don't need priority queue, queue se hi kaam ho jayega
 - Also DAG me shortest path nikalne k lie na Dijkstra nahi chahye normal queue rakhna and traverse the nodes in topological order

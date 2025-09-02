@@ -1,0 +1,52 @@
+Atcoder link: https://atcoder.jp/contests/dp/tasks/dp_t
+
+
+// Dekh yaha dp[i][k] denotes ki abhi tk 1,2,3....i tk ke numbers h... inhi ke saare permuations ko consider krna h
+// jo valid ho obviously
+// and which are ending in k
+// to ab dp[i+1][k] ke lie agar to i-2 (jo latest abhi symbol aayega) wo < hai
+// to agar k se end krana h to tum dp[i][1] + dp[i][2] .... dp[i][k-1] tk ka sum kr lo
+// aur > hai to 
+// dp[i][k+1] ... dp[i][n] tk to samajh aata h..... dp[i][k] bhi krna padega add
+// aisa islie ki i+1 to sabse bada number h na
+// to sabhi pehle wale me ek tarah se plus 1 kr do, to valid sequences ban jayenge na
+
+#include<bits/stdc++.h>
+using namespace std;
+#define int long long
+const int mod = 1e9+7;
+signed main() {
+	ios::sync_with_stdio(false);
+	cin.tie(nullptr);
+	cout.tie(nullptr);
+	int n;
+	cin >> n;
+	string s;
+	cin >> s;
+
+	vector<vector<int>> dp(n+1, vector<int>(n+1, 0));
+	dp[1][1] = 1;
+	for(int i=2;i<=n;i++) {
+		vector<int> pre_sum(n+1, 0);
+		pre_sum[1] = dp[i-1][1];
+		for(int j=2;j<=n;j++){
+			pre_sum[j] = (pre_sum[j-1] + dp[i-1][j])%mod;
+		}
+
+		for(int k=1;k<=i;k++) {
+			if(s[i-2] == '<') {
+				dp[i][k] = pre_sum[k-1];
+			} else {
+				dp[i][k] = (pre_sum[n] - pre_sum[k-1] + mod)%mod;
+			}
+		}
+	}
+
+	int ans = 0;
+	for(int i=1;i<=n;i++) {
+		ans = (ans + dp[n][i])%mod;
+	}
+	cout << ans << endl;
+
+	return 0;
+}

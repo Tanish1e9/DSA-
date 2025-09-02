@@ -1,0 +1,107 @@
+Atcoder link: https://atcoder.jp/contests/dp/tasks/dp_v
+
+// Dekh yaha na 2 chize hai
+// like kisi vertex ko black krna h agar to uske child ya to black ho skte ya white
+// islie dp[node] = product (1+dp[ci]) for all children of node except {par} ofcourse
+// Ab na agar modulo 1e9+7 hota na to problem itna sa hi h bhut simple
+// ek bar to subtree ko dekhte hue sirf nikal lie
+// and dusri baar me parent k through bhi nikal lenge... uske lie parent me se apna contribution hatana padega na 
+// to uske lie divide krna padega ab kyunki modulo koi random number hai to ho skta h modular inverse exist hi na kre
+// islie itna mathapachhi krna pad rha h
+// to yaha har ek node k lie uska contri hata ke bakio ka nikalna h
+// to prefix product and suffix product nikalna padega aur usse ye kaam acche se kr skte h
+// ek aur up array maintain krenge for every node jisme dp[par] / (1+dp[node]) hoga
+// aur fir dusri baar me 1 + up[node] krke multiply kr lenge  .... kyunki like baaki saare children consider ho chuke h
+// sirf parent ki ek "child" bachta h (socho agar node root hota to yahi hota na)
+// ab pehli bar me to sirf subtrees hi consider hue the na
+// dusri baar me like dp[node] wapas se modify ho rha h na
+// to agar kisi bhi child el ke lie up[el] = dp[node] / (1+dp[el]) tha initially
+// to ab dp[node] me (1+up[node]) multiply bhi to krna hoga , to same up[node] me bhi krna hoga
+// to bas wahi krte jaana and we will be done
+// dhyan rakhna ki 1 + up[node] ko store krne ki koshish mat krna chalaaki se because fir up ka recurrence disturb ho jayega
+
+
+#include<bits/stdc++.h>
+using namespace std;
+#define int long long
+
+void dfs(int node, int par, vector<vector<int>> &adj, vector<int> &dp, vector<int> &up, const int mod) {
+	for(int el:adj[node]) {
+		if(el==par) continue;
+		dfs(el, node, adj, dp, up, mod);
+		dp[node] = (dp[node] * (1+dp[el]))%mod;
+	}
+
+	int m = adj[node].size();
+	vector<int> pre(m), suf(m);
+
+	// pre
+	for (int i = 0; i < m; i++) {
+		int el = adj[node][i];
+		if (el == par) {
+			pre[i] = (i == 0 ? 1 : pre[i-1]); // just carry forward
+		} else {
+			pre[i] = ( (i == 0 ? 1 : pre[i-1]) * (1 + dp[el]) ) % mod;
+		}
+	}
+
+	// suf
+	for (int i = m-1; i >= 0; i--) {
+		int el = adj[node][i];
+		if (el == par) {
+			suf[i] = (i == m-1 ? 1 : suf[i+1]);
+		} else {
+			suf[i] = ( (i == m-1 ? 1 : suf[i+1]) * (1 + dp[el]) ) % mod;
+		}
+	}
+
+	// now for each child
+	for (int i = 0; i < m; i++) {
+		int el = adj[node][i];
+		if (el == par) continue;
+		int left  = (i == 0 ? 1 : pre[i-1]);
+		int right = (i == m-1 ? 1 : suf[i+1]);
+		up[el] = (left * right) % mod;
+	}
+}
+
+void dfs2(int node, int par, auto &adj, auto &dp, auto &up, const int mod) {
+	// if(par != -1) {
+		// dp[node] = dp[node] * (1 + dp[par] / (1 + dp[node]));
+		dp[node] = (dp[node] * (1 + up[node]))%mod;
+	// }
+
+	for(int el:adj[node]) {
+		if(el == par) continue;
+		// if(par!=-1) {
+			up[el] = (up[el] * (1 + up[node]))%mod;
+		// }
+		dfs2(el, node, adj, dp, up, mod);
+	}
+}
+
+signed main() {
+	ios::sync_with_stdio(false);
+	cin.tie(nullptr);
+	cout.tie(nullptr);
+	int n, m;
+	cin >> n >> m;
+	vector<vector<int>> adj(n+1);
+	for(int i=0;i<n-1;i++) {
+		int a, b;
+		cin >> a >> b;
+		adj[a].push_back(b);
+		adj[b].push_back(a);
+	}
+
+	vector<int> dp(n+1, 1);
+	vector<int> up(n+1, 0);
+	dfs(1, -1, adj, dp, up, m);
+	dfs2(1, -1, adj, dp, up, m);
+
+	for(int i=1;i<=n;i++) {
+		cout << dp[i] << "\n";
+	}
+
+	return 0;
+}

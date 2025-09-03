@@ -1,0 +1,39 @@
+Oj link: https://oj.uz/problem/view/CEOI16_kangaroo
+
+// hmesha LHS me dp[i][j] rakhna hai
+// aur like existing component ke sirf start ya end me daalne ki baat krni h
+// wrna duplicate permutations hone lag jayenge
+
+#include<bits/stdc++.h>
+using namespace std;
+#define int long long
+const int mod = 1e9+7;
+signed main() {
+	ios::sync_with_stdio(false);
+	cin.tie(nullptr);
+	cout.tie(nullptr);
+	int n, cs, cf;
+	cin >> n >> cs >> cf;
+	vector<vector<int>> dp(n+1, vector<int>(n+1, 0));
+
+	dp[1][1] = 1;
+	for(int i=2;i<=n;i++) {
+		for(int j=i;j>=1;j--) {
+			if(i==cs || i==cf) {
+				// first ya last component k begin/end me respectively ghus jao
+				// ya fir first ya last me apna hi component bana lo
+				dp[i][j] = (dp[i-1][j] + dp[i-1][j-1])%mod;
+			}
+			else {
+				// kinhi do componenet ke bich apna ek naya component bana lo
+				// starting ke pehle aur ending ke baad nahi ja skte 
+				dp[i][j] = (dp[i-1][j-1] * (j - (i>cs) - (i>cf)))%mod;
+				// kinhi do component ke bich me ghuske unko merge kr do
+				if(j+1<=n) dp[i][j] = (dp[i][j] + (dp[i-1][j+1] * j)%mod)%mod;
+			}
+		}
+	}
+
+	cout << dp[n][1] << endl;
+	return 0;
+}

@@ -1,0 +1,100 @@
+Atcoder link: https://atcoder.jp/contests/dp/tasks/dp_y
+
+// Ye wala dekh simple h, range ka sahi dhyan rakhna ki fact kaha tk compute krna h
+// uske baad yar core idea ye h ki tmko yahi chahye na ki koi path koi 2 wall se cross kr gya
+// to subtract krte waqt dono wall ke lie subtract hoke galat ans aa jayega
+// iske lie we will try to find paths till the wall cell (which does not pass through any other wall cell)
+// isse hoga ye ki har wall cell jitne "unique" paths ko invalid banayega wahi usme consider honge
+// koi aur path jo ki kisi aur wall cell se bhi pass kr rha wo usme consider honge
+// ab iske lie tmko i+j ke hisab se sort krna padega and then we can do this
+
+
+#include<bits/stdc++.h>
+using namespace std;
+#define int long long
+const int mod = 1e9+7;
+int fact[200001], ifact[200001];
+int bin_pow(int x, int n) {
+	int ans = 1;
+	while(n>0) {
+		if(n&1) {
+			n--;
+			ans = (ans * x)%mod;
+		} else {
+			n>>=1;
+			x = (x*x)%mod;
+		}
+	}
+	return ans;
+}
+bool comp(pair<int,int> &a, pair<int,int> &b) {
+	return a.first + a.second < b.first + b.second;
+}
+signed main() {
+	ios::sync_with_stdio(false);
+	cin.tie(0);
+	cout.tie(0);
+
+	fact[0] = 1;
+	for(int i=1;i<=200000;i++) {
+		fact[i] = (fact[i-1] * i)%mod;
+	}
+
+	ifact[200000] = bin_pow(fact[200000], mod-2);
+	for(int i=2e5-1;i>=0;i--) {
+		ifact[i] = ((i+1)*ifact[i+1])%mod;
+	}
+
+	int h, w, n;
+	cin >> h >> w >> n;
+	h--;
+	w--;
+	
+	vector<pair<int,int>> walls(n);
+	for(int i=0;i<n;i++) {
+		int a, b;
+		cin >> a >> b;
+		a--;
+		b--;
+		walls[i] = {a,b};
+	}
+
+	sort(walls.begin(), walls.end(), comp);
+	vector<int> dp(n);
+
+	for(int i=0;i<n;i++) {
+		int a = walls[i].first;
+		int b = walls[i].second;
+
+		int tot = (fact[a+b] * ifact[a])%mod;
+		tot = (tot * ifact[b])%mod;
+
+		for(int j=0;j<i;j++) {
+			int x = a - walls[j].first;
+			int y = b - walls[j].second;
+			if(x < 0 || y < 0) continue;
+			int temp = (fact[x+y] * ifact[x])%mod;
+			temp = (temp * ifact[y])%mod;
+			temp = (temp * dp[j])%mod;
+			tot = (tot - temp + mod)%mod;
+		}
+		dp[i] = tot;
+	}
+
+	int tot = (fact[h+w] * ifact[h])%mod;
+	tot = (tot * ifact[w])%mod;
+
+	for(int i=0;i<n;i++) {
+		int a = h - walls[i].first;
+		int b = w - walls[i].second;
+		if(a<0 || b<0) continue;
+		int temp = (fact[a+b] * ifact[a])%mod;
+		temp = (temp * ifact[b])%mod;
+		temp = (temp * dp[i])%mod;
+		tot = (tot - temp + mod)%mod;
+	}
+
+	cout << tot << endl;
+
+	return 0;
+}

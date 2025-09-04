@@ -1,0 +1,45 @@
+Atcoder link: https://atcoder.jp/contests/dp/tasks/dp_x
+
+
+#include<bits/stdc++.h>
+using namespace std;
+#define int long long
+
+class info{
+	public:
+	int weight, solidness, value;
+};
+
+bool comp(info &a, info &b) {
+	return a.weight + a.solidness < b.weight + b.solidness;
+}
+
+int dp[20001];
+signed main() {
+	ios::sync_with_stdio(false);
+	cin.tie(0);
+	cout.tie(0);
+	int n;
+	cin >> n;
+	vector<info> arr(n);
+	for(int i=0;i<n;i++) {
+		cin >> arr[i].weight >> arr[i].solidness >> arr[i].value;
+	}
+
+	sort(arr.begin(), arr.end(), comp);
+	memset(dp, 0, sizeof(dp));
+
+	for(int i=0;i<n;i++) {
+		// agar left to right loop chalaya na to ho skta h ki j + arr[i].weight khud arr[i].solidness ke range me aa jaye
+		// which means same hi block aage double count ho jayega islie reverse me chalna h
+		// essence h iska knapsack DP to waise krke space optimise krne par yahi banega
+		// main thing to w + s ke order me sort krne ka tha
+		for(int j=arr[i].solidness;j>=0;j--) {
+			dp[j+arr[i].weight] = max(dp[j+arr[i].weight], dp[j] + arr[i].value);
+		}
+	}
+
+	cout << *max_element(dp, dp+20001) << endl;
+
+	return 0;
+}

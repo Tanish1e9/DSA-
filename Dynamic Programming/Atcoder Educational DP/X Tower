@@ -1,5 +1,6 @@
 Atcoder link: https://atcoder.jp/contests/dp/tasks/dp_x
 
+// You have to sort the array in a particular order then applying DP will be very easy.
 
 #include<bits/stdc++.h>
 using namespace std;

@@ -1,0 +1,61 @@
+Hackerrank link: https://www.hackerrank.com/challenges/array-and-queries-1/problem
+
+// simple hi question h bhai bhut edge cases h cover krne ko 
+// but question simple hi h dara mat kro question dekh ke
+
+#include<bits/stdc++.h>
+using namespace std;
+#define int long long
+const int mod = 1e9+7;
+signed main() {
+    int n;
+    cin >> n;
+    vector<int> arr(n);
+    map<int,int> mpp;
+    for(int i=0;i<n;i++) {
+        cin >> arr[i];
+        mpp[arr[i]]++;
+    }
+    int count = 0, lastcount = 0, lastval = -1;
+    for(auto &it:mpp) {
+        if(it.first == lastval + 1) count += max(it.second - lastcount, 0ll);
+        else count += it.second;
+        
+        lastcount = it.second;
+        lastval = it.first;
+    }
+    
+    int q;
+    cin >> q;
+    int ans = 0;
+    for(int i=1;i<=q;i++) {
+        int id, val;
+        cin >> id >> val; id--;
+        
+        int orig = arr[id];
+        int prev = mpp.count(orig-1)?mpp[orig-1]:0;
+        int next = mpp.count(orig+1)?mpp[orig+1]:0;
+        int curr = mpp.count(orig)?mpp[orig]:0;
+        
+        if(prev == 0 && next == 0) count--;             // isolated
+        else if (max(prev, next) < curr) count--;       // decrease since you are not a part of any subsequence      
+        else if (curr <= min(prev, next)) count++;      // increase since you were connecting 2
+        
+        mpp[orig]--;
+        if(mpp[orig]==0) mpp.erase(orig);
+        
+        prev = mpp.count(val-1)?mpp[val-1]:0;
+        next = mpp.count(val+1)?mpp[val+1]:0;
+        curr = mpp.count(val)?mpp[val]:0;
+        
+        if(prev == 0 && next == 0) count++;             // isolated
+        else if (max(prev, next) <= curr) count++;      // increase since you will be starting a new subsequence
+        else if(curr < min(prev, next)) count--;        // decrease since you will be connecting 2 subsequences
+        
+        mpp[val]++;
+        arr[id] = val;
+        ans = (ans + i*count)%mod;
+    }
+    cout << ans << endl;
+    return 0;
+}

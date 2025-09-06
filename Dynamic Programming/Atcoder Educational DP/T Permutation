@@ -2,14 +2,21 @@ Atcoder link: https://atcoder.jp/contests/dp/tasks/dp_t
 
 
 // Dekh yaha dp[i][k] denotes ki abhi tk 1,2,3....i tk ke numbers h... inhi ke saare permuations ko consider krna h
-// jo valid ho obviously
-// and which are ending in k
+// jo valid ho obviously and which are ending in k
+// For transitions, ye realise kro ki agar koi sequence ko k se end krana h... to like piche ke sequences me
+// >=k numbers ko +1 kr de to bhi ek valid permutation hi rhega
+// kyu like isko 2 groups me image kro ek group >=k numbers ka, ek group <k numbers ka
+// isme >=k group me sabme +1 kia gya h, to like within each group to koi change ni ayega
+// across group bhi chote wale to pehle hi bade walo se chote the ab bade walo me +1 kr dia to kya hi fark pada
+// that's why >=k me +1 krne se ek valid permutation bana rhta
 // to ab dp[i+1][k] ke lie agar to i-2 (jo latest abhi symbol aayega) wo < hai
 // to agar k se end krana h to tum dp[i][1] + dp[i][2] .... dp[i][k-1] tk ka sum kr lo
 // aur > hai to 
-// dp[i][k+1] ... dp[i][n] tk to samajh aata h..... dp[i][k] bhi krna padega add
-// aisa islie ki i+1 to sabse bada number h na
-// to sabhi pehle wale me ek tarah se plus 1 kr do, to valid sequences ban jayenge na
+// dp[i][k+1] ... dp[i][n] tk to samajh aata h..... 
+// Ab socho ending number pichle length tk ka k hai and current ending bhi k banana h
+// agar < hai and sabhi >=k walo ko +1 kia, then (k+1) < k krna pad jayega na jo ki galat h
+// on the other hand, agar > hai and sabhi >=k walo ko +1 kia, then (k+1)>k which is also valid, islie equality sign yaha laga h
+
 
 #include<bits/stdc++.h>
 using namespace std;

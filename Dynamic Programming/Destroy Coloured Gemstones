@@ -10,6 +10,8 @@ Algozenith link: https://maang.in/problems/Destroy-Coloured-Gemstones-179?resour
 // islie next character wale ko bas alag se deal kia h baki to ho ja rha
 // ab yaha l>=r pe return 1 waghera krke aur kuch idhar udhar krke kr skte ho but ye clean solution h 
 // intuiton bithao ki delete krne ho subarrays ko ek ke bad ek then sirf first element k bare me socho
+// Also, agar like arr[l] == arr[k] hai suppose to helper(l+1, k-1) jab kia to usme last me kisi palindrome ko hi remove kia hoga n
+// usi ke sath me ye dono elements ko bhi remove kr dena islie koi plus one nahi add hua h
 
 
 #include<bits/stdc++.h>

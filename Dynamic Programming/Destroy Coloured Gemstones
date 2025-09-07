@@ -1,0 +1,50 @@
+Algozenith link: https://maang.in/problems/Destroy-Coloured-Gemstones-179?resourceUrl=cs70-cp477-pl3256-rs179&returnUrl=%5B%22%2Fcourses%2FDP-Workshop-Vivek-Gupta-Youtube-70%3Ftab%3Dchapters%22%5D
+
+
+// Kabhi bhi dekh aisa questions aaye na jaha bich ka string ud gya fir baki bacha bhi aapas me interact krega
+// to like sirf itna socho ki first character kaise kaise delete ho skta
+// to yaha ya to akele first character ko delete krenge
+// ya kisi ke sath to ab yaha ek edge case pad jayega ki suppose next character k sath hi delete krne ka soche
+// to bich me to koi partition hai nahi islie 0 return ho jayega 
+// but 1 count hona chahye tha na
+// islie next character wale ko bas alag se deal kia h baki to ho ja rha
+// ab yaha l>=r pe return 1 waghera krke aur kuch idhar udhar krke kr skte ho but ye clean solution h 
+// intuiton bithao ki delete krne ho subarrays ko ek ke bad ek then sirf first element k bare me socho
+
+
+#include<bits/stdc++.h>
+using namespace std;
+
+int dp[100][100];
+int helper(int l, int r, vector<int> &arr) {
+    if(l>r) return 0;
+    if(l==r) return 1;
+    if(dp[l][r]!=-1) return dp[l][r];
+
+    // delete alone
+    int ans = 1 + helper(l+1, r, arr);
+    if(arr[l] == arr[l+1]) ans = min(ans, 1 + helper(l+2, r, arr));
+    for(int k=l+2;k<=r;k++) {
+        if(arr[l]==arr[k]) {
+            ans = min(ans, helper(l+1, k-1, arr) + helper(k+1, r, arr));
+        }
+    }
+    return dp[l][r] = ans;
+}
+signed main() {
+    ios::sync_with_stdio(false);
+    cin.tie(0);
+    cout.tie(0);
+    int t;
+    cin >> t;
+    while(t--) {
+        int n;
+        cin >> n;
+        vector<int> arr(n);
+        for(int i=0;i<n;i++) cin >> arr[i];
+        memset(dp, -1, sizeof(dp));
+        cout << helper(0,n-1, arr) << "\n";
+    }
+
+    return 0;
+}

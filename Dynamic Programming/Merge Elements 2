@@ -1,0 +1,61 @@
+Algozenith link: https://maang.in/problems/Merge-Elements-2-162?resourceUrl=cs70-cp477-pl3256-rs162&returnUrl=%5B%22%2Fcourses%2FDP-Workshop-Vivek-Gupta-Youtube-70%3Ftab%3Dchapters%22%5D
+
+
+// Dekh isme na cost to infinity bhi ho skta agar requested element ban hi na paye to
+// to islie dp array me to nahi kr skte, ek done array lagega
+// dusra baat ki isko agar iterative me krte to ek sath hi saare numbers ka krwa lete na 
+// islie yaha pe agar merge(i,j) == num nahi bhi hota h na to bhi uske lie compute kra do
+// just imitating the iterative way
+// aur fir har segment k lie ek hi bar call hoga so done array will be independent of the 'num' parameter
+
+#include<bits/stdc++.h>
+using namespace std;
+#define int long long
+int dp[50][50][50], arr[50];
+bool done[50][50];
+int x, y, z;
+int merge(int a, int b) {
+    return (a*x + b*y + z)%50;
+}
+int helper(int l, int r, int num) {
+    if(l==r) {
+        if(num == arr[l]) return 0;
+        return 1e9;
+    }
+    if(done[l][r]==1) return dp[l][r][num];
+
+    for(int k=l;k<r;k++) {
+        for(int i=0;i<50;i++) {
+            for(int j=0;j<50;j++) {
+                dp[l][r][merge(i,j)] = min(dp[l][r][merge(i,j)], helper(l,k,i) + helper(k+1,r,j) + i*j);
+            }
+        }
+    }
+    done[l][r] = 1;
+    return dp[l][r][num];
+}
+ 
+signed main() {
+    ios::sync_with_stdio(false);
+    cin.tie(0); 
+    cout.tie(0);
+    int n;
+    cin >> n >> x >> y >> z;
+    for(int i=0;i<n;i++) cin >> arr[i];
+
+    for(int i=0;i<n;i++) {
+        for(int j=0;j<n;j++) {
+            for(int k=0;k<50;k++) {
+                dp[i][j][k] = 1e9;
+            }
+        }
+    }
+
+    int ans = 1e9;
+    for(int i=0;i<50;i++){
+        ans = min(ans, helper(0,n-1,i));
+    }
+    cout << ans << endl;
+    
+    return 0;
+}

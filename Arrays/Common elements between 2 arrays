@@ -1,0 +1,28 @@
+GFG link: https://www.geeksforgeeks.org/problems/common-elements5420/1
+
+// Set bana skte the a ka fir b me iterate krke check kr lete
+// O(nlogn) complexity ya O(n) aa jata depending upon set ya unordered_set
+// but sorting krne se na actually jab n large hoga to most efficient h 
+// since sorting ek bar kr rhe jabki set me pura binary tree bane pade h
+// sorting k bad to kaise hoga intuitive h hi
+
+vector<int> commonElements(vector<int> &a, vector<int> &b) {
+    sort(a.begin(), a.end());
+    sort(b.begin(), b.end());
+    int i=0, j=0;
+    int n = a.size();
+    int m = b.size();
+    vector<int> ans;
+    while(i<n && j<m) {
+        if(a[i]==b[j]) {
+            ans.push_back(a[i]);
+            i++;
+            j++;
+        } 
+        else if(a[i] < b[j]) i++;
+        else j++;
+    }
+    return ans;
+}
+
+

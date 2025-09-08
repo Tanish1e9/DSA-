@@ -7,7 +7,6 @@ LC link: https://leetcode.com/problems/remove-boxes/
 // ye galat h halanki ye to sahi h ki jitna ho sake ek substring jo choose krenge usko expand krenge left, right me
 
 // Ye rha O(n^4) code
-// TLE de rha h O(n^3) me optimise krenge
 int dp[100][100][100];
 int helper(int l, int r, int k, auto &arr) {
     if(l>r) return 0;
@@ -27,4 +26,62 @@ int removeBoxes(vector<int>& boxes) {
     memset(dp, -1, sizeof(dp));
     int n = boxes.size();
     return helper(0,n-1,0,boxes);
+}
+
+// Ab isme ye to pata h na ki ek colour ke group ko to ek hi sath krenge process to islie
+// next la die 
+int dp[100][100][100];
+int next[100];
+int helper(int l, int r, int k, auto &arr) {
+    if(l>r) return 0;
+    if(dp[l][r][k]!=-1) return dp[l][r][k];
+    while(l<r && arr[r-1]==arr[r]) {
+        k++;
+        r--;
+    }
+    int ans = helper(l, r-1, 0, arr) + (k+1)*(k+1);
+    for(int i=l;i<r;i++) {
+        if(arr[i]==arr[r])
+            ans = max(ans, helper(l, i, next[i]-i+k, arr) + helper(next[i], r-1, 0, arr));
+        i=next[i]-1;
+    }
+    return dp[l][r][k] = ans;
+}
+int removeBoxes(vector<int>& arr) {
+    memset(dp, -1, sizeof(dp));
+    int n = arr.size();
+    for(int i=n-1;i>=0;i--) {
+        if(i+1<n && arr[i]==arr[i+1]) next[i] = next[i+1];
+        else next[i]=i+1;
+    }
+
+    return helper(0,n-1,0,arr);
+}
+
+
+// Concise bhi kr skte h thoda
+int dp[100][100][100];
+int next[100];
+int helper(int l, int r, int k, auto &arr) {
+    if(l>r) return 0;
+    if(dp[l][r][k]!=-1) return dp[l][r][k];
+    int ans = helper(l, r-1, 0, arr) + (k+1)*(k+1);
+    for(int i=l;i<r;i++) {
+        if(arr[i]==arr[r])
+            // bas yaha dhyan rakhna hoga na agar arr[r-1] hi arr[r] ke barabar h
+            // to r pe cap laga de wrna aage chala jayega next and faltu me bada ans de dega
+            ans = max(ans, helper(l, i, min(next[i],r)-i+k, arr) + helper(next[i], r-1, 0, arr));
+        i=next[i]-1;
+    }
+    return dp[l][r][k] = ans;
+}
+int removeBoxes(vector<int>& arr) {
+    memset(dp, -1, sizeof(dp));
+    int n = arr.size();
+    for(int i=n-1;i>=0;i--) {
+        if(i+1<n && arr[i]==arr[i+1]) next[i] = next[i+1];
+        else next[i]=i+1;
+    }
+
+    return helper(0,n-1,0,arr);
 }

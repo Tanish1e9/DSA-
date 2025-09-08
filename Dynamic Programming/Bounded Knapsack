@@ -1,0 +1,34 @@
+CSES link: https://cses.fi/problemset/task/1159/
+
+// Naive solution ki har item ko kitni bar pick kr skte uspe bhi iterate kr lo
+// This is TC: O(n*x*count[i]) which is O(100*1e5*1000) = O(1e10) so we need to optimise it
+#include<bits/stdc++.h>
+using namespace std;
+#define int long long
+int dp[100][100005];
+int helper(int i, int x, auto &price, auto &num_pages, auto &count) {
+	if(i==price.size()) return 0;
+	if(dp[i][x]!=-1) return dp[i][x];
+	int ans = 0;
+	for(int k=0;k<=count[i];k++) {
+		if(price[i]*k <= x) ans = max(ans, k*num_pages[i] + helper(i+1, x-k*price[i], price, num_pages, count));
+	}
+
+	return dp[i][x] = ans;
+}
+signed main() {
+	ios::sync_with_stdio(false);
+	cin.tie(0);
+	cout.tie(0);
+	memset(dp, -1, sizeof(dp));
+	int n, x;
+	cin >> n >> x;
+	// we want to maximise num pages within the given price x
+	vector<int> price(n), num_pages(n), count(n);
+	for(int i=0;i<n;i++) cin >> price[i];
+	for(int i=0;i<n;i++) cin >> num_pages[i];
+	for(int i=0;i<n;i++) cin >> count[i];
+
+	cout << helper(0,x,price,num_pages,count) << endl;
+	return 0;
+}

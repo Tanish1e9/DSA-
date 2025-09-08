@@ -7,6 +7,12 @@ LC link: https://leetcode.com/problems/remove-boxes/
 // ye galat h halanki ye to sahi h ki jitna ho sake ek substring jo choose krenge usko expand krenge left, right me
 
 // Ye rha O(n^4) code
+// Correct intuition aisa h na ki
+// dp[l][r][k] denotes ki arr[r] ke barabar r+1 se n-1 tak, 'k' tho arr[r] aur latka hua h
+// ab socho ya to last element ko uske aage jitne h unke sath delete kr denge
+// ya fir kisi me merge krke chain ko aur lamba krenge
+// bas yahi 2 possibilities pe khela gya h
+
 int dp[100][100][100];
 int helper(int l, int r, int k, auto &arr) {
     if(l>r) return 0;

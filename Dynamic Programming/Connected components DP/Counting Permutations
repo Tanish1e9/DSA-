@@ -1,0 +1,145 @@
+CSES link: https://cses.fi/problemset/task/1075/
+
+// Dekho standard jaise connected components
+// lagta waise hi lagaye h jaisa states ka jroorat pada organically sochne pe
+// ki merge krte waqt ya push krte waqt pata hona chahye uss hisab se states lie h
+// Niche kam states wala solution bhi h usko dekh lena
+
+#include<bits/stdc++.h>
+using namespace std;
+#define int long long
+const int mod = 1e9+7;
+// i,j,k,l 
+// i denotes that (1..i) numbers have been taken
+// j means there are j connected components
+// k denotes ki kitne components k end points par h like (2) iska mtlb 2 hai
+// (1, 2) iska mtlb ek h (1 aur 2 dono hi numbers k lie)
+// l denotes ki unme se ek endpoints kya starting aur ending position par h permutation k
+// in other words, is the start or end already filled
+int dp[1001][1001][3][2];
+int helper(int n) {
+	if(n==1) return 1;
+	for(int i=0;i<3;i++) {
+		for(int j=0;j<2;j++) {
+			dp[2][1][i][j] = 0;
+		}
+	}
+	dp[2][2][2][1] = 2;
+
+	for(int i=3;i<=n;i++) {
+		for(int j=i;j>=1;j--) {
+			// create new component
+			// whenever we create it will have 2 ends
+			// however, we can choose ki start / end of permuation me rakhna h ya nahi
+			for(int k=0;k<3;k++) {
+				for(int p=0;p<2;p++) {
+					if(j>=2) dp[i][j][2][0] = (dp[i][j][2][0] + dp[i-1][j-1][k][p] * (j-2))%mod;
+					dp[i][j][2][1] = (dp[i][j][2][1] + 2*dp[i-1][j-1][k][p])%mod;
+				}
+			}
+			// merge two 
+			// isse hmesha 0 ends wala hi banega
+			// aur 0 ends se kabhi bhi start/end of permutation filled nahi rh skta
+			// j+1 me to j total merging possible ho skta
+			// inme se (k-p) unavailable rhenge because k to border aa gya par usme se jo 
+			// starting ya ending me agar aa gya to merging affect nahi krega
+			for(int k=0;k<3;k++) {
+				for(int p=0;p<2;p++) {
+					if(j>=k-p) dp[i][j][0][0] = (dp[i][j][0][0] + dp[i-1][j+1][k][p] * (j-(k-p)))%mod;
+				}
+			}
+
+			// pushing at ends
+			// ends me push krke to ek hi border aayega
+			// start ya ending choose kr skte
+			// same (k-p) wala philosophy yaha bhi h
+			// ki agar to end ya start pe hi banana h then we are concerned with p kitna h
+			// agar bich me banana h then we are concerned with (k-p)
+			for(int k=0;k<3;k++) {
+				for(int p=0;p<2;p++) {
+					if(2*j-2-k+p>=0) dp[i][j][1][0] = (dp[i][j][1][0] + dp[i-1][j][k][p] * (2*j-2-(k-p)))%mod;
+					dp[i][j][1][1] = (dp[i][j][1][1] + dp[i-1][j][k][p] * (2-p))%mod;
+				}
+			}
+		}
+	}
+
+	int ans = 0;
+	for(int i=0;i<3;i++) {
+		for(int j=0;j<2;j++) {
+			ans = (ans +dp[n][1][i][j])%mod;
+		}
+	}
+	return ans;
+}
+signed main() {
+	ios::sync_with_stdio(false);
+	cin.tie(0);
+	cout.tie(0);
+	int n;
+	cin >> n;
+
+	cout << helper(n) << endl;
+
+	return 0;
+}
+
+
+
+
+// M-2
+// isme thoda kam states use hoga
+// dp[i][j][k] denotes ki (1...i) tk numbers abhi tk fill kie h permutation me
+// aur unme j adjacent pairs aise hi (out of n-1) jo ki abs diff 1 rakhte ho
+// aur k denote krta ki kya (i, i-1) sath me h ya nahi
+// to ab agar i,j,1 soch rhe... iska mtlb ki i-1 se attach hona hi h
+// to agar to i-1 bhi i-2 se attached h to unke bich jaake j ko same rakh skte (i-1,i-2 ka bond break krke
+// i, i-1 ka bana dia)
+// also agar i-1, i-2, attached bhi h to i-1 ke dusre taraf lagke j ko ek badha skte
+// islie dekhna dp[i-1][j-1][1]*1 kie h + dp[i-1][j-1][0]*2 + dp[i-1][j][1]*1
+// agar i-1, i-2 attached nahi h to ab i-1 se attach krne ke 2 tarike h dono me hi ek badhega component
+// ab i,j,0 sochte h iska mtlb i-1 se door rhna h
+// ab i jo h kinhi do ka bond break krke j ko decrease kr skta h except i-1, i-2 ka (kyunki i khud i-1 se bond kr jayega)
+// to agar to i-1, i-2, attached h to dp[i-1][j+1][1] * j
+// else dp[i-1][j+1][0] * (j+1) 
+// also dp[i-1][j][0] * (i-2-j)    like total i jagah me se 2 jagah to i-1 hi kha lia aur baki j bonds k bhi bich ni aana na
+// wrna bond break krke components to kam ho jayega
+// also dp[i-1][j][1] * (i-2-(j-1))    extra bonds to j-1 hi bache na kyunki ek bond to i-1, i-2 ka hi h
+
+#include<bits/stdc++.h>
+using namespace std;
+#define int long long
+int dp[1001][1001][2];
+const int mod = 1e9+7;
+signed main() {
+	ios::sync_with_stdio(false);
+	cin.tie(0);
+	cout.tie(0);
+	int n;
+	cin >> n;
+	if(n==1) cout << 1 << endl;
+	else {
+		// i,j,1 mtlb ki i,i-1 are attached
+		dp[2][1][1] = 2;
+		for(int i=3;i<=n;i++) {
+			for(int j=i-1;j>=0;j--) {
+				if(j>=1) dp[i][j][1] = (dp[i-1][j-1][1] + (dp[i-1][j-1][0]*2)%mod)%mod;
+				dp[i][j][1] = (dp[i][j][1] + dp[i-1][j][1])%mod;
+						
+				dp[i][j][0] =  ((dp[i-1][j+1][0] * (j+1))%mod + (dp[i-1][j+1][1] * j)%mod)%mod;
+				if(i>=j+2) dp[i][j][0] = (dp[i][j][0] + (dp[i-1][j][0] * (i-j-2))%mod)%mod;
+				if(i>=j+1) dp[i][j][0] = (dp[i][j][0] + (dp[i-1][j][1] * (i-j-1))%mod)%mod;
+			}
+		}
+		cout << dp[n][0][0] << endl;
+	}
+
+	return 0;
+}
+
+
+
+
+
+
+

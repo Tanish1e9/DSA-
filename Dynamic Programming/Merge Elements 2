@@ -1,5 +1,9 @@
 Algozenith link: https://maang.in/problems/Merge-Elements-2-162?resourceUrl=cs70-cp477-pl3256-rs162&returnUrl=%5B%22%2Fcourses%2FDP-Workshop-Vivek-Gupta-Youtube-70%3Ftab%3Dchapters%22%5D
 
+// Remember ki C++ me global arrays 0 se hi initialised rhte h
+// function ke andar bhi agar static krke declare kro to aisa hota since tab bhi
+// data segment me memory allocate hota h
+
 
 // Dekh isme na cost to infinity bhi ho skta agar requested element ban hi na paye to
 // to islie dp array me to nahi kr skte, ek done array lagega

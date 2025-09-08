@@ -5,6 +5,16 @@ Algozenith link: https://maang.in/problems/Merge-Elements-2-162?resourceUrl=cs70
 // data segment me memory allocate hota h
 
 
+// Dekh agar yaha pe merged element (a+b)%100 jaisa kuch banta
+// to we know ki subarray ko chahe jaise merge kre unse same hi num aayega to current cost bhi same hi banega
+// islie subarrays k across bhi minimise krke solve ho jayega
+// i.e. ki maan lo kahi last cut laga hoga aur bas waha se socho
+// minimise over (l<=k<r)  dp(l,k) + dp(k+1,r) + [l to k ka sum %100] * [k+1 to r ka sum %100]
+// but ab kyunki merged number na order pe depend krta h
+// to islie jroori ni ki subarray bhi minimise hoke hi optima aaye
+// ho skta ki subarray minimised na ho but overall cost usse kam aa rha ho
+// islie aur fir number bhi kaha se laate, islie state me dalne ka intuition aaya
+
 // Dekh isme na cost to infinity bhi ho skta agar requested element ban hi na paye to
 // to islie dp array me to nahi kr skte, ek done array lagega
 // dusra baat ki isko agar iterative me krte to ek sath hi saare numbers ka krwa lete na 

@@ -5,4 +5,4 @@
    - To yaha greedy chal jata, jiski deadline sabse pehle aati ja rhi usko krte chalo     
 
 3) Agar deadlines aur durations de de tasks ka, with profit as d-x. (d deadline, x pe khatam hua) to yaha maximise the profit.
-   - yaha bhi greedy chal jata h. Shortest job first krna h.
+   - yaha bhi greedy chal jata h. Shortest job first krna h. CSES me tasks and deadlines dekh lena

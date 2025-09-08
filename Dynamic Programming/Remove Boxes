@@ -12,7 +12,6 @@ LC link: https://leetcode.com/problems/remove-boxes/
 // ab socho ya to last element ko uske aage jitne h unke sath delete kr denge
 // ya fir kisi me merge krke chain ko aur lamba krenge
 // bas yahi 2 possibilities pe khela gya h
-
 int dp[100][100][100];
 int helper(int l, int r, int k, auto &arr) {
     if(l>r) return 0;
@@ -35,7 +34,7 @@ int removeBoxes(vector<int>& boxes) {
 }
 
 // Ab isme ye to pata h na ki ek colour ke group ko to ek hi sath krenge process to islie
-// next la die 
+// next la die isse kya h thoda fast ho jata na jumping
 int dp[100][100][100];
 int next[100];
 int helper(int l, int r, int k, auto &arr) {
@@ -66,6 +65,8 @@ int removeBoxes(vector<int>& arr) {
 
 
 // Concise bhi kr skte h thoda
+// Actually ye faster bhi hoga kyunki while loop faltu me slow krta recursive call me to dp me
+// store ho jayega islie faster hoga
 int dp[100][100][100];
 int next[100];
 int helper(int l, int r, int k, auto &arr) {

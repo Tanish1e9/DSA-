@@ -1,0 +1,30 @@
+LC link: https://leetcode.com/problems/remove-boxes/
+
+// Iss testcase par tumhara intuitive solution galat hoga
+// [2,1,1,2,1,1,2,2]
+// intuition ki koi ek colour pick krenge and baki saare colours ko hatake, jo picked colour h
+// uske boxes ko last me hatayenge milake
+// ye galat h halanki ye to sahi h ki jitna ho sake ek substring jo choose krenge usko expand krenge left, right me
+
+// Ye rha O(n^4) code
+// TLE de rha h O(n^3) me optimise krenge
+int dp[100][100][100];
+int helper(int l, int r, int k, auto &arr) {
+    if(l>r) return 0;
+    if(dp[l][r][k]!=-1) return dp[l][r][k];
+    while(l<r && arr[r-1]==arr[r]) {
+        k++;
+        r--;
+    }
+    int ans = helper(l, r-1, 0, arr) + (k+1)*(k+1);
+    for(int i=l;i<r;i++) {
+        if(arr[i]==arr[r])
+        ans = max(ans, helper(l, i, k+1, arr) + helper(i+1, r-1, 0, arr));
+    }
+    return dp[l][r][k] = ans;
+}
+int removeBoxes(vector<int>& boxes) {
+    memset(dp, -1, sizeof(dp));
+    int n = boxes.size();
+    return helper(0,n-1,0,boxes);
+}

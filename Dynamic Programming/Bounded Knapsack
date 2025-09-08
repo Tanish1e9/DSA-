@@ -104,3 +104,9 @@ signed main() {
 
 	return 0;
 }
+
+
+// Monotone Queue optimisation h skipping for now can read it from cp-algorithms
+// Useful blogs
+// https://codeforces.com/blog/entry/59606
+// https://codeforces.com/blog/entry/49812

@@ -40,7 +40,9 @@ signed main() {
 // to bas wahi kie h
 // Yaha dhyan rakhna ki jaise jaise 2 ka powers badha rhe waise waise count se usko subtract bhi krte jana h
 // This is because we want to keep the total count same, wrna to extra count aa jayega na galat ans ayega
-
+// For eg agar kisi ka count 10 hai to isko 1,2,3,4 me split kr skte h ... but 1,2,4,8 me kr dia to galat ho jayega na
+// hmlog 10 se jada wale numbers bhi bna die
+// to like decomposition k lie subtract krna jroori h
 
 #include<bits/stdc++.h>
 using namespace std;

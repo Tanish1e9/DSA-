@@ -38,6 +38,7 @@ signed main() {
 // Basically, dekh pehle to pura count[i] tk enumerate kr rhe the combinations banane k lie
 // but like count[i] tk ka har number banane k lie bas kuch binary bases hi to lagenge na
 // specifically log(count[i]) tk ke binary numbers ka kr do to ho skta h
+// yaha pe subtract bhi krte ja skte usse bhi jo numbers banenge equivalent hi hote h
 // to bas wahi kie h
 
 

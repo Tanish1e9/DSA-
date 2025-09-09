@@ -94,10 +94,10 @@ signed main() {
 			bt[0] = 1;
 			for(int i=0;i<m-1;i++) {
 				sum += arr[i];
+		        // current index pe pichle me jo bana skte the 'or' pichle sabka + arr[j] bhi
+		        // bt[k] denotes ki k ban skta h ya nahi kisi bhi i tk turns out ki sirf last chahye prev dependency h
+		        // to ek hi bitset pe kaam ho jayega.... are wohi single row optimisation
 				bt = bt | (bt << arr[i]);
-        // current index pe pichle me jo bana skte the 'or' pichle sabka + arr[j] bhi
-        // bt[k] denotes ki k ban skta h ya nahi kisi bhi i tk turns out ki sirf last chahye prev dependency h
-        // to ek hi bitset pe kaam ho jayega.... are wohi single row optimisation
 			}
 
 			int ans = chars + m - 1;

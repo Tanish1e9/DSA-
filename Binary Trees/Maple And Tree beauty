@@ -1,0 +1,120 @@
+CF link: https://codeforces.com/contest/2138/problem/C2
+
+// Dekh isme na like saare leaves ka lca nikalna h pehle to
+// that will be the last one degree node root se niche jate jate 
+// wo nikal lie kyunki waha tk kuch bhi ho skta h na labels
+// ab uske baad jitni bhi branches nikal rhi h un sab ko ek tarah se same label doge
+// tab to LCS ka length aage badhega
+// aur ye kaam kab tk kroge .... jab agla level pe maanlo koi leaf hit ho gya... to bas ye level pe jo rha wo aakhri h
+// iske aage ni krna aisa h na.... kyunki aage wale leaves pe bound ho jayega na length
+// to islie har ek level pe kitni branches h uska ek array bana lo
+// ab bas sochna ye h ki arr ke har element ko ya to zeros ya ones se bharte hue kaha tk ja skte h
+// ab isme greedy lag rha hoga ki jo bhi chota wala satisfy kr de usse bhar lo par ye galat h
+// [2,4,6] and ones = 4, zeros = 9   kr lo dekh lo galat aa jayega
+// islie dp lagana h
+// ab index aur number of zeros to rhega hi states me.... number of ones derive ho jayega
+// suppose i index pe ho iska mtlb pref[i-1] tk to bhare ho na
+// aur abhi z zeros h iska mtlb ki (k-z) zeros utilise hua h, iska mtlb ki pref[i-1] - (k-z) ones utilise hua h
+// shuruwat me n-k ones the ab nikal jayega na
+// to aise dp krke easy version solve ho jayega... isi contest ka E1 dekh lena
+// but E2 me constraint badh gya ab kya kre
+// to like thoda analysis kro ki suppose kisi index j pe aake bas ruk gye kyunki aur aage badh nahi skte
+// let the residues of ones and zeros be c, d
+// to c < arr[j] && d < arr[j] tabhi ruk gye na
+// but c+d se baki tree to bhara hi jayega kyunki shuru me n mila tha
+// iska mtlb c + d >= sum (p=j to m-1) arr[p]
+// => c+d >= (m-j) arr[j]
+// but c+d < 2*arr[j] bhi to h(upar wale 2 ineq ko add kr do)
+// => (m-j) < 2  => j>=m-1 ..... aa gya
+// mtlb ki last index par hi ruk skte h ya uske aage
+// ab bas aisa kr lena h ki m-2 tk kya kya possibilities h zero ke kharch hone ki
+// to like 0 to k pe iterate krenge, agar z suppose ek valid kharch ho skta h to ab z maanke, ones waghera sab aa gya
+// to dekh lenge ki last element bhi aa skta h ya nahi ones ya zeros me....
+// agar ek bhi jagah aa gya iska mtlb last index h ans me wrna nahi
+// ab problem boils down to ki m-2 tk kya kya possibilities h zero k kharch hone ki
+// ye to same baat hua h ki kya kya subset sum possible h second last index tk
+// ab isko ek to tum bitset se kr skte ho easily ... m*k/64 (m*k 1e10 tk bhi chal jayega na kyunki time limit 6s hai)
+// to bas wahi kia gya h
+
+#include <bits/stdc++.h>
+using namespace std;
+#define int long long
+
+signed main() {
+    ios::sync_with_stdio(0);
+    cin.tie(0);
+    cout.tie(0);
+    int t;
+    cin >> t;
+    while (t--) {
+		int n, k;
+		cin >> n >> k;
+
+		vector<vector<int>> adj(n+1);
+		for(int i=0;i<n-1;i++) {
+			int x;
+			cin >> x;
+			adj[x].push_back(i+2);
+		}
+
+		int lca = 1;
+		int chars = 1;
+		while(adj[lca].size() == 1) {
+			chars++;
+			lca = adj[lca][0];
+		}
+
+		queue<int> q;
+		if(adj[lca].size() > 0)	q.push(lca);
+		vector<int> arr;
+		while(!q.empty()) {
+			int level_size = q.size();
+			int sum = 0;
+			bool flag = false;
+			while(level_size--) {
+				int node = q.front();
+				q.pop();
+				sum += adj[node].size();
+				for(int el:adj[node]) {
+					if(adj[el].size()>0) q.push(el);
+					else flag = true;
+				}
+			}
+
+			arr.push_back(sum);
+			if(flag) break;
+		}
+
+		if(arr.empty()) cout << chars << endl;
+		else {
+			int m = arr.size();
+			int sum = 0;
+			
+			bitset<200001> bt;
+			bt[0] = 1;
+			for(int i=0;i<m-1;i++) {
+				sum += arr[i];
+				bt = bt | (bt << arr[i]);
+        // current index pe pichle me jo bana skte the 'or' pichle sabka + arr[j] bhi
+        // bt[k] denotes ki k ban skta h ya nahi kisi bhi i tk turns out ki sirf last chahye prev dependency h
+        // to ek hi bitset pe kaam ho jayega.... are wohi single row optimisation
+			}
+
+			int ans = chars + m - 1;
+			for(int zeros = 0; zeros <=k; zeros++) {
+				int filled = sum;
+				int ones = filled - zeros;
+				if(bt[zeros]!=1 || ones > n-k || ones < 0) continue;
+				int rem_ones = n-k-ones;
+				int rem_zeros = k-zeros;
+				if(max(rem_ones, rem_zeros) >= arr.back()) {
+					ans++;
+					break;
+				}
+			}
+
+			cout << ans << endl;
+		}
+	}
+	return 0;
+}

@@ -37,9 +37,9 @@ signed main() {
 // Ye accept ho gya h, but there are more techniques to learn below
 // Basically, dekh pehle to pura count[i] tk enumerate kr rhe the combinations banane k lie
 // but like count[i] tk ka har number banane k lie bas kuch binary bases hi to lagenge na
-// specifically log(count[i]) tk ke binary numbers ka kr do to ho skta h
-// yaha pe subtract bhi krte ja skte usse bhi jo numbers banenge equivalent hi hote h
 // to bas wahi kie h
+// Yaha dhyan rakhna ki jaise jaise 2 ka powers badha rhe waise waise count se usko subtract bhi krte jana h
+// This is because we want to keep the total count same, wrna to extra count aa jayega na galat ans ayega
 
 
 #include<bits/stdc++.h>
@@ -72,13 +72,13 @@ signed main() {
 
 	vector<int> upd_price, upd_num_pages;
 	for(int i=0;i<n;i++) {
-		int j=0;
+		int j=1;
 		int c = count[i];
-		while((1ll<<j) <= c) {
-			upd_num_pages.push_back((1ll<<j) * num_pages[i]);
-			upd_price.push_back((1ll<<j) * price[i]);
-			c-=(1ll<<j);
-			j++;
+		while(j <= c) {
+			upd_num_pages.push_back(j * num_pages[i]);
+			upd_price.push_back(j * price[i]);
+			c-=j;
+			j*=2;
 		}
 		
 		if(c>0) {

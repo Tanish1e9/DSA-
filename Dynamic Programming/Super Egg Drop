@@ -19,6 +19,8 @@ int superEggDrop(int n, int k) {
             // to ans minimise krne me to help ni krega
             // islie har step me we can eliminate the right side of the maximum quantity
             // that's why binary search works
+            // kyunki agar i-1 wala bada hua to wo p ko kam krana chahega
+            // aur agar i wala bada hua to p ko badhana chahega to BS lag jayega
             while(low <= high) {
                 int mid = low + (high-low)/2;
                 int left = dp[i-1][mid-1];

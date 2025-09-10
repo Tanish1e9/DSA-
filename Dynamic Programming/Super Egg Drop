@@ -64,8 +64,8 @@ int superEggDrop(int n, int k) {
     // yani bhut jldi hi eggs ke moves badhane par exponentially floors increase krenge
     // hmlog ko to sirf k tk ka kaam h wo bhi n eggs k sath 
     // islie hmlog smartly krenge
+
     vector<vector<int>> dp(n+1, vector<int>(k+1, 0));
-    for(int i=0;i<=k;i++) dp[1][i] = i;
     
     // Hmesha check krenge ki jo moves abhi currently socha h
     // kya n eggs utna pe k visit kr dega, agar ha to bas ans aa gya
@@ -74,11 +74,12 @@ int superEggDrop(int n, int k) {
     // since 1 se krte to like 1 move ka to data nahi filled h na
     // to agar k=1 ho jaye tab bhi dp[n][1] = 0 hi initialised h na
     // to zero se start krna pada
+
     int moves = 0;
     while(dp[n][moves] < k) {
         // current moves se kaam ni ban rha moves badhana hoga
         moves++;
-        for(int i=2;i<=n;i++) {
+        for(int i=1;i<=n;i++) {
             dp[i][moves] = dp[i-1][moves-1] + dp[i][moves-1] + 1;
         }
     }

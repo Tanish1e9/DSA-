@@ -44,7 +44,7 @@ int superEggDrop(int n, int k) {
 }
 
 
-// O(n*logk) time, O(n*k) space is the most optimal solution
+// O(n*logk) time, O(n*k) space is the most optimal solution (Time wise, space to niche optimise kr dia h)
 // Mindblowing solution agar state rotate krke recurrence soch lete na 
 // bhut jldi ho jata 
 // fir isme bhi realise krna h ki values exponentially grow hongi to move wise compute krte jao
@@ -81,6 +81,28 @@ int superEggDrop(int n, int k) {
         moves++;
         for(int i=1;i<=n;i++) {
             dp[i][moves] = dp[i-1][moves-1] + dp[i][moves-1] + 1;
+        }
+    }
+
+    return moves;
+}
+
+
+// Sabse pehle ki moves ki log(k) ke aaspas chahye honge to k tk ka space allocate kyu kre
+// islie moves, eggs ko swap kro pehle to 
+// then 2 array optimisation to turant dikh jayega
+// fir single array optimisation bhi ho skta
+// final code dekho iss question ka kitna clean h
+
+int superEggDrop(int n, int k) {
+    // n eggs, k floors
+    vector<int> prev(n+1, 0);
+
+    int moves = 0;
+    while(prev[n] < k) {
+        moves++;
+        for(int i=n;i>=1;i--) {
+            prev[i] += prev[i-1] + 1;
         }
     }
 

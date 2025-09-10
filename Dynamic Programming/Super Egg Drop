@@ -1,0 +1,39 @@
+LC link: https://leetcode.com/problems/super-egg-drop/
+
+
+// TC O(e*f*log f) .... e are eggs, f is num_floors
+int superEggDrop(int n, int k) {
+    vector<vector<int>> dp(n+1, vector<int>(k+1, 0));
+
+    // for(int i=0;i<=n;i++) dp[i][0] = 0;
+    for(int i=1;i<=k;i++) dp[1][i] = i;
+    
+    for(int i=2;i<=n;i++) {
+        for(int j=1;j<=k;j++){
+            int ans = 1e9;
+            int low = 1;
+            int high = j;
+
+            // Observe ki agar ek row me left to right jayenge
+            // to minimum moves badhega hi na since eggs same and floor jada
+            // to ans minimise krne me to help ni krega
+            // islie har step me we can eliminate the right side of the maximum quantity
+            // that's why binary search works
+            while(low <= high) {
+                int mid = low + (high-low)/2;
+                int left = dp[i-1][mid-1];
+                int right = dp[i][j-mid];
+                ans = min(ans, max(left, right));
+                if(left > right) high = mid-1;
+                else low = mid+1;
+            }
+            
+            // for(int p=1;p<=j;p++) {
+            //     ans = min(ans, max(dp[i-1][p-1], dp[i][j-p]));
+            // }
+            
+            dp[i][j] = ans + 1;
+        }
+    }
+    return dp[n][k];   
+}

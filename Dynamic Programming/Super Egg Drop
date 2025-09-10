@@ -2,10 +2,13 @@ LC link: https://leetcode.com/problems/super-egg-drop/
 
 
 // TC O(e*f*log f) .... e are eggs, f is num_floors
+// intuition ye h ki brute force way me hmlog kahi se bhi first move kr skte
+// uske bad agar anda foota to dp[n-1][i-1] me ktine moves lagenge ya dp[n][k-i] me
+// kitne lagenge agar nahi toota
+// hmlog ko dono case me guarentee dena h islie we take max plus 1
 int superEggDrop(int n, int k) {
     vector<vector<int>> dp(n+1, vector<int>(k+1, 0));
 
-    // for(int i=0;i<=n;i++) dp[i][0] = 0;
     for(int i=1;i<=k;i++) dp[1][i] = i;
     
     for(int i=2;i<=n;i++) {
@@ -38,4 +41,47 @@ int superEggDrop(int n, int k) {
         }
     }
     return dp[n][k];   
+}
+
+
+// O(n*logk) time, O(n*k) space is the most optimal solution
+// Mindblowing solution agar state rotate krke recurrence soch lete na 
+// bhut jldi ho jata 
+// fir isme bhi realise krna h ki values exponentially grow hongi to move wise compute krte jao
+// agla move pe jaana h ya nahi depends ki dp[n][curr_moves] < k hona chahye wrna to curr_moves ans ho gya na
+
+int superEggDrop(int n, int k) {
+    // dp[i][j] denotes the max number of floors we can check 
+    // with i eggs and j moves
+    // dp[i][j] = dp[i-1][j-1] + 1 + dp[i][j-1];
+    // like soch ek egg drop kia aur wo toot gya... to niche hi check krna h
+    // to ek kam egg aur ek kam move me jitne floors check kr skte utna niche laga do
+    // agar nahi toota to same eggs aur ek kam move me jitne floors utna upar
+    // plus 1 current k lie
+
+    // Ab k moves me to for sure k visit ho hi jayega islie k se jada nahi jayenge
+    // aur iss dp ko normally bharne ka try kroge to values bhut large aayengi
+    // yani bhut jldi hi eggs ke moves badhane par exponentially floors increase krenge
+    // hmlog ko to sirf k tk ka kaam h wo bhi n eggs k sath 
+    // islie hmlog smartly krenge
+    vector<vector<int>> dp(n+1, vector<int>(k+1, 0));
+    for(int i=0;i<=k;i++) dp[1][i] = i;
+    
+    // Hmesha check krenge ki jo moves abhi currently socha h
+    // kya n eggs utna pe k visit kr dega, agar ha to bas ans aa gya
+    // nahi to iss moves wale column ko pura bhar lo
+    // yaha moves 1 se kyu nahi start kie?
+    // since 1 se krte to like 1 move ka to data nahi filled h na
+    // to agar k=1 ho jaye tab bhi dp[n][1] = 0 hi initialised h na
+    // to zero se start krna pada
+    int moves = 0;
+    while(dp[n][moves] < k) {
+        // current moves se kaam ni ban rha moves badhana hoga
+        moves++;
+        for(int i=2;i<=n;i++) {
+            dp[i][moves] = dp[i-1][moves-1] + dp[i][moves-1] + 1;
+        }
+    }
+
+    return moves;
 }

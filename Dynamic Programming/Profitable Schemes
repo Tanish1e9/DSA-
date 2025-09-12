@@ -1,0 +1,41 @@
+LC link: https://leetcode.com/problems/profitable-schemes/
+
+// Ekdum naive pick not pick approach
+// TC O(100*100*1e4) = O(1e8)
+// SC O(100 * 1e4) = O(1e6)
+
+const int mod = 1e9+7;
+int profitableSchemes(int n, int minProfit, vector<int>& group, vector<int>& profit) {
+    int maxprof = accumulate(profit.begin(), profit.end(), 0ll);
+    int m = group.size();
+
+    vector<vector<int>> curr(n+1, vector<int>(maxprof+1, 0));
+    vector<vector<int>> prev = curr;
+
+    for(int i=0;i<=n;i++) prev[i][0] = 1;
+
+    for(int i=group[0];i<=n;i++){
+        prev[i][profit[0]] += 1;
+    }
+
+    for(int idx=1;idx<m;idx++) {
+        curr[0][0] = 1;
+        for(int i=1;i<=n;i++) {
+            for(int j=0;j<=maxprof;j++) {
+                int ans = 0;
+                if(group[idx] <= i && profit[idx] <= j) {
+                    ans = prev[i-group[idx]][j-profit[idx]];
+                }
+                ans = (ans + prev[i][j])%mod;
+                curr[i][j] = ans;
+            }
+        }
+        prev = curr;
+    }
+
+    int ans = 0;
+    for(int j=minProfit;j<=maxprof;j++) {
+        ans = (ans + prev[n][j])%mod;
+    }
+    return ans;
+}

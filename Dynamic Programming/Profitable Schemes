@@ -1,6 +1,7 @@
 LC link: https://leetcode.com/problems/profitable-schemes/
 
 // Ekdum naive pick not pick approach
+// Trying to maintain exact profit kamane ke kitne ways end me adding >= minProfit waale
 // TC O(100*100*1e4) = O(1e8)
 // SC O(100 * 1e4) = O(1e6)
 
@@ -38,4 +39,59 @@ int profitableSchemes(int n, int minProfit, vector<int>& group, vector<int>& pro
         ans = (ans + prev[n][j])%mod;
     }
     return ans;
+}
+
+
+// Recursive try kie bas log ginne ka profit ko ignore krte hue
+// count subset sum equal to target jaise
+// Bas yaha fark itna h ki end me 1 tabhi return hoga jab profit threshold ko paar kre
+// islie tried to maintain current_profit also
+// Yaha tk to same hi complexity waghera tha (since current profit bhi 1e4 tk ja skta)
+// Now comes the twist... Do we actually need to store the exact value of curr_prof if it's >= minProfit?
+// Nahi na because end me to jake return 1 hi hone wala h
+// plus suppose kisi index tk hm bole ki already threshold paar profit generated h aur n bande bache h
+// to fir to bas bando aur index pe depend krega na profit ka factor to hat hi gya
+// to bas min(curr_prof, minProfit) kr dia and boom.... optimised
+
+// TC O(100*100*100) = O(1e6)
+// SC O(100*100) = O(1e4)
+
+const int mod = 1e9+7;
+// int dp[100][101][101];
+// int helper(int i, int n, int curr_prof, int minProfit, vector<int>&group, vector<int> &profit) {
+//     if(i==group.size()) return curr_prof == minProfit;
+//     if(dp[i][n][curr_prof]!=-1) return dp[i][n][curr_prof];
+//     int ans = 0;
+//     if(group[i] <= n) 
+//         ans = helper(i+1, n-group[i], min(curr_prof + profit[i], minProfit), minProfit, group, profit);
+//     ans = (ans + helper(i+1, n, curr_prof, minProfit, group, profit))%mod;
+//     return dp[i][n][curr_prof] = ans;
+// }
+int profitableSchemes(int n, int minProfit, vector<int>& group, vector<int>& profit) {
+    int m = group.size();
+    // memset(dp, -1, sizeof(dp));
+    // return helper(0,n,0,minProfit,group,profit);
+
+
+    // vector<vector<vector<int>>> dp(m+1, vector<vector<int>>(n+1, vector<int>(minProfit+1, 0)));
+    vector<vector<int>> next(n+1, vector<int>(minProfit+1, 0));
+    vector<vector<int>> curr = next;
+
+    for(int j=0;j<=n;j++) {
+        next[j][minProfit] = 1;
+    }
+
+    for(int i=m-1;i>=0;i--) {
+        for(int j=0;j<=n;j++) {
+            for(int k=0;k<=minProfit;k++) {
+                int ans = 0;
+                if(group[i] <= j) ans = next[j-group[i]][min(k + profit[i], minProfit)];
+                ans = (ans + next[j][k])%mod;
+                curr[j][k] = ans;
+            }
+        }
+        next = curr;
+    }
+
+    return next[n][0];
 }

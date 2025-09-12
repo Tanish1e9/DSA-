@@ -52,7 +52,7 @@ int profitableSchemes(int n, int minProfit, vector<int>& group, vector<int>& pro
 // plus suppose kisi index tk hm bole ki already threshold paar profit generated h aur n bande bache h
 // to fir to bas bando aur index pe depend krega na profit ka factor to hat hi gya
 // to bas min(curr_prof, minProfit) kr dia and boom.... optimised
-
+// State Space Reduction
 // TC O(100*100*100) = O(1e6)
 // SC O(100*100) = O(1e4)
 

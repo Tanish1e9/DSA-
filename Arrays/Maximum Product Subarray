@@ -41,6 +41,12 @@ int maxProduct(vector<int>& nums) {
 
 
 // Cleaner code
+// Kisi bhi index pe suppose piche wale index me maxi = 0 and mini = 0 hai
+// to apne aap hi agar current element positive h, to maxi me curr_element jana chahye aur mini me 0,
+// ye hoga hi na dekh lo expressions
+// same case agar element negative h aur piche mini = 0, ya maxi = 0 hai
+// to maxi me 0 aur mini me nums[i] jana chahye wo jayega hi na
+
 int maxProduct(vector<int>& nums) {
     int n = nums.size();
     int maxi = 0, mini = 0;

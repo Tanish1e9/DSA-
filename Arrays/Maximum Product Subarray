@@ -1,0 +1,65 @@
+LC link: https://leetcode.com/problems/maximum-product-subarray/description/
+
+// Dekh isme na sabse pehle to maan lo ki saare elements non-zero h
+// ab socho ans kaise niklega
+// to at any index i, max product subarray ending at i kya hoga?
+// agar nums[i] < 0 h, to hm chahenge i-1 to 0 jaye aur jitna jada negative product ho le aaye,
+// jisse multiply hoke positive ban jayega
+// agar nums[i] > 0 h, to hm chahenge ki i-1 to 0 jaaye aur jitna jada positive element ho le aaye
+// jisse multiply hoke positive ban jayega
+// to like har index pe max positive, min negative product store krne se kaam chal jayega
+// Now introduce 0, koi nums[i] agar 0 ho gya to max pos/ min neg at index i to zero hi ho jayega
+// to agla element ko ek tarah se rokna padega 0 ko cross krne se agar wo non-zero h to
+// to islie ye choice die h ki har index pe ya to element ko alone le lo, ya piche k sath combine kro
+// DP idea likha hai yaha pe look for cleaner code below it
+
+int maxProduct(vector<int>& nums) {
+    int n = nums.size();
+    vector<vector<int>> dp(n, vector<int>(2, 0));
+    // 0 means non-negative
+    // 1 means negative (agar not possible to 0 rhega)
+    int ans = nums[0];
+    
+    dp[0][0] = max(dp[0][0], nums[0]);
+    dp[0][1] = min(dp[0][1], nums[0]);
+
+    for(int i=1;i<n;i++) {
+        if(nums[i] < 0) {
+            dp[i][0] = max(nums[i] * dp[i-1][1], nums[i]);
+            dp[i][1] = min(nums[i] * dp[i-1][0], nums[i]);
+        } else {
+            dp[i][0] = max(nums[i] * dp[i-1][0], nums[i]);
+            dp[i][1] = min(nums[i] * dp[i-1][1], nums[i]);
+        }
+        ans = max(ans, dp[i][1]);
+        ans = max(ans, dp[i][0]);
+    }
+    return ans;
+}
+
+
+
+
+// Cleaner code
+int maxProduct(vector<int>& nums) {
+    int n = nums.size();
+    int maxi = 0, mini = 0;
+    
+    maxi = max(0, nums[0]);
+    mini = min(0, nums[0]);
+    int ans = nums[0];
+
+    for(int i=1;i<n;i++) {
+        if(nums[i] < 0) {
+            int temp = mini;
+            mini = min(maxi * nums[i], nums[i]);
+            maxi = max(temp * nums[i], nums[i]);
+        }
+        else {
+            maxi = max(maxi * nums[i], nums[i]);
+            mini = min(mini * nums[i], nums[i]);
+        }
+        ans = max(ans, maxi);
+    }
+    return ans;
+}

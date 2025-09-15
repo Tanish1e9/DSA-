@@ -69,8 +69,8 @@ int helper(int i, int j) {
     // putting diff than s[j]
     int j_copy = j;
 
-    while(j_copy>0 && pat[j_copy] == pat[ori]) j_copy = lps[j_copy-1];
-    if(pat[j_copy] == pat[ori]) ans = helper(i-1, 0);
+    while(j_copy>0 && pat[j_copy] == pat[j]) j_copy = lps[j_copy-1];
+    if(pat[j_copy] == pat[j]) ans = helper(i-1, 0);
     else ans = helper(i-1, j_copy+1);
  
     ans = (ans + helper(i-1, j+1))%mod;     // putting same as s[j]

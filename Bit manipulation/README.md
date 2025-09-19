@@ -1,5 +1,3 @@
-- Turn off the rightmost set bit of a number: val  = val & (val-1)  
-- Turn off the leftmost set bit of a number: val -= val & (-val);   (minus islie h ki koi bhi 2 ka power le lo suppose 8 dikh jayega)
-    - ye val & (-val) jo h wo (1<<position) laake dega leftmost set bit ka
+- Turn off the rightmost set bit of a number: val  = val & (val-1)  position ke lie val & (-val) 
 - for any given mask m agar uske saare submasks pe iterate krna ho and this should be done for all m
     - Then ye O(3^n) me kr skte h s = (s-1) & m krna with s initialised to m, jab tk s>0 rhe.... s=0 ko alag se process krna hoga

@@ -1,0 +1,91 @@
+LC link: https://leetcode.com/problems/max-sum-of-rectangle-no-larger-than-k/description/
+
+// Dekh pehle to iska 1D version imagine kr
+// Find the maximum sum of a subarray s.t. it is <=k.
+// array has all non-negative elements
+// Empty subarray ka sum 0 maan lena
+
+// Sliding window se ho jayega na
+int l=0, r=0;
+int sum = 0;
+int ans = 0;
+while(r<n) {
+  sum += arr[r];
+  while(sum > k) sum -= arr[l++];
+  ans = max(ans, sum);
+  // Isi me agar length maximise krne bol de s.t. sum <= k, to bhi ye ho jayega
+  // ans = max(ans, (r-l+1));
+  r++;
+}
+
+
+// Ab agar negative elements bhi ho
+// Aur sabse pehle sum maximise krne bola h s.t. sum <= k
+// to fir sum - x <= k  => x >= sum - k
+// x jitna kam hoga sum-x utna hi jada ... islie sum-k ka lower bound le lena h
+// to map maintain krte rhenge prefix sums ka uspe lower bound laga dengen (technically set lene se
+// kaam ho jayega) <- yahi kaam 2D wale code me kie h sabse niche dekho
+
+
+// yahi agar length maximise krne bol de na with negative elements
+https://leetcode.com/discuss/post/758045/apple-phone-longest-subarray-sum-at-most-0tbe/
+// yaha mila
+
+// maan lo prefix sums h mere paas agar say for any i, for all j <= i
+// sum - x <= k => x>=sum-k
+max(pre[0...j]) >= sum-k hai iska mtlb left side me answer mil jayega 
+else right hi jaana hoga to binary search lag jayega na
+// Bin search ke bajay sidhe ab tk jitna ans aya h
+// usse jada length banane ka koshish krenge iterate krke ... ye bhi equally hi fast hoga
+vector<int> pre_max(n);
+int sum = 0, ans = 0;
+for(int i=0;i<n;i++) {
+    sum += arr[i];
+
+    if(i>=1) pre_max[i] = max(pre_max[i-1], sum);
+    else pre_max[i] = sum;
+
+    while(i-ans >= 0 && pre_max[i-ans] >= sum - k) ans++;
+}
+return ans;
+
+
+// 2D me prefix sum store krna ho na... to pre[i,j] denotes sum of (0,0) to (i,j) wala rectangle
+// rec is pre[i,j] = pre[i-1][j] + pre[i][j-1] - pre[i-1][j-1] + arr[i][j]
+// i,j to i1,j1 ke lie pre[i1][j1] - pre[i-1][j1] - pre[i1][j-1] + pre[i-1][j-1]
+// Ya fir rowSums bhi maintain kr skte ho jaisa yaha kie h
+// basically pehle 2 column pair select kr lo, fir unke bich ke 2D array ko squash krke imagine kro 1D me
+// to samajh aayega
+
+int maxSumSubmatrix(vector<vector<int>>& arr, int max_sum) {
+    int n = arr.size();
+    int m = arr[0].size();
+    
+    int ans = -1e9;
+    for(int i=0;i<m;i++) {
+        vector<int> rowSum(n, 0);
+        for(int j=i;j<m;j++) {
+            for(int k=0;k<n;k++) {
+                rowSum[k] += arr[k][j];
+            }
+
+            int sum = 0;
+            int start = 0;
+
+            set<int> s;
+            for(int k=0;k<n;k++) {
+                sum += rowSum[k];
+                
+                if(sum <= max_sum) ans = max(ans, sum);
+                
+                auto it = s.lower_bound(sum-max_sum);
+                if(it != s.end()) ans = max(ans, sum - *it);
+                // just pruning
+                if(ans == max_sum) return max_sum;
+
+                if(!s.contains(sum)) s.insert(sum);
+            }
+        }
+    }
+    return ans;
+}

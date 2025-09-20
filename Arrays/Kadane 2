@@ -1,0 +1,55 @@
+Algozenith link: https://maang.in/problems/Kadane-2-1068?resourceUrl=cs70-cp479-pl3267-rs1068&returnUrl=%5B%22%2Fcourses%2FDP-Workshop-Vivek-Gupta-Youtube-70%3Ftab%3Dchapters%22%5D
+
+// Normal 2 column pair chunke squash kr do... imagine like a 1D array
+// pre sum maintain krne ka idea bhi commented code se utha lio, rowSum ka to use hi kie h
+// wo bhi tarika h ek
+
+#include<bits/stdc++.h>
+using namespace std;
+#define int long long
+signed main() {
+    ios::sync_with_stdio(false);
+    cin.tie(0);
+    cout.tie(0);
+    int t;
+    cin >> t;
+    while(t--) {
+        int n, m, k;
+        cin >> n >> m >> k;
+        vector<vector<int>> arr(n, vector<int>(m, 0));
+        for(int i=0;i<n;i++) {
+            for(int j=0;j<m;j++) {
+                cin >> arr[i][j];
+            }
+        }
+        // vector<vector<int>> pre(n, vector<int>(m, 0));
+        // for(int i=0;i<n;i++) {
+        //     for(int j=0;j<m;j++) {
+        //         pre[i][j] = arr[i][j];
+        //         if(i>=1) pre[i][j] += pre[i-1][j];
+        //         if(j>=1) pre[i][j] += pre[i][j-1];
+        //         if(i>=1 && j>=1) pre[i][j] -= pre[i-1][j-1];
+        //     }
+        // }
+        int ans = 0;
+        for(int i=0;i<m;i++) {
+            vector<int> rowSum(n, 0);
+            for(int j=i;j<m;j++) {
+                for(int k=0;k<n;k++) {
+                    rowSum[k] += arr[k][j];
+                }
+                int l = 0;
+                int r = 0;
+                int sum = 0;
+                while(r<n) {
+                    sum += rowSum[r];
+                    while(sum > k) sum -= rowSum[l++];
+                    ans = max(ans, (r-l+1)*(j-i+1));
+                    r++;
+                }
+            }
+        }
+        cout << ans << "\n";
+    }
+    return 0;
+}

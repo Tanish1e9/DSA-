@@ -1,0 +1,115 @@
+CSES link: https://cses.fi/problemset/task/2143
+
+// Dekh isme na directed graph h bas to scc graph banana pada
+// jaise iska pichla question reachable nodes me pehle se hi DAG dia h
+// to scc graph banane ka jroorat nahi h
+// aur baki to simple h solution bas bitset use kr lena h aur ho jayega
+
+// Bina scc graph banaye bitset lagake solve krna can get wrong ans
+// since maan lo 1->2->3->1 ek cycle h and 1->5 bhi ek h
+// now jab 1->2->3->1 jaa rhe honge... to 2, 3 to visited mark ho jayenge
+// jabki 5 unke lie ans me kabhi mark hi ni ho payega
+
+#include <bits/stdc++.h>
+using namespace std;
+const int nmax = 50001;
+vector<bitset<nmax>> ans(nmax);
+vector<set<int>> adj(nmax), rev_adj(nmax);
+vector<vector<int>> scc_adj;
+vector<int> scc_indegree;
+vector<int> vis(nmax, -1);
+
+void dfs(int node, auto &adj, auto &vis, int scc) {
+	vis[node] = scc;
+	for(int el:adj[node]) {
+		if(vis[el]==-1) dfs(el, adj, vis, scc);
+		// ye line likhna jroori h
+		// 4 nodes 4 edges
+		// 1->2
+		// 2->3
+		// 3->1
+		// 4->3... ispe chalake dekh lo nahi likhne se self loop aa jayega
+		else if(vis[el]!=scc) {
+			scc_adj[vis[el]].push_back(scc);
+			scc_indegree[scc]++;
+		}
+
+	}
+}
+
+void dfs_with_stack(int node, auto &adj, auto &vis, auto &st) {
+	vis[node] = node;
+	for(int el:adj[node]) {
+		if(vis[el]==-1) dfs_with_stack(el, adj, vis, st);
+	}
+	st.push(node);
+}
+
+int main() {
+    int n, m, queries;
+    cin >> n >> m >> queries;
+    
+    for(int i=0;i<m;i++) {
+        int a, b;
+        cin >> a >> b;
+		adj[a].insert(b);
+		rev_adj[b].insert(a);
+    }
+	stack<int> st;
+    for(int i=1;i<=n;i++) {
+		if(vis[i]==-1) {
+			dfs_with_stack(i,adj,vis,st);
+		}
+	}
+	vis.assign(nmax, -1);
+	int scc = 0;
+	while(!st.empty()) {
+		int curr = st.top();
+		st.pop();
+		if(vis[curr]!=-1) continue;
+		scc_adj.push_back(vector<int>());
+		scc_indegree.push_back(0);
+		dfs(curr, rev_adj, vis, scc);
+		scc++;
+	}
+
+	// Now we have scc graph, now we can topo sort
+	for(int i=0;i<scc;i++) {
+		cout << i << " : ";
+		for(int j:scc_adj[i]) {
+			cout << j << " ";
+		}
+		cout << endl;
+	}
+	queue<int> q;
+	for(int i=0;i<scc;i++) {
+		if(scc_indegree[i]==0) {
+			q.push(i);
+		}
+	}
+	vector<int> topo;
+	while(!q.empty()) {
+		int curr = q.front();
+		q.pop();
+		topo.push_back(curr);
+		for(int el:scc_adj[curr]) {
+			scc_indegree[el]--;
+			if(scc_indegree[el]==0) q.push(el);
+		}
+	}
+
+	for(int i=scc-1;i>=0;i--) {
+		ans[i][i] = 1;
+		for(int el:scc_adj[i]) {
+			ans[i] |= ans[el];
+		}
+	}
+
+    while(queries--) {
+		int a, b;
+		cin >> a >> b;
+		if(ans[vis[a]][vis[b]]) cout << "YES\n";
+		else cout << "NO\n";
+	}
+    return 0;
+}

@@ -1,0 +1,66 @@
+Algozenith link: https://maang.in/problems/Kadane-Twist-908?resourceUrl=cs70-cp479-pl3267-rs908&returnUrl=%5B%22%2Fcourses%2FDP-Workshop-Vivek-Gupta-Youtube-70%3Ftab%3Dchapters%22%5D
+
+// Thoda analysis krna h bas
+// ho skta h maximum subarray kisi ek chote array me hi lie kr jaye
+// islie har chote array me individually kadane laga denge, aur kd_max store kr 
+// lenge... fir bade array me jaise jaise aata jayega uss hisab se max lete jayenge
+// (This is imp ki pehle hi max mat kr lena kyunki ho skta ki kuch chote arrays use hi na ho)
+// Ab possibility yahi h ki atleast 2 arrays involve ho
+// to first array ka suf_max and next array ka pref_max leke hi ans aayega na
+// aur teesre array me extend krna h ya nahi that depends ki sum + tot_sum, suf_max
+// me se kya jaada h ... uss hisab se aage wala array ko max suf_sum mil hi jayega
+// suf_max kya hi hota h.... koi pehle array jiska true suf_max, bakio ka bas tot_sum add
+// and end me pref_max add krke ban gya na ... islie max(suf_max, sum + tot_sum) kr rhe
+
+#include<bits/stdc++.h>
+using namespace std;
+#define int long long
+signed main() {
+    ios::sync_with_stdio(false);
+    cin.tie(0);
+    cout.tie(0);
+    int t;
+    cin >> t;
+    while(t--) {
+        int ans = -1e18;
+        int n, m;
+        cin >> n >> m;
+        vector<vector<int>> info(n);
+        for(int i=0;i<n;i++) {
+            int l;
+            cin >> l;
+            vector<int> arr(l);
+            int tot_sum = 0;
+            int pre_max = -1e18;
+            for(int j=0;j<l;j++) {
+                cin >> arr[j];
+                tot_sum += arr[j];
+                pre_max = max(pre_max, tot_sum);
+            }
+            int suf_max = -1e18;
+            int sum = 0;
+            int kadane = 0;
+            int kd_max = -1e18;
+            for(int j=l-1;j>=0;j--) {
+                sum += arr[j];
+                kadane += arr[j];
+                kd_max = max(kd_max, kadane);
+                if(kadane < 0) kadane = 0;
+                suf_max = max(suf_max, sum);
+            }
+            info[i] = {pre_max, tot_sum, suf_max, kd_max};
+        }
+
+        int sum = 0;
+        for(int i=0;i<m;i++) {
+            int x;
+            cin >> x;
+            x--;
+            ans = max(ans, info[x][3]);
+            ans = max(ans, sum + info[x][0]);
+            sum = max(sum + info[x][1], info[x][2]);
+        }
+        cout << ans << "\n";
+    }
+    return 0;
+}

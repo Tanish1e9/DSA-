@@ -1,0 +1,30 @@
+LC link: https://leetcode.com/problems/maximum-side-length-of-a-square-with-sum-less-than-or-equal-to-threshold/description/
+
+// Ye to dekh simple hi h, prefix sum matrix bana lo
+// fir bas sidhe ans+1 pe check krna start krenge at any i,j aur aage badhte jayenge
+// TC is O(n*m) + O(min(n,m)) ... wo while loop pura milake O(min(n,m)) baar hi chal skta h max
+
+int get_sum(int a, int b, int c, int d, auto &pre) {
+    int ans = pre[c][d];
+    if(b>=1) ans -= pre[c][b-1];
+    if(a>=1) ans -= pre[a-1][d];
+    if(a>=1 && b>=1) ans += pre[a-1][b-1];
+    return ans;
+}
+int maxSideLength(vector<vector<int>>& arr, int threshold) {
+    int n = arr.size();
+    int m = arr[0].size();
+    vector<vector<int>> arr_copy = arr;
+    int ans = 0;
+    for(int i=0;i<n;i++) {
+        for(int j=0;j<m;j++) {
+            if(i>=1) arr_copy[i][j] += arr_copy[i-1][j];
+            if(j>=1) arr_copy[i][j] += arr_copy[i][j-1];
+            if(i>=1 && j>=1) arr_copy[i][j] -= arr_copy[i-1][j-1];
+            while(i-ans>=0 && j-ans>=0 && get_sum(i-ans, j-ans, i, j, arr_copy) <= threshold) {
+                ans++;
+            }
+        }
+    }
+    return ans;
+}

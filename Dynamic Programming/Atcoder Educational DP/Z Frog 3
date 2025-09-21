@@ -1,0 +1,67 @@
+Atocder link: https://atcoder.jp/contests/dp/tasks/dp_z
+
+#include<bits/stdc++.h>
+using namespace std;
+#define int long long
+int helper(auto &arr, int c) {
+    int n = arr.size();
+    vector<int> dp(n, 1e18);
+    // lines store ci,mi format me lines i.e. (intercept, slope)
+    // where ci = dp[i] + arr[i]*arr[i]
+    // and mi = -2*arr[i]
+    // observe that as i increases, arr[i] increases thus ci increases and mi decreases
+    // dp[i] bhi increasing hi hoga... since aisa kaise ho skta ki increasing height pe kam cost pe pahuch jaye
+    // points store ki koi bhi i index wala line, i-1 index wale line ko intersect kaha pe krega in (num, den) format
+    // ab kabhi bhi koi index pe ho to suppose agar current wala line... sabse piche wala line apne piche wale ko jaha intersect kre
+    // uske ya uske pehle current line sabse piche wale line ko kr de... then last line ka to use hi nahi h
+    // islie pop krte rhna h jab tk aisa ho fir apna line daalna h
+    // aur shuruwat me dekhna h ki j+1 wala line j wale line ko kahi current point(arr[i]) ke pehle to nahi intersect kr dia
+    // uss case me j ko aage badha dena h
+    // koi bhi line kisi line ko jaha intersect kre na to uske aage waale points pe dusra line hi minimum hoga
+    // since intercepts are increasing and slopes are all negative and decreasing
+    // Also yaha observe krna ki jo first line daale h with point as 0
+    // ye kabhi remove hi nahi hoga
+    // since remove krne k lie to j+1 se shuruwat hota 0 wala to aayega hi nahi isme
+    // aur piche se remove hone ke lie new line ka last line ke sath intersection point uss line ke intersection se kam pe hona hota
+    // 0 se kam pe to koi intersect nahi hi krega 
+    // yahi tha CHT... dekhoge to lines jaise intersect krte ja rhi un points ka convex hull hi ban rha h
+
+    vector<pair<int,int>> lines, points;
+    dp[0]=0;
+    lines.push_back({arr[0]*arr[0], -2*arr[0]});
+    points.push_back({0,1});
+    int j = 0;
+    for(int i=1;i<n;i++) {
+        while(j+1 < points.size() && points[j+1].first <= arr[i]*points[j+1].second) j++;
+        // for(int j=0;j<i;j++) {
+        //     dp[i] = min(dp[i], dp[j] + (arr[i]-arr[j])*(arr[i]-arr[j]) + c);
+        // }
+
+        dp[i] = c + arr[i]*arr[i] + lines[j].first + lines[j].second*arr[i];
+        int c1 = dp[i] + arr[i]*arr[i];
+        int m1 = -2*arr[i];
+        auto pl = lines.back();
+        auto pp = points.back();
+        while(lines.size() > 0 && (c1-pl.first)*pp.second <= pp.first * (pl.second - m1)) {
+            points.pop_back();
+            lines.pop_back();
+            pl = lines.back();
+            pp = points.back();
+        }
+        points.push_back({(c1-pl.first) , (pl.second-m1)});
+        lines.push_back({c1, m1});
+    }
+    return dp[n-1];
+}
+signed main () {
+    ios::sync_with_stdio(false);
+    cin.tie(0);
+    cout.tie(0);
+    int n, c;
+    cin >> n >> c;
+    vector<int> arr(n);
+    for(int i=0;i<n;i++) cin >> arr[i];
+
+    cout << helper(arr, c) << endl;
+    return 0;
+}

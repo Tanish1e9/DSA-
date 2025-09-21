@@ -26,6 +26,14 @@ int helper(auto &arr, int c) {
     // 0 se kam pe to koi intersect nahi hi krega 
     // yahi tha CHT... dekhoge to lines jaise intersect krte ja rhi un points ka convex hull hi ban rha h
 
+// for(int j=0;j<i;j++) {
+//     dp[i] = min(dp[i], dp[j] + (arr[i]-arr[j])*(arr[i]-arr[j]) + c);
+// }
+// Isme tum khologe to milega dp[i] = arr[i]*arr[i] + c + minimise over 0<=j<i(arr[j]*arr[j] + dp[j] - 2*arr[j] * arr[i])
+// To yahi pe intercept maan lo arr[j]*arr[j] + dp[j] ko
+// aur slope maan le -2*arr[j] ko ... arr[i] ke jagah x imagine kro
+// since arr[i] increasing order me h to isko graph me x ki tarah imagine kra ja skta h
+
     vector<pair<int,int>> lines, points;
     dp[0]=0;
     lines.push_back({arr[0]*arr[0], -2*arr[0]});
@@ -33,9 +41,6 @@ int helper(auto &arr, int c) {
     int j = 0;
     for(int i=1;i<n;i++) {
         while(j+1 < points.size() && points[j+1].first <= arr[i]*points[j+1].second) j++;
-        // for(int j=0;j<i;j++) {
-        //     dp[i] = min(dp[i], dp[j] + (arr[i]-arr[j])*(arr[i]-arr[j]) + c);
-        // }
 
         dp[i] = c + arr[i]*arr[i] + lines[j].first + lines[j].second*arr[i];
         int c1 = dp[i] + arr[i]*arr[i];

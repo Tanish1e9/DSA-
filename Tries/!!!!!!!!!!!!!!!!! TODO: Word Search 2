@@ -36,3 +36,78 @@ vector<string> findWords(vector<vector<char>>& board, vector<string>& words) {
     }
     return ans;
 }
+
+
+
+// Ye rha accepted code with good TC
+
+class TrieNode{
+    public:
+    TrieNode* chars[26];
+    bool ending = false;
+    void insert(string &word) {
+        TrieNode* curr = this;
+        for(char c:word) {
+            if(!curr->chars[c-'a']) curr->chars[c-'a'] = new TrieNode();
+            curr = curr->chars[c-'a'];
+        }
+        curr->ending = true;
+    }
+    bool search(string &word) {
+        TrieNode* curr = this;
+        for(char c:word) {
+            if(!curr->chars[c-'a']) return false;
+            curr = curr->chars[c-'a'];
+        }
+        return curr->ending;
+    }
+};
+
+class Solution {
+public:
+    int dx[4] = {-1,1,0,0};
+    int dy[4] = {0,0,-1,1};
+    vector<string> ans;
+    void dfs(int i, int j, auto &board, auto &vis, string &word, TrieNode* curr) {
+        if(!curr->chars[board[i][j]-'a']) return;
+        word.push_back(board[i][j]);
+        curr = curr->chars[board[i][j]-'a'];
+        if(curr->ending) {
+            ans.push_back(word);
+            // ab to iss word ka jroorat nahi h na
+            // nahi krne se double counting ho skta h na
+            curr->ending = false;
+        }
+        vis[i][j] = true;
+        for(int k=0;k<4;k++) {
+            int x = i + dx[k];
+            int y = j + dy[k];
+            if(x<0 || y<0 || x>=board.size() || y>=board[0].size() || vis[x][y]) continue;
+            dfs(x,y,board,vis,word,curr);
+        }
+        vis[i][j] = false;
+        word.pop_back();
+    }
+    vector<string> findWords(vector<vector<char>>& board, vector<string>& words) {
+        TrieNode* root = new TrieNode();
+        for(string &s:words) {
+            root->insert(s);
+        }
+        int n = board.size();
+        int m = board[0].size();
+        vector<vector<bool>> vis(n, vector<bool>(m, false));
+
+        string word;
+        for(int i=0;i<n;i++) {
+            for(int j=0;j<m;j++) {
+                dfs(i,j,board,vis,word,root);
+                // just pruning
+                if(ans.size() == words.size()) return ans;
+            }
+        }
+        return ans;
+    }
+};
+
+
+

@@ -1,0 +1,79 @@
+CSES link: https://cses.fi/problemset/task/1753/
+
+// Dekh isme na dekhna ek hi tarike se pat + '$' + text krke
+// lps, z compute krna h fir unke meanings se we can deduce ki pattern aaya ya nahi
+// yaha pe z ya lps value pat.size() se exceed kabhi kr hi ni skta because of dollar sign
+// To jhanjhat hi khatam h alag se algo lagane ka pattern pe alag se krne ka
+
+
+#include<bits/stdc++.h>
+using namespace std;
+#define int long long
+
+int kmp(string &text, string &pat) {
+	string com = pat + '$' + text;
+	int n = com.size();
+	vector<int> lps(n, 0);
+	int j=0;
+	int ans = 0;
+	// Remember ki ekdum sahi se LPS lagana h, i.e. start from 1 here
+	// pat.size() + 1 se kia agar to galat aa jayega
+	// maan le na ki kahi pat ke hi bich me h j aur match nahi kia
+	// to sidhe 0 chala jayega ye to galat hoga na
+	for(int i=1;i<n;i++) {
+		while(j>0 && com[i]!=com[j]) j = lps[j-1];
+
+		if(com[i]==com[j]) lps[i] = ++j;
+		else lps[i]=0;
+
+		if(lps[i]==pat.size()) {
+			ans++;
+			// actual index will be i-2*m where m is pat.size()
+		}
+	}
+	return ans;
+}
+int z(string &text, string &pat) {
+	string com = pat + '$' + text;
+	int n = com.size();
+	vector<int> zarr(n, 0);
+	int ans = 0;
+	int l=0, r=0;
+	// Yaha bhi 1 se hi start krna hoga... jab bhi window banega
+	// to wo assume krega na ki window waale precomputed h... par 1 se start ni kia
+	// to waha 0 rhega jo ki galat hoga na
+	for(int i=1;i<n;i++) {
+		if(i > r) {
+			while(i+zarr[i] < n && com[i+zarr[i]] == com[zarr[i]]) zarr[i]++;
+		} else {
+			if(zarr[i-l]+i <= r) zarr[i] = zarr[i-l];
+			else {
+				// Yaha boundary tk hmesha hi le lo na, we have checked above, r ko cross kr rha h 
+				zarr[i] = r-i+1;
+				while(i+zarr[i] < n && com[i+zarr[i]] == com[zarr[i]]) zarr[i]++;
+			}
+		}
+		// This window updation should happen for both while loops wala part, if wale me khud soch lo nahi hoga
+		// to dono bar repeat na krna pade code ko islie bahar hi likh dia
+		if(i+zarr[i]-1 > r) {
+			l=i;
+			r=i+zarr[i]-1;
+		}
+
+		if(zarr[i] == pat.size()){
+			ans++;
+			// actual index will be i-m-1 where m is pat.size()
+		}
+
+	}
+
+	return ans;
+}
+signed main() {
+	string text, pat;
+	cin >> text;
+	cin >> pat;
+
+	// cout << kmp(text, pat) << endl;
+	cout << z(text, pat) << endl;
+}

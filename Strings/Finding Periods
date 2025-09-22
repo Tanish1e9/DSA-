@@ -1,0 +1,69 @@
+CSES link: https://cses.fi/problemset/task/1733/
+
+// Yaha dekh KMP se koshish kie par usi me na Z-algo ka ekdum motivation dikhne laga tha
+// to islie Z se hi kr die... usi se hota h generally ye question since yaha we ask the question
+// ki koi substr(l,r) kya ek prefix bhi h to zarr[l] >= r-l+1 kuch iss type se fatt se bata denge ki h ya nahi
+// KMP se nahi bata skte ye
+// Ab dekh Zarr to compute kra lie... Ab kisi length i ke lie check krna h ki wo period h ki nahi
+// to pehle to i pe jaake dekho zarr[i] >= i hona chahye... fir 2*i pe jaake dekho >= 2*i hona chahye and so on
+// last me bacha kucha hona chahye to true h else false.... logn time laga har length ke lie pata krne me
+// accepted h ye
+// par socho na zarr[i] = n-i hone se i ans ho jata h
+// suppose we want to check ki i period h ya nahi... to maan lo ki period h
+// ab zarr[i] kya hoga? sochoge to n-i ho jayega... since start se wahi to repeat krta rhega... string k end tk pahuch jayenge
+
+
+#include <bits/stdc++.h>
+using namespace std;
+#define int long long
+vector<int> z(string &com) {
+	int n = com.size();
+	vector<int> zarr(n, 0);
+	int l=0, r=0;
+	for(int i=1;i<n;i++) {
+		if(i > r) {
+			while(i+zarr[i] < n && com[i+zarr[i]] == com[zarr[i]]) zarr[i]++;
+		} else {
+			if(zarr[i-l]+i <= r) zarr[i] = zarr[i-l];
+			else {
+				// Yaha boundary tk hmesha hi le lo na, we have checked above, r ko cross kr rha h 
+				zarr[i] = r-i+1;
+				while(i+zarr[i] < n && com[i+zarr[i]] == com[zarr[i]]) zarr[i]++;
+			}
+		}
+		// This window updation should happen for both while loops wala part, if wale me khud soch lo nahi hoga
+		// to dono bar repeat na krna pade code ko islie bahar hi likh dia
+		if(i+zarr[i]-1 > r) {
+			l=i;
+			r=i+zarr[i]-1;
+		}
+	}
+
+	return zarr;	
+}
+bool check_for_prefix(int len, auto &zarr) {
+	if((len<<1) >= zarr.size()) {
+		if(zarr[len] == zarr.size() - len) return true;
+		return false;
+	}
+	if(zarr[len] < len) return false;
+	return check_for_prefix(len<<1, zarr);
+}
+signed main() {
+    ios::sync_with_stdio(false);
+	cin.tie(0);
+	cout.tie(0);
+	
+	string s;
+	cin >> s;
+	vector<int> zarr = z(s);
+
+	int n = s.size();
+	for(int i=1;i<n;i++) {
+		// if(check_for_prefix(i,zarr)) cout << i << " ";
+		if(zarr[i] == n-i) cout << i << " ";
+	}
+	cout << n << endl;
+
+    return 0;
+}

@@ -1,6 +1,8 @@
 GFG link: https://www.geeksforgeeks.org/problems/search-pattern0205/1
 LC link: https://leetcode.com/problems/find-the-index-of-the-first-occurrence-in-a-string/
 
+// Z-algorithm wala bhi file dekh lena ek hi sath usme dono kra hua h
+
 vector <int> search(string pat, string txt){
     vector<int>ans;
     int m=pat.size();

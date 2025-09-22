@@ -4,7 +4,8 @@ CSES link: https://cses.fi/problemset/task/1753/
 // lps, z compute krna h fir unke meanings se we can deduce ki pattern aaya ya nahi
 // yaha pe z ya lps value pat.size() se exceed kabhi kr hi ni skta because of dollar sign
 // To jhanjhat hi khatam h alag se algo lagane ka pattern pe alag se krne ka
-
+// Also, yaha pe i>=m+1 wale pe hi check krna valid h but jroorat nahi h since
+// dollar k kaaran kabhi bhi i<=m pe ans milega hi nahi
 
 #include<bits/stdc++.h>
 using namespace std;

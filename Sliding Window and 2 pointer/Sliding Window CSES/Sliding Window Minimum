@@ -1,0 +1,42 @@
+CSES link: https://cses.fi/problemset/task/3221/
+
+// Mann me aayega ki map ya multiset use kr lete h
+// par usse jo logn factor extra aayega na.... bas wo TLE kra dega
+// monotonic deque use kro 
+
+#include<bits/stdc++.h>
+using namespace std;
+#define int long long
+vector<int> xarr(10000007);
+signed main() {
+	ios::sync_with_stdio(false);
+	cin.tie(0);
+	cout.tie(0);
+ 
+	int n, k;
+	cin >> n >> k;
+	int x, a, b, c;
+	cin >> x >> a >> b >> c;
+	
+	int ans = 0;
+	deque<int> dq;
+
+	for(int i=0;i<n;i++) {
+		if(i==0) xarr[i] = x;
+		else xarr[i] = (a*xarr[i-1]+b)%c;
+
+		// Add the current element
+		while(!dq.empty() && xarr[dq.back()] >= xarr[i]) dq.pop_back();
+		dq.push_back(i);
+		
+		int l = i-k+1;
+		if(l>=0) {
+			// window exists
+			ans ^= xarr[dq.front()];
+			// Remove the first element from the window
+			if(dq.front() == l) dq.pop_front();
+		}
+	}	
+	cout << ans << endl;
+	return 0;
+}

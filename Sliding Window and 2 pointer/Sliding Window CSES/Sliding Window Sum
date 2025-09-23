@@ -1,0 +1,75 @@
+CSES link: https://cses.fi/problemset/task/3220
+
+// Ye to simple hi h jada kuch h nahi
+// Har iteration me pehle array ka element generate kra die h
+// aur bas window ke hisab se operations kr rhe
+
+#include<bits/stdc++.h>
+using namespace std;
+#define int long long
+vector<int> xarr(10000007);
+signed main() {
+	ios::sync_with_stdio(false);
+	cin.tie(0);
+	cout.tie(0);
+ 
+	int n, k;
+	cin >> n >> k;
+	int x, a, b, c;
+	cin >> x >> a >> b >> c;
+	int ans = 0;
+	int sum = 0;
+    // Ye thik se krna ... 1 length ka bhi window ho skta
+    // to agar i=1 se start kra to wo rh jayega na
+	for(int i=0;i<n;i++) {
+		if(i==0) xarr[i] = x;
+		else xarr[i] = (a*xarr[i-1]+b)%c;
+ 
+		sum += xarr[i];
+		int l = i-k+1;
+		if(l>=0) {
+			ans ^= sum;
+			sum -= xarr[l];
+		}
+	}	
+	cout << ans << endl;
+	return 0;
+}
+
+
+
+// Yaha aise to pura xarr store krne ka jroorat nahi h, window bhar ka elements rakh skte
+// jiske lie deque use hoga... par in worst case to uska bhi size 1e7 jayega na... islie kuch khas fark ni padega
+#include<bits/stdc++.h>
+using namespace std;
+#define int long long
+
+deque<int> dq;
+signed main() {
+	ios::sync_with_stdio(false);
+	cin.tie(0);
+	cout.tie(0);
+
+	int n, k;
+	cin >> n >> k;
+	int x, a, b, c;
+	cin >> x >> a >> b >> c;
+	int ans = 0;
+	int sum = 0;
+	
+	for(int i=0;i<n;i++) {
+		if(i==0) dq.push_back(x);
+		else dq.push_back((dq.back()*a+b)%c);
+		
+		sum += dq.back();
+		int l = i-k+1;
+		if(l>=0) {
+			ans ^= sum;
+			// cout << sum << endl;
+			sum -= dq.front();
+			dq.pop_front();
+		}
+	}	
+	cout << ans << endl;
+	return 0;
+}

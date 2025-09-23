@@ -1,0 +1,86 @@
+Algozenith link:https://maang.in/problems/Travel-Optimisation-924?resourceUrl=cs70-cp480-pl3269-rs924&returnUrl=%5B%22%2Fcourses%2FDP-Workshop-Vivek-Gupta-Youtube-70%3Ftab%3Dchapters%22%5D
+
+
+// Dekh yaha na pehle to recurrence form krna h
+// to it's like i pe h to ya to bus lenge ya flight
+// bus leke bas i+1 hi pahuch skte
+// flight se i+1 to i+k me kahi bhi (n-1 ke paar nahi obviously)
+// and function returns the min cost to reach n-1 from i
+// ab dekh isme ek to sliding window minima lag hi rha h
+// uske lie monotonic deque lagana padega (map lagane pe TLE maarega)
+// Dusra n*m 1e8 pe bounded h to globally hi rakh paoge na isko ...jhanjhat hi h isme
+// islie prev, curr wala optimisation laga die
+// Aur to aur flights_left ko shuru me laaye h dp array ke taaki prev aur curr laga ske... i saamne rhta to nahi lagta na
+// Question overall ek bar me sab kr die the except the sliding window minima wala part
+
+#include<bits/stdc++.h>
+using namespace std;
+#define int long long
+// int helper(int i, int flights_left, vector<int> &air, vector<int> &bus, int k, int n) {
+//     if(i==n-1) return 0;
+//     int ans = bus[i] + helper(i+1, flights_left, air, bus, k, n);
+//     if(flights_left > 0) {
+//         int limit = min(i+k, n-1);
+//         for(int j=i+1;j<=limit;j++) {
+//             ans = min(ans, air[j] + air[i] + helper(j, flights_left-1, air, bus, k, n));
+//         }
+//     }
+//     return ans;
+// }
+
+int helper(vector<int> &air, vector<int> &bus, int n, int m, int k) {
+    vector<int> prev(n), curr(n);
+    prev[n-1] = 0;
+    curr[n-1] = 0;
+    for(int i=n-2;i>=0;i--){
+        prev[i] = bus[i] + prev[i+1];
+    }
+
+    for(int flights_left=1;flights_left<=m;flights_left++) {
+        deque<int> dq;
+        dq.push_front(n-1);
+        for(int i=n-2;i>=0;i--) {
+            // int ans = bus[i] + dp[flights_left][i+1];
+            // if(flights_left > 0) {
+                // int limit = min(i+k, n-1);
+                // for(int j=i+1;j<=limit;j++) {
+                //     ans = min(ans, air[j] + air[i] + dp[flights_left-1][j]);
+                // }
+            // }
+            // dp[flights_left][i] = ans;
+
+            curr[i] = min(air[dq.back()] + prev[dq.back()] + air[i], bus[i] + curr[i+1]);
+
+            while(!dq.empty() && air[dq.front()] + prev[dq.front()] >= air[i] + prev[i]) dq.pop_front();
+            dq.push_front(i);
+
+            int r = i+k;
+            if(r < n) {
+                if(dq.back() == r) dq.pop_back();
+            }
+        }
+
+        prev = curr;
+    }
+
+    return prev[0];
+}
+
+signed main() {
+    ios::sync_with_stdio(false);
+    cin.tie(0);
+    cout.tie(0);
+    int t;
+    cin >> t;
+    while(t--) {
+        int n, m, k;
+        cin >> n >> m >> k;
+        vector<int> bus(n), air(n);
+        for(int i=0;i<n;i++) cin >> bus[i];
+        for(int i=0;i<n;i++) cin >> air[i];
+
+        // cout << helper(0,m,air,bus,k,n) << "\n";
+        cout << helper(air, bus, n, m, k) << "\n";
+    }
+    return 0;
+}

@@ -1,5 +1,8 @@
 CSES link: https://cses.fi/problemset/task/3219/
 
+// Dekh ye idea pakad le ki excludants ka set maintain krke chalna h
+// btw agar k elements consideration me ho mex <= k hi hoga
+// islie sirf k tk ke elements se mtlb h to unhi ki freq ko track kia h
 
 #include <bits/stdc++.h>
 using namespace std;
@@ -36,6 +39,12 @@ signed main() {
 }
 
 
+
+// Yaha original thought tha mera
+// Soch rhe the ki agar current mex pata ho and koi element add ya remove ho to mex kya ho skta 
+// sb optimal tha except ki agar current mex hi add ho jaye
+// uss case me agla jump kaha maare for that I used a segment tree aur check krte gye ki
+// jaha bhi jump maare kya waha tk ke saare elements h agar yes to go right else go left
 
 
 #include<bits/stdc++.h>

@@ -110,3 +110,93 @@ signed main() {
 	cout << ans << "\n";
 	return 0;
 }
+
+
+
+// Now ye jo h AggStack and AggQueue ka solution ye bhi blocks ka prefix suffix hi maintain kr rha h
+// 'in' is maintaining prefix and 'out' is maintaining suffix
+// Iss technique me hmlog or k jagah koi bhi aur aggregate function like gcd, min etc laga skte h
+// O(k) hi extra space lega at any point of time
+// infact isme array bhi store krne ka jroorat nahi h
+// sliding window minimum me jo monotonic deque lagaye the wo method har aggregate function me nahi chalega
+
+
+#include<bits/stdc++.h>
+using namespace std;
+#define int long long
+
+class AggStack{
+	public:
+	stack<pair<int,int>> st;
+	void push(int x) {
+		if(!st.empty()) st.push({x, st.top().second | x});
+		else st.push({x,x});
+	}
+	void pop() {
+		st.pop();
+	}
+
+	bool empty() {
+		return st.empty();
+	}
+
+	int query() {
+		return st.top().second;
+	}
+
+	int top() {
+		return st.top().first;
+	}
+};
+
+
+class AggQueue{
+	public:
+	AggStack in, out;
+	void push(int x) {
+		in.push(x);
+	}
+	void pop() {
+		if(out.empty()) {
+			while(!in.empty()) {
+				out.push(in.top());
+				in.pop();
+			}
+		}
+		out.pop();
+	}
+	int query() {
+		int ans = 0;
+		if(!in.empty()) ans |= in.query();
+		if(!out.empty()) ans |= out.query();
+		return ans;
+	}
+};
+signed main() {
+	ios::sync_with_stdio(false);
+	cin.tie(0);
+ 
+	int n, k;
+	cin >> n >> k;
+	int x,a,b,c;
+	cin >> x >> a >> b >> c;
+	
+	int ans = 0, curr = 0;
+	AggQueue q;
+	for(int i=0;i<n;i++) {
+		if(i==0) curr = x;
+		else curr = (a*curr+b)%c;
+ 
+		q.push(curr);
+
+		int l = i-k+1;
+		if(l>=0) {
+			// window exists
+			ans ^= q.query();
+			q.pop();
+		}
+	}
+
+	cout << ans << "\n";
+	return 0;
+}

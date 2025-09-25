@@ -1,0 +1,49 @@
+CSES link: https://cses.fi/problemset/task/3224/
+
+#include<bits/stdc++.h>
+using namespace std;
+#define int long long
+class comp{
+	public:
+	bool operator()(const pair<int,int> &a, const pair<int,int> &b) const {
+		if(a.first != b.first) return a.first > b.first;
+		return a.second < b.second;
+	}
+};
+
+signed main() {
+	ios::sync_with_stdio(false);
+	cin.tie(0);
+	
+	int n, k;
+	cin >> n >> k;
+	vector<int> xarr(n); 
+	
+	map<int,int> mpp;
+	set<pair<int,int>, comp> st;
+	
+	for(int i=0;i<n;i++) {
+		cin >> xarr[i];
+ 
+		mpp[xarr[i]]++;
+		st.erase({mpp[xarr[i]]-1, xarr[i]});
+		st.insert({mpp[xarr[i]], xarr[i]});
+
+		int l = i-k+1;
+		if(l>=0) {
+			// window exists
+			cout << st.begin()->second << " ";
+			mpp[xarr[l]]--;
+			if(mpp[xarr[l]]==0) {
+				mpp.erase(xarr[l]);
+				st.erase({1, xarr[l]});
+			} else {
+				st.erase({mpp[xarr[l]]+1, xarr[l]});
+				st.insert({mpp[xarr[l]], xarr[l]});
+			}
+		}
+	}
+
+	cout << "\n";
+	return 0;
+}

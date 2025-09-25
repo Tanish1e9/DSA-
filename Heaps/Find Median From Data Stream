@@ -12,13 +12,13 @@ class MedianFinder {
 public:
     priority_queue<int> left;   // max heap
     priority_queue<int,vector<int>,greater<int>> right; // min heap
-	  bool to_left = true;
     MedianFinder() {
         
     }
     
     void addNum(int num) {
-        if(to_left) {
+		// dry run krke dekh lo sizes different hone par left ka hi jaada rhega
+        if(left.size() == right.size()) {
             if(right.empty() || right.top()>=num) left.push(num);
             else {
                 right.push(num);
@@ -34,7 +34,6 @@ public:
                 left.pop();
             }
         }
-		to_left = !to_left;
     }
     
     double findMedian() {

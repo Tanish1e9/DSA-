@@ -1,0 +1,101 @@
+CSES link: https://cses.fi/problemset/task/1190/
+
+
+// Isme ulta Subarray Sum Queries 2 se ek function jada hi likhna pada
+// khair bhut hi similar question hai uske dekh lo code
+
+
+#include <bits/stdc++.h>
+using namespace std;
+#define int long long
+class info{
+	public:
+	int pref_max, suf_max, kd_max, tot_sum;
+	info() {
+
+	}
+	info(int a, int b, int c, int d) {
+		pref_max = a;
+		suf_max = b;
+		kd_max = c;
+		tot_sum = d;
+	}
+};
+class seg_tree{
+	#define L (ind<<1)+1
+	#define R (ind<<1)+2
+	public:
+	vector<info> seg;
+	seg_tree(vector<int> &arr) {
+		int n = arr.size();
+		seg = vector<info> (4*n+1);
+		build(0,0,n-1,arr);
+	}
+	void build(int ind, int low, int high, vector<int> &arr) {
+		if(low == high) {
+			seg[ind].pref_max = seg[ind].suf_max = seg[ind].kd_max = seg[ind].tot_sum = arr[low];
+			return;
+		}
+		int mid = low + (high-low)/2;
+		build(L, low, mid, arr);
+		build(R, mid+1, high, arr);
+		seg[ind].pref_max = max(seg[L].pref_max, seg[L].tot_sum + seg[R].pref_max);
+		seg[ind].suf_max = max(seg[R].suf_max, seg[R].tot_sum + seg[L].suf_max);
+		seg[ind].kd_max = max({seg[L].kd_max, seg[R].kd_max, seg[L].suf_max + seg[R].pref_max});
+		seg[ind].tot_sum = seg[L].tot_sum + seg[R].tot_sum;
+	}
+	info query(int ind, int low, int high, int l, int r) {
+		if(r<low || high<l) return info(-1e18, -1e18, -1e18, 0);
+		if(l<=low && high<=r) return seg[ind];
+		int mid = low + (high-low)/2;
+		info left = query(L, low, mid, l, r);
+		info right = query(R, mid+1, high, l, r);
+
+		info ans;
+		ans.pref_max = max(left.pref_max, left.tot_sum + right.pref_max);
+		ans.suf_max = max(right.suf_max, right.tot_sum + left.suf_max);
+		ans.kd_max = max({left.kd_max, right.kd_max, left.suf_max + right.pref_max});
+		ans.tot_sum = left.tot_sum + right.tot_sum;
+		return ans;
+	}
+	void point_update(int ind, int low, int high, int k, int x) {
+		if(k<low || high<k) return;
+		if(low == high && low == k) {
+			seg[ind] = info(x,x,x,x);
+			return;
+		}
+		int mid = low + (high-low)/2;
+		point_update(L, low, mid, k, x);
+		point_update(R, mid+1, high, k, x);
+		seg[ind].pref_max = max(seg[L].pref_max, seg[L].tot_sum + seg[R].pref_max);
+		seg[ind].suf_max = max(seg[R].suf_max, seg[R].tot_sum + seg[L].suf_max);
+		seg[ind].kd_max = max({seg[L].kd_max, seg[R].kd_max, seg[L].suf_max + seg[R].pref_max});
+		seg[ind].tot_sum = seg[L].tot_sum + seg[R].tot_sum;
+	}
+	#undef L
+	#undef R
+};
+signed main() {
+    ios::sync_with_stdio(false);
+	cin.tie(0);
+	cout.tie(0);
+
+	int n, q;
+	cin >> n >> q;
+	vector<int> arr(n);
+	for(int i=0;i<n;i++) cin >> arr[i];
+
+	seg_tree stree(arr);
+	while(q--) {
+		int a, b;
+		cin >> a >> b;
+		a--;
+
+		// a to b first update kro
+		stree.point_update(0,0,n-1,a,b);
+		// then ans kro
+
+		cout << max(0ll,stree.query(0,0,n-1,0,n-1).kd_max) << "\n";
+	}
+    return 0;
+}

@@ -1,0 +1,115 @@
+CSES link: https://cses.fi/problemset/task/3219/
+
+
+#include <bits/stdc++.h>
+using namespace std;
+#define int long long
+
+signed main() {
+    ios::sync_with_stdio(false);
+	cin.tie(0);
+	
+	int n, k;
+	cin >> n >> k;
+	vector<int>arr(n);
+	set<int> excludants;
+	vector<int> freq(k+1, 0);
+	for(int i=0;i<=k;i++) excludants.insert(i);
+	for(int i=0;i<n;i++) {
+		cin >> arr[i];
+		if(arr[i]<=k) {
+			freq[arr[i]]++;
+			excludants.erase(arr[i]);
+		}
+
+		int l=i-k+1;
+		if(l>=0) {
+			cout << *excludants.begin() << " ";
+			if(arr[l]<=k) {
+				freq[arr[l]]--;
+				if(freq[arr[l]]==0) excludants.insert(arr[l]);
+			}
+		}
+	}
+	cout << endl;
+    return 0;
+}
+
+
+
+
+#include<bits/stdc++.h>
+using namespace std;
+#define int long long
+class seg_tree{
+	public:
+	vector<int> seg;
+	seg_tree(int n) {
+		seg.assign(4*n, 0);
+	}
+	void point_update(int ind, int low, int high, int k, int val) {
+		if(k < low || high < k) return;
+		if(low==high && low==k) {
+			seg[ind] = val;
+			return;
+		}
+		int mid = low + (high-low)/2;
+		point_update((ind<<1)+1, low, mid, k, val);
+		point_update((ind<<1)+2, mid+1, high, k, val);
+		seg[ind] = seg[(ind<<1)+1] + seg[(ind<<1)+2];
+	}
+	int query(int ind, int low, int high, int l, int r) {
+		if(r<low || high < l) return 0;
+		if(l<=low && high<=r) return seg[ind];
+		int mid = low + (high-low)/2;
+		int left = query((ind<<1)+1, low, mid, l, r);
+		int right = query((ind<<1)+2, mid+1, high, l, r);
+		return left + right;
+	}
+};
+signed main() {
+	ios::sync_with_stdio(false);
+	cin.tie(0);
+	
+	int n, k;
+	cin >> n >> k;
+	vector<int> arr(n);
+	vector<int> is_present(1e5+1, 0);
+	map<int,int> freq;
+	seg_tree stree(1e5+1);
+	int mex = 0;
+	for(int i=0;i<n;i++) {
+		cin >> arr[i];
+		freq[arr[i]]++;
+		if(arr[i]<=1e5) stree.point_update(0,0,1e5,arr[i],1);
+		if(arr[i] == mex) {
+			int low = mex+1;
+			int high = 1e5;
+			while(low<=high) {
+				int mid = low + (high-low)/2;
+				if(stree.query(0,0,1e5,mex+1,mid) == mid-mex) low = mid+1;
+				else high = mid-1;
+			}
+			mex = low;
+			// mex++;
+			// while(freq.count(mex)==1) mex++;
+		}
+
+		int l = i-k+1;
+		if(l>=0) {
+			// window exists
+			cout << mex << " ";
+			// remove element
+			freq[arr[l]]--;
+			if(freq[arr[l]]==0) {
+				freq.erase(arr[l]);
+				if(arr[l]<=1e5) stree.point_update(0,0,1e5,arr[l],0);
+				if(arr[l] < mex) mex = arr[l];
+			}
+		}
+	}
+	cout << endl;
+	return 0;
+}
+
+

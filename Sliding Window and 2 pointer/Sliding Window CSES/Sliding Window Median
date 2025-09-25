@@ -1,0 +1,70 @@
+CSES link: https://cses.fi/problemset/task/1076/
+
+// Agar ordered set use kr lo tab to trivially ho jayega
+// Here's a code without ordered set
+// ekdum similar approach jaisa find median of data stream me kie the
+// isme elements ko remove bhi krna h to set le lie plus duplicates bhi h
+// to multiset le lie h
+// baki ek challenge h ki arr[l] kis set me h left ya right ye pata krna 
+// to simple hi h left.rbegin() se compare krke pata chal jayega
+// bas ye hote hi waha se remove kr lo... agar left.size() < right.size() ho gya
+// to right se ek element nikal ke left me daal do
+// baki normal insertion ke waqt to pata hi h
+
+#include<bits/stdc++.h>
+using namespace std;
+#define int long long
+void insert_to_left(auto &left, auto &right, int num) {
+	if(right.empty() || *right.begin() >= num) left.insert(num);
+	else {
+		right.insert(num);
+		left.insert(*right.begin());
+		right.erase(right.begin());
+	}
+}
+void insert_to_right(auto &left, auto &right, int num) {
+	if(*left.rbegin() <= num) right.insert(num);
+	else {
+		left.insert(num);
+		right.insert(*left.rbegin());
+		// reverse iterators pe delete nahi hota h
+		left.erase(next(left.rbegin()).base());
+	}
+}
+signed main() {
+	ios::sync_with_stdio(false);
+	cin.tie(0);
+	
+	int n, k;
+	cin >> n >> k;
+	vector<int> arr(n);
+
+	multiset<int> left, right;
+	for(int i=0;i<n;i++) {
+		cin >> arr[i];
+		// add element
+		if(left.size() == right.size()) insert_to_left(left, right, arr[i]);
+		else insert_to_right(left, right, arr[i]);
+
+
+		int l = i-k+1;
+		if(l>=0) {
+			// window exists
+			cout << *left.rbegin() << " ";
+
+			// remove element
+			if(arr[l] <= *left.rbegin()) {
+				left.erase(left.find(arr[l]));
+			} else {
+				right.erase(right.find(arr[l]));
+			}
+
+			if(left.size() < right.size()) {
+				left.insert(*right.begin());
+				right.erase(right.begin());
+			}
+		}
+	}
+	cout << "\n";
+	return 0;
+}

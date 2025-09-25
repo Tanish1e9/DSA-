@@ -1,0 +1,81 @@
+CSES link: https://cses.fi/problemset/task/1077/
+
+// Ye to ekdum similar question ho gya median ke
+// we know ki median pe hi equal krana h to minimise cost ab dekh lo
+// bas sum_left, sum_right maintain krke chalo kaam ho jayega
+
+#include<bits/stdc++.h>
+using namespace std;
+#define int long long
+int sum_left = 0, sum_right = 0;
+void insert_to_left(auto &left, auto &right, int num) {
+	if(right.empty() || *right.begin() >= num) {
+		sum_left += num;
+		left.insert(num);
+	}
+	else {
+		sum_right += num;
+		right.insert(num);
+		sum_left += *right.begin();
+		left.insert(*right.begin());
+		sum_right -= *right.begin();
+		right.erase(right.begin());
+	}
+}
+void insert_to_right(auto &left, auto &right, int num) {
+	if(*left.rbegin() <= num) {
+		sum_right += num;
+		right.insert(num);
+	}
+	else {
+		sum_left += num;
+		left.insert(num);
+		sum_right += *left.rbegin();
+		right.insert(*left.rbegin());
+		sum_left -= *left.rbegin();
+		// reverse iterators pe delete nahi hota h
+		left.erase(next(left.rbegin()).base());
+	}
+}
+signed main() {
+	ios::sync_with_stdio(false);
+	cin.tie(0);
+	
+	int n, k;
+	cin >> n >> k;
+	vector<int> arr(n);
+
+	multiset<int> left, right;
+	for(int i=0;i<n;i++) {
+		cin >> arr[i];
+		// add element
+		if(left.size() == right.size()) insert_to_left(left, right, arr[i]);
+		else insert_to_right(left, right, arr[i]);
+
+		int l = i-k+1;
+		if(l>=0) {
+			// window exists
+			// minimum cost to median ke equal krane me hi hoga
+			// bhut famous result hai
+			cout << sum_right - sum_left + (*left.rbegin()) * (left.size() - right.size()) << " ";
+
+			// remove element
+			if(arr[l] <= *left.rbegin()) {
+				sum_left -= arr[l];
+				left.erase(left.find(arr[l]));
+			} else {
+				sum_right -= arr[l];
+				right.erase(right.find(arr[l]));
+			}
+
+			if(left.size() < right.size()) {
+				sum_left += *right.begin();
+				left.insert(*right.begin());
+				sum_right -= *right.begin();
+				right.erase(right.begin());
+			}
+		}
+	}
+	cout << "\n";
+	return 0;
+}

@@ -1,0 +1,46 @@
+LC link: https://leetcode.com/problems/find-median-from-data-stream/description/
+
+// Isme na simply hmlog left me half(incase of even) ya half+1(incase of odd) elements rakhte h 
+// left wala max heap hota right wala min heap hota h
+// ab simply in dono ke top ka use krke ans bata skte na
+// bas we want to maintain left.top() <= right.top()
+// i.e. sort krne par shuru wale elements left me ho and baad wale right me 
+// isi property k wajah se sirf indono k top se median nikal jata h
+// classic question h ye
+
+class MedianFinder {
+public:
+    priority_queue<int> left;   // max heap
+    priority_queue<int,vector<int>,greater<int>> right; // min heap
+	  bool to_left = true;
+    MedianFinder() {
+        
+    }
+    
+    void addNum(int num) {
+        if(to_left) {
+            if(right.empty() || right.top()>=num) left.push(num);
+            else {
+                right.push(num);
+                left.push(right.top());
+                right.pop();
+            }
+        }
+		else {
+            if(left.top() <= num) right.push(num);
+            else {
+                left.push(num);
+                right.push(left.top());
+                left.pop();
+            }
+        }
+		to_left = !to_left;
+    }
+    
+    double findMedian() {
+        if((left.size() + right.size())%2==0) return (1.0*left.top() + right.top())/2.0;
+        return left.top();
+    }
+};
+
+

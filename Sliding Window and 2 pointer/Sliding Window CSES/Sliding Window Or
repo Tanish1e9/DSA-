@@ -49,3 +49,64 @@ signed main() {
 	cout << ans << "\n";
 	return 0;
 }
+
+
+// Isme na k length ke blocks me baant die h (last wale me ho skta <=k ho)
+// fir observe krna har ek k length k window ko inhi blocks ke prefix aur suffix se banaya ja skta h
+// to bas wahi kie h and ye accepted + intended solution h
+// isi ke space ko thoda optimise krenge agle solution me by using only O(k) extra space rather than O(n) here
+
+#include<bits/stdc++.h>
+using namespace std;
+#define int long long
+vector<int> xarr(10000007), suff(10000007), pref(10000007);
+signed main() {
+	ios::sync_with_stdio(false);
+	cin.tie(0);
+ 
+	int n, k;
+	cin >> n >> k;
+	int x,a,b,c;
+	cin >> x >> a >> b >> c;
+	
+	int ans = 0;
+	int pre = 0;
+	int curr_block = 0;
+	for(int i=0;i<n;i++) {
+		if(i==0) xarr[i] = x;
+		else xarr[i] = (a*xarr[i-1]+b)%c;
+ 
+		if(i/k > curr_block) {
+			curr_block++;
+			pre = 0;
+		}
+		pre |= xarr[i];
+		pref[i] = pre;
+	}
+
+	int suf = 0;
+	curr_block = (n-1)/k;
+	for(int i=n-1;i>=0;i--) {
+		if(i/k < curr_block) {
+			curr_block--;
+			suf = 0;
+		}
+		suf |= xarr[i];
+		suff[i] = suf;
+	}
+
+	for(int i=k-1;i<n;i++) {
+		int l = i-k+1;
+		// l will always be now >=0
+		if(i%k==k-1) {
+			// if l,i are forming a block itself then taking anyone of pref or suff will suffice
+			// Here even if you take both it wont matter since it's bitwise OR but just for clarity
+			// I did this
+			ans ^= pref[i];
+		} else {
+			ans ^= pref[i] | suff[l];
+		}
+	}
+	cout << ans << "\n";
+	return 0;
+}

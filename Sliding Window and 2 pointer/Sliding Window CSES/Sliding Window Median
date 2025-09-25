@@ -7,6 +7,8 @@ CSES link: https://cses.fi/problemset/task/1076/
 // to multiset le lie h
 // baki ek challenge h ki arr[l] kis set me h left ya right ye pata krna 
 // to simple hi h left.rbegin() se compare krke pata chal jayega
+// Btw, priority queue me pata krne k lie ye comparison krna h
+// multiset me to find hi kr skte h directly
 // bas ye hote hi waha se remove kr lo... agar left.size() < right.size() ho gya
 // to right se ek element nikal ke left me daal do
 // baki normal insertion ke waqt to pata hi h

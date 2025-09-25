@@ -1,0 +1,51 @@
+CSES link: https://cses.fi/problemset/task/3405/
+
+// Ye solution me thoda array use kr lie aur &= krke
+// fir rightmost bit ka index k lie __builtin_ctz waghera use krke enough optimise ho gya ki accept ho jaye
+// but ye intended solution nahi h look below
+
+#include<bits/stdc++.h>
+using namespace std;
+#define int long long
+vector<int> xarr(10000007);
+signed main() {
+	ios::sync_with_stdio(false);
+	cin.tie(0);
+ 
+	int n, k;
+	cin >> n >> k;
+	int x,a,b,c;
+	cin >> x >> a >> b >> c;
+	int freq[31] = {0};
+	
+	int ans = 0;
+	int curr = 0;
+	for(int i=0;i<n;i++) {
+		if(i==0) xarr[i] = x;
+		else xarr[i] = (a*xarr[i-1]+b)%c;
+ 
+		int num = xarr[i];
+		curr |= num;
+		while(num > 0) {
+			int bits = __builtin_ctz(num);
+			freq[bits]++;
+			num &= num-1;
+		}
+ 
+		int l = i-k+1;
+		if(l>=0) {
+			// window exists
+			ans ^= curr;
+			
+			num = xarr[l];
+			while(num > 0) {
+				int bits = __builtin_ctz(num);
+				freq[bits]--;
+				if(freq[bits]==0) curr ^= (1ll<<bits);
+				num &= num-1;
+			}
+		}
+	}
+	cout << ans << "\n";
+	return 0;
+}

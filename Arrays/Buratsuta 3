@@ -1,0 +1,105 @@
+CF link: https://codeforces.com/contest/2149/problem/G
+
+// Dekh isme bhi simple hi h
+// ans atmax 2 hi hoga
+// to har segment ka top 2 frequent elements rakh lo
+// fir merged segment k top 2 will be from those 4 only
+
+#include <bits/stdc++.h>
+using namespace std;
+#define int long long
+map<int, vector<int>> freq;
+
+bool find_majority(int cand, int l, int r) {
+	if(cand == -1) return false;
+	int st = lower_bound(freq[cand].begin(),freq[cand].end(),l)-freq[cand].begin();
+	int en = upper_bound(freq[cand].begin(),freq[cand].end(),r)-freq[cand].begin()-1;
+	if((st<=en) && (en-st+1 > (r-l+1)/3)) return true;
+	return false;
+}
+
+set<int> find_answers(pair<int,int> &a, pair<int,int> &b, int low, int high) {
+	set<int> res;
+	if(find_majority(a.first, low, high)) res.insert(a.first);
+	if(find_majority(a.second, low, high)) res.insert(a.second);
+	if(find_majority(b.first, low, high)) res.insert(b.first);
+	if(find_majority(b.second, low, high)) res.insert(b.second);
+	return res;
+}
+
+class seg_tree{
+	#define L (ind<<1)+1
+	#define R (ind<<1)+2
+	public:
+	vector<pair<int,int>> seg;
+	seg_tree(vector<int>&arr) {
+		int n = arr.size();
+		seg.assign(4*n, {-1, -1});
+		build(0,0,n-1,arr);
+	}
+	void build(int ind, int low, int high, auto &arr) {
+		if(low==high) {
+			seg[ind] = {arr[low], -1};
+			return;
+		}
+		int mid = low + (high-low)/2;
+		build(L, low, mid, arr);
+		build(R, mid+1, high, arr);
+		
+		set<int> res = find_answers(seg[L], seg[R], low, high);
+		if(res.size() > 0) {
+			seg[ind].first = *res.begin();
+			if(res.size()==2) seg[ind].second = *res.rbegin();
+		}
+	}
+	pair<int,int> query(int ind, int low, int high, int l, int r) {
+		if(r<low || high<l) return {-1, -1};
+		if(l<=low && high<=r) return seg[ind];
+
+		int mid = low + (high-low)/2;
+		pair<int,int> left = query(L, low, mid, l, r);
+		pair<int,int> right = query(R, mid+1, high, l, r);
+		
+		set<int> res = find_answers(left, right, l, r);
+		pair<int,int> ans = {-1, -1};
+		if(res.size()>0) {
+			ans.first = *res.begin();
+			if(res.size()==2) ans.second = *res.rbegin();
+		}
+		return ans;
+	}
+	#undef L
+	#undef R
+};
+signed main() {
+    ios::sync_with_stdio(false);
+	cin.tie(0);
+	cout.tie(0);
+
+	int t;
+	cin >> t;
+	while(t--) {
+		int n, q;
+		cin >> n >> q;
+		vector<int> arr(n);
+		freq.clear();
+		for(int i=0;i<n;i++) {
+			cin >> arr[i];
+			freq[arr[i]].push_back(i);
+		}
+		seg_tree stree(arr);
+		while(q--) {
+			int a, b;
+			cin >> a >> b;
+			a--;b--;
+			pair<int,int> ans = stree.query(0,0,n-1,a,b);
+			if(ans.first==-1 && ans.second ==-1) cout << -1 << "\n";
+			else {
+				if(ans.first!=-1) cout << ans.first << " ";
+				if(ans.second!=-1) cout << ans.second << " ";
+				cout << "\n";
+			}
+		}
+	}
+    return 0;
+}

@@ -1,0 +1,109 @@
+Spoj link: https://www.spoj.com/problems/PATULJCI/
+Kattis link: https://open.kattis.com/problems/farmingmars
+
+// Ekdum simple code h yar
+// bas ye realise kr ki koi bhi 2 segment ho 
+// dono ka majority nikal lo (if does not exist then ya to -1 ya koi bhi random number return kr do)
+// fir in dono me se hi koi merged segment ka majority hoga
+// Now to find frequency efficiently har ek element ke saare indices store kr lo usme binary search kr lena
+// ye technique bhi bhut khatarnak h O(n) hi storage lega
+// Bas to segment tree me har segment ka majority store krenge and we are done
+// Kattis wala problem ekdum hi copy h... waha bas arr me 1e6 se multiply krke store kr lena
+// plus map<int,vector<int>> freq bana lena
+
+
+#include <bits/stdc++.h>
+using namespace std;
+#define int long long
+vector<vector<int>> freq;
+int lower_bound(auto &arr, int k) {
+	int n = arr.size();
+	int low = 0;
+	int high = n-1;
+	while(low<=high) {
+		int mid = low + (high-low)/2;
+		if(arr[mid] >= k) high = mid-1;
+		else low = mid+1;
+	}
+	return low;
+}
+int upper_bound(auto &arr, int k) {
+	int n = arr.size();
+	int low = 0;
+	int high = n-1;
+	while(low<=high) {
+		int mid = low + (high-low)/2;
+		if(arr[mid] > k) high = mid-1;
+		else low = mid+1;
+	}
+	return low;
+}
+int find_majority(int cand, int l, int r) {
+	if(cand == -1) return -1;
+	int st = lower_bound(freq[cand], l);
+	int en = upper_bound(freq[cand], r)-1;
+	if((st<=en) && (en-st+1 > (r-l+1)/2)) return cand;
+	return -1;
+}
+class seg_tree{
+	#define L (ind<<1)+1
+	#define R (ind<<1)+2
+	public:
+	vector<int> seg;
+	seg_tree(vector<int>&arr) {
+		int n = arr.size();
+		seg.assign(4*n, -1);
+		build(0,0,n-1,arr);
+	}
+	void build(int ind, int low, int high, auto &arr) {
+		if(low==high) {
+			seg[ind] = arr[low];
+			return;
+		}
+		int mid = low + (high-low)/2;
+		build(L, low, mid, arr);
+		build(R, mid+1, high, arr);
+		seg[ind] = find_majority(seg[L], low, high);
+		if(seg[ind]==-1) seg[ind] = find_majority(seg[R], low, high);
+	}
+	int query(int ind, int low, int high, int l, int r) {
+		if(r<low || high<l) return -1;
+		if(l<=low && high<=r) return seg[ind];
+
+		int mid = low + (high-low)/2;
+		int left = query(L, low, mid, l, r);
+		int right = query(R, mid+1, high, l, r);
+		
+		if(find_majority(left, l, r)!=-1) return left;
+		else if(find_majority(right, l, r)!=-1) return right;
+		return -1;
+	}
+	#undef L
+	#undef R
+};
+signed main() {
+    ios::sync_with_stdio(false);
+	cin.tie(0);
+	cout.tie(0);
+
+	int n, c;
+	cin >> n >> c;
+	freq = vector<vector<int>>(c+1);
+	vector<int> arr(n);
+	for(int i=0;i<n;i++) {
+		cin >> arr[i];
+		freq[arr[i]].push_back(i);
+	}
+	int q;
+	cin >> q;
+	seg_tree stree(arr);
+	while(q--) {
+		int a, b;
+		cin >> a >> b;
+		a--;b--;
+		int val = stree.query(0,0,n-1,a,b);
+		if(val==-1) cout << "no\n";
+		else cout << "yes " << val << "\n";
+	}
+    return 0;
+}

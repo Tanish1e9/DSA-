@@ -8,6 +8,8 @@ vector<int> majorityElement(vector<int>& nums) {
         int n = nums.size();
         int ans1=-1, vote1=0, ans2=-1, vote2=0;
         for(int i=0;i<n;i++) {
+            // pehle compare krke badhana jroori h wrna ho skta h ki ki equal element aaya
+            // fir bhi wo dusre waale me add ho gya
             if(nums[i]==ans1) vote1++;
             else if(nums[i]==ans2) vote2++;
             else if(vote1==0) {

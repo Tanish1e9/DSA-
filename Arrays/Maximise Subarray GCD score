@@ -1,0 +1,36 @@
+LC link: https://leetcode.com/problems/maximize-subarray-gcd-score/description/
+
+// Dekh question dikh tough rha h thoda easy hi h
+// har subarray pe iterate kro aur bas 2 ke powers ko alag se maintain krenge
+// ab socho jo minimum 2 ka power hoga (uske jitne bhi instances honge) agar wo <=k hoga
+// tab to jo existing gcd h usme ek 2 ka power badha payenge wrna to nahi hoga na kuch
+// to bas 2 ka minimum power maintain kr lenge, aur uska kitna count h
+// agar count <=k h to hmlog minimum_power + 1 maan lenge 2 ke power ka aur baki ka gcd compute krte ja rhe the
+// and just maximise for the ans
+
+
+long long maxGCDScore(vector<int>& nums, int k) {
+    long long ans = 0;
+    int n = nums.size();
+    for(int i=0;i<n;i++) {
+        int g = 0;
+        int mini = 1e9;
+        int count = 0;
+        for(int j=i;j<n;j++) {
+            int zer = __builtin_ctz(nums[j]);
+            g = __gcd(g, nums[j] >> zer);
+
+            if(zer < mini) {
+                mini = zer;
+                count = 1;
+            } else if(zer == mini) {
+                count++;
+            }
+            int extra = 1<<mini;
+            if(count <= k) extra <<= 1;
+
+            ans = max(ans, 1ll*(j-i+1)*g*extra);
+        }
+    }
+    return ans;
+}

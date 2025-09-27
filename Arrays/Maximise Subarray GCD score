@@ -3,7 +3,7 @@ LC link: https://leetcode.com/problems/maximize-subarray-gcd-score/description/
 // Dekh question dikh tough rha h thoda easy hi h
 // har subarray pe iterate kro aur bas 2 ke powers ko alag se maintain krenge
 // ab socho jo minimum 2 ka power hoga (uske jitne bhi instances honge) agar wo <=k hoga
-// tab to jo existing gcd h usme ek 2 ka power badha payenge wrna to nahi hoga na kuch
+// tab to jo existing gcd h usme ek 2 ka power badha payenge wrna to nahi hoga na kuch (bcz atmost 1 hi baar double kr skte)
 // to bas 2 ka minimum power maintain kr lenge, aur uska kitna count h
 // agar count <=k h to hmlog minimum_power + 1 maan lenge 2 ke power ka aur baki ka gcd compute krte ja rhe the
 // and just maximise for the ans

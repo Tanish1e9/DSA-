@@ -1,0 +1,62 @@
+CF link: https://codeforces.com/contest/455/problem/B
+
+// Dekh isme na agar maan lo can_win and can_lose dono h
+// to first player jabardasti k-1 haarega aur end me jaake jiit jayega
+// agar can_win = false, can_lose = true (btw dono false nahi ho skta) 
+// ho to first player haara fir second game me wahi pehle jaake fir har jayega
+// aise kth game bhi first haar jayega ans second hoga
+// aur agar can_win = true, can_lose = false ho
+// then first jiita fir second jitega (since wo pehle jaayega next game me)
+// to k odd hone par first else second jiit jayega
+// ab can_win = true hone k lie we must find a child jaha cin_win = false ho
+// aur can_lose = true hone k lie we must find a child jaha can_lose = false ho
+
+#include<bits/stdc++.h>
+using namespace std;
+#define int long long
+class TrieNode{
+	public:
+	TrieNode* arr[26] = {0};
+	bool ending = false;
+	TrieNode() {}
+	void insert(string &s) {
+		TrieNode* curr = this;
+		for(char c:s) {
+			if(!curr->arr[c-'a']) curr->arr[c-'a'] = new TrieNode();
+			curr = curr->arr[c-'a'];
+		}
+		curr->ending = true;
+	}
+};
+pair<bool,bool> rec(TrieNode* curr) {
+	bool flag = false, can_win = false, can_lose = false;
+	for(int i=0;i<26;i++) {
+		if(!curr->arr[i]) continue;
+		flag = true;
+		pair<bool,bool> el = rec(curr->arr[i]);
+		if(el.first == false) can_win = true;
+		if(el.second == false) can_lose = true;
+	}
+	if(!flag) can_lose = true;
+	return {can_win, can_lose};
+}
+signed main() {
+	ios::sync_with_stdio(false);
+	cin.tie(0);
+	TrieNode* root = new TrieNode();
+	int n, k;
+	cin >> n >> k;
+	for(int i=0;i<n;i++) {
+		string s;
+		cin >> s;
+		root->insert(s);
+	}
+
+	pair<bool,bool> ans = rec(root);
+	
+	if(ans.first && ans.second) cout << "First" << endl;
+	else if(!ans.first) cout << "Second" << endl;
+	else if(k&1) cout << "First" << endl;
+	else cout << "Second" << endl;
+	return 0;
+}

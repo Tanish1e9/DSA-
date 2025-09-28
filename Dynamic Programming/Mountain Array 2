@@ -1,0 +1,52 @@
+Algozenith link: https://maang.in/problems/Mountain-Array-II-917?resourceUrl=cs70-cp480-pl3269-rs917&returnUrl=%5B%22%2Fcourses%2FDP-Workshop-Vivek-Gupta-Youtube-70%3Ftab%3Dchapters%22%5D
+
+// Dekh ye to simple question h
+// longest bitonic subsequence nikal lo, fir usko n se minus kr dena ans aa jayega
+
+#include<bits/stdc++.h>
+using namespace std;
+#define int long long
+signed main() {
+    ios::sync_with_stdio(false);
+    cin.tie(0);
+    int t;
+    cin >> t;
+    while(t--) {
+        int n;
+        cin >> n;
+        vector<int>arr(n);
+        for(int i=0;i<n;i++) cin >> arr[i];
+        
+        vector<int> inc(n), dec(n);
+        vector<int> seq;
+        for(int i=0;i<n;i++) {
+            int idx = lower_bound(seq.begin(), seq.end(), arr[i]) - seq.begin();
+            if(idx == seq.size()) {
+                seq.push_back(arr[i]);
+            } else {
+                seq[idx] = arr[i];
+            }
+            inc[i] = seq.size();
+        }
+        seq.clear();
+        for(int i=n-1;i>=0;i--) {
+            int idx = lower_bound(seq.begin(), seq.end(), arr[i]) - seq.begin();
+            if(idx == seq.size()) {
+                seq.push_back(arr[i]);
+            } else {
+                seq[idx] = arr[i];
+            }
+            dec[i] = seq.size();
+        }
+
+        int ans = 0;
+        for(int i=0;i<n;i++) {
+            if(inc[i]>1 && dec[i]>1) {
+                ans = max(ans, inc[i]+dec[i]-1);
+            }
+        }
+        if(ans==0) cout << -1 << "\n";
+        else cout << n-ans << "\n";
+    }
+    return 0;
+}

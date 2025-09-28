@@ -1,5 +1,31 @@
 CSES link: https://cses.fi/problemset/task/1110
 
+// Naive O(n^2) approach
+#include<bits/stdc++.h>
+using namespace std;
+#define int long long
+signed main() {
+	ios::sync_with_stdio(false);
+	cin.tie(0);
+	string s;
+	cin >> s;
+	string mini = s;
+	int n = s.size(); 
+	s += s;
+	for(int i=0;i<n;i++) {
+		for(int j=i;j<i+n;j++) {
+			if(s[j] < mini[j-i]) {
+				mini = s.substr(i,n);
+				break;
+			} else if(s[j] > mini[j-i]) break;
+		}
+	}
+	cout << mini << endl;
+	return 0;
+}
+
+
+
 // Lyndon's factorisation algorithm to find index of minimal lexicographic rotation
 // Ye optimal h dekh simple ekdum h ki i,j do candidates maintain krte chalte h
 // achha ss = s+s bana lete taaki modulo waghera na krna pade
@@ -53,7 +79,6 @@ int main() {
 
 // Suffix Array gives the order of all suffixes of a string. Read if interested.
 // Ye code kuch waisa hi h but nlog^2(n) ka h jo TLE maarega iss question pe.... nlogn fastest implementation hota h
-
 // Isme pehle sirf ek character consider krke order banao
 // fir 2 character, fir 4 ... aise krte krte aur current ordering ka hi use krte krte ye kaam krna h
 

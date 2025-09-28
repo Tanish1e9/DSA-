@@ -48,3 +48,55 @@ int main() {
     cout << res << "\n";
     return 0;
 }
+
+
+
+// Suffix Array gives the order of all suffixes of a string. Read if interested.
+// Ye code kuch waisa hi h but nlog^2(n) ka h jo TLE maarega iss question pe.... nlogn fastest implementation hota h
+
+// Isme pehle sirf ek character consider krke order banao
+// fir 2 character, fir 4 ... aise krte krte aur current ordering ka hi use krte krte ye kaam krna h
+
+#include<bits/stdc++.h>
+using namespace std;
+
+int main(){
+    string s;
+    cin >> s;
+    int n = s.size();
+	vector<int> ordering(n);
+	vector<vector<int>> collec;
+	collec.push_back(vector<int>());
+	for(int i=0;i<n;i++) {
+		collec[0].push_back(i);
+		ordering[i] = s[i]-'a';
+	}
+
+	int p=0;
+	while(p < n) {
+		vector<int> next_ordering(n);
+		vector<vector<int>> next_collec;
+		int cumm = 0;
+		for(int i=0;i<collec.size();i++) {
+			set<int> st;
+			for(int j:collec[i]) {
+				st.insert(ordering[(j+p)%n]);
+			}
+			vector<int> temp(st.begin(), st.end());
+			while(next_collec.size() < cumm + temp.size()) next_collec.push_back(vector<int>());
+			
+			for(int j:collec[i]) {
+				next_ordering[j] = cumm + lower_bound(temp.begin(), temp.end(), ordering[(j+p)%n]) - temp.begin();
+				next_collec[next_ordering[j]].push_back(j);
+			}
+			cumm += temp.size();
+		}
+		if(p==0) p++;
+		else p <<= 1;
+		collec = next_collec;
+		ordering = next_ordering;
+	}
+
+	cout << s.substr(collec[0][0]) + s.substr(0, collec[0][0]) << endl;
+    return 0;
+}

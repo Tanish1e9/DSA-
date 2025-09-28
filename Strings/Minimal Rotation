@@ -1,0 +1,50 @@
+CSES link: https://cses.fi/problemset/task/1110
+
+// Lyndon's factorisation algorithm to find index of minimal lexicographic rotation
+// Ye optimal h dekh simple ekdum h ki i,j do candidates maintain krte chalte h
+// achha ss = s+s bana lete taaki modulo waghera na krna pade
+// to 2 candidates me se hmesha worse candidate ko eliminate krte chalte
+// to dekho i=0, j=1 initialise kr die
+// ab jab tk i+k == j+k hai tab tk k++ krte rho
+// k is nothing just the first point of difference dekho har bar end pe reset kr hi rhe h
+// to first point of difference pe maan lo (i,j) me jo aage h wo wala jiit gya
+// to fir i=j+1 kr dena (agar i piche waala tha to)
+// kyunki i to j me na har string ko i defeat krke rakha h tabhi i fixed tha aur j itna aage pahuch gya tha
+// hmesha haarne waala aage badhta h...
+// aur agar piche waala jiit gya to j=j+k+1 kr dena (agar j aage waala ho) 
+// kyunki j to j+k ke lie correspondingly i to i+k le lo dekhna i wala hara dega sabko
+// bas yahi algo h
+
+
+#include <bits/stdc++.h>
+using namespace std;
+int booth(string &s) {
+    string ss = s + s;  
+    int n = s.size();
+    int i = 0, j = 1, k = 0;
+
+    while (i < n && j < n && k < n) {
+        if (ss[i + k] == ss[j + k]) {
+            k++;
+            continue;
+        }
+        if (ss[i + k] > ss[j + k]) {
+            i = i + k + 1;
+            if (i <= j) i = j + 1;
+        } else {
+            j = j + k + 1;
+            if (j <= i) j = i + 1;
+        }
+        k = 0;
+    }
+    return min(i, j);
+}
+
+int main() {
+    string s;
+    cin >> s;
+    int idx = booth(s);
+    string res = s.substr(idx) + s.substr(0, idx);
+    cout << res << "\n";
+    return 0;
+}

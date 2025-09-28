@@ -1,0 +1,44 @@
+Algozenith link: https://maang.in/problems/Mountain-Arrays-394?resourceUrl=cs70-cp480-pl3269-rs394&returnUrl=%5B%22%2Fcourses%2FDP-Workshop-Vivek-Gupta-Youtube-70%3Ftab%3Dchapters%22%5D
+
+// Yaha na sabse pehle ye realise kro ki mountain ka top jo hoga wo maximum element hoga
+// to like pehle to array ko sort kr die aur piche se banana shuru krenge
+// ab top element to fix h to dono ends ko ek tarah se top element hi maan lo
+// fir agla element k paas choice h ki wo ya to left end pe jaye ya right end pe (depending upon abs diff <= k) 
+// to isse n^3 DP banta h
+// thoda aur observe kro to i+1 wala hmesha ki ek end pe hoga na i ke lie
+// to sirf dusra wala store krne ki jroorat h and boom we are done
+
+#include<bits/stdc++.h>
+using namespace std;
+#define int long long
+const int mod = 1e9+7;
+int dp[1000][1000];
+int helper(int i, int r, int k, vector<int>&arr) {
+    if(i==-1) return arr[r]!=arr.back();
+    if(dp[i][r]!=-1) return dp[i][r];
+    int ans = 0;
+    if(arr[i+1] - arr[i] <= k) ans = (ans + helper(i-1, r, k, arr))%mod;
+    if(arr[r] - arr[i] <= k) ans = (ans + helper(i-1, i+1, k, arr))%mod;
+    return dp[i][r] = ans;
+}
+
+signed main() {
+    ios::sync_with_stdio(false);
+    cin.tie(0);
+    int t;
+    cin >> t;
+    while(t--) {
+        int n, k;
+        cin >> n >> k;
+        vector<int> arr(n);
+        for(int i=0;i<n;i++) cin >> arr[i];
+
+        if(n < 3) cout << 0 << "\n";
+        else {
+            sort(arr.begin(), arr.end());
+            memset(dp, -1, sizeof(dp));
+            cout << helper(n-2, n-1, k, arr) << "\n";
+        }
+    }
+    return 0;
+}

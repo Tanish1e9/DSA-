@@ -41,6 +41,8 @@ using namespace std;
 class manacher{
     private:
     string add_hashes(string &s) {
+        // yaha dhyan rakhna hashes se pura wrapped hona chahye
+        // wrna galat hoga
         string t;
         for(char c:s) {
             t.push_back('#');

@@ -1,0 +1,37 @@
+CSES link: https://cses.fi/problemset/task/1149/
+
+// Mast question h dekho dp[i] denotes distinct subsequences using s[0...i-1]
+// ye coordinate shift islie kia h ki dp[0] = 1 rakhna h na empty subsequence k lie
+// dp[i] = 2*dp[i-1] hoga in general.... mtlb dp[i-1] me jitne bhi the unko rakho + unhi me ith character daal ke rakh do
+// ab socho agar current character piche bhi kahi aaya h (say at j)
+// to (j-1) tk jitne subsequences the utno me hi ye s[i] wala character append krke aur s[j] wala character append krke same hi banega
+// to unko hata dena h
+// bbbb pe dry run krna to samajh aayega aisa sirf last occurrence k lie krna h
+// since socho i=4 pe.... dekhe to usko j=2 pe last occurrence dikha... to j=1 tk ka minus krna, to empty, b, bb ye teen ghatana hoga
+// ab agar soche ki j=1 pe bhi h to j=0 tk ka bhi hata de... i.e. empty, b .... to ye to double hata die na
+// ab last[c] ghatayenge to initialise to 0 se hi krenge 
+// ab soch c ka occurrence actually at i-1 hua h... to i-2 tk ka ghatana hoga na... i.e. dp[i-1]
+
+#include<bits/stdc++.h>
+using namespace std;
+#define int long long
+const int mod = 1e9+7;
+signed main() {
+	ios::sync_with_stdio(false);
+	cin.tie(0);
+	string s;
+	cin >> s;
+	int n = s.size();
+	vector<int> dp(n+1, 0);
+	vector<int> last(26, 0);
+	dp[0] = 1;
+	for(int i=1;i<=n;i++) {
+		dp[i] = (2*dp[i-1])%mod;
+		int c = s[i-1]-'a';
+	
+		dp[i] = (dp[i] - last[c] + mod)%mod;
+		last[c] = dp[i-1];
+	}
+	cout << (dp[n] - 1 + mod)%mod << endl;
+	return 0;
+}

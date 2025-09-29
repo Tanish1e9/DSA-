@@ -1,0 +1,140 @@
+CSES link: https://cses.fi/problemset/task/3356/
+
+// Bhut lamba code h bhai iska
+// Dekh waise question simple hi h
+// har ek element (i.e. array index ke hisab se)
+// prev_occurrence aur next_occurrence store krke rakho
+// fir jab a,b me query ho to check ki maximum prev_occ of all elements >= a ho gya to "NO"
+// ya fir minimum next_occ of all elements <= b ho gya to "YES"
+// aur sath me map<int,set<int>> bhi rakho
+// jisse naye indices insert ho to unka prev aur next efficiently nikal sake
+// aur erase bhi kr sake
+
+#include<bits/stdc++.h>
+using namespace std;
+#define int long long
+ 
+map<int,set<int>> mpp;
+vector<int> next_occurr, prev_occurr;
+pair<int,int> find_pre_next(int i, auto &arr) {
+	auto &s = mpp[arr[i]];
+	auto it = s.lower_bound(i);
+	int next_occ = arr.size(), prev_occ = -1;
+	it++;
+	if(it!=s.end()) next_occ = *it;
+	it--;
+	if(it!=s.begin()) prev_occ = *(--it);
+	return {prev_occ, next_occ};
+}
+ 
+class seg_tree{
+	#define L (ind << 1) + 1
+	#define R (ind << 1) + 2
+	public:
+	vector<pair<int,int>> seg;
+	seg_tree(auto &arr) {
+		int n = arr.size();
+		seg.assign(4*n, {-1,n});
+		build(0,0,n-1,arr);
+	}
+	void build(int ind, int low, int high, auto &arr) {
+		if(low==high) {
+			seg[ind] = {prev_occurr[low], next_occurr[low]};
+			return;
+		}
+		int mid = low + (high-low)/2;
+		build(L, low, mid, arr);
+		build(R, mid+1, high, arr);
+		seg[ind].first = max(seg[L].first, seg[R].first);
+		seg[ind].second = min(seg[L].second, seg[R].second);
+	}
+	void point_update(int ind, int low, int high, int k, pair<int,int> val) {
+		if(k<low || high<k) return;
+		if(low==high && low==k) {
+			if(val.first != -2) seg[ind].first = val.first;
+			if(val.second != -2) seg[ind].second = val.second;
+			return;
+		}
+		int mid = low + (high-low)/2;
+		point_update(L, low, mid, k, val);
+		point_update(R, mid+1, high, k, val);
+		seg[ind].first = max(seg[L].first, seg[R].first);
+		seg[ind].second = min(seg[L].second, seg[R].second);
+	}
+	pair<int,int> query(int ind, int low, int high, int l, int r) {
+		if(r<low || high<l) return {-1e18, 1e18};
+		if(l<=low && high<=r) return seg[ind];
+		pair<int,int> ans = {-1e18, 1e18};
+		int mid = low + (high-low)/2;
+		pair<int,int> left = query(L, low, mid, l, r);
+		pair<int,int> right = query(R, mid+1, high, l, r);
+		ans.first = max(left.first, right.first);
+		ans.second = min(left.second, right.second);
+		return ans;
+	}
+	#undef L
+	#undef R
+};
+ 
+signed main() {
+	ios::sync_with_stdio(false);
+	cin.tie(0);
+	int n, q;
+	cin >> n >> q;
+	vector<int> arr(n);
+	next_occurr.assign(n, n);
+	prev_occurr.assign(n, -1);
+	for(int i=0;i<n;i++) {
+		cin >> arr[i];
+		auto &s = mpp[arr[i]];
+		if(!s.empty()) {
+			int p = *s.rbegin();
+			prev_occurr[i] = p;
+			next_occurr[p] = i;
+		}
+
+		s.insert(i);
+	}
+ 
+	seg_tree stree(arr);
+ 
+	while(q--) {
+		int t;
+		cin >> t;
+		if(t==1) {
+			int k, u;
+			cin >> k >> u;
+			k--;
+
+			if(prev_occurr[k]!=-1) {
+				stree.point_update(0,0,n-1,prev_occurr[k],{-2, next_occurr[k]});
+				next_occurr[prev_occurr[k]]	= next_occurr[k];
+			}
+			if(next_occurr[k]!=n) {
+				stree.point_update(0,0,n-1,next_occurr[k],{prev_occurr[k],-2});
+				prev_occurr[next_occurr[k]] = prev_occurr[k];
+			}
+ 
+			mpp[arr[k]].erase(k);
+			if(mpp[arr[k]].empty()) mpp.erase(arr[k]);
+			arr[k] = u;
+			mpp[u].insert(k);
+			auto val = find_pre_next(k, arr);
+ 
+			stree.point_update(0,0,n-1,k,{val.first, val.second});
+			prev_occurr[k] = val.first;
+			next_occurr[k] = val.second;
+			if(val.second!=n) prev_occurr[val.second] = k;
+			if(val.first!=-1) next_occurr[val.first] = k;
+		} else {
+			int a, b;
+			cin >> a >> b;
+			a--;b--;
+			pair<int,int> val = stree.query(0,0,n-1,a,b);
+			
+			if(val.first>=a || val.second<=b) cout << "NO\n";
+			else cout << "YES\n";
+		}
+	}
+	return 0;
+}

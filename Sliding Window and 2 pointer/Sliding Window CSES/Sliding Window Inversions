@@ -1,0 +1,75 @@
+CSES link: https://cses.fi/problemset/task/3223/
+
+// Dekh simple at the end element add ho rha to we need to find out ki kitne elements bade h isse
+// Aur at the front element remove ho rha to we need to find out ki kitne elements chote h isse
+// Simple koi bhi inversion me ek chota element hoga na wo count krega inversion ko add krte waqt
+// aur fir remove krte waqt bada element count krega
+// to bas index compression ke sath segment tree laga do
+
+#include<bits/stdc++.h>
+using namespace std;
+#define int long long
+class seg_tree{
+	#define L (ind<<1) + 1
+	#define R (ind<<1) + 2
+	public:
+	vector<int> seg;
+	seg_tree(int n) {
+		seg.assign(4*n, 0);
+	}
+	void point_update(int ind, int low, int high, int k, int val) {
+		if(k<low || high<k) return;
+		if(low==high && low==k) {
+			seg[ind] += val;
+			return;
+		}
+		int mid = low + (high-low)/2;
+		point_update(L, low, mid, k, val);
+		point_update(R, mid+1, high, k, val);
+		seg[ind] = seg[L] + seg[R];
+	}
+	int query(int ind, int low, int high, int l, int r) {
+		if(r < low || high < l) return 0;
+		if(l<=low && high <=r) return seg[ind];
+		int mid = low + (high-low)/2;
+		int left = query(L, low, mid, l, r);
+		int right = query(R, mid+1, high, l, r);
+		return left + right;
+	}
+	#undef L
+	#undef R
+};
+signed main(){
+	ios::sync_with_stdio(false);
+	cin.tie(0);
+	int n, k;
+	cin >> n >> k;
+	vector<pair<int,int>> arr(n);
+	vector<int> ordering(n);
+	for(int i=0;i<n;i++) {
+		cin >> arr[i].first;
+		arr[i].second = i;
+	}
+
+	sort(arr.begin(), arr.end());
+	for(int i=0;i<n;i++) {
+		ordering[arr[i].second] = i;
+	}
+
+	seg_tree stree(n);
+	int curr = 0;
+	for(int i=0;i<n;i++) {
+		curr += stree.query(0,0,n-1,ordering[i]+1, n-1);
+		stree.point_update(0,0,n-1,ordering[i],1);
+
+		int l = i-k+1;
+		if(l>=0) {
+			cout << curr << " ";
+			curr -= stree.query(0,0,n-1,0,ordering[l]-1);
+			stree.point_update(0,0,n-1,ordering[l],-1);
+		}
+	}
+	cout << endl;
+	
+	return 0;
+}

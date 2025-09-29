@@ -81,6 +81,10 @@ public:
             if(last_pos.count(nums[i])) {
                 p = last_pos[nums[i]];
             }
+            // i pe 1 aayega usse 0 to i-1 sabpe +1 hoga
+            // par phir p pe -1 aayega usse 0 to p sabpe -1 hoga
+            // => p+1 to i-1 sabpe +1 aur i pe bhi to +1 hi h
+            // to sidhe p+1 to i +1 hoga
             stree.range_update(0,0,n-1,p+1,i,1);
 
             last_pos[nums[i]] = i;

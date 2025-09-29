@@ -1,0 +1,92 @@
+LC link: https://leetcode.com/problems/subarrays-distinct-element-sum-of-squares-ii/description/
+
+// Yaha square of distinct counts ka sum pucha h
+// agar sidhe sum krwata to usko to contribution technique se kie hi the CSES ka Distinct Values Sum
+// Par contribution yaha nahi lag payega
+// islie yaha last_occurrence wale method se hi sochenge
+// to jo last_occurrence me krte the
+// usme saare suffixes apne answers hote the
+// to wahi yaha krenge fark h ki sidhe un elements ko hi maintain krenge aur unke sum, squares ko
+// to dekho ho jayega
+
+const int mod = 1e9+7;
+class seg_tree{
+    #define L (ind<<1) + 1
+    #define R (ind<<1) + 2
+    public:
+    vector<long> seg_sum, seg_sq, lazy;
+    seg_tree(int n) {
+        seg_sum.assign(4*n, 0);
+        seg_sq.assign(4*n, 0);
+        lazy.assign(4*n, 0);
+    }
+    int query(int ind, int low, int high, int l, int r) {
+        if(lazy[ind]!=0) {
+            seg_sq[ind] = (seg_sq[ind] + mod + 2ll*seg_sum[ind]*lazy[ind] + lazy[ind]*lazy[ind]*(high-low+1))%mod;
+            seg_sum[ind] =  (seg_sum[ind] + mod + lazy[ind]*(high-low+1))%mod;
+            if(low!=high) {
+                lazy[L] += lazy[ind];
+                lazy[R] += lazy[ind];
+            }
+            lazy[ind] = 0;
+        }
+        if(r<low || high<l) return 0;
+        if(l<=low && high<=r) return seg_sq[ind];
+        int mid = low + (high-low)/2;
+        int left = query(L, low, mid, l, r);
+        int right = query(R, mid+1, high, l, r);
+        return (left + right)%mod;
+    }
+    void range_update(int ind, int low, int high, int l, int r, int val) {
+        if(lazy[ind]!=0) {
+            seg_sq[ind] = (seg_sq[ind] + mod + 2ll*seg_sum[ind]*lazy[ind] + lazy[ind]*lazy[ind]*(high-low+1))%mod;
+            seg_sum[ind] =  (seg_sum[ind] + mod + lazy[ind]*(high-low+1))%mod;
+            if(low!=high) {
+                lazy[L] += lazy[ind];
+                lazy[R] += lazy[ind];
+            }
+            lazy[ind] = 0;
+        }
+        if(r<low || high<l) return;
+        if(l<=low && high<=r) {
+            seg_sq[ind] = (seg_sq[ind] + mod + 2ll*seg_sum[ind]*val + val*val*(high-low+1))%mod;
+            seg_sum[ind] =  (seg_sum[ind] + mod + val*(high-low+1))%mod;
+            if(low!=high) {
+                lazy[L] += val;
+                lazy[R] += val;
+            }
+            return;
+        }
+        int mid = low + (high-low)/2;
+        range_update(L, low, mid, l, r, val);
+        range_update(R, mid+1, high, l, r, val);
+        seg_sum[ind] = (seg_sum[L] + seg_sum[R])%mod;
+        seg_sq[ind] = (seg_sq[L] + seg_sq[R])%mod;
+    }
+    #undef L
+    #undef R
+};
+
+class Solution {
+public:
+    int sumCounts(vector<int>& nums) {
+        int n = nums.size();
+        map<int,int>last_pos;
+        seg_tree stree(n);
+        long ans = 0;
+        for(int i=0;i<n;i++) {
+            // suffix sums answers honge actually
+            // to unhe hi maintain krna h bas
+            stree.range_update(0,0,n-1,i,i,1);
+            if(i>=1) stree.range_update(0,0,n-1,0,i-1,1);
+            if(last_pos.count(nums[i])) {
+                int p = last_pos[nums[i]];
+                stree.range_update(0,0,n-1,0,p,-1);
+            }
+            last_pos[nums[i]] = i;
+
+            ans = (ans + stree.query(0,0,n-1,0,i))%mod;
+        }
+        return ans;
+    }
+};

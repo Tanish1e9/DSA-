@@ -1,0 +1,69 @@
+GFG link: https://www.geeksforgeeks.org/problems/make-array-elements-unique--170645/1
+LC link: https://leetcode.com/problems/minimum-increment-to-make-array-unique/description/
+
+
+// M-1 O(nlogn), O(1)
+int minIncrements(vector<int>& arr) {
+    sort(arr.begin(), arr.end());
+    int n = arr.size();
+    int ans = 0, extra = 0;
+    int i=0;
+    while(i<n) {
+        int j = i;
+        while(i<n-1 && arr[i+1]==arr[i]) i++;
+
+        // current element arr[j]==arr[i] kitni bar extra aaya? ans -> (i-j)
+        // uska hi (destination - initial) * count krna hoga na
+        // to -initial * count kr die h answer me
+        extra += i-j;
+        ans -= arr[i]*(i-j);
+        
+        if(i+1 == n) break;
+        
+        // piche waale jitne extra bache h unme se kuch hat skte abhi
+        // arr[i]+1... arr[i]+mini destinations honge
+        // to islie dekho bas sum add kr dia
+        // aur count ghata dia
+        int mini = min(extra, arr[i+1]-arr[i]-1);
+        ans += arr[i]*mini + (mini*(mini+1))/2;
+        extra -= mini;
+        
+        i++;
+    }
+    // bache kuche saare extra abhi deal ho jayenge kyunki ab aage koi element hi nahi
+    // Kyunki sirf increase krna tha islie aage hi look forward kr skte h
+    ans += arr.back()*extra + (extra*(extra+1))/2;
+    return ans;
+}
+
+
+
+// M-2 O(maxi), O(maxi)
+// Same hi method h
+// basically dekh kahi bhi hole aaya to wo piche waale kisi extra ko kha jayega
+// aise krte krte end me jitne extras bach jayenge wo maxi+1...maxi+extra khayenge
+// to aise ans aayega
+
+int minIncrements(vector<int>& arr) {
+    vector<int> freq(1e6+1, 0);
+    int maxi = -1;
+    for(int i:arr) {
+        freq[i]++;
+        maxi = max(maxi, i);
+    }
+    
+    int ans = 0;
+    int extra = 0;
+    for(int i=0;i<=maxi;i++){
+        if(freq[i]==0 && extra > 0)  {
+            extra--;
+            ans += i;
+        } else if(freq[i]>1) {
+            extra += freq[i]-1;
+            ans -= i*(freq[i]-1);
+        }
+    }
+    
+    ans += extra*(maxi) + (extra*(extra+1))/2;
+    return ans;
+}

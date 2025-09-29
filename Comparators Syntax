@@ -44,6 +44,7 @@ priority_queue<T,vector<T>,comp>pq((comp(distances)));
 
 Or we can do through lambda functions
 
+// isko function<bool(T,T)> comp = ... krke likh skte ho jaha auto available na ho
 auto comp = [](T&a,T&b)->bool{
     return a->val < b->val;
     // same thing ulta ayega since min heap h

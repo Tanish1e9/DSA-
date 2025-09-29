@@ -10,3 +10,4 @@ isse kya h ki kisi range ka answer galat aa skta because uska ek child update hi
   - https://leetcode.com/problems/subarrays-distinct-element-sum-of-squares-ii/description/
   - Distinct Values Subarrays (Sorting Searching me)
   - https://www.geeksforgeeks.org/problems/make-array-elements-unique--170645/1
+  - https://www.geeksforgeeks.org/dsa/check-if-all-subarrays-contains-at-least-one-unique-element/

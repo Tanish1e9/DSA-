@@ -102,3 +102,120 @@ signed main() {
 
 	return 0;
 }
+
+
+
+// Another method small to large merging O(nlog^2(n)) h but still a good method
+// Isme child ka array kharab kr dena h
+// like small to large me aisa krna hi hoga wrna har bar ek new set create krne gye to
+// efficiency chala jayega
+
+// Impl - 1
+
+#include<bits/stdc++.h>
+using namespace std;
+#define int long long
+
+// Total merging O(n log(n)*log(n)) hota h
+void merge(set<int> &a, set<int> &b) {
+	// We want to make a the merged set
+	// agar b ko banana hota to reverse condition hota
+	if(a.size() < b.size()) swap(a, b);
+
+	for(int i:b) a.insert(i);
+	// For memory efficiency
+	// Agar nahi kroge to memory usage O(nlogn) jaayega but clear krne par har element
+	// ek hi jagah hoga at any time to O(n) ho jayega
+	b.clear();
+}
+void dfs(int node, int par, auto &adj, auto &colours, auto &sets, auto &ans) {
+	for(int el:adj[node]) {
+		if(el==par) continue;
+		dfs(el, node, adj, colours, sets, ans);
+		merge(sets[node], sets[el]);
+	}
+	sets[node].insert(colours[node]);
+	ans[node] = sets[node].size();
+}
+signed main() {
+	ios::sync_with_stdio(false);
+	cin.tie(0);
+	int n;
+	cin >> n;
+	vector<int> colours(n+1);
+	for(int i=0;i<n;i++) cin >> colours[i+1];
+	vector<vector<int>> adj(n+1);
+	for(int i=0;i<n-1;i++) {
+		int a, b;
+		cin >> a >> b;
+		adj[a].push_back(b);
+		adj[b].push_back(a);
+	}
+
+	vector<set<int>> sets(n+1);
+	vector<int> ans(n+1);
+	dfs(1,-1,adj,colours,sets,ans);
+	for(int i=1;i<=n;i++) {
+		cout << ans[i] << " ";
+	}
+	cout << endl;
+	return 0;
+}
+
+
+
+
+// Impl - 2
+
+
+
+#include<bits/stdc++.h>
+using namespace std;
+#define int long long
+
+// Total merging O(n log(n)*log(n)) hota h
+void merge(set<int> &a, set<int> &b) {
+	// We want to make a the merged set
+	// agar b ko banana hota to reverse condition hota
+	if(a.size() < b.size()) swap(a, b);
+
+	for(int i:b) a.insert(i);
+	// For memory efficiency
+	// Agar nahi kroge to memory usage O(nlogn) jaayega but clear krne par har element
+	// ek hi jagah hoga at any time to O(n) ho jayega
+	b.clear();
+}
+set<int> dfs(int node, int par, auto &adj, auto &colours, auto &ans) {
+	set<int> s;
+	for(int el:adj[node]) {
+		if(el==par) continue;
+		set<int> p = dfs(el, node, adj, colours, ans);
+		merge(s, p);
+	}
+	s.insert(colours[node]);
+	ans[node] = s.size();
+	return s;
+}
+signed main() {
+	ios::sync_with_stdio(false);
+	cin.tie(0);
+	int n;
+	cin >> n;
+	vector<int> colours(n+1);
+	for(int i=0;i<n;i++) cin >> colours[i+1];
+	vector<vector<int>> adj(n+1);
+	for(int i=0;i<n-1;i++) {
+		int a, b;
+		cin >> a >> b;
+		adj[a].push_back(b);
+		adj[b].push_back(a);
+	}
+
+	vector<int> ans(n+1);
+	dfs(1,-1,adj,colours,ans);
+	for(int i=1;i<=n;i++) {
+		cout << ans[i] << " ";
+	}
+	cout << endl;
+	return 0;
+}

@@ -1,0 +1,107 @@
+CF link: https://codeforces.com/contest/1354/problem/E
+
+// Ye simple hi question tha bro
+// observe kr ki different parity k hi nodes connected ho skte
+// to bipartite graph hi hua na!!!
+// bipartite ke partitions nikalwa lo
+// fir knapsack dp lagwake kisi ek partition ko har bar chunte hue n2 banana hoga
+// agar bana paye to thik h wrna no
+// aur printing DP solutions to aa hi gya h ab
+
+#include <bits/stdc++.h>
+using namespace std;
+#define int long long
+int dp[5001][5001];
+bool helper(int i, int t, auto &arr) {
+	if(i==arr.size()) return t==0;
+	if(dp[i][t]!=-1) return dp[i][t];
+
+	bool ans = false;
+	if(t>=arr[i].first) ans = ans || helper(i+1, t-arr[i].first, arr);
+	if(t>=arr[i].second) ans = ans || helper(i+1, t-arr[i].second, arr);
+	return dp[i][t] = ans;
+}
+bool dfs(int node, int col, auto &adj, auto &vis, auto &colours, auto &comp) {
+	vis[node] = col;
+	colours[col]++;
+	comp.push_back(node);
+	for(int el:adj[node]) {
+		if(vis[el]==-1) {
+			if(!dfs(el, (col+1)%2, adj, vis, colours, comp)) return false;
+		} else if(vis[el]==col) return false;
+	}
+	return true;
+}
+signed main() {
+	ios::sync_with_stdio(false);
+	cin.tie(0);
+	int n, m;
+	cin >> n >> m;
+	
+	int n1, n2, n3;
+	cin >> n1 >> n2 >> n3;
+
+	vector<vector<int>> adj(n+1);
+
+	for(int i=0;i<m;i++) {
+		int a, b;
+		cin >> a >> b;
+		adj[a].push_back(b);
+		adj[b].push_back(a);
+	}
+
+	vector<int> vis(n+1, -1);
+	vector<pair<int,int>> arr;
+	vector<vector<int>> comp;
+	bool ans = true;
+	for(int i=1;i<=n;i++) {
+		if(vis[i]!=-1) continue;
+		vector<int> colours(2, 0);
+		comp.push_back(vector<int>());
+		if(!dfs(i,0,adj,vis,colours,comp.back())) {
+			ans = false;
+			break;
+		}
+		arr.push_back({colours[0], colours[1]});
+	}
+
+	if(!ans) {
+		cout << "NO" << endl;
+		return 0;
+	}
+
+	memset(dp, -1, sizeof(dp));
+	if(helper(0,n2,arr)) {
+		vector<int> final_ans(n+1);
+		cout << "YES" << endl;
+
+		int curr = 0;
+		int curr_target = n2;
+		while(curr < arr.size()) {
+			if(helper(curr+1, curr_target-arr[curr].first, arr)) {
+				for(int i:comp[curr]) {
+					if(vis[i]==0) final_ans[i] = 2;
+					else if(n1 > 0) {final_ans[i] = 1;n1--;}
+					else final_ans[i] = 3;
+				}
+				curr_target -= arr[curr].first;
+			} else {
+				for(int i:comp[curr]) {
+					if(vis[i]==1) final_ans[i] = 2;
+					else if(n1 > 0) {final_ans[i] = 1;n1--;}
+					else final_ans[i] = 3;
+				}
+				curr_target -= arr[curr].second;
+			}
+			curr++;
+		}
+
+		for(int i=1;i<=n;i++) {
+			cout << final_ans[i];
+		}
+		cout << endl;
+	}
+	else cout << "NO" << endl;
+
+	return 0;
+}

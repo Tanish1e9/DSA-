@@ -1,0 +1,81 @@
+CSES link: https://cses.fi/problemset/task/1734/
+
+// Simple approach ki na ending points k hisab se query ko process kro and last occurrence ko hi 1
+// rakhenge else sabme 0 fir subarray sum nikalte rhna h bas
+// Ye sahi islie hoga ki r pe end hone waali saari queries ek sath answer hogi
+// to rightmost rakha gya h sabhi values ko to aana hoga to aa hi jayenge range me (wrna nahi aana tha)
+
+
+#include<bits/stdc++.h>
+using namespace std;
+#define int long long
+class seg_tree{
+	#define L (ind << 1) + 1
+	#define R (ind << 1) + 2
+	public:
+	vector<int> seg;
+	seg_tree(int n) {
+		seg.assign(4*n, 0);
+	}
+	void point_update(int ind, int low, int high, int k, int val) {
+		if(k<low || high<k) return;
+		if(low == high && low==k) {
+			seg[ind] += val;
+			return;
+		}
+		int mid = low + (high-low)/2;
+		point_update(L, low, mid, k, val);
+		point_update(R, mid+1, high, k, val);
+		seg[ind] = seg[L] + seg[R];
+	}
+	int query(int ind, int low, int high, int l, int r) {
+		if(r < low || high < l) return 0;
+		if(l<=low && high<=r) return seg[ind];
+		int mid = low + (high-low)/2;
+		int left = query(L, low, mid, l, r);
+		int right = query(R, mid+1, high, l, r);
+		return left + right;
+	}
+	#undef L
+	#undef R
+};
+signed main() {
+	ios::sync_with_stdio(false);
+	cin.tie(0);
+	int n, q;
+	cin >> n >> q;
+	vector<int> arr(n);
+	for(int i=0;i<n;i++) cin >> arr[i];
+
+	vector<vector<int>> queries(q, vector<int>(3));
+	for(int i=0;i<q;i++) {
+		int a, b;
+		cin >> a >> b;
+		queries[i][2] = i;
+		queries[i][1] = a-1;
+		queries[i][0] = b-1;
+	}
+
+	sort(queries.begin(), queries.end());
+	vector<int> ans(q);
+	map<int,int> last_pos;
+	int r = -1;
+	seg_tree stree(n);
+	for(auto &q:queries) {
+		int a = q[1], b = q[0];
+		while(r < b) {
+			r++;
+			stree.point_update(0,0,n-1,r,1);
+			if(last_pos.count(arr[r])) {
+				stree.point_update(0,0,n-1,last_pos[arr[r]], -1);
+			}
+			last_pos[arr[r]] = r;
+		}
+
+		ans[q[2]] = stree.query(0,0,n-1,a,b);
+	}
+	for(int i=0;i<q;i++) {
+		cout << ans[i] << endl;
+	}
+	return 0;
+}

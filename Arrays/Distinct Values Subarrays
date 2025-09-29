@@ -1,0 +1,37 @@
+CSES link: https://cses.fi/problemset/task/3420/
+
+// Simple h dekh koi bhi subarray ko valid kab bolenge jab uske andar kisi bhi element ka prev_occurrence
+// array ke andar na lie kre
+// to har position k lie we will calculate valid subarrays ending at that position
+// aur prev occurrences ka max lete chalenge
+// to valid subarray will maxi+1 se start krte hue i tk ke saare(ending at i) 
+// And DONE
+
+#include <bits/stdc++.h>
+using namespace std;
+#define int long long
+signed main() {
+	ios::sync_with_stdio(false);
+	cin.tie(0);
+	int n;
+	cin >> n;
+	
+	map<int,int> last_pos;
+	int ans = 0;
+	int maxi = -1;
+	for(int i=0;i<n;i++) {
+		int x;
+		cin >> x;
+		int l = -1;
+		if(last_pos.count(x)) {
+			l = last_pos[x];
+		} 
+
+		maxi = max(maxi, l);
+		ans += i-maxi;
+		last_pos[x] = i;
+	}
+
+	cout << ans << endl;
+	return 0;
+}

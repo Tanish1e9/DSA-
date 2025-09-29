@@ -1,0 +1,104 @@
+CSES link: https://cses.fi/problemset/task/1139/
+
+// Dekh isme na nodes ko sort krna by increasing time_end...
+// aur fir hmesha last occurrence of an element hi one hoga
+// to saare nodes jinka end time same h unko ek sath hi process kra jayega
+// uske bad aage badhenge and jaha tk r badhana pade badha do s.t. next query ko cater kr sako
+
+
+#include<bits/stdc++.h>
+using namespace std;
+#define int long long
+
+class seg_tree{
+	#define L (ind<<1) + 1
+	#define R (ind<<1) + 2
+	public:
+	vector<int> seg;
+	seg_tree(int n) {
+		seg.assign(4*n, 0);
+	}
+	void point_update(int ind, int low, int high, int k, int val) {
+		if(k<low || high<k) return;
+		if(low==high && low==k) {
+			seg[ind]+=val;
+			return;
+		}
+		int mid = low + (high-low)/2;
+		point_update(L, low, mid, k, val);
+		point_update(R, mid+1, high, k, val);
+		seg[ind] = seg[L] + seg[R];
+	}
+	int query(int ind, int low, int high, int l, int r) {
+		if(r<low || high<l) return 0;
+		if(l<=low && high<=r) return seg[ind];
+		int mid = low + (high-low)/2;
+		int left = query(L, low, mid, l, r);
+		int right = query(R, mid+1, high, l, r);
+		return left + right;
+	}
+	#undef L
+	#undef R
+};
+
+void dfs(int node, int par, auto &adj, int &timer, auto &time_start, auto &time_end, auto &colours, auto &tour) {
+	timer++;
+	tour.push_back(colours[node]);
+	time_start[node] = timer;
+	for(int el:adj[node]) {
+		if(el==par) continue;
+		dfs(el, node, adj, timer, time_start, time_end, colours, tour);
+	}
+	time_end[node] = timer;
+}
+
+signed main() {
+	ios::sync_with_stdio(false);
+	cin.tie(0);
+	int n;
+	cin >> n;
+	vector<int> colours(n+1);
+	for(int i=0;i<n;i++) cin >> colours[i+1];
+
+	vector<vector<int>> adj(n+1);
+	for(int i=0;i<n-1;i++) {
+		int a, b;
+		cin >> a >> b;
+		adj[a].push_back(b);
+		adj[b].push_back(a);
+	}
+	int timer = -1;
+	vector<int> time_end(n+1), time_start(n+1), tour;
+	dfs(1, -1, adj, timer, time_start, time_end, colours, tour);
+
+	vector<int> queries(n);
+	iota(queries.begin(), queries.end(), 1);
+
+	function<bool(int,int)> comp = [&time_start, &time_end] (int i, int j) -> bool {
+		return time_end[i] < time_end[j];
+	};
+	sort(queries.begin(), queries.end(), comp);
+
+	seg_tree stree(n);
+	map<int,int> last_pos;
+	int r=-1;
+	vector<int> ans(n+1);
+	for(int k:queries) {
+		while(r<time_end[k]) {
+			r++;
+			stree.point_update(0,0,n-1,r,1);
+			if(last_pos.count(tour[r])) {
+				stree.point_update(0,0,n-1,last_pos[tour[r]],-1);
+			}
+			last_pos[tour[r]] = r;
+		}
+
+		ans[k] = stree.query(0,0,n-1,time_start[k],time_end[k]);
+	}
+	for(int i=1;i<=n;i++) {
+		cout << ans[i] << " ";
+	}
+	cout << endl;
+
+	return 0;
+}

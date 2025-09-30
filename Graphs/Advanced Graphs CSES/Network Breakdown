@@ -1,0 +1,86 @@
+CSES link: https://cses.fi/problemset/task/1677/
+
+#include<bits/stdc++.h>
+using namespace std;
+#define int long long
+class DSU{
+	public:
+	vector<int> size, parent;
+	DSU(int n) {
+		parent.resize(n+1);
+		for(int i=0;i<=n;i++) parent[i] = i;
+
+		size.assign(n+1, 1);
+	}
+	void union_by_size(int a, int b) {
+		int ult_a = find_par(a);
+		int ult_b = find_par(b);
+		if(ult_a == ult_b) return;
+		if(size[ult_a] > size[ult_b]) {
+			size[ult_a] += size[ult_b];
+			parent[ult_b] = ult_a;
+		} else {
+			size[ult_b] += size[ult_a];
+			parent[ult_a] = ult_b;
+		}
+	}
+	int find_par(int node) {
+		if(parent[node]==node) return node;
+		return parent[node] = find_par(parent[node]);
+	}
+};
+signed main() {
+	ios::sync_with_stdio(false);
+	cin.tie(0);
+
+	int n, m, q;
+	cin >> n >> m >> q;
+	set<pair<int,int>> edges;
+	
+	for(int i=0;i<m;i++) {
+		int a, b;
+		cin >> a >> b;
+		if(a>b) swap(a,b);
+		edges.insert({a,b});
+	}
+
+	vector<pair<int,int>> queries(q);
+	for(int i=0;i<q;i++) {
+		int a, b;
+		cin >> a >> b;
+		if(a>b) swap(a,b);
+		queries[i] = {a, b};
+		edges.erase({a,b});
+	}
+
+	reverse(queries.begin(), queries.end());
+	vector<int> ans(q);
+	int comp = n;
+	DSU ds(n);
+	for(auto &edge:edges) {
+		int a = edge.first;
+		int b = edge.second;
+		if(ds.find_par(a)!=ds.find_par(b)) {
+			comp--;
+			ds.union_by_size(a, b);
+		}
+	}
+
+	for(int i=0;i<q;i++) {
+		ans[q-1-i] = comp;
+		int a = queries[i].first;
+		int b = queries[i].second;
+
+		if(ds.find_par(a)!=ds.find_par(b)) {
+			comp--;
+			ds.union_by_size(a, b);
+		}
+	}	
+
+	for(int i=0;i<q;i++) {
+		cout << ans[i] << " ";
+	}
+	cout << endl;
+	
+	return 0;
+}

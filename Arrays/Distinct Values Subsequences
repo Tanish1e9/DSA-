@@ -1,0 +1,33 @@
+CSES link: https://cses.fi/problemset/task/3421/
+
+// Koi bhi element k lie observe kr ki usko ek hi bar le skte h na
+// to maan le wo jitni bhi jagah aaya h un sab jagah me se ek jagah le skte ya kahi bhi ni le skte
+// to freq[el]+1 ways hue na uss element k lie aise hi har element ka multiply kr de aa jayega
+
+#include<bits/stdc++.h>
+using namespace std;
+#define int long long
+const int mod = 1e9+7;
+signed main() {
+	ios::sync_with_stdio(false);
+	cin.tie(0);
+
+	int n;
+	cin >> n;
+	
+	map<int,int> freq;
+	for(int i=0;i<n;i++) {
+		int x;
+		cin >> x;
+		freq[x]++;
+	}
+	
+	int ans = 1;
+	for(pair<int,int> it:freq) {
+		ans = (ans * (1+it.second))%mod;
+	}
+
+	cout << (ans - 1 + mod)%mod << endl;
+
+	return 0;
+}

@@ -1,0 +1,125 @@
+CF link: https://codeforces.com/contest/2145/problem/D
+
+// Isme core idea yahi h ki hmlog un subarrays ko count krenge
+// jinme koi inversion nahi aa rha
+// ab wo subarrays ke elements  <,<,<,<...
+// aisa hi relation follow krenge agar ek bhi > aa gya to inversion aa gya na
+// to bas ab we will try to construct this <> string (0-1 maanke) 
+// isme 0 ke jitne consecutive length hoga (say x) then (x+1)*x/2 are such subarrays which dont have any inversion 
+// (elements to x+1 honge na x to comparisons h)
+// (dhyan rakhna length 2 subarrays ginne h islie (x+1)x/2 kia total subarrays to (x+1)(x+2)/2 hote h)
+// to wahi krte chalenge
+// ab string ban gya
+// to string ke monotonic parts ko pakdo 
+// agar increasing h to bade bade elements bharo taki aage jo decreasing aayega usko satisfy kre
+// aur decreasing h to chote chote ... to l=1, r=n bana lena r side se aur l side se bharne k lie
+// aur bas we are done
+
+// ab isi me wo jo string me 0,1 krke nikal rhe na
+// usike 0 ke lengths nikalne ka koshish krte
+// to wo krke ek vector me store krte chalenge and then uss vector ke madad se we can construct the string
+// aur bas fir string to ans
+// DP wale me 200ms laga isme 1200ms, both are accepted and ye without DP solution bhi kaafi achha h
+// Main idea to <> me map krne waala hi tha uske bad to ho jayega
+
+
+#include<bits/stdc++.h>
+using namespace std;
+#define int long long
+// int dp[30][450][30];
+// bool helper(int n, int i, int k, int curr_len) {
+// 	if(i==n-1) {
+// 		k-=curr_len*(curr_len+1)/2;
+// 		if(k==0) return 1;
+// 		return 0;
+// 	}
+// 	if(dp[i][k][curr_len]!=-1) return dp[i][k][curr_len];
+// 	bool ans = false;
+// 	if(k>=((curr_len+2)*(curr_len+1))/2) ans = ans || helper(n, i+1, k, curr_len+1);
+// 	ans = ans || helper(n, i+1, k-(curr_len*(curr_len+1))/2, 0);
+// 	return dp[i][k][curr_len] = ans;
+// }
+
+bool rec(int n, int k, vector<int> &num) {
+	if(k==0) return 1;
+	
+	for(int i=n;i>=2;i--) {
+		if((i*(i-1))/2 > k) continue;
+		num.push_back(i);
+		if(rec(n-i, k-(i*(i-1))/2, num)) return true;
+		num.pop_back();
+	}
+
+	return false;
+}
+
+vector<int> fill(string &s) {
+	vector<int> ans(s.size()+1);
+	int i=0;
+	int l=1, r=s.size()+1;
+	while(i<s.size()) {
+		int j=i;
+		while(i+1<s.size() && s[i+1]==s[i]) i++;
+
+		for(int k=i+1;k>=j+(j!=0);k--) {
+			if(s[j]=='0') ans[k] = r--;
+			else ans[k] = l++;
+		}
+		i++;
+	}
+	return ans;
+}
+void construct(int n, string &s, vector<int> &vec) {
+	for(int i:vec) {
+		n-=i;
+		for(int j=0;j<i-1;j++) s+='0';
+		s+='1';
+	}
+	for(int j=0;j<n;j++) s+='1';
+	s.pop_back();
+}
+signed main() {
+	ios::sync_with_stdio(false);
+	cin.tie(0);
+	int t=1;
+	cin >> t;
+	while(t--) {
+		int n, k;
+		cin >> n >> k;
+		string s;
+		// memset(dp, -1, sizeof(dp));
+		// bool res = helper(n, 0,(n*(n-1))/2-k, 0);
+		// if(!res) {
+		// 	cout << 0 << "\n";
+		// 	continue;
+		// }
+		// int curr_len = 0;
+		// int to_find = (n*(n-1))/2-k;
+		// for(int i=0;i<n-1;i++) {
+		// 	if(helper(n, i+1, to_find-(curr_len*(curr_len+1))/2, 0)) {
+		// 		s.push_back('1');
+		// 		to_find -= (curr_len*(curr_len+1))/2;
+		// 		curr_len = 0;
+		// 	} else {
+		// 		s.push_back('0');
+		// 		curr_len++;
+		// 	}
+		// }
+
+		vector<int> vec;
+		bool val = rec(n, (n*(n-1))/2-k, vec);
+		if(!val) {
+			cout << 0 << "\n";
+			continue;
+		}
+
+		construct(n, s, vec);
+		vector<int> ans = fill(s);
+		for(int i:ans) {
+			cout << i << " ";
+		}
+		cout << "\n";
+	}
+	
+	return 0;
+}

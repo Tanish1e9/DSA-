@@ -1,57 +1,53 @@
 LC link: https://leetcode.com/problems/basic-calculator-ii/
 
 // ye code originally hm kie h but isme O(n) space ja rha na so we need to optimise
-    map<char,int> precedence;
-    bool issolv(char a,char b){
-        return (precedence[b] >= precedence[a]);
+// ekdum infix ko jaise 2 stack se solve krte h usi template pe h
+
+map<char, int> priority;
+bool is_operator(char c) {
+    if(c=='+' || c=='-' || c=='/' || c=='*') return true;
+    return false;
+}
+void empty_ops(auto &operand, auto &operators, bool check, char s) {
+    while(!operators.empty() && (!check || priority[operators.top()] >= priority[s])) {
+        int b = operand.top();operand.pop();
+        int a = operand.top();operand.pop();
+        char c = operators.top();operators.pop();
+        if(c=='+') operand.push(a+b);
+        else if(c=='-') operand.push(a-b);
+        else if(c=='*') operand.push(a*b);
+        else operand.push(a/b);
     }
-    int solve(int a,int b,char ch){
-        if(ch=='+') return a+b;
-        else if(ch=='-') return a-b;
-        else if(ch=='/') return a/b;
-        return a*b;
-    }
-    void empty_ops(auto&operands,auto&operators,bool check=false,char x=' '){
-        while(!operators.empty() && (!check || issolv(x,operators.top()))){
-            int b=operands.top();operands.pop();
-            int a=0;
-            if(!operands.empty()){
-                a=operands.top();
-                operands.pop();
-            }
-            char op=operators.top();operators.pop();
-            operands.push(solve(a,b,op));
+}
+int calculate(string s) {
+    priority['+'] = priority['-'] = 1;
+    priority['*'] = priority['/'] = 2;
+    stack<char> operators;
+    stack<int> operand;
+    int i=0;
+    int n = s.size();
+    while(i<n) {
+        if(isspace(s[i])) {
+            i++;
+            continue;
         }
-    }
-    int calculate(string s) {
-        precedence['+']=precedence['-']=0;
-        precedence['*']=precedence['/']=1;
-        stack<char>operators;
-        stack<int>operands;
-        operands.push(0);
-        bool flag=false;
-        for(int i=0;i<s.size();i++){
-            if(isspace(s[i])) continue;
-            if(isdigit(s[i])){
-                int num=s[i]-'0';
-                if(!flag){
-                    int x=operands.top();operands.pop();
-                    operands.push(10*x+num);
-                }
-                else{
-                    operands.push(num);
-                    flag=false;
-                }
+        if(is_operator(s[i])) {
+            empty_ops(operand, operators, true, s[i]);
+            operators.push(s[i]);
+        } else {
+            int j=i;
+            int num=s[i]-'0';
+            while(i+1<n && isdigit(s[i+1])) {
+                i++;
+                num = num*10+(s[i]-'0');
             }
-            else{
-                empty_ops(operands,operators,true,s[i]);
-                operators.push(s[i]);
-                flag=true;
-            }
+            operand.push(num);
         }
-        empty_ops(operands,operators);
-        return operands.top();
+        i++;
     }
+    empty_ops(operand, operators, false, 'a');
+    return operand.top();
+}
 
 // literally jo basic calc 1 me kie the na couple of variables maintain krke blkul waise hi kie h
 // yaha stack use ni krna padega because brackets nhi h

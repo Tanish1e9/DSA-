@@ -1,93 +1,102 @@
 GFG link: https://www.geeksforgeeks.org/problems/infix-to-postfix-1587115620/1
 
-    // ye wala to wahi infix solve krne wala intuition se hm kr die h
-    // but it can be optimised
+// ye wala to wahi infix solve krne wala intuition se hm kr die h
+// but it can be optimised
+// Dhyan rakhna yaha ^ ko bhi consider krna padega 
+// Uska precedence right to left hota islie kuch change hoga
 
-    bool isoperator(char ch){
-        return ch=='+' || ch=='-' || ch=='^' || ch=='*' || ch=='/';
-    }
-    string infixToPostfix(string s) {
-        map<char,int>precedence;
-        precedence['^']=2;
-        precedence['*']=precedence['/']=1;
-        precedence['+']=precedence['-']=0;
-        precedence['(']=-1;
-        stack<string>operands;
-        stack<char>operators;
-        for(int i=0;i<s.size();i++){
-            if(s[i]=='(') {
-                operators.push(s[i]);
-                continue;
-            }
-            if(s[i]==')'){
-                while(operators.top()!='('){
-                    string b=operands.top();operands.pop();
-                    string a=operands.top();operands.pop();
-                    char ch=operators.top();
-                    operators.pop();
-                    operands.push(a+b+ch);
-                }
+bool is_operator(char c) {
+    return c=='+' || c=='-' || c=='^' || c=='/' || c=='*';
+}
+map<char,int> priority;
+bool check(char a, char b) {
+    if(priority[a] > priority[b]) return true;
+    if(priority[a]==priority[b] && b!='^') return true;
+    return false;
+}
+string infixToPostfix(string& s) {
+    priority['^'] = 3;
+    priority['*'] = priority['/'] = 2;
+    priority['-'] = priority['+'] = 1;
+    priority['('] = 0;
+    stack<char> operators;
+    stack<string> operand;
+    for(char c:s) {
+        if(c==')') {
+            while(operators.top()!='(') {
+                string b = operand.top();operand.pop();
+                string a = operand.top();operand.pop();
+                operand.push(a+b+operators.top());
                 operators.pop();
             }
-            else if(isoperator(s[i])){
-                while(!operators.empty() && precedence[operators.top()]>=precedence[s[i]]){
-                    string b=operands.top();operands.pop();
-                    string a=operands.top();operands.pop();
-                    char ch=operators.top();
-                    operators.pop();
-                    operands.push(a+b+ch);
-                }
-                operators.push(s[i]);
-            }
-            else operands.push(string(1,s[i]));
-        }
-        while(!operators.empty()){
-            string b=operands.top();operands.pop();
-            string a=operands.top();operands.pop();
-            char ch=operators.top();
             operators.pop();
-            operands.push(a+b+ch);
         }
-        return operands.top();
+        else if(c=='('){
+            operators.push('(');
+        }
+        else if(is_operator(c)) {
+            while(!operators.empty() && check(operators.top(),c)) {
+                string b = operand.top();operand.pop();
+                string a = operand.top();operand.pop();
+                operand.push(a+b+operators.top());
+                operators.pop();
+            }
+            operators.push(c);
+        } else {
+            operand.push(string(1, c));
+        }
     }
+    while(!operators.empty()) {
+        string b = operand.top();operand.pop();
+        string a = operand.top();operand.pop();
+        operand.push(a+b+operators.top());
+        operators.pop();   
+    }
+    return operand.top();
+}
 
 // ye h simply optimised version infix me jaise operators pop hote usi prakaar hua h bas operands ko direct ans me bhejte ja rhe 
 
-    bool isoperator(char ch){
-        return ch=='+' || ch=='-' || ch=='^' || ch=='*' || ch=='/';
-    }
-    string infixToPostfix(string s) {
-        map<char,int>precedence;
-        precedence['^']=2;
-        precedence['*']=precedence['/']=1;
-        precedence['+']=precedence['-']=0;
-        precedence['(']=-1;
-        string ans;
-        stack<char>operators;
-        for(int i=0;i<s.size();i++){
-            if(s[i]=='(') {
-                operators.push(s[i]);
-                continue;
-            }
-            if(s[i]==')'){
-                while(operators.top()!='('){
-                    ans.push_back(operators.top());
-                    operators.pop();
-                }
+bool is_operator(char c) {
+    return c=='+' || c=='-' || c=='^' || c=='/' || c=='*';
+}
+map<char,int> priority;
+bool check(char a, char b) {
+    if(priority[a] > priority[b]) return true;
+    if(priority[a]==priority[b] && b!='^') return true;
+    return false;
+}
+string infixToPostfix(string& s) {
+    priority['^'] = 3;
+    priority['*'] = priority['/'] = 2;
+    priority['-'] = priority['+'] = 1;
+    priority['('] = 0;
+    stack<char> operators;
+    string ans;
+    for(char c:s) {
+        if(c==')') {
+            while(operators.top()!='(') {
+                ans += operators.top();
                 operators.pop();
             }
-            else if(isoperator(s[i])){
-                while(!operators.empty() && precedence[operators.top()]>=precedence[s[i]]){
-                    ans.push_back(operators.top());
-                    operators.pop();
-                }
-                operators.push(s[i]);
-            }
-            else ans.push_back(s[i]);
-        }
-        while(!operators.empty()){
-            ans.push_back(operators.top());
             operators.pop();
         }
-        return ans;
+        else if(c=='('){
+            operators.push('(');
+        }
+        else if(is_operator(c)) {
+            while(!operators.empty() && check(operators.top(),c)) {
+                ans += operators.top();
+                operators.pop();
+            }
+            operators.push(c);
+        } else {
+            ans += c;
+        }
     }
+    while(!operators.empty()) {
+        ans += operators.top();
+        operators.pop();   
+    }
+    return ans;
+}

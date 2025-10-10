@@ -65,38 +65,40 @@ LC link:
 
 // optimal way
 int calculate(string s) {
-    int num=0;
-    int ans=0;
-    int sign=1;
-    stack<int>st;
-    for(int i=0;i<s.size();i++){
-        if(isspace(s[i])) continue;
-        if(isdigit(s[i])){
-            num = num*10+(s[i]-'0');
+    stack<int> st;
+    int n = s.size();
+    int ans=0, i=0, sign=1;
+    while(i<n) {
+        if(isspace(s[i])){
+            i++;
+            continue;
         }
-        else if(s[i]=='('){
+        if(s[i]=='(') {
             st.push(ans);
+            // ye wala sign bracket waale expression as a whole k lie h
             st.push(sign);
+            // don't forget to reset the states
             sign=1;
             ans=0;
-            num=0;
-        }
-        else if(s[i]==')'){
-            ans+=sign*num;
-            sign=1;
-            num=0;
-            ans=st.top()*ans;
+        } else if(s[i]==')') {
+            int temp = st.top()*ans;
             st.pop();
-            ans+=st.top();
+            ans = st.top()+temp;
             st.pop();
         }
-        else{
-            ans+=sign*num;
-            sign=(s[i]=='+'?1:-1);
-            num=0;
+        else if(isdigit(s[i])) {
+            int num=s[i]-'0';
+            while(i+1<n && isdigit(s[i+1])) {
+                i++;
+                num=num*10 + (s[i]-'0');
+            }
+            ans += sign*num;
+        } else {
+            if(s[i]=='+') sign=1;
+            else sign=-1;
         }
+        i++;
     }
-    ans+=num*sign;
-    // "1+2" iss example me jroorat padega
+
     return ans;
 }

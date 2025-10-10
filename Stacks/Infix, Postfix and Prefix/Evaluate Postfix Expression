@@ -1,19 +1,43 @@
 GFG link: https://www.geeksforgeeks.org/problems/evaluation-of-postfix-expression1735/1?itm_source=geeksforgeeks&itm_medium=article&itm_campaign=bottom_sticky_on_article
 
 // ye to simple hi h bas left to right stack me daalte jaana h
-// assumption h ki single number hoga
-    int evaluatePostfix(string S){
-        stack<int>s;
-        for(int i=0;i<S.size();i++){
-            if(S[i]>='0' && S[i]<='9')s.push(S[i]-'0');
-            else{
-                int b=s.top();s.pop();
-                int a=s.top();s.pop();
-                if(S[i]=='+') s.push(a+b);
-                else if(S[i]=='*') s.push(a*b);
-                else if(S[i]=='/') s.push(a/b);
-                else s.push(a-b);
+// Isme bas rounding off wale me dhyan rakhna maan lo -10/53 aa gya to aise to 0 aa jayega ye
+// but hmlog ko -1 krana h to val ko check kroge to nahi pata chalega negative tha ya positive
+// islie a*b<0 krke check krna h aur val ko ek gira dena h
+// assumption ki 0 se division ka mauka nahi aayega
+
+    bool is_operator(string &s) {
+        if(s=="+" || s=="-" || s=="/" || s=="*" || s=="^") return true;
+        return false;
+    }
+    int bin_pow(int x, int n) {
+        int ans = 1;
+        while(n>0) {
+            if(n&1) {
+                n--;
+                ans = ans * x;
             }
+            x = x*x;
+            n>>=1;
         }
-        return s.top();
+        return ans;
+    }
+    int evaluatePostfix(vector<string>& arr) {
+        stack<int> st;
+        for(string &s:arr) {
+            if(is_operator(s)) {
+                int b = st.top();st.pop();
+                int a = st.top();st.pop();
+                if(s=="+") st.push(a+b);
+                else if(s=="-") st.push(a-b);
+                else if(s=="*") st.push(a*b);
+                else if(s=="^") st.push(bin_pow(a, b));
+                else {
+                    int val = a/b;
+                    if(a*b<0 && a%b!=0) val--;
+                    st.push(val);
+                }
+            } else st.push(stoi(s));
+        }
+        return st.top();
     }

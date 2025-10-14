@@ -1,4 +1,4 @@
-LC link: 
+LC link: https://leetcode.com/problems/basic-calculator/
 
 // ye in general infix expressions ko solve kr skta h iska basic calc 2 wale version me bas do the follwing changes
 // 1) precedence[(]=-1    taki koi bhi operator iss ( ko na pop kara de

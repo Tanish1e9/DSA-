@@ -1,0 +1,33 @@
+LC link: https://leetcode.com/problems/maximum-total-reward-using-operations-ii/description/
+
+// Part 1 bhi dekhna iska, usme to normal n^2 dp lag jayega
+// yaha part 2 me bitset se bas usko hi optimise kie h
+// 2 shandaar tricks jisse apna kaam ho skta since apne ko arr[i] ke niche waali hi bits ko
+// pakad ke left shift krna tha
+// to either we can incrementally build the mask or we can just left shift and right shift by the rem amount
+// jisse left waale 0 hi ho jaye
+
+int maxTotalReward(vector<int>& arr) {
+    sort(arr.begin(), arr.end());
+    int n = arr.size();
+    bitset<100000> dp, mask;
+    dp[0] = 1;
+    mask[0] = 1;
+    // for(int i=0;i<arr.size();i++) {
+    //     int shift = 100000-arr[i];
+    //     dp |= dp << shift >> shift << arr[i];
+    // }
+    int mask_pos = 0;
+    for(int i=0;i<arr.size();i++) {
+        while(mask_pos+1 < arr[i]) {
+            mask_pos++;
+            mask[mask_pos] = 1;
+        }
+        dp |= (dp & mask) << arr[i];
+    }
+    for(int i=100000;i>=0;i--) {
+        if(dp[i]) return i;
+    }
+    // dummy
+    return -1;
+}

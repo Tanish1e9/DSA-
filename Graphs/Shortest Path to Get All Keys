@@ -1,0 +1,58 @@
+LC link: https://leetcode.com/problems/shortest-path-to-get-all-keys/
+
+// Isme na simple BFS hi krna h saath me ek bitmask rakhna h ki kon kon se keys aa gye h
+// ab tk... visited array me x,y ke sath mask bhi store krna padega so that we dont visit same cell twice
+// having the same number of keys... ha agar keys jaada aa gye to visit kr skte h
+
+int dx[4] = {-1,1,0,0};
+int dy[4] = {0,0,-1,1};
+bool checkkey(char c, int mask) {
+    if(!isupper(c)) return true;
+    return (1<<(c-'A')) & mask;
+}
+int shortestPathAllKeys(vector<string>& grid) {
+    int n = grid.size();
+    int m = grid[0].size();
+    int si, sj, num_keys=0;
+    for(int i=0;i<n;i++) {
+        for(int j=0;j<m;j++) {
+            char c = grid[i][j];
+            if(islower(c)) num_keys++;
+            if(c=='@') {
+                si = i;
+                sj = j;
+            }
+        }
+    }
+    vector<vector<vector<bool>>> vis(n, vector<vector<bool>>(m, vector<bool>(1<<num_keys, 0)));
+    queue<vector<int>> q;
+    q.push({si,sj,0});
+    vis[si][sj][0] = true;
+
+    int level = 0;
+    while(!q.empty()) {
+        int level_size = q.size();
+        while(level_size--) {
+            auto curr = q.front();
+            q.pop();
+            int a = curr[0];
+            int b = curr[1];
+            int c = curr[2];
+            
+            if(islower(grid[a][b])) c |= 1<<(grid[a][b]-'a') ;
+            if(__builtin_popcount(c)==num_keys) {
+                return level;
+            }
+            for(int k=0;k<4;k++) {
+                int x = a+dx[k];
+                int y = b+dy[k];
+                if(x<0 || y<0 || x>=n || y>=m || grid[x][y]=='#' || 
+                vis[x][y][c] || !checkkey(grid[x][y], c)) continue;
+                q.push({x,y,c});
+                vis[x][y][c] = true;
+            }
+        }
+        level++;
+    }
+    return -1;
+}

@@ -1,0 +1,46 @@
+GFG link: https://www.geeksforgeeks.org/problems/travelling-salesman-problem2732/1
+
+// Ye code iterative me hi chala recursive me TLE de rha tha
+// (Ye wala recursive ulta likha hua h ki kin kin ko visit krna baaki h uss sense me)
+// Since I was trying to make it faster
+// Yaha pe dekho mask badhta ja rha h islie decreasing order of mask pe chalenge
+// ab j ka to pata nahi kon sa hoga
+// islie mask ko bahar kr die ki badhe hue mask ka saara hi kuch compute ho jaye
+// mask me i included hona hi chahye ni to skip kr die h
+
+int dp[20][1<<20];
+// int helper(int i, int mask, vector<vector<int>> &cost, int n) {
+//     if(mask==0) return cost[i][0];
+//     if(dp[i][mask]!=-1) return dp[i][mask];
+//     int ans = 1e9;
+//     int copy = mask;
+//     while(copy > 0) {
+//         int el = __builtin_ctz(copy);
+//         ans = min(ans, cost[i][el] + helper(el, mask & ~(1<<el), cost, n));
+//         copy = copy & (copy-1);
+//     }
+//     return dp[i][mask] = ans;
+// }
+
+int tsp(vector<vector<int>>& cost) {
+    int n = cost.size();
+    // memset(dp, -1, sizeof(dp));
+    // return helper(0,(1<<n)-2,cost,n);
+    for(int mask=(1<<n)-1;mask>=1;mask--) {
+        for(int i=0;i<n;i++) {
+            if(mask+1==(1<<n)) {
+                dp[i][mask] = cost[i][0];
+                continue;
+            }
+            if(!(mask & (1<<i))) continue;
+            int ans = 1e9;
+            for(int j=0;j<n;j++) {
+                if(mask & (1<<j)) continue;
+                ans = min(ans, cost[i][j] + dp[j][mask^(1<<j)]);
+            }
+            dp[i][mask] = ans;
+        }
+    }
+    
+    return dp[0][1];
+}

@@ -1,0 +1,68 @@
+CF link: https://codeforces.com/contest/1402/problem/A
+
+// Intuition yahi h ki monotonic stack lagayenge
+// ab usme ek height ko dono taraf next smaller height tk extend krenge and we will try to count
+// isme bas ek dikkat hoga ki koi bade height waale me kuch aise rectangles count honge
+// joki choti height wale bhi jab extend honge unme bhi count ho jayenge
+// for that we needed ki next_lower se upar ek height line chahye hi
+
+
+#include<bits/stdc++.h>
+using namespace std;
+#define int long long
+const int mod = 1e9+7;
+const int inv2 = (mod+1)/2;
+
+// point is that we don't want to overcount
+// so if we allowed choosing any two 
+// take eg 4 8 5 then in 8 if we allowed to choose any two heights
+// then when 5 extends, it can also choose those same heights and
+// the same width lines thus leading to overcounting
+// so we avoided the next_lower layer... making sure at least one height line
+// is greater than next_lower
+int find_rect(int w,int h,int next_lower) {
+    int a = (w*(w+1))%mod;
+    a = (a*inv2)%mod;
+
+    int b = (h*(h+1))%mod;
+    b = (b - ((next_lower+1)*(next_lower))%mod + mod)%mod;
+    b = (b*inv2)%mod;
+
+    return (a*b)%mod;
+}
+signed main() {
+    ios::sync_with_stdio(false);
+    cin.tie(0);
+    int n;
+    cin >> n;
+    vector<int> height(n), width(n), pref_width(n);
+    for(int i=0;i<n;i++) cin >> height[i];
+    for(int i=0;i<n;i++) cin >> width[i];
+    pref_width[0] = width[0];
+    for(int i=1;i<n;i++) pref_width[i] = (pref_width[i-1] + width[i])%mod;
+
+    stack<int> st;
+    int ans = 0;
+    for(int i=0;i<=n;i++) {
+        while(!st.empty() && (i==n || height[st.top()] > height[i])) {
+            int j = st.top();
+            st.pop();
+            int left = !st.empty() ? (st.top() + 1) : 0;
+            int right = i-1;
+
+            int w = pref_width[right];
+            if(left > 0) w = (w - pref_width[left-1] + mod)%mod;
+
+            int next_lower = 0;
+            if(i!=n) next_lower = height[i];
+            if(!st.empty()) next_lower = max(next_lower, height[st.top()]);
+
+            ans = (ans + find_rect(w,height[j],next_lower))%mod;
+        }
+
+        st.push(i);
+    }
+    
+    cout << ans << endl;
+    return 0;
+}

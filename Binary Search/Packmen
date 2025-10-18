@@ -1,0 +1,59 @@
+CF link: https://codeforces.com/contest/847/problem/E
+
+// Intuition yahi h na ki leftmost ka hmesha socho jo next pacman aayega wahi cover krega na
+// aur fir jitna bhi time allot hua h usko pura utilise krte hue pehle right jaye fir left, ya pehle left fir right
+// dono me se jisme bhi maximum coverage mile wo choose krenge
+// and leftmost ko tabhi lenge agar wo covered wale area me na aata ho
+// to end tk agar leftmost bacha rh gya to bas return false
+// ya kahi bich me bhi nahi ho paya to return false
+
+#include<bits/stdc++.h>
+using namespace std;
+#define int long long
+bool check(auto &s, int mid) {
+	int n = s.size();
+	int leftmost = n;
+	int i=0, covered_till = -1;
+	while(i<n) {
+		if(s[i]=='P') {
+			if(leftmost == n) covered_till = max(covered_till, i+mid);
+			else {
+				if(i-leftmost > mid) return false;
+				else {
+					// Agar packman kuch door right jaake fir aaye left
+					// ya fir pehle left jaake fir jitna right ja sake
+					// inhi dono se covered_till aayega max leke 
+					int a = i+(mid-(i-leftmost))/2;
+					int b = i+mid-2*(i-leftmost);
+					covered_till = max(covered_till, max(a, b));
+					leftmost = n;
+				}
+			}
+		} else if(s[i] == '*') {
+			if(leftmost == n && i > covered_till) leftmost = i;
+		}
+		i++;
+	}
+	if(leftmost != n) return false;
+	return true;
+}
+signed main() {
+    ios::sync_with_stdio(false);
+    cin.tie(0);
+    
+    int n;
+	cin >> n;
+	string s;
+	cin >> s;
+
+	int low = 0;
+	int high = 1e9;
+	while(low<=high) {
+		int mid = low + (high-low)/2;
+		if(check(s,mid)) high = mid-1;
+		else low = mid+1;
+	}
+
+	cout << low << endl;
+    return 0;
+}

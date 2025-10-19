@@ -84,6 +84,8 @@ l = decltype(l)( a.erase(next(l).base()) );
 static bool comp(const pair<int,int> &a, const pair<int,int> &b) {
 	return a.first < b.first;
 }
+// Yaha second me -1 daalne se first index pe lower bound hoga actual me
+// and second pe 1e18 daalne se first index pe upper bound hoga actual me
 int idx = lower_bound(nums.begin(), nums.end(), make_pair(nums[jagah[i]].first, -1), comp) - nums.begin();
 
 string ke end me ek character daalna ho to 

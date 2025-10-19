@@ -1,0 +1,86 @@
+CF link: https://codeforces.com/contest/2154/problem/C2
+
+#include<bits/stdc++.h>
+using namespace std;
+#define int long long
+const int Nmax = 4e5;
+int sieve[Nmax];
+void compute_sieve() {
+	for(int i=0;i<Nmax;i++) sieve[i] = i;
+
+	for(int i=2;i<Nmax;i++) {
+		if(sieve[i] != i) continue;
+		for(int j=i;j<Nmax;j+=i) {
+			sieve[j] = i;
+		}
+	}
+}
+
+int cost(auto &arr) {
+	int n = arr.size();
+	map<int,int> mpp;
+	for(int i=0;i<n;i++) {		
+		int x = arr[i].first;
+		while(x > 1) {
+			int spf = sieve[x];
+			if(mpp[spf] > 0) return 0;
+			mpp[spf]++;
+			while(x>1 && x%spf==0) x/=spf;
+		}
+	}
+	// Consider easy version (isme saare costs - 1 the bas aur kuch nahi)
+	// Ab yaha pe answer atmax 2 hi ho skta h aur minimum 1
+	// We need to check ki 1 ho skta kya
+	// to uske lie har element pe ek add krke dekhna hoga
+	// ki kya usse kaam ho rha
+	// To bas aise hi easy version solve hua, copy the same for hard
+	// bas costs replace hongi
+	int ans = arr[0].second + arr[1].second;
+
+	for(int i=0;i<n;i++) {
+		// Har number ke jitne bhi distinct prime factors honge
+		// unpe plus 1 krna h
+		// taki apne hi number ke multiple same prime factors se ye na soch lo
+		// ki ans 0 h
+		// aur ye bhi dhyan rakhna ki arr[i]+1 krte waqt arr[i] delete hoga na
+		// to islie uska contribution minus krenge
+		int x = arr[i].first + 1;
+		while(x>1) {
+			int spf = sieve[x];
+			if(mpp.count(spf) && mpp[spf] > (arr[i].first%spf==0)) ans = min(ans, arr[i].second);
+			while(x>1 && x%spf==0) x/=spf;
+		}
+	}
+	
+	// Upar tk to easy version ke hi equivalent h bilkul
+	// ab ans mera b1+b2 hi h atmax (arr is sorted on the basis of costs)
+	// aur ab kisi bhi element pe >=2 ops wala hi case bacha h (=1 wala to upar dekh lie)
+	// to >=2 ops me iss answer se better to sirf b1 se hi possible h na
+	// to we did it
+	for(auto it:mpp) {
+		if(it.second == (arr[0].first%it.first==0)) continue;
+		ans = min(ans, (it.first - arr[0].first%it.first)*arr[0].second);
+	}
+
+	return ans;
+}
+signed main() {
+	ios::sync_with_stdio(false);
+	cin.tie(0);
+	
+	compute_sieve();
+	int t;
+	cin >> t;
+	while(t--) {
+		int n;
+		cin >> n;
+		vector<pair<int,int>> arr(n);
+		for(int i=0;i<n;i++) cin >> arr[i].first;
+		for(int i=0;i<n;i++) cin >> arr[i].second;
+		sort(arr.begin(), arr.end(), [](pair<int,int>&a, pair<int,int>&b){
+			return a.second < b.second;
+		});
+		cout << cost(arr) << "\n";
+	}
+	return 0;
+}

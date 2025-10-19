@@ -1,0 +1,50 @@
+CF link: https://codeforces.com/contest/1083/problem/A
+
+// Dekh isme na hm originally rerooting se solve kr die the
+// par actually ye simple question h isme rerooting chahye hi nahi
+// isme socho ki agar koi invalid path ho (jisme kahi bich me negative ho ja rha)
+// to uske lie better path simply jaha pe negative ho rha uske aage wale node se start krna h
+// to agar hm over all paths max lete ja rhe bina invalidity ki chinta kre
+// to invalid paths to apne aap hi hat jayenge
+// aur ab path ka answer to simply saare nodes ka sum - edges ka cost hoga na
+// to bas top two paths for every node (among uske children leke) ans ko maximise krte rhna h
+// aur return krna h sirf top wala path
+
+#include<bits/stdc++.h>
+using namespace std;
+#define int long long
+int ans = 0;
+int dfs(int node, int par, auto &adj, auto &weight) {
+	int maxi = 0, smaxi = 0;
+	for(auto el:adj[node]) {
+		if(el.first == par) continue;
+		int val = dfs(el.first, node, adj, weight) - el.second;
+		if(val >= maxi) {
+			smaxi = maxi;
+			maxi = val; 
+		} else smaxi = max(smaxi, val);
+	}
+	
+	ans = max(ans, maxi + smaxi + weight[node]);
+	return maxi + weight[node];
+}
+signed main() {
+	ios::sync_with_stdio(false);
+	cin.tie(0);
+	
+	int n;
+	cin >> n;
+	vector<int> weight(n+1);
+	for(int i=1;i<=n;i++) cin >> weight[i];
+
+	vector<vector<pair<int,int>>> adj(n+1);
+	for(int i=0;i<n-1;i++) {
+		int a, b, c;
+		cin >> a >> b >> c;
+		adj[a].push_back({b,c});
+		adj[b].push_back({a,c});
+	}
+	dfs(1,-1,adj,weight);
+	cout << ans << endl;
+	return 0;
+}

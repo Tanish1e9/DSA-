@@ -1,0 +1,109 @@
+CF link: https://codeforces.com/contest/2154/problem/D
+
+// Simple intuition yahi h na
+// ki hmlog ka goal pehle to hoga ki 1 to n wala path ke alawa jitne nodes h unko hataye
+// uske lie we will always remove leaves (kyunki isse aisa kabhi ni hoga ki cat unintended section me trap ho jaye)
+// aur to ensure ki cat khud uss leaf pe na ho
+// we will use parity of levels.... kyunki cat jab bhi move krti to node ke level ki parity change hoti h
+// aur iske bad hmlog 1 to n tk yahi same kaam krenge
+// (ab to 1 leaf ban chuka hoga na after removal of all other nodes)
+// bas end me n wale node pe continue kr denge because ofcourse cat ko nahi maarna h
+
+#include<bits/stdc++.h>
+using namespace std;
+#define int long long
+
+void dfs(int node, int par, int lvl, auto &adj, auto &parent, auto &level) {
+	parent[node] = par;
+	level[node] = lvl;
+	for(int el:adj[node]) {
+		if(el==par) continue;
+		dfs(el,node,lvl+1,adj,parent,level);
+	}
+}
+signed main() {
+	ios::sync_with_stdio(false);
+	cin.tie(0);
+	
+	int t;
+	cin >> t;
+	while(t--) {
+		int n;
+		cin >> n;
+		
+		vector<vector<int>> adj(n+1);
+		vector<int> degree(n+1, 0);
+		for(int i=0;i<n-1;i++) {
+			int a, b;
+			cin >> a >> b;
+			adj[a].push_back(b);
+			adj[b].push_back(a);
+			degree[a]++;
+			degree[b]++;
+		}
+
+		vector<int> parent(n+1, -1), level(n+1);
+		dfs(1,-1,0,adj,parent,level);
+		
+		vector<bool> is_path(n+1, false);
+		int curr = n;
+		while(curr!=-1) {
+			is_path[curr] = true;
+			curr = parent[curr];
+		}
+
+		queue<int> leaves;
+		for(int i=1;i<=n;i++) {
+			if(adj[i].size()==1) {
+				leaves.push(i);
+			}
+		}
+		
+		vector<string> ans;
+		int rem = 0;
+		while(!leaves.empty()) {
+			curr = leaves.front();
+			leaves.pop();
+			
+			if(!is_path[curr]){
+				if(level[curr]%2 == rem) {
+					ans.push_back("1");
+					rem = (rem+1)%2;
+				}
+				ans.push_back("2 " + to_string(curr));				
+				ans.push_back("1");
+				rem = (rem+1)%2;
+				for(int el:adj[curr]) {
+					degree[el]--;
+					if(degree[el]==1) leaves.push(el);
+				}
+			}
+		}
+
+		leaves.push(1);
+		while(!leaves.empty()) {
+			curr = leaves.front();
+			leaves.pop();
+			if(curr == n) continue;
+			
+			if(level[curr]%2 == rem) {
+				ans.push_back("1");
+				rem = (rem+1)%2;
+			}
+			ans.push_back("2 " + to_string(curr));				
+			ans.push_back("1");
+			rem = (rem+1)%2;
+			for(int el:adj[curr]) {
+				degree[el]--;
+				if(degree[el]==1) leaves.push(el);
+			}
+		}
+
+		cout << ans.size() << "\n";
+		for(string &s:ans) {
+			cout << s << "\n";
+		}
+		cout << "\n";
+	}
+	return 0;
+}

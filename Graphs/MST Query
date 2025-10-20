@@ -1,0 +1,85 @@
+Atcoder link: https://atcoder.jp/contests/abc355/tasks/abc355_f
+
+
+// Good question of DSU 
+// yaha edge weights <= 10 hai
+// Intuition pehla to h Kruskal's algorithm ka
+// to 10 DSU bana lie
+// DSU[i] stores those edges j such that j<=i
+// iska mtlb c cost ka edge will be inserted in c to 10 waale DSUs
+// ab socho aisa hai ki DSU[1] me sirf 1 wale edges
+// DSU[2] me 1 aur 2 waale edges
+// to DSU[0] me to n connected components hai
+// DSU[1] me kuch kam iska mtlb jo difference aaya utne 1 waale edges use hue h
+// fir DSU[2] me kuch aur kam firse wahi jo difference aaya utne 2 waale edges use hue honge
+// tm dekho to ek tarah se saare edges ko sorted fashion me hi to use kr rhe
+// abhi tk agar 1...5 waale edges use krke suppose 3 connected component achieve kr lia
+// aut fir ab 1...6 waale edges use krke 1 connected component then 2 tho 6 waale edge use hue h na
+// iss tarah ka prefix sum krke difference lena tha islie <= i waale saare store kie in DS[i] as opposed to == i
+// kyunki sirf == 6 se pata nahi chalta na .... hmlog ko 1 to 6 sabka jod chahye tha
+
+#include<bits/stdc++.h>
+using namespace std;
+#define int long long
+class DSU{
+	public:
+	vector<int> size, parent;
+	int connected_comp;
+	DSU(int n) {
+		size.assign(n+1, 1);
+		parent.resize(n+1);
+		// 1 based indexing ke lie upar plus 1 hai actually n hi h components
+		connected_comp = n;
+		iota(parent.begin(), parent.end(), 0);
+	}
+	int find_par(int node) {
+		if(parent[node]==node) return node;
+		return parent[node] = find_par(parent[node]);
+	}
+	void union_by_size(int a, int b) {
+		int ult_a = find_par(a);
+		int ult_b = find_par(b);
+		if(ult_a == ult_b) return;
+		connected_comp--;
+		if(size[ult_a] > size[ult_b]) {
+			size[ult_a] += size[ult_b];
+			parent[ult_b] = ult_a;
+		} else {
+			size[ult_b] += size[ult_a];
+			parent[ult_a] = ult_b;
+		}
+	}
+};
+signed main() {
+	ios::sync_with_stdio(false);
+	cin.tie(0);
+	
+	int n, q;
+	cin >> n >> q;
+	vector<DSU> ds(11, DSU(n));
+	
+	for(int i=0;i<n-1;i++) {
+		int a, b, c;
+		cin >> a >> b >> c;
+		for(int i=c;i<=10;i++) {
+			ds[i].union_by_size(a,b);
+		}
+	}
+
+	while(q--) {
+		int a, b, c;
+		cin >> a >> b >> c;
+
+		for(int i=c;i<=10;i++) {
+			ds[i].union_by_size(a,b);
+		}
+
+		int sum = 0;
+		for(int i=1;i<=10;i++) {
+			sum += (ds[i-1].connected_comp - ds[i].connected_comp)*i;
+		}
+		cout << sum << "\n";
+	}
+
+	return 0;
+}

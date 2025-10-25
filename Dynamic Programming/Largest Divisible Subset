@@ -1,32 +1,85 @@
 LC link: https://leetcode.com/problems/largest-divisible-subset/
 
-    // literally same to same LIS wala jaisa h halka sa condition badle h bas
-    vector<int> largestDivisibleSubset(vector<int>& nums) {
-        sort(nums.begin(), nums.end());
-        int n = nums.size();
-        vector<int> parent(n, -1);
-        vector<int> lis_ending(n, 1);
-        int last_ind = 0;
-        int max_val = 0;
-        for(int i=0;i<n;i++) {
-            for(int prev = 0;prev < i;prev++) {
-                if(nums[i]%nums[prev]==0 && lis_ending[prev] + 1 > lis_ending[i]) {
-                    lis_ending[i] = 1 + lis_ending[prev];
-                    parent[i]=prev;
-                }
-            }
-            if(lis_ending[i] > max_val) {
-                max_val = lis_ending[i];
-                last_ind = i;
+// literally same to same LIS wala jaisa h halka sa condition badle h bas
+vector<int> largestDivisibleSubset(vector<int>& nums) {
+    sort(nums.begin(), nums.end());
+    int n = nums.size();
+    vector<int> parent(n, -1);
+    vector<int> lis_ending(n, 1);
+    int last_ind = 0;
+    int max_val = 0;
+    for(int i=0;i<n;i++) {
+        for(int prev = 0;prev < i;prev++) {
+            if(nums[i]%nums[prev]==0 && lis_ending[prev] + 1 > lis_ending[i]) {
+                lis_ending[i] = 1 + lis_ending[prev];
+                parent[i]=prev;
             }
         }
-
-        vector<int> ans;
-        while(parent[last_ind]!=-1) {
-            ans.push_back(nums[last_ind]);
-            last_ind = parent[last_ind];
+        if(lis_ending[i] > max_val) {
+            max_val = lis_ending[i];
+            last_ind = i;
         }
-        ans.push_back(nums[last_ind]);
-        reverse(ans.begin(), ans.end());
-        return ans;
     }
+
+    vector<int> ans;
+    while(parent[last_ind]!=-1) {
+        ans.push_back(nums[last_ind]);
+        last_ind = parent[last_ind];
+    }
+    ans.push_back(nums[last_ind]);
+    reverse(ans.begin(), ans.end());
+    return ans;
+}
+
+
+
+// Also look this problem, this has a O(Nlogn) solution due to the constraints being <= 1e5
+CF link: https://codeforces.com/contest/1475/problem/G
+
+
+// Intuition ye h na ki har element apne multiples ko extend kra skta h
+// to bas har element ke multiples pe iterate krenge... freq store kr lenge
+// jinka freq 0 hoga unko skip kr denge
+// also how will we handle repetitions
+// to hmlog hmesha equal waalo ke first waale ko extend krayenge
+// and wo fir apne hi me aage tk extend kra dega na
+// basically j=k*i ke lie longest[i] + freq[j] ho jayega
+// longest initialise bhi infact freq jaise hi hoga isi fact ke wajah se
+// 1 se to unko krenge jo ek hi h... multiple waale to apni freq ke barabar chain
+// already lekar baithe h
+
+#include<bits/stdc++.h>
+using namespace std;
+#define int long long
+const int Nmax = 2e5+5;
+signed main() {
+	ios::sync_with_stdio(false);
+	cin.tie(0);
+	int t;
+	cin >> t;
+	while(t--) {
+		int n;
+		cin >> n;
+		vector<int> freq(Nmax);
+		for(int i=0;i<n;i++) {
+			int x;
+			cin >> x;
+			freq[x]++;
+		}
+		vector<int> longest = freq;
+		
+		int maxi=1;
+		for(int i=1;i<Nmax;i++) {
+			if(freq[i]==0) continue;
+			for(int j=i*2;j<Nmax;j+=i) {
+				if(freq[j]==0) continue;
+				longest[j] = max(longest[j], longest[i] + freq[j]);
+			}
+			maxi = max(maxi, longest[i]);
+		}
+		cout << n-maxi << endl;
+	}
+	return 0;
+}
+
+

@@ -1,0 +1,31 @@
+LC link: https://leetcode.com/problems/check-if-string-is-transformable-with-substring-sort-operations/description/
+
+// Isme na key contraint to dikh hi rha h ki ek chota element
+// kisi bade element ko cross krke right ki taraf nahi ja skta
+// to bas usi se chalte hue hmlog ko manlo at ith index, t[i] laana h
+// to first occurrence laana is the best since koi bhi aur occurrence, aage aane wale
+// t[i] ke occurrences ke jada paas hoga to waha jana unke lie aasan hoga
+// ab socho agar pos[t[i]] se piche koi t[i] se chota element rh gya to wo to unused h abhi
+// to wo to aage ja hi ni payega islie return false
+// bas yahi h
+
+
+bool isTransformable(string s, string t) {
+    int n = s.length();
+    vector<int> pos(10, n);
+    for(int i=0;i<n;i++) {
+        int d = s[i]-'0';
+        if(pos[d] == n) pos[d] = i;
+    }
+
+    for(int i=0; i<n; i++){
+        int num = t[i]-'0';
+        if(pos[num] == n) return 0;
+        for(int j=0; j<num; j++){
+            if(pos[j] < pos[num]) return false;
+        }
+        pos[num]++;
+        while(pos[num]<n && s[pos[num]]-'0'!=num) pos[num]++;
+    }
+    return 1;
+}

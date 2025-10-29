@@ -1,0 +1,91 @@
+LC link: https://leetcode.com/problems/maximum-sum-queries/description/
+
+// Method 1: isme na queries aur arr (ek array bana lenge pairs ka with original indices) 
+// ko increasing x ke hisab se sort kr lenge
+// to ab right side se processing start krte hue, queries ke x ke hisab se unhi points ko daalenge seg tree me
+// jinka x satisfy ho rha hoga
+// ek alag array bhi rakhenge, jisme y_sorted hoga
+// uska ordering ka use krenge hmlog 
+// to iss y_sorted me required y (query k hisab se) ka index nikal lie binary search se
+// and then seg_tree ko query kr denge iss index se end tk
+// seg_tree stores the maximum sum... since y ke hisab se ordering bana h to aage waale y to satisfy krenge hi
+// and x ko satisfy krne waale points hi daale gye h
+// thoda tedious solution h + offline query processing h
+
+class seg_tree{
+    #define L (ind<<1) + 1
+    #define R (ind<<1) + 2
+    public:
+    vector<int> seg;
+    seg_tree(int n) {
+        seg.assign(4*n,-1);
+    }
+    void point_update(int ind, int low, int high, int k, int val) {
+        if(k<low || high<k) return;
+        if(low==high && low==k) {
+            seg[ind] = val;
+            return;
+        }
+        int mid = low + (high-low)/2;
+        point_update(L, low, mid, k, val);
+        point_update(R, mid+1, high, k, val);
+        seg[ind] = max(seg[L], seg[R]);
+    }
+    int query(int ind, int low, int high, int l, int r) {
+        if(r<low || high<l) return -1;
+        if(l<=low && high<=r) return seg[ind];
+        int mid = low + (high-low)/2;
+        int left = query(L, low, mid, l, r);
+        int right = query(R, mid+1, high, l, r);
+        return max(left, right);
+    }
+    #undef L
+    #undef R
+};
+class Solution {
+public:
+    vector<int> maximumSumQueries(vector<int>& nums1, vector<int>& nums2, vector<vector<int>>& queries) {
+        int q = queries.size();
+        vector<int> ans(q);
+        for(int i=0;i<q;i++) {
+            queries[i].push_back(i);
+        }
+        sort(queries.begin(), queries.end());
+
+        int n = nums1.size();
+        vector<vector<int>> arr(n, vector<int>(3)), y_sorted(n, vector<int>(3));
+        for(int i=0;i<n;i++) {
+            arr[i][0] = nums1[i];
+            arr[i][1] = nums2[i];
+            arr[i][2] = i;
+            y_sorted[i][0] = arr[i][1];
+            y_sorted[i][1] = arr[i][0];
+            y_sorted[i][2] = i;
+        }
+        sort(arr.begin(), arr.end());
+        sort(y_sorted.begin(), y_sorted.end());
+
+        vector<int> ordering(n);
+        for(int i=0;i<n;i++) {
+            ordering[y_sorted[i][2]] = i;
+        }
+
+        seg_tree stree(n);
+        int r=n-1;
+        for(int i=q-1;i>=0;i--) {
+            while(r>=0 && arr[r][0] >= queries[i][0]) {
+                stree.point_update(0,0,n-1,ordering[arr[r][2]],arr[r][0]+arr[r][1]);
+                r--;
+            }
+            vector<int> temp = {queries[i][1],-1,-1};
+            int idx = lower_bound(y_sorted.begin(), y_sorted.end(), temp) - y_sorted.begin();
+            ans[queries[i][2]] = stree.query(0,0,n-1,idx,n-1);
+        }
+        return ans;
+    }
+};
+
+
+
+
+// Method 2 - online

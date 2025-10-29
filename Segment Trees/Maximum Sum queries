@@ -87,5 +87,95 @@ public:
 
 
 
-
 // Method 2 - online
+// Much cleaner and faster code. Isme na aise soch kuch points jinka x, y dono hi
+// kinhi dusre points ke x,y se >= ho respectively... to ye jo latter wale points h
+// wo to dominate ho gye na... wo to kabhi answer nahi ho skte
+// islie we will first find a set of non-dominated points...
+// aur isko coordinate plane pe krke dekhna y and x me opposite monotonicity show hoga
+// y dec kia to x increase krega... (since agar x bhi decrease kr gya to dominate ho jayega na)
+// to bas isme na ek particular range aa jayega... har query ke lie... usme range maxima krna h bas
+// to find this set of non-dominated points... pehle saare points ko x ke hisab se inc sort kr lo
+// then ek stack me daalte rhenge... jab tk agla point dominate kr rha hoga st.top() ko tab tk pop krate rho
+// khud socho x ke hisab se increasing aa rha to y ke hisab se decreasing hi bachega (stack me at the end)
+// aur bas we are done
+
+
+
+class seg_tree{
+    #define L (ind<<1) + 1
+    #define R (ind<<1) + 2
+    public:
+    vector<int> seg;
+    seg_tree(auto &arr) {
+        int n = arr.size();
+        seg.assign(4*n, -1);
+        build(0,0,n-1,arr);
+    }
+    void build(int ind, int low, int high, auto &arr) {
+        if(low==high) {
+            seg[ind] = arr[low].first + arr[high].second;
+            return;
+        }
+        int mid = low + (high-low)/2;
+        build(L, low, mid, arr);
+        build(R, mid+1, high, arr);
+        seg[ind] = max(seg[L], seg[R]);
+    }
+    int query(int ind, int low, int high, int l, int r) {
+        if(r<low || high<l) return -1;
+        if(l<=low && high<=r) return seg[ind];
+        int mid = low + (high-low)/2;
+        int left = query(L, low, mid, l, r);
+        int right = query(R, mid+1, high, l, r);
+        return max(left, right);
+    }
+    #undef L
+    #undef R
+};
+
+class Solution {
+public:
+    pair<int,int> find_range(auto &st, auto &query) {
+        int low = 0;
+        int high = st.size()-1;
+        while(low<=high) {
+            int mid = low + (high-low)/2;
+            if(st[mid].second >= query[1]) low = mid+1;
+            else high=mid-1;
+        }
+        int right = high;
+        low = 0;
+        high = st.size()-1;
+        while(low<=high) {
+            int mid = low + (high-low)/2;
+            if(st[mid].first >= query[0]) high=mid-1;
+            else low=mid+1;
+        }
+        return {low, right};
+    }
+    vector<int> maximumSumQueries(vector<int>& nums1, vector<int>& nums2, vector<vector<int>>& queries) {
+        int n = nums1.size();
+        vector<pair<int,int>> arr(n);
+        for(int i=0;i<n;i++) {
+            arr[i].first = nums1[i];
+            arr[i].second = nums2[i];
+        }
+        sort(arr.begin(), arr.end());
+        vector<pair<int,int>> st;
+        for(int i=0;i<n;i++) {
+            while(!st.empty() && st.back().first <= arr[i].first && st.back().second <= arr[i].second) {
+                st.pop_back();
+            }
+            st.push_back(arr[i]);
+        }
+        seg_tree stree(st);
+        int q = queries.size();
+        vector<int> ans(q);
+        for(int i=0;i<q;i++) {
+            pair<int,int> p = find_range(st, queries[i]);
+            ans[i] = stree.query(0,0,st.size()-1,p.first,p.second);
+        }
+        return ans;
+    }
+};

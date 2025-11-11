@@ -1,0 +1,30 @@
+LC link: https://leetcode.com/problems/maximum-and-sum-of-array/description/
+
+
+M-1: DP-way
+// Since numSlots <= 9, and we have 3 states per slot
+// To bitmask type ka bana lenge but with base 3
+// aur bas ho jayega
+
+using ll = long long;
+int powers_3[10] = {1, 3, 9, 27, 81, 243, 729, 2187, 6561, 19683};
+vector<vector<int>> dp;
+int helper(int i, int state, auto &nums, int numSlots) {
+    if(i==nums.size()) return 0;
+    if(dp[i][state]!=-1) return dp[i][state];
+    int ans = 0;
+    int copy = state;
+    for(int j=1;j<=numSlots;j++) {
+        int free_slots = state%3;
+        if(free_slots<2) {
+            ans = max(ans, (nums[i]&j) + helper(i+1, copy + powers_3[j-1], nums, numSlots));
+        }
+        state/=3;
+    }
+    return dp[i][copy] = ans;
+}
+int maximumANDSum(vector<int>& nums, int numSlots) {
+    int n = nums.size();
+    dp.assign(n, vector<int>(powers_3[numSlots] , -1));
+    return helper(0, 0, nums, numSlots);
+}

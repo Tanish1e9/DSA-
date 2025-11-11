@@ -1,0 +1,30 @@
+LC link: https://leetcode.com/problems/best-time-to-buy-and-sell-stock-v/description/
+
+
+// Dekh isme na hm sochenge hi nahi kuch bhi profit negative waghera ka
+// hm bas andha dhun numbers select krenge + ya - ke sath
+// since we are maximising over everything apne aap hi end me maximum nikalke aayega
+
+
+using ll = long long;
+ll dp[3][501][1000];
+ll helper(int i, int k, int state, auto &prices) {
+    if(i == prices.size()) {
+        if(state==0) return 0;
+        return -1e18;
+    }
+    if(dp[state][k][i]!=-1) return dp[state][k][i];
+    ll ans = helper(i+1, k, state, prices);
+    if(state == 0 && k>0) {
+        ans = max(ans, prices[i] + helper(i+1, k, 1, prices));
+        ans = max(ans, -prices[i] + helper(i+1, k, 2, prices));
+    }
+    else if(state == 1) ans = max(ans, -prices[i] + helper(i+1, k-1, 0, prices));
+    else if(state == 2) ans = max(ans, prices[i] + helper(i+1, k-1, 0, prices));
+
+    return dp[state][k][i] = ans;
+}
+ll maximumProfit(vector<int>& prices, int k) {
+    memset(dp, -1, sizeof(dp));
+    return helper(0,k,0,prices);
+}

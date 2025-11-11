@@ -1,0 +1,56 @@
+LC link: https://leetcode.com/problems/maximize-cyclic-partition-score/
+
+// Isme na pehle to rotation ko bhul jao maan lo bina rotation ke hi score maximise krna h to kaise krenge
+// to ye khayal aata h ki har index pe ya to naya subarray start hoga ya current hi rhega
+// par isme max aur min ka hisab to nahi rakh payenge
+// aur agar rakha to O(n^2k) jayega
+// To aise socho ki har subarray ek max aur min element ka difference hi h na
+// to hm k pairs chun lete h (max aur min ka)
+// fark hi nahi padta ki actually jo chun rhe wo possible h ya nahi
+// kyunki hmlog max lenge to end me ek valid selection hi aayega kyunki invalid selection se chota hi ans aata
+// to bas k pairs chunne h ab ya to pehle max chun lenge ya min ya kuch bhi nahi
+// to 3 state banana hoga jab tk current pair complete nahi hota aage ni jayenge
+// ekdum buy and sell stock 5 ke jaisa h
+// ab rotation ke lie suno
+// answer tabhi aayega jab global minima of array ya to end me ho ya beginning me
+// since ye observe kro ki global minima jis bhi partion me ho uss partion me
+// global minima agar end pe na ho to answer same hi to rhta h
+// islie minima end pe ho to ek optimal ans aayega hi aur bas yahi kia gya h
+
+
+using ll = long long;
+vector<vector<ll>> dp[3];
+ll helper(int i, int k, int state, auto &nums) {
+    if(k==0 && state==0) return 0;
+    if(i == nums.size()) {
+        if(state == 0) return 0;
+        return -1e18;
+    }
+    if(dp[state][i][k]!=-1) return dp[state][i][k];
+
+    ll ans = helper(i+1, k, state, nums);
+    if(state == 0 && k>0) {
+        ans = max(ans, nums[i] + helper(i+1, k, 1, nums));
+        ans = max(ans, -nums[i] + helper(i+1, k, 2, nums));
+    }
+    else if(state == 1) ans = max(ans, -nums[i] + helper(i+1, k-1, 0, nums));
+    else if(state == 2) ans = max(ans, nums[i] + helper(i+1, k-1, 0, nums));
+
+    return dp[state][i][k] = ans;
+}
+ll maximumScore(vector<int>& nums, int k) {
+    int n = nums.size();
+    int idx = min_element(nums.begin(), nums.end()) - nums.begin();
+    
+    reverse(nums.begin(), nums.begin()+idx);
+    reverse(nums.begin()+idx, nums.end());
+    reverse(nums.begin(), nums.end());
+    dp[0] = dp[1] = dp[2] = vector<vector<ll>>(n + 1, vector<ll>(k + 1, -1)); 
+    ll ans = helper(0,k,0,nums);
+
+    reverse(nums.begin()+1, nums.end());
+    reverse(nums.begin(), nums.end());
+    dp[0] = dp[1] = dp[2] = vector<vector<ll>>(n + 1, vector<ll>(k + 1, -1)); 
+    ans = max(ans, helper(0,k,0,nums));
+    return ans;
+}

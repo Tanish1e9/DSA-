@@ -1,0 +1,25 @@
+LC link: https://leetcode.com/problems/minimum-time-to-remove-all-cars-containing-illegal-goods/description/
+
+// Itna to realise hua ki ek car ko agar bich se nikale h
+// to uske aas pas tk ek end se remove krte hue to nahi hi aa rhe honge
+// wrna ends walo ke sath hi nikal dete
+// Hence the array will be divided into 3 regions
+// to bas region me khel gye h ki har region me kya hoga
+
+vector<int> dp[3];
+int helper(int i, int cuts, string &s) {
+    if(i==s.size()) return 0;
+    if(dp[cuts][i]!=-1) return dp[cuts][i];
+
+    int ans = 0;
+    if(cuts == 0) ans = min(helper(i, 1, s), 1 + helper(i+1, 0, s));
+    else if(cuts == 1) ans = min(helper(i, 2, s), (s[i]=='1')*2 + helper(i+1, 1, s));
+    else ans = 1 + helper(i+1, 2, s);
+    
+    return dp[cuts][i] = ans;
+}
+int minimumTime(string s) {
+    int n = s.size();
+    dp[0] = dp[1] = dp[2] = vector<int>(n, -1);
+    return helper(0,0,s);
+}

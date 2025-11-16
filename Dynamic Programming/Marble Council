@@ -1,0 +1,103 @@
+CF link: https://codeforces.com/contest/2166/problem/D
+
+// Isme dekh core intuition ye h na
+// ki agar koi bhi element s me non-zero baar laana h (upto the freq of element ofcourse) 
+// to sirf usi element ke multisets banake laa skte dusra element ghusane ka jroorat hi nahi
+// for eg x hai frequency, aur maanlo y laana h... to y tho me 1-1 daal do, aur fir kisi ek me bacha hua bhar do
+// problem h agar koi element ko 0 times laana ho
+// to maanlo ki jo jo elements nahi laana unke siwa baaki saare elements ikhatta kr lie
+// sbka apna apna multiset hoga as described above
+// ab na jo jo element nahi aane waala h... unko same frequency distribution me baat do inn
+// aane waale elements k sath, jisse ye chhup jaye until exhausted
+// to basically agar nahi aane waale max freq ke element ko chhupa paye, to we are done
+// suppose {2,2,2}, {2,2} {3,3,3} laana tha and {5,5,5,5,5,5} , {1,1} ko nahi laana h
+// to aise kr do {2,2,2,5,5,5,1} {2,2,5,5,1} {3,3,3,5} .. same freq distribution until exhausted
+// Aise alag alag element baantne se dikh rha hoga ki maximum chhupane ka capability milta h
+// To saar ye nikla ki jin elements ko nahi laana s me unme se max freq <= (aane waalo ke freq ka sum)
+// agar ho jaaye to possible h wrna nahi
+// ab agar non-zero baar lana ho ek element ko jiski freq f hai, to uske f tarike h na (1 to f laa skte count)
+// to bas aane walo ke frequency ko multiply kr do and add it!!!
+
+// ab naively iss idea ka recursion likhoge to O(n^3) dp milega
+// to thoda smart khelte
+// elements ko kaam krte ki decreasing freq ke hisab se sort kr lete
+// and I will choose the first element jo ki nahi aana h
+// to target set ho jayega na ki aane wale elements ka sum atleast kitna hona chahye
+// aur dekho aise target waala dp, across different maximas same hi rhega
+// to bas yehi kr do ho jayega, target negative bhi ho skta to dp offset lena padega
+
+// Further optimisation (500ms to 62ms) ke lie dekho ki agar target pehle se hi negative h
+// to kisi element ko le ya na le fark hi nhi padta... islie (1+freq) ka product hi hoga
+// across all remaining elements, to ye suffix product sidhe return kr skte ho
+
+#include<bits/stdc++.h>
+using namespace std;
+#define int long long
+
+const int mod = 998244353;
+vector<vector<int>> dp;
+
+int helper(int i, int target, auto &vec, auto &freq, auto &suff) {
+	if(target <= 0) return suff[i];
+	if(i == vec.size()) return 0;
+	if(dp[i][target]!=-1) return dp[i][target];
+
+	int ans = (freq[vec[i]]*helper(i+1, target - freq[vec[i]], vec, freq, suff))%mod;
+	ans = (ans + helper(i+1, target, vec, freq, suff))%mod;
+	
+	return dp[i][target] = ans;
+}
+
+signed main() {
+	ios::sync_with_stdio(false);
+	cin.tie(0);
+	
+	int t;
+	cin >> t;
+	while(t--) {
+		int n;
+		cin >> n;
+		vector<int> freq(n+1);
+		for(int i=0;i<n;i++) {
+			int x;
+			cin >> x;
+			freq[x]++;
+		}
+		
+		vector<int> vec;
+		for(int i=1;i<=n;i++) {
+			if(freq[i]==0) continue;
+			vec.push_back(i);
+		}
+		sort(vec.begin(), vec.end(), [&freq](int a, int b) {
+			return freq[a] > freq[b];
+		});
+
+		// Plus one should be there imagine I don't take the last element
+		// and then call for i+1, that will be == vec.size()
+		// and there suff[vec.size()] would return garbage, when I want it to return 1
+		vector<int> suff(vec.size()+1, 1);
+		for(int i=vec.size()-1;i>=0;i--) {
+			if(i+1 < vec.size()) suff[i] = suff[i+1];
+			suff[i] = (suff[i] * (1 + freq[vec[i]]))%mod;
+		}
+		
+		// If we don't want to do this suff thing, then take the size to be 2*n+1
+		// and a dp offset of +n, so as to avoid indexing negative targets
+		// You can already guess, that is a lot of memory wasted, (so much that memset gave TLE)
+		// So this is better
+		dp.assign(vec.size(), vector<int>(freq[vec[0]]+1, -1));
+
+		int already_taken = 0, ans = 0, prod = 1;
+		for(int i=0;i<vec.size();i++) {
+			int val = helper(i+1, freq[vec[i]] - already_taken, vec, freq, suff);
+			ans = (ans + prod * val)%mod;
+
+			// already_taken to <= n hi hoga na so no mod needed
+			already_taken += freq[vec[i]];
+			prod = (prod * freq[vec[i]])%mod;
+		}
+		cout << (ans + prod)%mod << "\n";
+	}
+	return 0;
+}

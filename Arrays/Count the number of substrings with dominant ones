@@ -1,0 +1,40 @@
+LC link: https://leetcode.com/problems/count-the-number-of-substrings-with-dominant-ones/description/
+
+// Yaha worst case to O(n^2) hi h, but best case O(nrootn) type ka jaa rha
+// overall pass ho ja rha
+
+int numberOfSubstrings(string s) {
+    int n = s.size();
+    vector<int> suff(n), next_zero(n, n);
+    int ans = 0, last = n;
+    for(int i=n-1;i>=0;i--) {
+        next_zero[i] = last;
+        if(i<n-1) suff[i] = suff[i+1];
+        if(s[i]=='0') {
+            last = i;
+            suff[i]++;
+        }
+    }
+    
+    for(int i=n-1;i>=0;i--) {
+        int j=i;
+        while(j<n) {
+            int zero = suff[i];
+            if(j+1<n) zero -= suff[j+1];
+            int extra_ones = zero*zero - (j-i+1-zero);
+            if(extra_ones > 0) j += extra_ones;
+            else {
+                // suff ke bajay pref_sum bhi le skte the
+                // aur fir next_zero ke bajay pref pe bhi upper_bound of pref[j] kr skte the
+                // suff pe bhi kr skte h par thoda bin_search likhna padega
+                // somehow, next_zero se kaafi fast ho gya h
+                // Also, ye jo suff aur next_zero ka calculation h, ye same loop me kr skte h
+                // par thoda cluttered lagega islie alag loop me kr die TC to same hi rhega
+                int index = next_zero[j];
+                ans += index-j;
+                j = index;
+            }
+        }
+    }
+    return ans;
+}

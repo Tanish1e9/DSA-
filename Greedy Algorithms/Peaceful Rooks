@@ -1,0 +1,64 @@
+CF link: https://codeforces.com/contest/1411/problem/C
+
+// Dekh aisa observe kro, ki already agar diagonal pe h to usko to hata hi do
+// Aur fir to bacha hua har rook ke lie atleast 1 move lagega hi... aur 1 move me kisko occupy kre wo
+// usse fark hi nahi padta
+// ab (1,2), (2,1) ko dekho ye na ek cycle h... isme 3 lagega yani 2 + 1 (due to a cycle)
+// to directed edges consider krne h (a,b) -> (x,a) and then just simple cycle detection
+// isme kya h ki graph thoda successor type ka hoga... to double counting nahi hone waala 
+
+#include<bits/stdc++.h>
+using namespace std;
+#define int long long
+bool dfs(int node, int par, auto &adj, auto &vis, auto &path_vis) {
+	vis[node] = true;
+	path_vis[node] = true;
+	for(int el:adj[node]) {
+		if(!vis[el]) {
+			if(dfs(el, node, adj, vis, path_vis)) return true;
+		} 
+		else if(path_vis[el]) return true;
+	}
+	path_vis[node] = false;
+	return false;
+}
+signed main() {
+	ios::sync_with_stdio(0);
+	cin.tie(0);
+
+	int t;
+	cin >> t;
+	while(t--) {
+		int n, m;
+		cin >> n >> m;
+		vector<pair<int,int>> arr(m);
+		
+		vector<int> rows(n+1, -1), cols(n+1, -1);
+		int ans = 0;
+		for(int i=0;i<m;i++) {
+			cin >> arr[i].first >> arr[i].second;
+			if(arr[i].first != arr[i].second) {
+				ans++;
+				rows[arr[i].first] = i;
+				cols[arr[i].second] = i;
+			}
+		}
+		vector<vector<int>> adj(m);
+		for(int i=0;i<m;i++) {
+			if(arr[i].first == arr[i].second) continue;
+			if(cols[arr[i].first] != -1) {
+				adj[i].push_back(cols[arr[i].first]);
+			}
+		}
+		vector<bool> vis(m, false);
+		for(int i=0;i<m;i++) {
+			if(vis[i] || arr[i].first == arr[i].second) continue;
+			vector<bool> path_vis(m, false);
+			bool is_cycle = dfs(i, -1, adj, vis, path_vis);
+			ans += is_cycle;
+		}
+		
+		cout << ans << "\n";
+	}
+	return 0;
+}

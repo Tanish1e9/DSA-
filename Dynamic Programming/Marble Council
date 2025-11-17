@@ -18,7 +18,7 @@ CF link: https://codeforces.com/contest/2166/problem/D
 // ab agar non-zero baar lana ho ek element ko jiski freq f hai, to uske f tarike h na (1 to f laa skte count)
 // to bas aane walo ke frequency ko multiply kr do and add it!!!
 
-// ab naively iss idea ka recursion likhoge to O(n^3) dp milega
+// ab naively iss idea ka recursion likhoge to O(n^3) dp milega (Isko n^2 kr skte h agla method dekho)
 // to thoda smart khelte
 // elements ko kaam krte ki decreasing freq ke hisab se sort kr lete
 // and I will choose the first element jo ki nahi aana h
@@ -101,3 +101,49 @@ signed main() {
 	}
 	return 0;
 }
+
+
+// Actually ye aur simply ho skta, ye to pata hi h ki non-picked ke max se sum of picked jaada hona chahye
+// to socho na koi bhi individually picked se bhi to sum of picked trivially jaada hoga
+// to hm hmesha keh skte ki sum of picked >= max_freq hona chahye and that's it we have eliminated a parameter
+// This code works
+
+#include<bits/stdc++.h>
+using namespace std;
+#define int long long
+
+const int mod = 998244353;
+vector<vector<int>> dp;
+int helper(int i, int taken, auto &freq, auto &maxi) {
+	if(i==freq.size()) return taken >= maxi;
+	if(dp[i][taken]!=-1) return dp[i][taken];
+
+	int ans = (freq[i]*helper(i+1, taken + freq[i], freq, maxi))%mod;
+	ans = (ans + helper(i+1, taken, freq, maxi))%mod;
+
+	return dp[i][taken] = ans;
+}
+signed main() {
+	ios::sync_with_stdio(false);
+	cin.tie(0);
+	int t;
+	cin >> t;
+	while(t--) {
+		int n;
+		cin >> n;
+		vector<int> freq(n+1);
+		for(int i=0;i<n;i++) {
+			int x;
+			cin >> x;
+			freq[x]++;
+		}
+		int maxi = *max_element(freq.begin(), freq.end());
+		dp.assign(n+1, vector<int>(n+1, -1));
+		cout << helper(1,0,freq,maxi) << "\n";
+	}
+
+	return 0;
+}
+
+
+

@@ -1,0 +1,31 @@
+LC link: https://leetcode.com/problems/poor-pigs/description/
+
+class Solution {
+public:
+    int poorPigs(int n, int die, int test) {
+        if(n==1) return 0;
+        // pigs can never be greater than O(log n) n <- buckets
+        // so here ans <= 10 always
+        // numRounds = Test/Die <= 100
+        // Ans is (numRounds+1)^x buckets (for x pigs)
+        // aise islie ki T+1 base me number ko imagine kro
+        // fir ith round (0<=i<T) me jo jo numbers me xth bit pe i h
+        // unhi ko xth pos wale pig ko pilao
+        // jo jo mar gye usse pata chal gya ki unn positions par i tha
+        // aisa aage ke lie krte rho
+        // dhyan do ki jitne pigs bache ab utne hi positions pe kya h wo unknown h na
+        // to aise hmlog 0 to T-1 tk ke values to determine kr lenge
+        // last me jo bache unme T hi hoga na value... to T+1 base me pura encoding mil gya
+
+        int numRounds = test/die;
+        for(int x=1;x<=10;x++) {
+            int num = 1;
+            for(int p=1;p<=x;p++) {
+                num = num * (numRounds+1);
+            }
+            if(num >= n) return x;
+        }
+        // dummy
+        return -1;
+    }
+};

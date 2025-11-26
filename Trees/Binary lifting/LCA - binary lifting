@@ -55,6 +55,10 @@ int find_lca(int a, int b, int n, auto &level, auto& parent){
 	// 	if(par_a==par_b) high = mid - 1;
 	// 	else low = mid + 1;
 	// }
+
+	// yaha ulta chalna padega dhyan do, kyunki we want to find highest x such that xth parent of a and b
+	// are different, so say x=6 hai aur niche se start kia ... to 0th bit set kr doge jo ki galat hoga
+	// krke dekh lo
 	for(int i=17;i>=0;i--){
 		if((1<<i) >= n) continue;
 		int ap = parent[i][a];

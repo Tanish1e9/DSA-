@@ -4,6 +4,7 @@ Codechef link: https://www.codechef.com/problems/CATS
 // root k lie apne aap hi handle ho jayega
 // this would prevent errors in cases jaha root != 1 ho jaise ki iss question me tha
 // baki intuition to simple LCA jaisa hi h ki tab tk jump krayenge jab tk cat na mile final position pe cat ruk jayega
+
 #include <bits/stdc++.h>
 using namespace std;
 
@@ -45,6 +46,10 @@ int main() {
 	    cin >> c;
 	    if(is_cat[c]) {cout << 0 << endl;continue;}
 	    int ans = 1;
+
+		// yaha dhyaan do ulta hi chalana padega... kyunki we are trying to find the highest unoccupied parent
+		// wo maan lo koi 'x' h suppose, to x ke binary representation me maan lo 110 hai... to LSB se start kia
+		// to first parent to hai hi unoccupied, to waha 1 set kr doge jo ki galat ho jayega
 	    for(int i=18;i>=0;i--) {
 	        if((1<<i)>=n) continue;
 	        int cp = parent[i][c];

@@ -43,3 +43,43 @@ int countPartitions(vector<int>& arr, int k) {
 }
 
 
+// M-2 upar waale code ko hi thoda sa aur optimise kr die h
+// by computing the rightmost j inside the dp loop only and suff_sum is also not used
+// Hmesha dhyan rakhna agar ek side se elements daalte ja rhe
+// and piche se elements hatate rhna h ... to deque me back pe elements add honge (waha 
+// monotonicity maintain krne k lie pop_backs honge then push_back hoga)
+// but fir element jab remove hoga tab hmesha front se hoga
+// Isme bhi dekho back pe hm decreasing order me indices daalte ja rhe
+// to front side pe bade indices honge na
+// jinko remove krna h hmko agar diff > k ho gya to
+
+using ll = long long;
+const int mod = 1e9+7;
+int countPartitions(vector<int>& arr, int k) {
+    int n = arr.size();
+    int r = n-1;
+    deque<int> inc_min, dec_max;
+
+    vector<int> dp(n+1);
+    dp[n] = 1;
+    int sum = 1;
+    for(int i=n-1;i>=0;i--) {
+        while(!dec_max.empty() && arr[dec_max.back()] <= arr[i]) dec_max.pop_back();
+        dec_max.push_back(i);
+
+        while(!inc_min.empty() && arr[inc_min.back()] >= arr[i]) inc_min.pop_back();
+        inc_min.push_back(i);
+
+        while(arr[dec_max.front()] - arr[inc_min.front()] > k) {
+            if(dec_max.front() == r) dec_max.pop_front();
+            if(inc_min.front() == r) inc_min.pop_front();
+            sum = (sum - dp[r+1] + mod)%mod;
+            r--;
+        }
+
+        dp[i] = sum;
+        sum = (sum + dp[i])%mod;
+    }
+
+    return dp[0];
+}

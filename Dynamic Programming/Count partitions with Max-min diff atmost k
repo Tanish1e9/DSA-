@@ -1,0 +1,45 @@
+LC link: https://leetcode.com/problems/count-partitions-with-max-min-difference-at-most-k/
+
+// Dekh iss question me na simply dp me for(int j=i;j<n;j++) type ka partition dp lagane ka idea ata h
+// Jo ki bilkul sahi h bas isi j waale loop ko optimise krna h
+// To ye observe kie ki i ke lie suppose j koi value r tk ja skta
+// to i+1 ke lie j >= r hi hoga... to isi nature ka fayda uthake we have precomputed the
+// rightmost j's for all i's and then suffix sum optimisation laga denge
+
+const int mod = 1e9+7;
+using ll = long long;
+int countPartitions(vector<int>& arr, int k) {
+    int n = arr.size();
+
+    vector<int> points(n);
+    deque<int> inc_min, dec_max;
+    int r = -1;
+    for(int i=0;i<n;i++) {
+        while(r+1<=n && (r+1==0 || arr[dec_max.front()] - arr[inc_min.front()] <= k)) {
+            r++;
+            if(r==n) continue;
+            while(!dec_max.empty() && arr[dec_max.back()] <= arr[r]) dec_max.pop_back();
+            dec_max.push_back(r);
+
+            while(!inc_min.empty() && arr[inc_min.back()] >= arr[r]) inc_min.pop_back();
+            inc_min.push_back(r);
+        }
+        points[i] = r-1;
+        if(inc_min.front() == i) inc_min.pop_front();
+        if(dec_max.front() == i) dec_max.pop_front();
+    }
+
+    vector<ll> suff_sum(n+1);
+    suff_sum[n] = 1;
+
+    int curr = 0; 
+    for(int i=n-1;i>=0;i--) {
+        curr = suff_sum[i+1];
+        if(points[i]+2 <= n) curr = (curr - suff_sum[points[i]+2] + mod)%mod;
+        suff_sum[i] = (suff_sum[i+1] + curr)%mod;
+    }
+
+    return curr;
+}
+
+

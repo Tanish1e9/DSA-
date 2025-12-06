@@ -1,0 +1,77 @@
+LC link: https://leetcode.com/problems/race-car/description/
+
+// Iss question me na dekh 2 prunings h thodi naive waali jisse normal BFS pass ho jayega (500ms me)
+// 1) ki speed > target agar ho chuka h to further accelerate krke kuch nahi hoga
+// 2) ki opp direction me initial target se door jaake koi fayda nahi h (distance kyu hi badhana chahenge)
+// Ab ek golden pruning h jisse bhut fast hota itna ki vis hatake repeated states ho jayenge still <10ms me hoga
+// wo ye ki Reverse tabhi kro jab opp ho ya fir overshoot kr rhe ho target ko
+// Iska intuition utna bhi clear nahi h but thoda sa soche h
+// Ki dekho kisi bhi point pe (jaha current speed ke hisab se accelerate kia
+// to overshoot nahi hoga i.e. position + speed <= target h)
+// To iss point pe reverse kroge fir kuch door Accelerate krke
+// wapas reverse krke hi aaoge... to same point pe to aaoge hi
+// jada speed laane k lie piche jaana padega bhut jo ki kyu krna h
+// aur kam speed pe aaye to since pehle wala speed pe hi overshoot nahi kr rha tha
+// to kam se kam initial speed se jitna distance cover hota utna cover krne me 2 steps lag jayenge
+// To kahi na kahi loss hi ho ja rha h
+// In general chota distance pe kam time lagega, to islie distance chota jab tk ho rha tab tk kr lo
+
+int racecar(int target) {
+    queue<vector<int>> q;
+    bool vis[2][15][10001] = {0};
+    
+    q.push({0,target,0});
+    vis[0][0][target] = true;
+    int level = 0;
+    while(!q.empty()) {
+        int level_size = q.size();
+        while(level_size--) {
+            vector<int> curr = q.front();
+            q.pop();
+            int p = curr[0], t = curr[1], opp = curr[2];
+            if(t==0) return level;
+
+            // This is just an observation that we need R only when
+            // either we are going opposite or in the next A move we can overshoot
+            // the current target
+            // This line makes our code very fast (so fast that we can even remove the vis
+            // array stuff, and it will still be faster even with repeated states)
+            if(opp || (1<<p) > t) {
+                if(!vis[!opp][0][t]){
+                    // If 'R' is chosen
+                    q.push({0,t,!opp});
+                    vis[!opp][0][t] = true;
+                }
+            }
+
+            // If the current speed is already > the initial target
+            // then it is of no use accelerating it further (since kabhi target pe 
+            // pinpoint kr hi nahi payenge)
+            if((1<<p) > target) continue;
+
+          
+            // If 'A' is chosen
+            if(!opp) {
+                if(!vis[(1<<p) > t][p+1][abs(t-(1<<p))]) {
+                    q.push({p+1, abs(t-(1<<p)), (1<<p) > t});
+                    vis[(1<<p) > t][p+1][abs(t-(1<<p))] = true;
+                }
+            }
+            // If we are going opp then no use of going 
+            // further than the initial target
+            else if(t+(1<<p) <= target){
+                if(!vis[1][p+1][t+(1<<p)]) {
+                    q.push({p+1, t + (1<<p), 1});
+                    vis[1][p+1][t+(1<<p)] = true;
+                }
+            }
+        }
+        level++;
+    }
+    // dummmy
+    return -1;
+}
+
+
+
+

@@ -1,0 +1,59 @@
+LC link: https://leetcode.com/problems/longest-valid-parentheses/description/
+
+// Isme observe kr... jaha bhi ( h wahi se start hoga na
+// ab waha se start krke jaha bhi pehli bar 0 touch kre (yani ')' tk pahuch jaye)
+// uske bad to ek dp ki tarah call kr skte
+// dp[i] = 0 if (s[i]=')')
+// else dp[i] = next[i]-i+1+dp[next[i]+1]
+// Ab ye next[i] ke lie observe kr ... jaha jaha prefix_sum same ho rha
+// suppose i, j pe then next[i+1] = j hoga
+// ek pref_sum = 0 ko index -1 pe bhi maan lena "()" iss string ko tackle krne ke lie
+// ab isi ko ek hi loop me calculate krne ke lie suffix same le lie same hi funda pe
+
+M-1 (Original thought)
+int longestValidParentheses(string s) {
+    int n = s.size();
+    unordered_map<int,int> indices;
+    indices[0] = n;
+    int sum = 0, ans = 0;
+    vector<int> dp(n+1,0);
+    
+    for(int i=n-1;i>=0;i--) {
+        if(s[i]=='(') sum++;
+        else sum--;
+
+        // )( isme indices[0] = n ke karan first ) ka next ho jayega
+        // islie ye check lagana pada
+        if(s[i]==')') dp[i] = 0;
+        else if(indices.count(sum)) dp[i] = indices[sum]-i + dp[indices[sum]];
+        indices[sum] = i;
+        ans = max(ans, dp[i]);
+    }
+    return ans;
+}
+
+
+// Main baat yahi tha ki ( se start krke jitna door tk continuation me ja skte jao
+// jaise hi sum negative ho fir reset krke ek aage wale index se start kro
+// isme na problem yahi h ki agar sum positive rh gya ... to bich me kahi bhi apna string ho skta 
+// usko nahi khoj payenge, islie ye stack kind of lagaye h
+// ()() cases me previous i jo stack ke bottom par hoga hmesha wahi se calculate hoga
+// fir agar ek ) aake continuity break kr dia... to jo stack ke bottom par tha wo bhi pop ho jayega
+// and new starting point daala jayega
+
+M-2 - Very optimal
+int longestValidParentheses(string s) {
+    int n = s.size();
+    stack<int> st;
+    st.push(-1);
+    int ans = 0;
+    for(int i=0;i<n;i++) {
+        if(s[i]=='(') st.push(i);
+        else {
+            st.pop();
+            if(st.empty()) st.push(i);
+            else ans = max(ans, i-st.top());
+        }
+    }
+    return ans;
+}

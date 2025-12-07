@@ -1,0 +1,26 @@
+GFG link: https://www.geeksforgeeks.org/problems/maximum-team-of-k-player/1
+
+// GFG pe driver code hi galat h 
+// Dekh t teams ban skte ya nahi agar check krna ho
+// to t bande horizontally arrange krne h na (aisa k layers banana h)
+// to socho na ki ek hi group t se jada contribute kaise kr skta h
+// to bas usi tarah se kr die
+
+bool check(vector<int> &arr, int mid, int k) {
+    int ans = 0;
+    for(int i=0;i<arr.size();i++) {
+        ans += min(arr[i], mid);
+    }
+    return ans >= mid*k;
+}
+int countOfTeams(vector<int>& arr, int N, int K) {
+    if(K==0) return 0;
+    int low = 1;
+    int high = accumulate(arr.begin(), arr.end(), 0)/K;
+    while(low<=high) {
+        int mid = low + (high-low)/2;
+        if(check(arr, mid, K)) low = mid+1;
+        else high = mid-1;
+    }
+    return high;
+}

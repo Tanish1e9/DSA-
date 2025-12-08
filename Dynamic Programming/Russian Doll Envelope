@@ -1,7 +1,50 @@
 LC link: https://leetcode.com/problems/russian-doll-envelopes/description/
 
 
+// Ye best code h aur it is developed from the general 2D LIS code only
+// Dekh yaha nums ko sort krke general LIS ka code laga doge to bhi accept ho jayega
+// But yaha hmlog kuch aur observations se thoda kaam aasan kr skte h
+// (READ 2D LIS FIRST) 
+// to jo buckets hote h unme hmlog ko check krne k lie simply lower bound - 1 pe check krna 
+// hota but since yaha pe x increasing h to sirf end waale 2 elements dekh ke kaam ho skta
+// Ab ye 2 elements bhi islie dekhne pad rhe ki agar x same ho gya bucket ke aakhri waale ka
+// to uske pichla wala chahye hoga
+// par ye dikkat tabhi aa rhi h jab x same ho kyunki agar x bina check kie kr dia
+// to same x waale hi ek dusre ko extend kr denge jo ki galat hoga
+// to islie socho ki x same hone par y pe decreasing sort kr dete h
+// to same x waala koi extend ho hi nahi payega
+// y pe to check kr hi rhe islie y same hone par koi dikkat nhi h
+// To iss tarah se ek hi element pe kaam ho jayega and x pe check krne ka jroorat nahi 
+// to bas y coordinates store krenge bucket ke aakhri element ka and we will be done
+
+int maxEnvelopes(vector<vector<int>>& nums) {
+    int n = nums.size();
+    // nums ko ek vector<pair<int,int>> bna doge to fast ho jayega
+    // faltu h islie nahi kia
+    vector<int> arr;
+    sort(nums.begin(), nums.end(), [](vector<int> &a, vector<int> &b){
+        if(a[0]!=b[0]) return a[0] < b[0];
+        return a[1] > b[1];
+    });
+    for(int i=0;i<n;i++) {
+        int idx = lower_bound(arr.begin(), arr.end(), nums[i][1]) - arr.begin();
+        if(idx == arr.size()) arr.push_back(nums[i][1]);
+        else arr[idx] = nums[i][1];
+    }
+    return arr.size();
+}
+
+
+
+
+
+
+
+
 // Ye segment_tree ka solution h
+// Ye general 2D LIS problem nahi solve kr skta since here
+// hmlog increasing x consider kr rhe h
+// However 1D LIS segment tree se kr skte h but overkill h
 // Not the most optimal, but accept ho jayega
 // 2 major things in this :- 
 // 1) observe ki agar x coordinate same ho to y ko 

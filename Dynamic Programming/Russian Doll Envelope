@@ -1,0 +1,85 @@
+LC link: https://leetcode.com/problems/russian-doll-envelopes/description/
+
+
+// Ye segment_tree ka solution h
+// Not the most optimal, but accept ho jayega
+// 2 major things in this :- 
+// 1) observe ki agar x coordinate same ho to y ko 
+// decreasing order me sort kia gya h... why?
+// taaki same x me bade y wale kahi chote y walo ko hi extend na 
+// kr de
+// 2) Same y coordinate ka jagah same h... kyunki maan lo ki koi first point aaya 
+// jiska y coordinate kisi pehle wale point k y coordinate ke equal h
+// to ab aage ka socho ki x coordinate same rhte rhte y chota ya equal hi hoga... to unko to current y 
+// se fark ni padega... aur aage x coordinate bada ho jayega to agar unko iss y se fark pade
+// to current wala point ka hi y store krna chahye... because current point ka LIS length piche wale
+// same y wale point se >= hi hoga
+                                          
+
+class seg_tree{
+    #define L (ind<<1) + 1
+    #define R (ind<<1) + 2
+    public:
+    vector<int> seg;
+    seg_tree(int n) {
+        seg.assign(4*n, 0);
+    }
+    void point_update(int ind, int low, int high, int k, int val) {
+        if(k<low || high<k) return;
+        if(low==high && low==k) {
+            seg[ind] = val;
+            return;
+        }
+        int mid = low + (high-low)/2;
+        point_update(L, low, mid, k, val);
+        point_update(R, mid+1, high, k, val);
+        seg[ind] = max(seg[L], seg[R]);
+    }
+    int query(int ind, int low, int high, int l, int r) {
+        if(r<low || high<l) return 0;
+        if(l<=low && high<=r) return seg[ind];
+        int mid = low + (high-low)/2;
+        int left = query(L, low, mid, l, r);
+        int right = query(R, mid+1, high, l, r);
+        return max(left, right);
+    }
+    #undef L
+    #undef R
+};
+class Solution {
+public:
+    int maxEnvelopes(vector<vector<int>>& arr) {
+        int n = arr.size();
+        for(int i=0;i<n;i++) arr[i].push_back(i);
+        
+        sort(arr.begin(), arr.end(), [](vector<int> &a, vector<int> &b) {
+            return a[1] < b[1];
+        });
+
+        vector<int> jagah(n);
+        for(int i=0;i<n;i++) {
+            jagah[arr[i][2]] = i;
+            int j = i;
+            while(i+1<n && arr[i+1][1] == arr[i][1]) {
+                jagah[arr[i+1][2]] = j;
+                i++;
+            }
+        }
+
+        sort(arr.begin(), arr.end(), [](vector<int>&a, vector<int> &b){
+            if(a[0]!=b[0]) return a[0] < b[0];
+            return a[1] > b[1];
+        });
+
+        int ans = 1;
+        seg_tree stree(n);
+        for(int i=0;i<n;i++) {
+            int val = stree.query(0,0,n-1,0,jagah[arr[i][2]]-1);
+            ans = max(ans, val+1);
+            stree.point_update(0,0,n-1,jagah[arr[i][2]],val+1);
+        }
+        
+        return ans;
+    }
+};
+

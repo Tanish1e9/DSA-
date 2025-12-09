@@ -1,0 +1,69 @@
+LC link: https://leetcode.com/problems/arithmetic-slices-ii-subsequence/description/
+
+// Dekh 2 methods h ye helper function wala originally hm soche
+// point ye tha na ki ki agar 0 ya 1 ya 2 ya 3 elements pick hue the na
+// to fir ye current ki choices ko affect krta
+// we dont need to keep track of diff... like agar 2 pick ho gye h and diff set ho gya h
+// then call usi ko jayega jo uss diff ko satisfy kre... jisse current element - last element krke
+// diff nikal sake... to sirf last element ko track krke kaam ho gya
+
+// M-2 jo niche wale function ke hi andar likha h
+// usme h ki har index ke lie uske aage for a particular diff kitne 
+// elements h wo store kr lie ... aur O(n^2) hi differences ho skte na
+// Hence ye solution bhi O(n^2) hi h
+
+vector<vector<int>> dp[4];
+using ll = long long;
+int helper(int i, int last, int state, auto &nums, auto &freq) {
+    state = min(3, state);
+    if(i==nums.size()) return state==3;
+    if(dp[state][i][last]!=-1) return dp[state][i][last];
+
+    int ans = 0;
+    // picking 
+    if(state == 0) ans += helper(i+1, i, 1, nums, freq);
+    else {
+        ll next_num = 2ll*nums[i]-nums[last];
+        int idx = nums.size();
+        if(freq.count(next_num)) {
+            auto &vec = freq[next_num];
+            idx = upper_bound(vec.begin(), vec.end(), i) - vec.begin();
+            if(idx < vec.size()) idx = vec[idx];
+            else idx = nums.size();
+        }
+        ans += helper(idx, i, state+1, nums, freq);
+    }
+
+    // not picking
+    if(state <= 1) ans += helper(i+1, last, state, nums, freq);
+    else {
+        auto &vec = freq[nums[i]];
+        int idx = upper_bound(vec.begin(), vec.end(), i) - vec.begin();
+        if(idx < vec.size()) ans += helper(vec[idx], last, state, nums, freq);
+        else ans += helper(nums.size(), last, state, nums, freq);
+    } 
+
+    return dp[state][i][last] = ans;
+}
+int numberOfArithmeticSlices(vector<int>& nums) {
+    int n = nums.size();
+    // unordered_map<ll,vector<int>> freq;
+    // for(int i=0;i<n;i++) {
+    //     freq[nums[i]].push_back(i);
+    // }
+    // dp[0] = dp[1] = dp[2] = dp[3] = vector<vector<int>>(n, vector<int>(n, -1));
+    // return helper(0,0,0,nums,freq);
+
+    vector<unordered_map<ll,int>> mpp(n);
+    int ans = 0;
+    for(int i=n-2;i>=0;i--) {
+        for(int j=i+1;j<n;j++) {
+            ll diff = 0ll + nums[j] - nums[i];
+            int count = 0;
+            if(mpp[j].count(diff)) count = mpp[j][diff];
+            mpp[i][diff] += count + 1;
+            ans += count;
+        }
+    }
+    return ans;
+}

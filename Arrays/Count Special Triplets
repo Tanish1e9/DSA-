@@ -3,6 +3,11 @@ LC link: https://leetcode.com/problems/count-special-triplets/description/
 
 // M-1 (ekdum visualise krke kia gya h,
 // isi ko thoda aur optimise krke M2 niklega)
+// Isme to simply har element ka indices store kr lie
+// then x ke 2 consecutive indices ko pakdo
+// count ki kitne x/2 in dono ke bich aayenge... iss number ka contribution add kr do
+// like left wale occurrences of x and correspondingly right waalo me bhi to ye contain hoga
+// bas isi tarah se
 
 const int mod = 1e9+7;
 using ll = long long;
@@ -26,6 +31,29 @@ int specialTriplets(vector<int>& nums) {
             ll count = r-l+1;
             ans = (ans + count * (j+1) * (freq[i].size()-j-1))%mod;
         }
+    }
+    return ans;
+}
+
+// Yaha soche ki jaise hi koi x mila
+// to aage pehla x/2 mile uske lie iske aage jitne x h unko jodo
+// fir agla x/2 ke aage jitne x h unko jodo
+// to ye jo count jodna pad rha h isko maintain krlenge
+// aur right to left chalenge to apna kaam ho jayega
+// arrays use krne se fast ho ja rha h
+
+const int mod = 1e9+7;
+int specialTriplets(vector<int>& nums) {
+    // unordered_map<int,int> freq, counts;
+    int freq[100001] = {0};
+    int counts[100001] = {0};
+    int ans = 0;
+    int n = nums.size();
+    for(int i=n-1;i>=0;i--) {
+        if(nums[i]%2==0) ans = (ans + counts[nums[i]>>1])%mod;
+        if((nums[i]<<1) <= 1e5) counts[nums[i]] = (counts[nums[i]] + freq[nums[i]<<1])%mod;
+        // freq update count ke baad hi krna wrna 0 ke case me gadbad ho jayega
+        freq[nums[i]]++;
     }
     return ans;
 }

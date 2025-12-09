@@ -1,0 +1,31 @@
+LC link: https://leetcode.com/problems/count-special-triplets/description/
+
+
+// M-1 (ekdum visualise krke kia gya h,
+// isi ko thoda aur optimise krke M2 niklega)
+
+const int mod = 1e9+7;
+using ll = long long;
+int specialTriplets(vector<int>& nums) {
+    int n = nums.size();
+    unordered_map<int,vector<int>> freq;
+    for(int i=0;i<n;i++) {
+        freq[nums[i]].push_back(i);
+    }
+
+    ll x = freq[0].size();
+    ll ans = (x*(x-1)*(x-2)/6)%mod;
+
+    for(auto &it:freq) {
+        int i = it.first;
+        if(i==0 || (i&1) || freq[i].size() < 2 || !freq.count(i/2)) continue;
+        int l = -1, r = -1;
+        for(int j=0;j<freq[i].size()-1;j++) {
+            int r = lower_bound(freq[i/2].begin(), freq[i/2].end(), freq[i][j+1]) - freq[i/2].begin() - 1;
+            int l = lower_bound(freq[i/2].begin(), freq[i/2].end(), freq[i][j]) - freq[i/2].begin();
+            ll count = r-l+1;
+            ans = (ans + count * (j+1) * (freq[i].size()-j-1))%mod;
+        }
+    }
+    return ans;
+}

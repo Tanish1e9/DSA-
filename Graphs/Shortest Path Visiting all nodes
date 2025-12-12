@@ -1,0 +1,41 @@
+LC link: https://leetcode.com/problems/shortest-path-visiting-all-nodes/description/
+
+// Dekh ek to tarika h ki hamiltonian paths jaise bitmask DP lagake kr lena
+// fark ye h ki hamiltonian me vertices repeat nahi hota tha yaha hoga
+// islie Floyd warshall lagake har pair ke bich me shortest distance laga lena
+// and fir Hamiltonian jaisa kaam krna ho jayega
+
+// Ye wahi tarika h bas BFS form me h
+// parallely har node se start kra die h
+// vis[i][mask] denotes ki ith node pe end krna with mask nodes visited me kitna minimum
+// distance lag jayega
+// aur bas first time FULL mask encounter hote hi level return kr dia
+
+int shortestPathLength(vector<vector<int>>& adj) {
+    int n = adj.size();
+    queue<pair<int,int>> q;
+    vector<vector<int>> vis(n, vector<int>(1<<n, 1e9));
+    for(int i=0;i<n;i++) {
+        q.push({i,1<<i});
+        vis[i][1<<i] = 0;
+    }
+    int level = 0;
+    while(!q.empty()) {
+        int level_size = q.size();
+        while(level_size--) {
+            auto curr = q.front();
+            q.pop();
+            if(curr.second == (1<<n)-1) return level;
+            for(int el:adj[curr.first]) {
+                if(vis[el][curr.second | (1<<el)] > level + 1) {
+                    vis[el][curr.second | (1<<el)] = level + 1;
+                    q.push({el, curr.second | (1<<el)});
+                }
+            }
+        }
+        level++;
+    }
+
+    // dummy
+    return -1;
+}

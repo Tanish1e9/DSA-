@@ -1,5 +1,5 @@
 Atcoder link: https://atcoder.jp/contests/dp/tasks/dp_t
-
+LC link: https://leetcode.com/problems/valid-permutations-for-di-sequence/description/
 
 // Dekh yaha dp[i][k] denotes ki abhi tk 1,2,3....i tk ke numbers h... inhi ke saare permuations ko consider krna h
 // jo valid ho obviously and which are ending in k

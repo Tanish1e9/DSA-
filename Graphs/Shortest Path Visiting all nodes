@@ -8,16 +8,18 @@ LC link: https://leetcode.com/problems/shortest-path-visiting-all-nodes/descript
 // Ye wahi tarika h bas BFS form me h
 // parallely har node se start kra die h
 // vis[i][mask] denotes ki ith node pe end krna with mask nodes visited me kitna minimum
-// distance lag jayega
+// distance lag jayega (Ab socho ki distance to hmesha badh hi rha h as level increases)
+// To vis[i][mask] pe jo first time pahuch gya wahi best distance hoga islie sirf 
+// boolean store krke bhi kaam ho jayega
 // aur bas first time FULL mask encounter hote hi level return kr dia
 
 int shortestPathLength(vector<vector<int>>& adj) {
     int n = adj.size();
     queue<pair<int,int>> q;
-    vector<vector<int>> vis(n, vector<int>(1<<n, 1e9));
+    vector<vector<bool>> vis(n, vector<bool>(1<<n, false));
     for(int i=0;i<n;i++) {
         q.push({i,1<<i});
-        vis[i][1<<i] = 0;
+        vis[i][1<<i] = true;
     }
     int level = 0;
     while(!q.empty()) {
@@ -27,8 +29,8 @@ int shortestPathLength(vector<vector<int>>& adj) {
             q.pop();
             if(curr.second == (1<<n)-1) return level;
             for(int el:adj[curr.first]) {
-                if(vis[el][curr.second | (1<<el)] > level + 1) {
-                    vis[el][curr.second | (1<<el)] = level + 1;
+                if(!vis[el][curr.second | (1<<el)]) {
+                    vis[el][curr.second | (1<<el)] = true;
                     q.push({el, curr.second | (1<<el)});
                 }
             }

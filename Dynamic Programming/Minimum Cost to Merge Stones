@@ -1,0 +1,39 @@
+LC link: https://leetcode.com/problems/minimum-cost-to-merge-stones/description/
+
+// Dekh agar yahi 2 rhta na to aaram se MCM type ka ho jata
+// usme 1 cut lagate the ... yaha k-1 cut lagayenge... in the hope ki ye
+// jo ek section kata h... wo ek me merge ho jaye
+// bas 2 additional chiz h usme
+// Ek to ki sum tabhi add krna h jab cuts == k-1 ho
+// aur agar cuts == 0 ho to ek element h to thik h 
+// wrna k-1 cuts krna padega
+// Ab hmlog hmesha first cut ka sochenge... basically l to r me
+// jo k hisso ko merge krna h usme pehla hissa banane ka
+// to wo ya to 1 elem hoga, ya 1 + (k-1) hoga... ya 1 + 2(k-1) ...
+// islie dekho p+=(k-1) kie h
+// TC O(n^2*k*n/k) = O(n^3) 
+
+int dp[30][30][31];
+int helper(int l, int r, int cuts, auto &arr, int k) {
+    if(r-l+1 < cuts+1) return 1e9;
+    if(cuts == 0) {
+        if(l==r) return 0;
+        return dp[l][r][cuts] = helper(l,r,k-1,arr,k);
+    }
+    if(dp[l][r][cuts]!=-1) return dp[l][r][cuts];
+
+    int ans = 1e9, sum = 0;
+    if(cuts == k-1) sum = accumulate(arr.begin()+l, arr.begin()+r+1, 0);
+
+    for(int p=l;p<r;p+=k-1) {
+        ans = min(ans, sum + helper(l,p,0,arr,k) + helper(p+1,r,cuts-1,arr,k));
+    }
+    return dp[l][r][cuts] = ans;
+}
+int mergeStones(vector<int>& arr, int k) {
+    int n = arr.size();
+    if(n==1) return 0;
+    if((n-1) % (k-1) != 0) return -1;
+    memset(dp, -1, sizeof(dp));
+    return helper(0,n-1,k-1,arr,k);
+}

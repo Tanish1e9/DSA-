@@ -1,0 +1,46 @@
+LC link: https://leetcode.com/problems/maximum-profit-from-trading-stocks-with-discounts/description/
+
+// Isme na dekh simply har node pe half aur budget track krne ka to turant intuition aaya tha
+// fir child me budget ko kaise divide kre isi me confusion tha... to uske lie ek separate function
+// banake uspe Knapsack type ka DP laga die and This got solved
+// Thoda slow side pe h ye, I think iteratively krne se accept ho jayega
+// Abhi iterative nahi hua h kabhi hoga to update kr denge
+
+int dp2[2][161][161], dp[2][161][161];
+int allocate(int node, int i, int budget, bool half, auto &adj, auto &present, auto &future) {
+    auto &curr = adj[node];
+    if(i==curr.size()) return 0;
+    if(dp2[half][curr[i]][budget]!=-1) return dp2[half][curr[i]][budget];
+
+    int ans = 0;
+    for(int b=0;b<=budget;b++) {
+        ans = max(ans, helper(curr[i], half, b, adj, present, future) + 
+        allocate(node, i+1, budget-b, half, adj, present, future));
+    }
+    
+    return dp2[half][curr[i]][budget] = ans;
+}
+int helper(int node, bool half, int budget, auto &adj, auto &present, auto &future) {
+    if(dp[half][node][budget]!=-1) return dp[half][node][budget];
+
+    int cost = present[node-1];
+    if(half) cost /= 2;
+
+    int ans = allocate(node,0,budget,false,adj,present,future);
+    if(cost <= budget) {
+        ans = max(ans, future[node-1]-cost + 
+        allocate(node,0,budget-cost,true,adj,present,future));
+    }
+
+    return dp[half][node][budget] = ans;
+}
+int maxProfit(int n, vector<int>& present, vector<int>& future, vector<vector<int>>& hierarchy, int budget) {
+    vector<vector<int>> adj(n+1);
+    for(auto &v:hierarchy) {
+        adj[v[0]].push_back(v[1]);
+    }
+    memset(dp, -1, sizeof(dp));
+    memset(dp2, -1, sizeof(dp2));
+
+    return helper(1,false,budget,adj,present,future);
+}

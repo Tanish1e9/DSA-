@@ -1,0 +1,40 @@
+LC link: https://leetcode.com/problems/form-largest-integer-with-digits-that-add-up-to-target/description/
+
+// We want ki kon sa digit choose kre
+// jisse maximum further length mile as well as
+// agar multiple digits possible ho to largest digit choose krna h
+// bas yehi info se we can construct the string
+// chahte to sirf length return kra ke
+// niche wapas se digits pe iterate krke nikal skte the
+// but kyu dubara loop likhna islie yahi kr dia
+
+vector<pair<int,int>> dp;
+pair<int,int> helper(int target, auto &cost) {
+    if(target==0) return {0,-1};
+    if(dp[target].first != -1) return dp[target];
+
+    int ans = -1e9, dig = -1;
+    for(int i=9;i>=1;i--) {
+        int val = -1e9;
+        if(target >= cost[i-1]) val = 1+helper(target-cost[i-1], cost).first;
+        if(val > ans) {
+            ans = val + 1;
+            dig = i;
+        }
+    }
+    return dp[target] = {ans,dig};
+}
+string largestNumber(vector<int>& cost, int target) {
+    dp.assign(target+1, {-1,-1});
+    // pehle hi -1 ka kaam khatam kr dia h
+    if(helper(target, cost).first < 0) return "0";
+    string res;
+    int t = target;
+    while(t > 0) {
+        pair<int,int> val = helper(t, cost);
+        int dig = val.second;
+        res += char(dig+'0');
+        t -= cost[dig-1];
+    }
+    return res;
+}

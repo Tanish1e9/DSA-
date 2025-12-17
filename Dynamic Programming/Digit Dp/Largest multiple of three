@@ -1,0 +1,47 @@
+LC link: https://leetcode.com/problems/largest-multiple-of-three/description/
+
+// getting the maximum length of the number that can be formed
+// with digits[i..end] with current modulo as rem
+
+int dp[10000][3];
+int helper(int i, int rem, auto &digits) {
+    if(i==digits.size()) {
+        if(rem==0) return 0;
+        return -1e9;
+    }
+    if(dp[i][rem]!=-1) return dp[i][rem];
+
+    int npick = helper(i+1, rem, digits);
+    int pick = 1+helper(i+1, (rem+digits[i])%3, digits);
+
+    return dp[i][rem] = max(pick, npick);
+}
+string largestMultipleOfThree(vector<int>& digits) {
+    // sorted in decreasing order since
+    // length won't change because div by 3 only cares about sum
+    // But we have to form largest number therefore 
+    // we will try to pick larger ones before
+
+    sort(digits.begin(), digits.end(), greater<int>());
+    memset(dp, -1, sizeof(dp));
+    string ans;
+    int i=0, n=digits.size(), rem=0;
+    while(i<n) {
+        int npick = helper(i+1, rem, digits);
+        int pick = 1+helper(i+1, (rem+digits[i])%3, digits);
+        // pick kr skte ho to kr hi lo
+        // since baad me length bhale same milega
+        // but digits to chote ho jayenge na
+        // other condition is for trimming of leading zeros
+        // thoda weird condition h because [1] pe "" krna h
+        // and [0] pe "0"
+
+        if(pick >= npick && (digits[i]!=0 || ans.empty() || ans[0]!='0')) {
+            ans += char(digits[i]+'0');
+            rem = (rem+digits[i])%3;
+        }
+        i++;
+    }
+    
+    return ans;
+}

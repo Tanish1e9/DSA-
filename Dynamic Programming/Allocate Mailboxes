@@ -1,0 +1,31 @@
+LC link: https://leetcode.com/problems/allocate-mailboxes/description/
+
+
+int minDistance(vector<int>& houses, int K) {
+    sort(houses.begin(), houses.end());
+    int n = houses.size();
+    vector<vector<int>> cost(n, vector<int>(n, 0));
+    // Ye kitna beautifully i,j me median pe rakhke
+    // cost nikale h dekho
+    for(int i=n-1;i>=0;i--) {
+        for(int j=i;j<n;j++) {
+            if(i==j) cost[i][j] = 0;
+            else {
+                cost[i][j] = houses[j]-houses[i];
+                if(i+1 <= j-1) cost[i][j] += cost[i+1][j-1];
+            }
+        }
+    }
+    vector<vector<int>> dp(K+1, vector<int>(n+1, 1e9));
+    dp[0][n] = 0;
+    for(int k=1;k<=K;k++) {
+        for(int i=n-1;i>=0;i--) {
+            // DnC DP use krke iss step ko optimise kia ja
+            // skta h jab padhoge tab kr lena 
+            for(int j=i;j<n;j++) {
+                dp[k][i] = min(dp[k][i], cost[i][j] + dp[k-1][j+1]);
+            }
+        }
+    }
+    return dp[K][0];
+}

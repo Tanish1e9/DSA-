@@ -1,0 +1,64 @@
+LC link: https://leetcode.com/problems/parallel-courses-ii/description/
+
+
+// Isme na dekh ekdum naive tarika
+// jaise wo 3^n me saare mask ka submask generate krne wala tarika h na
+// usi se krke validity check waghera krke dp se kr dia
+// accept bhi ho gya but bhut slow tha
+// Isme simply ab kya kia usi chiz ko BFS ke form me kr rhe h
+// to isme ye optimisation ho gya
+// ki agar <=k courses hi kr skte ho
+// to saare kr lenge
+// wrna k courses koi chun ke kr skte
+// aur jaise hi all done wala state visit ho return kr dena h
+// mask denotes ki kon-kon se krne bache h
+// to 0 state represents ki kuch ni bacha yani saare kr lie
+// to isi state tk pahuchne ke lie BFS ho rha h
+
+int minNumberOfSemesters(int n, vector<vector<int>>& relations, int k) {
+    vector<int> pre_req(n+1);
+    for(auto &v:relations) {
+        pre_req[v[1]] |= 1<<(v[0]-1);
+    }
+
+    vector<int> vis(1<<n, 1e9);
+    int level = 0;
+    queue<int> q;
+    q.push((1<<n)-1);
+    while(!q.empty()) {
+        int level_size = q.size();
+        while(level_size--) {
+            int mask = q.front();
+            q.pop();
+            if(mask == 0) return level;
+
+            int kr_skta = 0;
+            for(int i=0;i<n;i++) {
+                if((1<<i) & mask) {
+                    if(pre_req[i+1] & mask) continue;
+                    kr_skta |= 1<<i;
+                }
+            }
+            if(__builtin_popcount(kr_skta) <= k) {
+                if(vis[mask ^ kr_skta] > level + 1) {
+                    vis[mask ^ kr_skta] = level + 1;
+                    q.push(mask ^ kr_skta);
+                }
+            }
+            else {
+                for(int s=kr_skta;s;s=(s-1)&kr_skta) {
+                    if(__builtin_popcount(s) != k) continue;
+                    if(vis[mask ^ s] > level + 1) {
+                        vis[mask ^ s] = level + 1;
+                        q.push(mask ^ s);
+                    }
+                }
+            }
+        }
+        level++;
+    }
+    // dummy
+    return -1;
+}
+
+}

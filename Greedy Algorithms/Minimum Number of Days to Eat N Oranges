@@ -1,0 +1,58 @@
+LC link: https://leetcode.com/problems/minimum-number-of-days-to-eat-n-oranges/description/
+
+
+// Isme na dekh ekdum no-brainer BFS likh do accept ho jayega
+// But fast krne k lie
+// Let's prove ki kabhi bhi >=3 -1's krna optimal nahi hoga
+// maanlo 3 bar -1 kie and we get n-3
+// fir n-3 pe maan le /2 kroge to (n-3)/2 yani (n-1)/2 -1 pe pahuchoge (steps ho gya -1,-1,-1,/2)
+// but isi ke lie -1,/2,-1 kr lete to kam me same hi jagah pahuchte
+// fir (n-3)/3 krte agar to n/3-1 (4 steps lage h)
+// dikh hi rha h /3,-1 krne pe 2 hi steps me pahuch jate
+// to aise prove hota h ki atmax 2 hi -1's consecutively krne h
+// to remainder lekar ke 2 and 3 se utne -1's krake fir /2 and /3 kr dena h
+
+unordered_map<int,int> dp;
+int helper(int n) {
+    if(n<=1) return n;
+    if(dp.count(n)) return dp[n];
+    return dp[n] = 1 + min(n%3+helper(n/3), n%2+helper(n/2));;
+}
+int minDays(int n) {
+    // queue<int> q;
+    // q.push(n);
+    // int level = 0;
+    // unordered_set<int> vis;
+    // vis.insert(n);
+    // while(!q.empty()) {
+    //     int level_size = q.size();
+    //     while(level_size--) {
+    //         int curr = q.front();
+    //         q.pop();
+    //         if(curr == 0) return level;
+    //         if(curr%3==0) {
+    //             if(!vis.count(curr/3)) {
+    //                 vis.insert(curr/3);
+    //                 q.push(curr/3);
+    //             }
+    //         }
+    //         if(curr%2==0) {
+    //             if(!vis.count(curr/2)) {
+    //                 vis.insert(curr/2);
+    //                 q.push(curr/2);
+    //             }
+    //         }
+    //         if(!vis.count(curr-1)) {
+    //             vis.insert(curr-1);
+    //             q.push(curr-1);
+    //         }
+    //     }
+    //     level++;
+    // }
+    // // dummy
+    // return -1;
+    return helper(n);
+}
+
+
+

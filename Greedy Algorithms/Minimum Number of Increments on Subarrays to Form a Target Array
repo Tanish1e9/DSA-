@@ -1,0 +1,62 @@
+LC link: https://leetcode.com/problems/minimum-number-of-increments-on-subarrays-to-form-a-target-array/description/
+
+
+// Dekh ekdum ye paint the fence type ka sawaal h
+// minimum ko har bar krte jayenge aur uspe split krte jayenge
+// optimise krne ke lie seg tree bana dia and ye accept ho gya h 
+// but iska much easier solution bhi h
+
+class seg_tree{
+    #define L (ind << 1) + 1
+    #define R (ind << 1) + 2
+    public:
+    vector<int> seg;
+    seg_tree(auto &arr) {
+        int n = arr.size();
+        seg.resize(4*n);
+        build(0,0,n-1,arr);
+    }
+    void build(int ind, int low, int high, auto &arr) {
+        if(low==high) {
+            seg[ind] = arr[low];
+            return;
+        }
+        int mid = low + (high-low)/2;
+        build(L, low, mid, arr);
+        build(R, mid+1, high, arr);
+        seg[ind] = min(seg[L], seg[R]);
+    }
+    int query(int ind, int low, int high, int l, int r) {
+        if(r<low || high<l) return 1e9;
+        if(l<=low && high<=r) return seg[ind];
+        int mid = low + (high-low)/2;
+        int left = query(L, low, mid, l, r);
+        int right = query(R, mid+1, high, l, r);
+        return min(left, right);
+    }
+    #undef L 
+    #undef R 
+};
+int helper(int l, int r, int already, auto &target, auto &stree, auto &indices) {
+    if(l>r) return 0;
+    int mini = stree.query(0,0,target.size()-1,l,r);
+    int st = lower_bound(indices[mini].begin(), indices[mini].end(), l) - indices[mini].begin();
+
+    int last = l, ans = mini-already;
+    for(int it = st; it<indices[mini].size() && indices[mini][it]<=r; it++) {
+        int i = indices[mini][it];
+        ans += helper(last, i-1, mini, target, stree, indices);
+        last = i+1;
+    }
+    ans += helper(last, r, mini, target, stree, indices);
+    return ans;
+}
+int minNumberOperations(vector<int>& target) {
+    int n = target.size();
+    vector<vector<int>> indices(1e5+1);
+    for(int i=0;i<n;i++) {
+        indices[target[i]].push_back(i);
+    }
+    seg_tree stree(target);
+    return helper(0,n-1,0,target,stree,indices);
+}

@@ -5,7 +5,7 @@ LC link: https://leetcode.com/problems/minimum-number-of-increments-on-subarrays
 // minimum ko har bar krte jayenge aur uspe split krte jayenge
 // optimise krne ke lie seg tree bana dia and ye accept ho gya h 
 // but iska much easier solution bhi h
-
+// M-1
 class seg_tree{
     #define L (ind << 1) + 1
     #define R (ind << 1) + 2
@@ -59,4 +59,32 @@ int minNumberOperations(vector<int>& target) {
     }
     seg_tree stree(target);
     return helper(0,n-1,0,target,stree,indices);
+}
+
+
+
+// M-2
+// simple intuition yahi h ki har element k lie
+// prev smaller and next smaller nikal lo
+// fir in dono me se jo max ho ... usse element kitna extra h
+// wo jod lo ans me bas... kyunki jab ye chote waale honge
+// wo current element ko sath me hi krwayenge... jisse kam cost lagega na
+// Iska na O(1) space ka bhi solution h ... wo thoda abhi intuitive nahi lag rha h
+// bad me kabhi dekh lena
+
+int minNumberOperations(vector<int>& arr) {
+    stack<int> st;
+    int n = arr.size();
+    int ans = 0;
+    for(int i=0;i<=n;i++) {
+        while(!st.empty() && (i==n || st.top() >= arr[i])) {
+            int curr = st.top();st.pop();
+            int left = 0, right = 0;
+            if(!st.empty()) left = st.top();
+            if(i<n) right = arr[i];
+            ans += curr - max(left, right);
+        }
+        if(i<n) st.push(arr[i]);
+    }
+    return ans;
 }

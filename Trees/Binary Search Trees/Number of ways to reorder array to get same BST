@@ -4,6 +4,8 @@ LC link: https://leetcode.com/problems/number-of-ways-to-reorder-array-to-get-sa
 // agar tree given ho to ans calculation to linear time me hoga
 // but tree banane me O(n^2) worst case time ja skta h
 // islie ye tarika na fail kr skta 
+// O(n) solutions bhi h LC par baad me check kr lena
+// filhal thoda complex lag rha tha
 
 using ll = long long;
 const int mod = 1e9+7;

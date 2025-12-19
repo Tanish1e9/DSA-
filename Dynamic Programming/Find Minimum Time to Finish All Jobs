@@ -1,0 +1,117 @@
+LC link: https://leetcode.com/problems/find-minimum-time-to-finish-all-jobs/description/
+
+// Ye basically Backtracking ko hi thoda prune krke optimise kie h
+// fastest h ye method niche waale methods slower h
+bool check(int mid, auto &jobs, auto &workers, int i) {
+    if(i==jobs.size()) return true;
+    for(int j=0;j<workers.size();j++) {
+        if(workers[j] + jobs[i] <= mid) {
+            workers[j] += jobs[i];
+            if(check(mid, jobs, workers, i+1)) return true;
+            workers[j] -= jobs[i];
+        }
+        // basically na earlier workers pe hi assign kro
+        // ek worker agar khali h to aage ka bharke koi fayda nahi
+        // indistingushable h na workers
+        // abhi agar worker khali h
+        // to upar usko bharke aage call kie honge
+        // to yaha se ans aa jayega agar aana hoga
+        if(workers[j]==0) break;
+    }
+
+    return false;
+}
+int minimumTimeRequired(vector<int>& jobs, int k) {
+    // isse bas fast hota h nahi krne se bhi ans aayega
+    sort(jobs.begin(), jobs.end(), greater<int>());
+    int low = 1;
+    int high = 1e9;
+    while(low <= high) {
+        int mid = low + (high-low)/2;
+        vector<int> workers(k, 0);
+        if(check(mid, jobs, workers, 0)) high = mid-1;
+        else low = mid+1;
+    }
+    return low;
+}
+
+
+
+// Ye to ekdum naive DP h
+// isi dp ko BFS way me likh denge
+// to fast ho jayega
+class Solution {
+public:
+    unordered_map<int,int> subsetSum;
+    int dp[12][1<<12];
+    int helper(int i, int vis, int k, auto &jobs) {
+        int n = jobs.size();
+        if(i==k) {
+            if(vis == (1<<n)-1) return 0;
+            return 1e9;
+        } 
+        if(dp[i][vis]!=-1) return dp[i][vis];
+
+        int avail = 0;
+        int ans = helper(i+1, vis, k, jobs);
+        for(int j=0;j<n;j++) {
+            if(vis & (1<<j)) continue;
+            avail |= 1<<j;
+        }
+        for(int s=avail;s;s=(s-1) & avail) {
+            int sub = subsetSum[s];
+            if(!sub) {
+                for(int p=0;p<n;p++){
+                    if(s & (1<<p)) sub += jobs[p];
+                }
+                subsetSum[s] = sub;
+            }
+            ans = min(ans, max(sub, helper(i+1, vis | s, k, jobs)));
+        }
+        return dp[i][vis] = ans;
+    }
+    int minimumTimeRequired(vector<int>& jobs, int k) {
+        memset(dp, -1, sizeof(dp));
+        return helper(0,0,k,jobs);
+    }
+};
+
+
+
+// Naive DP ko BFS way me likh dia to fast ho gya
+class Solution {
+public:
+    int minimumTimeRequired(vector<int>& jobs, int k) {
+        int n = jobs.size();
+        queue<pair<int,int>> q;
+        q.push({0,0});
+        vector<int> dp(1<<n, 1e9), subsetSum(1<<n, 0);
+        int level = 0;
+        while(level < k) { 
+            int level_size = q.size();
+            while(level_size--) {
+                auto curr = q.front();
+                q.pop();
+                int vis = curr.second;
+
+                int avail = ((1<<n)-1) ^ vis;
+                for(int s=avail;s;s=(s-1)&avail) {
+                    int sub = subsetSum[s];
+                    if(!sub) {
+                        for(int i=0;i<n;i++) {
+                            if(s & (1<<i)) sub += jobs[i];
+                        }
+                        subsetSum[s] = sub;
+                    }
+                    if(dp[vis | s] > max(sub, curr.first)) {
+                        dp[vis | s] = max(sub, curr.first);
+                        q.push({max(sub, curr.first), vis | s});
+                    }
+                }
+            }
+            level++;
+        }
+
+        return dp.back();
+    }   
+};

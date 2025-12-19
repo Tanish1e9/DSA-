@@ -1,0 +1,56 @@
+LC link: https://leetcode.com/problems/largest-color-value-in-a-directed-graph/description/
+
+// DAG na ho to ans -1 dena h
+// aur DAG me Topo Sort ka to intuition aa hi jaata h
+// to yaha bhi toposort ke reverse order me nodes ko process krenge
+// for each color we will find out the maximum frequency we can get through all paths
+// passing through a particular node
+// aur current node ke color ka frequency to ek increment kr hi denge
+// aur bas isi sab ke across maxima leke kaam ho jayega
+
+
+class Solution {
+public:
+    int largestPathValue(string colors, vector<vector<int>>& edges) {
+        int n = colors.size();
+        vector<vector<int>> adj(n);
+        vector<int> indegree(n);
+        for(auto &v:edges) {
+            if(v[0]==v[1]) return -1;
+            adj[v[0]].push_back(v[1]);
+            indegree[v[1]]++;
+        }
+        
+        queue<int> q;
+        for(int i=0;i<n;i++) {
+            if(indegree[i]==0) q.push(i);
+        }
+        vector<int> topo;
+        while(!q.empty()) {
+            int curr = q.front();
+            q.pop();
+            topo.push_back(curr);
+            for(int el:adj[curr]) {
+                indegree[el]--;
+                if(indegree[el]==0) q.push(el);
+            }
+        }
+        // cycle h
+        if(topo.size() < n) return -1;
+
+        vector<vector<int>> frequencies(n, vector<int>(26, 0));
+        int ans = 1;
+        for(int it=n-1;it>=0;it--) {
+            int i = topo[it];
+            for(int el:adj[i]) {
+                for(int j=0;j<26;j++) {
+                    frequencies[i][j] = max(frequencies[i][j], frequencies[el][j]);
+                }
+            }
+            frequencies[i][colors[i]-'a']++;
+            ans = max(ans, *max_element(frequencies[i].begin(), frequencies[i].end()));
+        }
+
+        return ans;
+    }
+};

@@ -1,0 +1,58 @@
+LC link: https://leetcode.com/problems/painting-a-grid-with-three-different-colors/description/
+
+
+// Isme sochega na to total tarike ek row ko bharne k lie max
+// 243 ho skte h (3^5) par isme se valid sirf 3*2*2*2*2 yani 48 hi ho skte h
+// plus iss state ko base 3 me represent krne me bhut dikkat aayega
+// islie na kya kie ki har valid state generate krake
+// 48*48 ka matrix bana die ki kin do ko aapas me dikkat hoga
+// aur ab simply ek integer choose kr lenge har row pe 
+// to ye ek example h states ko thoda transform kr dene ka
+
+const int mod = 1e9+7;
+void rec(int i, string &curr, auto &validstates, int m) {
+    if(i==m) {
+        validstates.push_back(curr);
+        return;
+    }
+    for(char c='0';c<='2';c++) {
+        if(!curr.empty() && c==curr.back()) continue;
+        curr.push_back(c);
+        rec(i+1, curr, validstates, m);
+        curr.pop_back();
+    }
+}
+int dp[1000][49];
+int helper(int i, int last, auto &dikkat, int n) {
+    if(i==n) return 1;
+    if(dp[i][last]!=-1) return dp[i][last];
+    int ans = 0;
+    for(int j=0;j<dikkat.size();j++) {
+        if(last < dikkat.size() && dikkat[last][j]) continue;
+        ans = (ans + helper(i+1, j, dikkat, n))%mod;
+    }
+    return dp[i][last] = ans;
+}
+int colorTheGrid(int m, int n) {
+    vector<string> validstates;
+    string curr;
+    rec(0,curr,validstates,m);
+    int p = validstates.size();
+    vector<vector<bool>> dikkat(p, vector<bool>(p, true));
+    for(int i=0;i<p;i++) {
+        for(int j=0;j<p;j++) {
+            bool flag = false;
+            for(int k=0;k<m;k++) {
+                if(validstates[i][k]==validstates[j][k]) {
+                    flag = true;
+                    break;
+                }
+            }
+            dikkat[i][j] = flag;
+        }
+    }
+    memset(dp, -1, sizeof(dp));
+    return helper(0,p,dikkat,n);
+}
+
+

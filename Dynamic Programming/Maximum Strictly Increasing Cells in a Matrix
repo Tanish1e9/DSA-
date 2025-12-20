@@ -1,0 +1,130 @@
+LC link: https://leetcode.com/problems/maximum-strictly-increasing-cells-in-a-matrix/
+
+
+// Preferred method
+// Isme na simply globally sort krke
+// decreasing order me elements ko process kr rhe
+// ab rows aur cols me row aur column ka maxima h
+// and since decreasing order me kr rhe to curr element bejhijhak
+// rows aur cols max ko use kr skta h
+// bas dhyan rakhna h ki agar same elements pe iterate kr rhe ho
+// tab update nahi krna h rows aur cols max ko kyunki tab dusra equal element isko extend kr skta h
+// islie tab ka bas store kr lo and bad me update kr do we are done
+
+int maxIncreasingCells(vector<vector<int>>& mat) {
+    int n = mat.size();
+    int m = mat[0].size();
+    vector<vector<int>> arr;
+    for(int i=0;i<n;i++) {
+        for(int j=0;j<m;j++) {
+            arr.push_back({mat[i][j], i, j});
+        }
+    }
+    sort(arr.begin(), arr.end(), greater<vector<int>>());
+    vector<int> rows(n,0), cols(m,0);
+    vector<int> temp_rows(n,0), temp_cols(m,0);
+    int i=0, ans = 1;
+    while(i<m*n) {
+        int j = i;
+        int curr_ans = max(rows[arr[i][1]], cols[arr[i][2]]) + 1;
+        temp_rows[arr[i][1]] = max(temp_rows[arr[i][1]], curr_ans);
+        temp_cols[arr[i][2]] = max(temp_cols[arr[i][2]], curr_ans);
+        ans = max(ans, curr_ans);
+        while(i+1<m*n && arr[i+1][0] == arr[i][0]) {
+            i++;
+            curr_ans = max(rows[arr[i][1]], cols[arr[i][2]]) + 1;
+            ans = max(ans, curr_ans);
+            temp_rows[arr[i][1]] = max(temp_rows[arr[i][1]], curr_ans);
+            temp_cols[arr[i][2]] = max(temp_cols[arr[i][2]], curr_ans);
+        }
+        for(int p=j;p<=i;p++) {
+            rows[arr[p][1]] = max(rows[arr[p][1]], temp_rows[arr[p][1]]);
+            cols[arr[p][2]] = max(cols[arr[p][2]], temp_cols[arr[p][2]]);
+        }
+        i++;
+    }
+    return ans;
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+// Ye mera original thought tha
+// thoda complicated ho gya h not preferred method
+// Isme na equal elements ke upar traverse kr rhe to kuch cases h wo
+// consider krke ho jayega
+
+int dp[100000][3][2];
+int helper(int i, int j, int state, bool hoskta, int n, int m, auto &nextRow, auto &nextCol, auto &mat) {
+    if(dp[i*m+j][state][hoskta]!=-1) return dp[i*m+j][state][hoskta];
+    int ans = 1;
+    int y = nextRow[i][j], x = nextCol[j][i];
+    if(y < m) {
+        if(mat[i][j]!=mat[i][y]) {
+            if(state!=2 || hoskta) ans = max(ans, 1 + helper(i,y,1,true,n,m,nextRow,nextCol,mat));
+        }
+        else if(state!=2) {
+            ans = max(ans, helper(i,y,1,hoskta,n,m,nextRow,nextCol,mat));
+        }
+        else if(hoskta) {
+            ans = max(ans, helper(i,y,1,false,n,m,nextRow,nextCol,mat));
+        }
+    }
+    if(x < n) {
+        if(mat[i][j]!=mat[x][j]) {
+            if(state!=1 || hoskta) ans = max(ans, 1 + helper(x,j,2,true,n,m,nextRow,nextCol,mat));
+        }
+        else if(state!=1) {
+            ans = max(ans, helper(x,j,2,hoskta,n,m,nextRow,nextCol,mat));
+        }
+        else if(hoskta) {
+            ans = max(ans, helper(x,j,2,false,n,m,nextRow,nextCol,mat));
+        }
+    }
+
+    return dp[i*m+j][state][hoskta] = ans;
+}
+int maxIncreasingCells(vector<vector<int>>& mat) {
+    memset(dp, -1, sizeof(dp));
+    int n = mat.size();
+    int m = mat[0].size();
+    vector<vector<int>> nextRow(n, vector<int>(m, m));
+    vector<vector<int>> nextCol(m, vector<int>(n, n));
+    for(int i=0;i<n;i++) {
+        vector<pair<int,int>> arr(m);
+        for(int j=0;j<m;j++) {
+            arr[j] = make_pair(mat[i][j], j);
+        }
+        sort(arr.begin(), arr.end());
+        for(int j=0;j<m-1;j++) {
+            nextRow[i][arr[j].second] = arr[j+1].second;
+        }
+    }
+    for(int j=0;j<m;j++) {
+        vector<pair<int,int>> arr(n);
+        for(int i=0;i<n;i++) {
+            arr[i] = make_pair(mat[i][j], i);
+        }
+        sort(arr.begin(), arr.end());
+        for(int i=0;i<n-1;i++) {
+            nextCol[j][arr[i].second] = arr[i+1].second;
+        }
+    }
+
+    int ans = 1;
+    for(int i=0;i<n;i++) {
+        for(int j=0;j<m;j++) {
+            ans = max(ans, helper(i,j,0,true,n,m,nextRow,nextCol,mat)); 
+        }
+    }
+    return ans;
+}

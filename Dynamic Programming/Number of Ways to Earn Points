@@ -1,0 +1,31 @@
+LC link: https://leetcode.com/problems/number-of-ways-to-earn-points/description/
+
+// Dekh ye na ek naya tarika h
+// Unbounded knapsack me jaise krte h na ki pick krke wapas same hi index me aa gye
+// Yaha bounded h to waise krne me dikkat hoga
+// Par samjho ki max lena ek non-invertible operation h islie usme dikkat hota tha (Fir binary decomposition etc)
+// Par yaha to number of ways lena h jo ki minus krne se invert kr skte h
+// to bas yaha pe (count + 1) wale ko subtract kr dena h
+// (count + 1) leke i+1 pe call hoga na ki i pe
+// aur sirf count + 1 hi kyu ho skta h na ki count + 2 wala bhi included ho
+// recursively sochna count + 1 hatane se sab hatt gya h
+// Ek naya tarika dikha h isko dhyan rakhna
+
+using ll = long long;
+const int mod = 1e9+7;
+int dp[50][1001];
+ll helper(int i, int target, auto &types) {
+    if(i==types.size()) return (target==0);
+    if(dp[i][target]!=-1) return dp[i][target];
+
+    ll ans = helper(i+1, target, types);
+    if(target >= types[i][1]) ans = (ans + helper(i, target-types[i][1], types))%mod;
+    if(target >= (types[i][0] + 1)*types[i][1]) 
+        ans = (ans - helper(i+1, target-types[i][1]*(1 + types[i][0]), types) + mod)%mod;
+    
+    return dp[i][target] = ans;
+}
+int waysToReachTarget(int target, vector<vector<int>>& types) {
+    memset(dp, -1, sizeof(dp));
+    return helper(0,target,types);
+}

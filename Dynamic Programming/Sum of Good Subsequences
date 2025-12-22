@@ -1,0 +1,81 @@
+LC link: https://leetcode.com/problems/sum-of-good-subsequences/description/
+
+// Ye recursive DP utna sahi se ni ho payega
+// iterative me jada sahi se hoga
+// to har good subsequence ka sum jodne ka theka
+// uss subseq ka last element lega
+// to har element k lie uske +-1 pe kitne subsequences end ho rhe honge
+// unko jod ke + 1 krke current element pe kitne end honge wo nikal jayenge
+// sum waghera dekh lena
+// aur aage ke lie sum and count dono update kr dena
+
+using ll = long long;
+const int N = 1e5;
+const int mod = 1e9+7;
+int sumOfGoodSubsequences(vector<int>& nums) {
+    int n = nums.size();
+    vector<int> count(N+1,0);
+    vector<int> sum(N+1, 0);
+
+    int ans = 0;
+    for(int i=0;i<n;i++) {
+        ll curr_count = 1, curr_sum = 0;
+        if(nums[i]>0) {
+            curr_count = (curr_count + count[nums[i]-1])%mod;
+            curr_sum = (curr_sum + sum[nums[i]-1])%mod;
+        }
+        if(nums[i]<N) {
+            curr_count = (curr_count + count[nums[i]+1])%mod;
+            curr_sum = (curr_sum + sum[nums[i]+1])%mod;
+        }
+
+        curr_sum = (curr_sum + (curr_count * nums[i])%mod)%mod;
+        sum[nums[i]] = (sum[nums[i]] + curr_sum)%mod;
+        count[nums[i]] = (count[nums[i]] + curr_count)%mod;
+
+        ans = (ans + curr_sum)%mod;
+    }
+    return ans;
+}
+
+
+// Originally hm aise soche the
+// ki contribution of har element nikal lete h
+// to aage ki taraf jitne lag skte
+// aur piche ki taraf jitne lag skte
+// unka multiplication kr lo
+// Ek aur jod lena h dono taraf kyunki extend na kre usko bhi jodna h na
+// to aise contri nikal jayega fir add kr dena sabka
+
+using ll = long long;
+const int N = 1e5;
+const int mod = 1e9+7;
+int sumOfGoodSubsequences(vector<int>& nums) {
+    int n = nums.size();
+    vector<int> count(N+1,0);
+    vector<int> contri_l(n), contri_r(n);
+    for(int i=0;i<n;i++) {
+        contri_l[i] = 1;
+        if(nums[i]>=1) contri_l[i] = (contri_l[i] + count[nums[i]-1])%mod;
+        if(nums[i]<N) contri_l[i] = (contri_l[i] + count[nums[i]+1])%mod;
+
+        count[nums[i]] = (count[nums[i]] + contri_l[i])%mod;
+    }
+    count.assign(N+1, 0);
+    for(int i=n-1;i>=0;i--) {
+        contri_r[i] = 1;
+        if(nums[i]>=1) contri_r[i] = (contri_r[i] + count[nums[i]-1])%mod;
+        if(nums[i]<N) contri_r[i] = (contri_r[i] + count[nums[i]+1])%mod;
+
+        count[nums[i]] = (count[nums[i]] + contri_r[i])%mod;
+    }
+
+    int ans = 0;
+    for(int i=0;i<n;i++) {
+        ll val = (1ll*contri_l[i]*contri_r[i])%mod;
+        val = (val * nums[i])%mod;
+        ans = (ans + val)%mod;
+    }
+    return ans;
+}
+

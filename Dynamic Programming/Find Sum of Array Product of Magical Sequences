@@ -1,0 +1,64 @@
+LC link: https://leetcode.com/problems/find-sum-of-array-product-of-magical-sequences/
+
+// Sexy question hai ekdum
+// Dekh isme na main point ye pakadna h
+// ki ith element ko jitni bhi bar (say c) bar pick kie
+// to ith position se start hote hue c ka binary representation aa jayega
+// fir i+1 pe jab jayenge to (c>>1) ka representation bachega na aur c ka 0th bit
+// to gya jo bhi tha uss hisab se k, ya k-1 krna pada hoga
+// ab m bar bhi pick kr le but aage pass to m>>1 hi krenge na
+// to max 15 pass hoga islie 16 likhne se kaam chal gya
+// ek basic pruning kie h ki agar k zero ho to x==0 and m==0 hona chahye
+// since koi bhi element pick kia to 0 set bits pe to nahi kr payenge
+// aur x agar non-zero hua to usko zero bhi nahi bana skte h
+// Aur permutation bhi krna h islie count pata hona chahye islie loop lagana pada h
+// Solved it after 3 days of intermittent thinking, great dopmaine hit
+
+using ll = long long;
+const int mod = 1e9+7;
+ll bin_pow(ll x, int n) {
+    ll ans = 1;
+    while(n) {
+        if(n&1) {
+            ans = (ans*x)%mod;
+            n--;
+        }
+        n>>=1;
+        x=(x*x)%mod;
+    }
+    return ans;
+}
+vector<ll> fact, ifact;
+int dp[50][16][31][31];
+int helper(int i, int x, int m, int k, auto &nums) {
+    if(k==0) return m==0 && x==0;
+    if(i==nums.size()) {
+        int bits = __builtin_popcount(x);
+        return k==bits && m==0;
+    }
+    if(dp[i][x][m][k]!=-1) return dp[i][x][m][k];
+    
+    int ans = 0;
+    ll p = 1;
+    for(int c=0;c<=m;c++) {
+        ll val = (ifact[c] * p)%mod;
+        ans = (ans + val * helper(i+1, (x+c)>>1, m-c, k-((x+c)&1), nums))%mod;
+        p = (p * nums[i])%mod;
+    }
+
+    return dp[i][x][m][k] = ans;
+}
+int magicalSum(int m, int k, vector<int>& nums) {
+    fact = ifact = vector<ll> (51, 1);
+    for(int i=2;i<=50;i++) {
+        fact[i] = (fact[i-1]*i)%mod;
+    }
+    ifact[50] = bin_pow(fact[50], mod-2);
+    for(int i=49;i>=0;i--) {
+        ifact[i] = (ifact[i+1]*(i+1))%mod;
+    }
+    memset(dp, -1, sizeof(dp));
+    return (fact[m]*helper(0,0,m,k,nums))%mod;
+}
+
+

@@ -1,0 +1,142 @@
+LC link: https://leetcode.com/problems/find-the-maximum-sum-of-node-values/
+
+// Ekdum brute force DP
+// Isme wahi divide kie h
+
+using ll = long long;
+ll dp2[20000][2];
+ll allocate(int i, int node, bool even, int par, int k, auto &adj, auto &nums) {
+    if(i==adj[node].size()) {
+        if(even) return 0;
+        return -1e9;
+    }
+    // iss if pe dp nahi lagana wrna socho parent bhi to kahi pe valid position h na
+    // bilkul hi alag interpretation ho jayega and answer will be wrong
+    // uss budget wale question me par tha hi nahi
+
+    if(adj[node][i] == par) 
+        return allocate(i+1, node, even, par, k, adj, nums);
+    if(dp2[adj[node][i]][even]!=-1) return dp2[adj[node][i]][even];
+
+    return dp2[adj[node][i]][even] = max(
+            helper(adj[node][i], true, node, adj, k, nums) + 
+            allocate(i+1, node, !even, par, k, adj, nums)
+            ,
+            helper(adj[node][i], false, node, adj, k, nums) + 
+            allocate(i+1, node, even, par, k, adj, nums)
+        );
+}
+ll dp[20000][2];
+ll helper(int node, bool xored, int par, auto &adj, int k, auto &nums) {
+    if(dp[node][xored]!=-1) return dp[node][xored];
+    int curr = xored?(nums[node]^k):nums[node];
+
+    ll npick = curr + allocate(0,node,true,par,k,adj,nums);
+    ll pick = (curr^k) + allocate(0,node,false,par,k,adj,nums);
+    return dp[node][xored] = max(pick, npick);
+}
+ll maximumValueSum(vector<int>& nums, int k, vector<vector<int>>& edges) {
+    int n = edges.size()+1;
+    vector<vector<int>> adj(n);
+    for(auto &v:edges) {
+        adj[v[0]].push_back(v[1]);
+        adj[v[1]].push_back(v[0]);
+    }
+    memset(dp, -1, sizeof(dp));
+    memset(dp2, -1, sizeof(dp2));
+    return helper(0,false,-1,adj,k,nums);
+}
+
+
+
+
+
+
+
+
+
+
+// Ab thoda better solution hm observe kie ki leaves se start kro
+// agar xor krne se gain ho rha h to kro wrna mat kro
+// hmlog har node pe adjust kr skte h
+// but root node pe jo hua so manna padega
+// islie soche ki jiss node pe minimum loss ho rha usi ko root bana dete h
+// aur isse bhi ho jayega
+
+using ll = long long;
+ll sum = 0;
+bool dfs(int node, int par, auto &adj, int k, auto &nums) {
+    int count = 0;
+    for(int el:adj[node]) {
+        if(el==par) continue;
+        count += dfs(el,node,adj,k,nums);
+    }
+    if(par==-1) {
+        if(count&1) sum += nums[node]^k;
+        else sum += nums[node];
+        return false;
+    }
+    if((nums[node]^k) > nums[node]) {
+        sum += nums[node]^k;
+        if(count&1) return false;
+        return true;
+    }
+    sum += nums[node];
+    if(count&1) return true;
+    return false;
+}
+ll maximumValueSum(vector<int>& nums, int k, vector<vector<int>>& edges) {
+    int n = edges.size() + 1;
+    vector<vector<int>> adj(n);
+    for(auto &v:edges) {
+        adj[v[0]].push_back(v[1]);
+        adj[v[1]].push_back(v[0]);
+    }
+    int mini = 1e9;
+    int min_index = 0;
+    for(int i=0;i<n;i++) {
+        if(abs(nums[i] - (nums[i]^k)) < mini) {
+            mini = abs(nums[i]-(nums[i]^k));
+            min_index = i;
+        }
+    }
+    dfs(min_index, -1, adj, k, nums);
+    return sum;
+}
+
+
+
+
+
+
+
+
+// Ye most optimal solution h
+// socho to kaise bhi xor kr le hmlog
+// effectively jo number xor honge wo hmesha even hi honge
+// islie agar even numbers ko xor krne par gain ho rha then well and good
+// wrna ek ka kurbani dena hoga
+// ab usi ka kurbani denge jiska gain minimum ho
+// ya fir ek ko extra xor kr denge jiska loss minimum ho
+// dono hi same tarike se handle ho jayega
+
+using ll = long long;
+ll maximumValueSum(vector<int>& nums, int k, vector<vector<int>>& edges) {
+    int n = edges.size() + 1;
+    int mini = 1e9;
+    int count = 0;
+    ll ans = 0;
+    for(int i=0;i<n;i++) {
+        if(abs(nums[i] - (nums[i]^k)) < mini) {
+            mini = abs(nums[i]-(nums[i]^k));
+        }
+        if(nums[i] < (nums[i]^k)) {
+            count++;
+            ans += nums[i]^k;
+        }
+        else ans += nums[i];
+    }
+    
+    if((count%2) == 1) return ans-mini;
+    return ans;
+}

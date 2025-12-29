@@ -1,0 +1,47 @@
+LC link: https://leetcode.com/problems/maximum-height-by-stacking-cuboids/
+
+// Dekh isme na initially to yahi soche ki individual cubes ko sort krke 
+// overall sort kr dete h just for some uniformity taki hm soch paye
+// and moreover, koi loss ho ni rha tha ye jo order aayega ye initial order bhi given
+// ho skta hi h na
+// fir observe kie ki piche wala kabhi aage wale ke niche nahi aa skta 
+// since iska smallest dimension kisi bhi aage wale ke dimension se jada nahi hoga
+// to bas yaha se DP approach ban gya 
+// ab aise to hm har permutation (yani 3!=6) pe try kr rhe the
+// but fir se observe kro to
+// ki relative order same hi rhega hmesha agar upar aa skta h to
+// ho skta h ki 012 ke alawa koi permutation bhi upar aa jaye, but
+// agar 012 wala aana possible nahi h, to koi aur bhi ni hoga
+// and since height maximise krna h to kyu nahi 012 ko hi chune to bas
+// yaha se we cracked it
+
+bool check(int i, int j, auto &arr) {
+    if(i==arr.size()) return true;  
+    for(int k=0;k<3;k++) {
+        if(arr[i][k] > arr[j][k]) return false;
+    }
+    return true;
+}
+vector<vector<int>> dp;
+int helper(int i, int last, auto &arr) {
+    if(i==arr.size()) return 0;
+    if(dp[i][last]!=-1) return dp[i][last];
+
+    int ans = helper(i+1, last, arr);
+    
+    if(check(last,i,arr)) {
+        ans = max(ans, arr[i][2] + helper(i+1, i, arr));
+    }
+    
+    return dp[i][last] = ans;
+}
+int maxHeight(vector<vector<int>>& arr) {
+    int n = arr.size();
+    for(int i=0;i<n;i++) {
+        sort(arr[i].begin(), arr[i].end());
+    }
+    sort(arr.begin(), arr.end());
+    dp = vector<vector<int>>(n, vector<int>(n+1, -1));
+    
+    return helper(0,n,arr);
+}

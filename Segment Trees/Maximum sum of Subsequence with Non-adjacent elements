@@ -1,0 +1,94 @@
+LC link: https://leetcode.com/problems/maximum-sum-of-subsequence-with-non-adjacent-elements/description/
+
+// isme na queries ko sequentially process krna h independently nahi
+// Dekh isme updates ho rha h to wahi soche ki normal DP to chalega nahi
+// to segment tree pe hi soche, ki merge kaise kia jaye uspe soojh gya
+// and we did it, got accepted
+
+
+using ll = long long;
+struct info{
+    ll arr[2][2];
+};
+class seg_tree{
+    #define L (ind<<1)+1
+    #define R (ind<<1)+2
+    public:
+    vector<info> seg;
+    seg_tree(auto &nums) {
+        int n = nums.size();
+        seg.resize(4*n);
+        build(0,0,n-1,nums);
+    }
+    void build(int ind, int low, int high, auto &nums) {
+        if(low==high) {
+            seg[ind].arr[1][1] = max(nums[low],0);
+            seg[ind].arr[0][0] = seg[ind].arr[0][1] = seg[ind].arr[1][0] = 0;
+            return;
+        }
+        int mid = low + (high-low)/2;
+        build(L, low, mid, nums);
+        build(R, mid+1, high, nums);
+
+        for(int i=0;i<2;i++) {
+            for(int j=0;j<2;j++) {
+                seg[ind].arr[i][j] = max(seg[L].arr[i][1] + seg[R].arr[0][j], 
+                seg[L].arr[i][0] + seg[R].arr[1][j]);
+            }
+        }
+    }
+    void point_update(int ind, int low, int high, int k, int val) {
+        if(k<low || high<k) return;
+        if(low==high && low==k) {
+            seg[ind].arr[1][1] = max(val,0);
+            seg[ind].arr[0][0] = seg[ind].arr[0][1] = seg[ind].arr[1][0] = 0;
+            return;
+        }
+        int mid = low + (high-low)/2;
+        point_update(L, low, mid, k, val);
+        point_update(R, mid+1, high, k, val);
+
+        for(int i=0;i<2;i++) {
+            for(int j=0;j<2;j++) {
+                seg[ind].arr[i][j] = max(seg[L].arr[i][1] + seg[R].arr[0][j], 
+                seg[L].arr[i][0] + seg[R].arr[1][j]);
+            }
+        }
+    }
+    info query(int ind, int low, int high, int l, int r) {
+        info ans;
+        ans.arr[0][0] = ans.arr[0][1] = ans.arr[1][0] = ans.arr[1][1] = 0;
+        if(r<low || high<l) return ans;
+        if(l<=low && high<=r) return seg[ind];
+        int mid = low + (high-low)/2;
+        info left = query(L, low, mid, l, r);
+        info right = query(R, mid+1, high, l, r);
+
+        for(int i=0;i<2;i++) {
+            for(int j=0;j<2;j++) {
+                ans.arr[i][j] = max(left.arr[i][1] + right.arr[0][j], 
+                left.arr[i][0] + right.arr[1][j]);
+            }
+        }
+        return ans;
+    }
+    #undef L
+    #undef R
+};
+class Solution {
+public:
+    const int mod = 1e9+7;
+    int maximumSumSubsequence(vector<int>& nums, vector<vector<int>>& queries) {
+        seg_tree stree(nums);
+        int n = nums.size();
+        ll ans = 0;
+        for(auto &q:queries) {
+            stree.point_update(0,0,n-1,q[0],q[1]);
+            info res = stree.query(0,0,n-1,0,n-1);
+            ll maxi = *max_element(&res.arr[0][0], &res.arr[0][0] + 4);
+            ans = (ans + maxi)%mod;
+        }
+        return ans;
+    }
+};
+

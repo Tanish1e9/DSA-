@@ -1,0 +1,33 @@
+LC link: https://leetcode.com/problems/minimum-cost-to-reach-destination-in-time/
+
+
+class Solution {
+public:
+    int minCost(int maxTime, vector<vector<int>>& edges, vector<int>& passingFees) {
+        int n = passingFees.size();
+        vector<vector<pair<int,int>>> adj(n);
+        for(auto &v:edges) {
+            adj[v[0]].push_back({v[1], v[2]});
+            adj[v[1]].push_back({v[0], v[2]});
+        }
+        // cost, node, time
+        priority_queue<vector<int>, vector<vector<int>>, greater<vector<int>>> pq;
+        pq.push({passingFees[0], 0, 0});
+        vector<int> dist(n, 1e9);
+        dist[0] = 0;
+        while(!pq.empty()) {
+            auto curr = pq.top();
+            pq.pop();
+            if(curr[1] == n-1) return curr[0];
+
+            for(auto el:adj[curr[1]]) {
+                if(curr[2] + el.second <= maxTime && curr[2] + el.second < dist[el.first]) {
+                    dist[el.first] = curr[2] + el.second;
+                    pq.push({curr[0]+passingFees[el.first], el.first, dist[el.first]});
+                }
+            }
+        }
+        
+        return -1;
+    }
+};

@@ -1,0 +1,85 @@
+LC link: https://leetcode.com/problems/last-day-where-you-can-still-cross/description/
+
+// Dekh ye mera original thought h
+// Simply har component me max row aur min row track kie h
+// reverse order se chalte hue jab ye pehli bar
+// row-1 ka difference la dega that will be our answer
+
+class DSU{
+    public:
+    vector<int> size, parent, maxi, mini;
+    DSU(int n, int col) {
+        size.assign(n, 1);
+        maxi.resize(n);
+        mini.resize(n);
+        parent.resize(n);
+        for(int i=0;i<n;i++) {
+            parent[i] = i;
+            maxi[i] = mini[i] = i/col;
+        }
+    }
+    int find_par(int node) {
+        if(parent[node]==node) return node;
+        return parent[node] = find_par(parent[node]);
+    }
+    void union_by_size(int a, int b) {
+        int ult_a = find_par(a);
+        int ult_b = find_par(b);
+        if(ult_a == ult_b) return;
+        if(size[ult_a] > size[ult_b]) {
+            size[ult_a] += size[ult_b];
+            parent[ult_b] = ult_a;
+
+            maxi[ult_a] = max(maxi[ult_a], maxi[ult_b]);
+            mini[ult_a] = min(mini[ult_a], mini[ult_b]);
+        }
+        else {
+            size[ult_b] += size[ult_a];
+            parent[ult_a] = ult_b;
+
+            maxi[ult_b] = max(maxi[ult_b], maxi[ult_a]);
+            mini[ult_b] = min(mini[ult_b], mini[ult_a]);
+        }
+    }
+    int get_max(int node) {
+        int ult = find_par(node);
+        return maxi[ult] - mini[ult];
+    }
+};
+class Solution {
+public:
+    int latestDayToCross(int row, int col, vector<vector<int>>& cells) {
+        const int n = row*col;
+        DSU ds(n,col);
+        vector<vector<int>> mat(row, vector<int>(col, 1));
+
+        const int dx[4] = {-1,1,0,0};
+        const int dy[4] = {0,0,-1,1};
+
+        for(int i=n-1;i>=0;i--) {
+            auto &v = cells[i];
+            v[0]--;v[1]--;
+
+            mat[v[0]][v[1]] = 0;
+            for(int k=0;k<4;k++) {
+                int x = v[0]+dx[k];
+                int y = v[1]+dy[k];
+                if(x<0 || y<0 || x>=row || y>=col || mat[x][y]==1) continue;
+                ds.union_by_size(v[0]*col+v[1], x*col+y);
+            }
+            if(ds.get_max(v[0]*col+v[1]) == row-1) return i;
+        }
+        // dummy
+        return -1;
+    }
+};
+
+
+
+// One more method can be ki cells me har cell ke lie uska index daal do
+// fir binary search on ans krenge
+// usme unhi cells ko consider krenge jinka value threshold se upar ho
+// aur multi source BFS se check kr lenge ki top row se bottom row reachable h ya nahi
+// Isme log ka factor aayega, to upar wala method faster h but ye BS on graphs ka template dhyan rakho
+
+

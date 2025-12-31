@@ -1,0 +1,105 @@
+LC link: https://leetcode.com/problems/network-recovery-pathways/description/
+
+// Ye question vs LC 1928 Min cost to reach destination in time
+// Usme PQ kaam krta but yaha nahi aisa kyu
+// core reason h na
+// ki maan lo bhut se paths se ek node tk pahuch skte bas agle hi step pe
+// to ho skta h na ki ab tk jo max cost wala path ho, uske aage ek bhut
+// chota edge lag jaye to cost to bhut kam ho gya aur sath me hi tame taken
+// bhi kam record ho gya uss node pe, to dusra path ko aane bhi nahi dega
+// jabki ye 1928 me... aisa ho hi nahi skta
+// kyunki cost sabke lie same increment hoga to jispe minimum cost aa rha tha
+// usi path se iss node tk ka actual min cost path niklega aur fir time ko kam krne me 
+// hi fayda h na 
+// Jab ek step ka cost edge pe depend kre to dikkat h
+// but yaha node pe kr rha h to koi dikkat nahi h
+
+
+class Solution {
+public:
+    // Galti pehle yahi kr rhe the ki
+    // priority queue me sab ghusake ya fir
+    // helper DP me bhi sab involve kr rhe the
+    // BS on ans tk to gye the
+    // fir jab confirm hua ki BS on ans hi krna h
+    // tab click kia ki eligible edges ka use krke
+    // shortest distance nikalna h and we have to check 
+    // if it's <= k
+    using ll = long long;
+    ll find_min_distance(int n, auto &adj, int mid) {
+        vector<int> indegree(n,0);
+        for(int i=0;i<n;i++) {
+            for(auto el:adj[i]) {
+                if(el.second < mid) continue;
+                indegree[el.first]++;
+            }
+        }
+        queue<int> q;
+        for(int i=0;i<n;i++) {
+            if(indegree[i]==0) q.push(i);
+        }
+        
+        vector<ll> dist(n, 1e18);
+        dist[0] = 0;
+        while(!q.empty()) {
+            int curr = q.front();
+            q.pop();
+            
+            for(auto el:adj[curr]) {
+                if(el.second < mid) continue;
+
+                dist[el.first] = min(dist[el.first], dist[curr] + el.second);
+                indegree[el.first]--;
+                if(indegree[el.first]==0) q.push(el.first);
+            }
+        }
+        return dist[n-1];
+    }
+    int find_idx(auto &edges, int wt) {
+        int low = 0;
+        int high = edges.size()-1;
+        while(low<=high) {
+            int mid = low + (high-low)/2;
+            if(edges[mid][2] >= wt) high = mid-1;
+            else low = mid+1;
+        }
+        return low;
+    }
+
+    int findMaxPathScore(vector<vector<int>>& edges, vector<bool>& online, ll k) {
+        int n = online.size();
+        vector<vector<int>> online_edges;
+        for(auto &v:edges) {
+            if(!online[v[0]] || !online[v[1]]) continue;
+            online_edges.push_back(v);
+        }
+        sort(online_edges.begin(), online_edges.end(), [](vector<int> &a, vector<int> &b){
+            return a[2] < b[2];
+        });
+
+        vector<vector<pair<int,int>>> adj(n);
+        for(auto &v:online_edges) {
+            adj[v[0]].push_back({v[1], v[2]});
+        }
+        
+        int m = online_edges.size();
+        vector<ll> dp(m, -1);
+
+        int low = 0;
+        int high = 1e9;
+        while(low <= high) {
+            int mid = low + (high-low)/2;
+            int idx = find_idx(online_edges, mid);
+            if(idx == m) {
+                high = mid-1;
+                continue;
+            }
+
+            if(dp[idx]==-1) dp[idx] = find_min_distance(n, adj, mid);
+            
+            if(dp[idx] <= k) low = mid+1;
+            else high = mid-1;
+        }
+        return high;
+    }
+};

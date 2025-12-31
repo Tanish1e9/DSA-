@@ -1,0 +1,72 @@
+LC link: https://leetcode.com/problems/count-numbers-with-non-decreasing-digits/description/
+
+// Dekh isme base b me convert hi krne me dikkat ho rha tha
+// par dhyan se soch na bachpan me jo long division krte the
+// wahi tarika ko implement krte h na to ek digit free me aata h par agar
+// wo less than divisor hota to quotient me ek zero maarke ek aur utarte h
+// aur agar bada ho to mod bachta h uska
+// to wahi implement kr die h
+// convert krne ka to tarika me bas remainder push krte jana h
+// and number ko quotient se replace krte rhna h until it gets 0
+// Aur bas ho gya simple hi h ... bas division kaise hota wo yad kr lo
+
+const int mod = 1e9+7;
+pair<string,int> divide(string &s, int b) {
+    string ans;
+    int rem = 0;
+    for(char c:s) {
+        rem = rem*10 + (c-'0');
+        if(!ans.empty() || (rem/b)>0) ans.push_back(rem/b + '0');
+        rem %= b;
+    }
+    if(ans.empty()) ans = "0";
+    return {ans,rem};
+}
+string convert(string &s, int b) {
+    if(s=="0") return s;
+
+    string ans;
+    while(s != "0") {
+        pair<string,int> res = divide(s, b);
+        ans.push_back(res.second + '0');
+        s = res.first;
+    }
+    reverse(ans.begin(), ans.end());
+
+    return ans;
+}
+vector<vector<int>> dp[2];
+int helper(int i, bool tight, int last, string &s, int b) {
+    if(i==s.size()) return 1;
+    if(dp[tight][i][last]!=-1) return dp[tight][i][last];
+
+    int ans = 0;
+    int lim = tight?(s[i]-'0'):b-1;
+    for(int j=last;j<=lim;j++) {
+        ans = (ans + helper(i+1, tight && (j==lim), j, s, b))%mod;
+    }
+    return dp[tight][i][last] = ans;
+}
+
+int countNumbers(string l, string r, int b) {
+    string L = convert(l, b);
+    string R = convert(r, b);
+
+    dp[0] = dp[1] = vector<vector<int>>(R.size(), vector<int>(b+1, -1));
+    int A = helper(0, true, 0, R, b);
+
+    dp[0] = dp[1] = vector<vector<int>>(L.size(), vector<int>(b+1, -1));
+    int B = helper(0, true, 0, L, b);
+    int ans = (A-B+mod)%mod;
+
+    bool flag = true;
+    for(int i=1;i<L.size();i++) {
+        if(L[i] < L[i-1]) {
+            flag = false;
+            break;
+        }
+    }
+    ans = (ans + flag)%mod;
+    return ans;
+}
+

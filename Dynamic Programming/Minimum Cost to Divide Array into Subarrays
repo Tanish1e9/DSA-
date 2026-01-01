@@ -1,0 +1,95 @@
+LC link: https://leetcode.com/problems/minimum-cost-to-divide-array-into-subarrays/
+
+// Isme dekh ek core realisation to ye h ki hmesha maanlo
+// ki first subarray hi chun rhe h
+// to aage walo ka number kaise badhayenge
+// k*suff_cost[j+1] jod denge... jisse aage walo ka number badh jayega
+// bas ab iske bad O(n^2) me to easily solve ho jayega
+// CHT lagana thoda sa h... iska template likh die h isko use krte rhna
+// Observe ye bhi krna yaha slope negative h aur magnitude me increase kr rha
+// with increasing x (yaha x actually suff_cost h aur right to left ja rhe... islie x increase kr rha)
+// to yaha se ekdum CHT ka setup ban jata h
+
+using ll = long long;
+class Pointx{
+    public:
+    ll num, den;
+    Pointx(ll num, ll den) : num(num), den(den) {
+        bool neg = num*den < 0;
+        ll g = __gcd<ll>(abs(num), abs(den));
+        this->num = abs(num)/g;
+        this->den = abs(den)/g;
+        if(neg) this->num *= -1;
+    }
+};
+class Line{
+    public:
+    ll c, m;
+    Line(ll c, ll m) : c(c), m(m) {}
+    ll evaluate(ll x) {return m*x+c;}
+
+    Pointx intersect(Line l) {
+        Pointx p = Pointx(this->c - l.c, l.m - this->m);
+        return p;
+    }
+};
+class CHT{
+    public:
+    deque<Line> lines;
+    deque<Pointx> points;
+
+    void insert(Line l) {
+        if(lines.empty()) {
+            lines.push_back(l);
+            return;
+        }
+        Pointx p = lines.back().intersect(l);
+            
+        while(!points.empty() && p.num*points.back().den <= p.den*points.back().num) {
+            points.pop_back();
+            lines.pop_back();
+            p = lines.back().intersect(l);
+        }
+        lines.push_back(l);
+        points.push_back(p);
+    }
+
+    ll query(ll x) {
+        while(!points.empty() && points.front().num <= x*points.front().den) {
+            points.pop_front();
+            lines.pop_front();
+        }
+        if(lines.empty()) return 0;
+        return lines.front().evaluate(x);
+    }
+};  
+class Solution {
+public:
+    ll minimumCost(vector<int>& nums, vector<int>& cost, int k) {
+        int n = nums.size();
+        ll tot_nums = accumulate(nums.begin(), nums.end(), 0);
+
+        vector<ll> dp(n+1, 1e18);
+        dp[n] = 0;
+        CHT cht;
+        cht.insert(Line(0,0));
+
+        ll suff_nums=0, suff_cost=0;
+        for(int i=n-1;i>=0;i--) {
+            suff_nums += nums[i];
+            suff_cost += cost[i];
+
+            dp[i] = (tot_nums + k) * suff_cost + cht.query(suff_cost);
+            
+            Line l(dp[i]-suff_cost*(tot_nums-suff_nums), -suff_nums);
+            cht.insert(l);
+
+            // for(int j=i;j<n;j++) {
+            //     dp[i] = min(dp[i], (suff_nums[0]-suff_nums[j+1]) * (suff_cost[i]-suff_cost[j+1]) 
+            //     + k*suff_cost[i] + dp[j+1]);
+            // }
+        }
+        return dp[0];
+    }
+};
+

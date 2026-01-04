@@ -1,0 +1,52 @@
+LC link: https://leetcode.com/problems/number-of-effective-subsequences/
+
+
+// Dekh isme na bit pe inclusion exclusion lagana h
+// ye to bhut jldi samajh gye the
+// ab usko lagana kaise h uske lie SOS DP padhe hote pehle
+// to ekdum click kr jata
+// khair to ekdum wahi SOS DP laga die (CSES SOS Bit Problem kr lo)
+// aur number of set bits even odd k hisab se +- kr dena ans me
+// Bas ek chiz dhyan rakhna ki hmesha 20 tk nahi jaana TLE maar dega
+// to jitna maxbit required h wo dekh lena and kr dena ho jayega accept
+
+const int mod = 1e9+7;
+int countEffective(vector<int>& nums) {
+    int n = nums.size();
+    int ori = 0;
+    for(int i:nums) ori |= i;
+
+    int maxbit = 0;
+    for(int i=20;i>=0;i--) {
+        if((1<<i) & ori) {
+            maxbit = i+1;
+            break;
+        }
+    }
+    vector<int> dp(1<<maxbit,0);
+    for(int i:nums) dp[i]++;
+
+    for(int i=0;i<maxbit;i++) {
+        for(int mask=0;mask<(1<<maxbit);mask++) {
+            if(mask & (1<<i)) {
+                dp[mask] += dp[mask ^ (1<<i)];
+            }
+        }
+    }
+
+    vector<int> pow2(n,1);
+    for(int i=1;i<n;i++) {
+        pow2[i] = (2ll*pow2[i-1])%mod;
+    }
+
+    int ans = 0;
+    for(int s=ori;s;s=(s-1)&ori) {
+        const int k = __builtin_popcount(s);
+        const int num = pow2[dp[((1<<maxbit) - 1) ^ s]];
+
+        if(k&1) ans = (ans + num)%mod;
+        else ans = (ans - num + mod)%mod;
+    }
+    return ans;
+}
+

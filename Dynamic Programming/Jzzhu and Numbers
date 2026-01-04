@@ -1,0 +1,52 @@
+CF link: https://codeforces.com/contest/449/problem/D
+
+
+#include <bits/stdc++.h>
+using namespace std;
+#define int long long
+
+// Dekh isme na koi bhi bit 1 nahi honi chahye
+// Yaha Logical AND chal rha h ki 0th bit!=1 AND 1stbit!=1 ...
+// to isko OR me convert kro 2^n - (0th bit==1 OR 1st bit==1)
+// yaha pe ab inclusion exclusion lag payega
+// aur bas wahi kr die
+
+const int mod = 1e9+7;
+signed main() {
+    ios::sync_with_stdio(false);
+    cin.tie(0);
+    int n;
+    cin >> n;
+    const int N = 20;
+    vector<int> dp(1<<N,0);
+    vector<int> arr(n);
+    for(int i=0;i<n;i++) {
+        cin >> arr[i];
+        dp[arr[i]]++;
+    }
+
+    for(int i=0;i<N;i++) {
+        for(int mask=(1<<N)-1;mask>=0;mask--) {
+            if(!(mask & (1<<i))) {
+                dp[mask] += dp[mask ^ (1<<i)];
+            }
+        }
+    }
+
+    vector<int> pow2(n+1, 1);
+    for(int i=1;i<=n;i++) {
+        pow2[i] = (2ll*pow2[i-1])%mod;
+    }
+
+    int ans = pow2[n];
+    for(int mask=1;mask<(1<<N);mask++) {
+        int k = __builtin_popcount(mask);
+        if(k&1) ans = (ans - (pow2[dp[mask]]-1))%mod;
+        else ans = (ans + (pow2[dp[mask]]-1))%mod;
+    }
+    cout << (ans-1+mod)%mod << endl;
+
+    return 0;
+}
+
+

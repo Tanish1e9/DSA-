@@ -1,0 +1,49 @@
+LC link: https://leetcode.com/problems/count-no-zero-pairs-that-sum-to-n/
+
+
+using ll = long long;
+ll dp[16][2][2];
+ll helper(int i, int carry, bool gayab, string &s) {
+    if(i<0) return carry==0;
+    if(dp[i][carry][gayab]!=-1) return dp[i][carry][gayab];
+
+    ll ans = 0;
+    // carry atmost 1 hi ho skta h to ek aur possibility h
+    // ki i==0 pe dono hi number gayab ho jaye and bas carry hi bacha de
+    if(i==0) ans += s[0]-'0' == carry;
+
+    if(gayab) {
+        for(int num = s[i]-'0'; num<=9+carry; num+=10) {
+            for(int j=1;j<=9;j++) {
+                if(num == carry+j) {
+                    ans += helper(i-1, num/10, true, s);
+                }
+            }
+        }
+    }
+    else {
+        for(int num = s[i]-'0'; num<=18+carry; num+=10) {
+            for(int j=1;j<=9;j++) {
+                if(9 >= num-carry-j && num-carry-j>=1) {
+                    ans += helper(i-1, num/10, gayab, s);
+                }
+                // dono me se koi bhi number gayab ho skta na ab
+                // islie 2 se mutliply kia h
+                // aur i<s.size()-1 se hi ye possible h wrna to number 0 ho jayega
+                // which is not acceptable
+                else if(i<s.size()-1 && num == carry+j) {
+                    ans += 2*helper(i-1, num/10, true, s);
+                }
+            }
+        }
+    }
+    return dp[i][carry][gayab] = ans;
+}
+ll countNoZeroPairs(ll n) {
+    string s = to_string(n);
+    memset(dp, -1, sizeof(dp));
+    return helper(s.size()-1,0,false,s);
+}
+
+
+

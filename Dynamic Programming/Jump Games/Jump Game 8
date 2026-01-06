@@ -1,0 +1,19 @@
+LC link: https://leetcode.com/problems/jump-game-vii/
+
+
+// Literally bas sliding window maintain krna h 
+
+bool canReach(string s, int minJump, int maxJump) {
+    int n = s.size();
+    vector<bool> dp(n, false);
+    dp[n-1] = true;
+    int sum = 0;
+    for(int i=n-1-minJump;i>=0;i--) {
+        int l = i+minJump;
+        int r = i+maxJump;
+        if(s[l]=='0') sum += dp[l];
+        dp[i] = sum>0;
+        if(r<n && s[r]=='0') sum -= dp[r];
+    }
+    return dp[0];
+}

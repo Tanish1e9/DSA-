@@ -1,0 +1,35 @@
+LC link: https://leetcode.com/problems/jump-game-v/description/
+
+// Dekh isme na prevGreater and nextGreater using monotonic stacks nikalke
+// effective limits nikalwa lo
+// aur fir increasing order of heights me process kro 
+// segment tree se range maxima aa hi jayega aur bas ho gya
+// Par yaha constraint chota h to easily kr dia
+// yahi bada hota to mountain range jaisa ekdum kr dete
+
+int dp[1000];
+int helper(int i, auto &arr, int d) {
+    int n = arr.size();
+    if(dp[i]!=-1) return dp[i];
+
+    int ans = 1;
+    int r = min(i+d, n-1);
+    for(int j=i+1;j<=r;j++) {
+        if(arr[i] <= arr[j]) break;
+        ans = max(ans, 1+helper(j, arr, d));
+    }
+    int l = max(i-d, 0);
+    for(int j=i-1;j>=l;j--) {
+        if(arr[i] <= arr[j]) break;
+        ans = max(ans, 1+helper(j, arr, d));
+    }
+    return dp[i] = ans;
+}
+int maxJumps(vector<int>& arr, int d) {
+    memset(dp, -1, sizeof(dp));
+    int ans = 0, n = arr.size();
+    for(int i=0;i<n;i++) {
+        ans = max(ans, helper(i,arr,d));
+    }
+    return ans;
+}

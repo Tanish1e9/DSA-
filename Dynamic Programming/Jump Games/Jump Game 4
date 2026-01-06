@@ -1,0 +1,51 @@
+LC link: https://leetcode.com/problems/jump-game-iv/
+
+// Yaha na observe kroge ki wahi circular dependency type ho jayega
+// islie isko graph jaise hi krna padega model krke
+
+int minJumps(vector<int>& arr) {
+    int n = arr.size();
+    unordered_map<int,vector<int>> mpp;
+    for(int i=0;i<n;i++) {
+        mpp[arr[i]].push_back(i);
+    }
+    queue<int> q;
+    q.push(0);
+    int level = 0;
+    vector<bool> vis(n, false);
+    vis[0] = true;
+    while(!q.empty()) {
+        int level_size = q.size();
+        while(level_size--) {
+            int curr = q.front();
+            q.pop();
+            if(curr == n-1) return level;
+            if(curr+1<n) {
+                if(!vis[curr+1]) {
+                    vis[curr+1] = true;
+                    q.push(curr+1);
+                }
+            }
+            if(curr-1>=0) {
+                if(!vis[curr-1]) {
+                    vis[curr-1] = true;
+                    q.push(curr-1);
+                }
+            }
+            for(int j:mpp[arr[curr]]) {
+                if(!vis[j]) {
+                    vis[j] = true;
+                    q.push(j);
+                }
+            }
+            // Ye line bhut important h wrna unnecessarily bhut TC add krega
+            // kyunki number of equal values bar wo mpp[val] me loop hoga na
+            mpp[arr[curr]].clear();
+        }
+        level++;
+    }
+
+    // dummy
+    return -1;
+}
+

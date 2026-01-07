@@ -1,0 +1,13 @@
+LC link: https://leetcode.com/problems/jump-game/
+
+
+bool canJump(vector<int>& nums) {
+    int n = nums.size();
+    int farthest = 0;
+    for(int i=0;i<n;i++) {
+        if(farthest >= i) 
+            farthest = max(farthest, i+nums[i]);
+        else return false;
+    }
+    return true;
+}

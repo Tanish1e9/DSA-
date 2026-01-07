@@ -1,0 +1,37 @@
+LC link: https://leetcode.com/problems/jump-game-ix/
+
+// Ye khatarnaak question laga hmko too many edge cases to cover
+// Dekh isme na aise soch ki koi bhi element pe h, we only care about whether we can 
+// go to bigger elements or not, all bigger values to the left are accessible, 
+// to islie pref_max to waise hi le lie
+// ab right me koi bhi bada value ko access krne k lie
+// uske right me ek chota value hona chahye
+// to maximise our chances we will jump onto the biggest element to the left, i.e. the pref_max
+// then we will find the rightmost index whose value < pref_max
+// and then the answer at this rightmost index will also contribute to our answer
+// why answer why not directly pref_max[rightmost idx]?
+// because it may happen that after reaching the rightmost index, we go a little left
+// we get bigger values that opens up even bigger values to the right (by having a smaller value after them)
+// that's why take ans and compute from right to left
+
+
+vector<int> maxValue(vector<int>& nums) {
+    int n = nums.size(); 
+    vector<int> pref_max(n), suff_min(n, 1e9);
+    for(int i=0;i<n;i++) {
+        if(i>0) pref_max[i] = pref_max[i-1];
+        pref_max[i] = max(pref_max[i], nums[i]);
+    }
+    for(int i=n-1;i>=0;i--) {
+        if(i+1<n) suff_min[i] = suff_min[i+1];
+        suff_min[i] = min(suff_min[i], nums[i]);
+    }
+
+    vector<int> ans(n);
+    int r = n-1;
+    for(int i=n-1;i>=0;i--) {
+        while(r>i && suff_min[r] >= pref_max[i]) r--;
+        ans[i] = max(ans[r], pref_max[i]);
+    }
+    return ans;
+}

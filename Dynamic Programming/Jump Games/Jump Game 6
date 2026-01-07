@@ -1,0 +1,19 @@
+LC link: https://leetcode.com/problems/jump-game-vi/
+
+// Ye simple hi h ho jana chahye
+
+int maxResult(vector<int>& nums, int k) {
+    int n = nums.size();
+    vector<int> dp(n);
+    dp[n-1] = nums[n-1];
+    deque<int> dq;
+    dq.push_back(n-1);
+    for(int i=n-2;i>=0;i--) {
+        while(!dq.empty() && dq.back() > i+k) dq.pop_back();
+        dp[i] = nums[i] + dp[dq.back()];
+
+        while(!dq.empty() && dp[dq.front()] <= dp[i]) dq.pop_front();
+        dq.push_front(i);
+    }
+    return dp[0];
+}

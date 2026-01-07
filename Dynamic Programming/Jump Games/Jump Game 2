@@ -1,0 +1,28 @@
+LC link: https://leetcode.com/problems/jump-game-ii/
+
+
+// isme ekdum naive approach soch
+// ki i to [i+1,farthest] jump kr skte na
+// in sab me se minimum lena h
+// ab ye to samajh hi rha h ki i to j fir j to k such that
+// k<=farthest kabhi optimal nahi hoga, since +1 ho jayega na
+// to islie farthest ke aage ka hi dekhna hoga
+// to i+1 to farthest me aisa j chuno jiska j+nums[j] maximum ho
+// kyunki wo baki sabka bhi farthest ke aage ka cover kr lega na
+// to bas aise ho gya
+
+int jump(vector<int>& nums) {
+    int n = nums.size();
+    int farthest = 0;
+    int i=0, ans=0;
+    while(farthest<n-1) {
+        int next = 0;
+        while(i<=farthest) {
+            next = max(next, min(n-1,i+nums[i]));
+            i++;
+        }
+        farthest = next;
+        ans++;
+    }
+    return ans;
+}

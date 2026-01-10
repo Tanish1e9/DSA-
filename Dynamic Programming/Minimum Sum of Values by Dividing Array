@@ -1,0 +1,91 @@
+LC link: https://leetcode.com/problems/minimum-sum-of-values-by-dividing-array/
+
+// Dekh ye khatarnaak question tha
+// hm pata ni kyu confuse kr rhe the ki for a given i, j's jo honge s.t
+// and[i..j] is the required value, wo discontinuous honge
+// but and value to hmesha decrease hi krega so it will be monotonic and
+// continuous 
+// To simply binary search krke ek range nikal skte h hmlog jo ki satisfy krega
+// ab dhyan do ki ek step piche k lie agar possible h koi range... to uss range me
+// i+1 wale ka range to definitely included hoga (sochna ispe) 
+// To bas implement krna h ab
+
+int check(auto &freq, int i, int mid, int expect) {
+    bool extra = false, missing = false;
+    for(int k=0;k<20;k++) {
+        int sub = i>0?freq[i-1][k]:0;
+        bool actual = (freq[mid][k]-sub) == mid-i+1;
+        bool expected = expect & (1<<k);
+        if(actual && !expected) extra = true;
+        else if(!actual && expected) missing = true;
+    }
+    if(!extra && !missing) return 0;
+    if(extra && missing) return -1;
+    if(extra) return 1;
+    return -1;
+}
+pair<int,int> bin_search(auto &freq, int i, int expect, int n) {
+    int low = i;
+    int high = n-1;
+    pair<int,int> res = {-1, -1};
+    
+    while(low<=high) {
+        int mid = low + (high-low)/2;
+        int val = check(freq, i, mid, expect);
+        if(val == 0) res.first = mid;
+        if(val <= 0) high = mid-1;
+        else low = mid+1;
+    }
+    low = i, high = n-1; 
+    while(low<=high) {
+        int mid = low + (high-low)/2;
+        int val = check(freq, i, mid, expect);
+        if(val == 0) res.second = mid;
+        if(val < 0) high = mid-1;
+        else low = mid+1;
+    }
+    return res;
+}
+int minimumValueSum(vector<int>& nums, vector<int>& andValues) {
+    int n = nums.size();
+    vector<vector<int>> freq(n, vector<int>(20, 0));
+    for(int i=0;i<n;i++) {
+        for(int j=0;j<20;j++) {
+            if(i>0) freq[i][j] = freq[i-1][j];
+            if(nums[i] & (1<<j)) freq[i][j]++;
+        }
+    }
+
+    int m = andValues.size();
+    vector<vector<int>> dp(2, vector<int>(n+1, 1e9));
+    dp[0][n] = 0;
+    for(int j=1;j<=m;j++) {
+        int mini = 1e9, r = -1;
+        dp[j & 1][n] = 1e9;
+        for(int i=n-1;i>=0;i--) {
+            pair<int,int> val = bin_search(freq, i, andValues[m-j], n);
+            int low = val.first;
+            int high = val.second;
+            if(low == -1 || low > high) {
+                r = -1;
+                dp[j & 1][i] = mini = 1e9;
+                continue;
+            }
+
+            if(r==-1) {
+                r = high;
+                mini = min(mini, nums[r] + dp[(j-1) & 1][r+1]);
+            }    
+            while(r>low) {
+                r--;
+                mini = min(mini, nums[r] + dp[(j-1) & 1][r+1]);
+            }
+            
+            dp[j & 1][i] = mini;
+        }
+    }
+
+    if(dp[m & 1][0]==1e9) return -1;
+    return dp[m & 1][0];
+}
+

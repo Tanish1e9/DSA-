@@ -1,0 +1,49 @@
+LC link: https://leetcode.com/problems/number-of-ways-to-separate-numbers/
+
+// Dekh isme main crux to yahi tha ki agar pehle l length lie the
+// to current pe l+1 ke aage ka saara length chal jayega
+// ab l length chalega ya nahi wo check krna hoga
+// uske lie har i,j ke lie longest common prefix nikal lo
+// kyunki first differing character pe hi to decide ho jayega na
+// to bas wahi kr die h and we are done
+// Ye string comparison me hm fas gye the pata nahi kyu 
+// crux to figure out kr hi die the
+
+const int mod = 1e9+7;
+bool check(int i, int len, string &num, auto &lcp) {
+    if(i==0) return true;
+    if(i<len) return false;
+    int l = lcp[i-len][i];
+    return l >= len || num[i-len+l] <= num[i+l];
+}
+int numberOfCombinations(string num) {
+    int n = num.size();
+    vector<vector<int>> lcp(n+1, vector<int>(n+1, 0));
+    for(int i=n-1;i>=0;i--) {
+        for(int j=n-1;j>=i;j--) {
+            if(num[i] == num[j]) lcp[i][j] = 1 + lcp[i+1][j+1];
+        }
+    }
+
+    vector<vector<int>> dp(n+1, vector<int> (n+1, 0));
+    dp[n].assign(n+1, 1);
+
+    for(int i=n-1;i>=0;i--) {
+        if(num[i]=='0') continue;
+        vector<int> suff(n, 0);
+        suff[n-1] = 1;
+        for(int j=n-2;j>=i;j--) {
+            suff[j] = (suff[j+1] + dp[j+1][j-i+1])%mod;
+        }
+        for(int len=n-i;len>=1;len--) {
+            if(check(i, len, num, lcp)) dp[i][len] = (dp[i][len] + dp[i+len][len])%mod;
+            if(i+len < n) dp[i][len] = (dp[i][len] + suff[i+len])%mod;
+
+            // for(int j=i+len;j<n;j++) {
+            //     dp[i][len] = (dp[i][len] + dp[j+1][j-i+1])%mod;
+            // }
+        }
+    }
+
+    return dp[0][1];
+}

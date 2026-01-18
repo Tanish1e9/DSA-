@@ -1,0 +1,98 @@
+LC link: https://leetcode.com/problems/separate-squares-ii/description/
+
+
+struct Node{
+    int cover_count = 0;
+    int total_len = 0;
+};  
+class seg_tree{
+    #define L (ind<<1)+1
+    #define R (ind<<1)+2
+    public:
+    vector<Node> seg;
+    seg_tree(int n) {
+        seg.resize(4*n);
+    }
+    void range_update(int ind, int low, int high, int l, int r, int val, auto &xcoords) {
+        if(high<l || r<low) return;
+        if(l<=low && high<=r) {
+            if(val == 1) {
+                seg[ind].cover_count++;
+                seg[ind].total_len = xcoords[high+1] - xcoords[low];
+            }
+            else {
+                seg[ind].cover_count--;
+                if(seg[ind].cover_count == 0) {
+                    if(low == high) seg[ind].total_len = 0;
+                    else seg[ind].total_len = seg[L].total_len + seg[R].total_len;
+                }
+            }
+            return;
+        }
+        int mid = low + (high-low)/2;
+        range_update(L, low, mid, l, r, val, xcoords);
+        range_update(R, mid+1, high, l, r, val, xcoords);
+        if(seg[ind].cover_count == 0) {
+            if(low == high) seg[ind].total_len = 0;
+            else seg[ind].total_len = seg[L].total_len + seg[R].total_len;
+        }
+    }
+    int query() {
+        return seg[0].total_len;
+    }
+    void reset() {
+        seg.assign(seg.size(), Node());
+    }
+    #undef L
+    #undef R
+};
+class Solution {
+public:
+    const double tol = 1e-6;
+    double separateSquares(vector<vector<int>>& squares) {
+        int n = squares.size();
+        set<int> st;
+        for(int i=0;i<n;i++) {
+            st.insert(squares[i][0]);
+            st.insert(squares[i][0] + squares[i][2]);
+        }
+        vector<int> xcoords(st.begin(), st.end());
+        int m = xcoords.size();
+        unordered_map<int,int> mpp;
+        for(int i=0;i<m;i++) {
+            mpp[xcoords[i]] = i;
+        }
+        
+        vector<vector<int>> events;
+        for(int i=0;i<n;i++) {
+            events.push_back({squares[i][1], mpp[squares[i][0]], mpp[squares[i][0] + squares[i][2]], 1});
+            events.push_back({squares[i][1] + squares[i][2], mpp[squares[i][0]], mpp[squares[i][0] + squares[i][2]], -1});
+        }
+        sort(events.begin(), events.end());
+
+        double tot = 0;
+        seg_tree stree(m-1);
+        stree.range_update(0,0,m-2, events[0][1], events[0][2]-1, events[0][3], xcoords);
+        for(int i=1;i<2*n;i++) {
+            double x = stree.query();
+            tot += x*(events[i][0]-events[i-1][0]);
+            stree.range_update(0,0,m-2, events[i][1], events[i][2]-1, events[i][3], xcoords);
+        }
+
+        double down = 0;
+        stree.reset();
+        stree.range_update(0,0,m-2,events[0][1], events[0][2]-1, events[0][3], xcoords);
+        for(int i=1;i<2*n;i++) {
+            double x = stree.query();
+            double new_val = down + x*(events[i][0]-events[i-1][0]);
+            if(tot/2 - new_val > tol){
+                down = new_val;
+                stree.range_update(0, 0, m-2, events[i][1], events[i][2]-1, events[i][3], xcoords);
+            }
+            else return events[i-1][0] + (tot/2-down)/x;
+        }
+
+        // dummy
+        return 0;
+    }
+};

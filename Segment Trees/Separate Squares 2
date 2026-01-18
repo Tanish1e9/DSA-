@@ -1,5 +1,16 @@
 LC link: https://leetcode.com/problems/separate-squares-ii/description/
 
+// Dekh yaha bhi Line sweep lagayenge 
+// Bas yaha ek tarah se overlapping x ko bhi ek hi bar ginna h
+// to thoda khatarnak thought h segment tree ka
+// first on all the unique x values we do coordinate compression
+// to fir consecutive x values form one segment
+// ab koi bhi square add krna ho na... to it will encompass a range of segments
+// to range of segments pe hi sab kaam hoga
+// we will maintain 2 things at each node, cover count and total_len
+// total_len will denote the overlapped length (considered only once) at all times
+// if cover_count > 0 then that whole segment is covered
+// aur bas ho gya ye
 
 struct Node{
     int cover_count = 0;

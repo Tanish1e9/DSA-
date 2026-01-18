@@ -1,0 +1,66 @@
+LC link: https://leetcode.com/problems/separate-squares-i/
+
+// Dekh isme Binary search to obvious solution h to wahi likha h
+
+const double tol = 1e-6;
+bool check(auto &squares, double mid) {
+    double up=0, down=0;
+    for(auto &sq:squares) {
+        if(mid - sq[1] <= tol) up += 1ll*sq[2]*sq[2];
+        else if(mid - sq[1] - sq[2] >= tol) down += 1ll*sq[2]*sq[2];
+        else {
+            up += (sq[2] + sq[1] - mid) * sq[2];
+            down += (mid - sq[1]) * sq[2];
+        }
+    }
+    return up-down <= tol;
+}
+double separateSquares(vector<vector<int>>& squares) {
+    int n = squares.size();
+    double low = 0, high = 1e9;
+    while(abs(low - high) > tol) {
+        double mid = (low + high)/2;
+
+        if(check(squares, mid)) high = mid;
+        else low = mid;
+    }
+    return low;
+}
+
+
+// Ek aur tarika h sweep line algorithm
+// Isme na bas ye key point h 
+// ki soch ki total x axis pe length jo h 
+// wo kisi square ke top ya bottom pe hi change hota na
+// to we will just keep going above jab tk half of total area ko cross na kr jaye
+// aur uske bad hmlog ko pata hoga kitna extra area chahye
+// plus x me length bhi hoga
+// to divide krke height mil jayega and we will solve the question
+// This method is important for solving Separate Squares 2
+
+
+const double tol = 1e-6;
+double separateSquares(vector<vector<int>>& squares) {
+    int n = squares.size();
+    vector<pair<int,int>> events;
+    double tot = 0;
+    for(int i=0;i<n;i++) {
+        events.push_back({squares[i][1], squares[i][2]});
+        events.push_back({squares[i][1] + squares[i][2], -squares[i][2]});
+        tot += 1ll*squares[i][2]*squares[i][2];
+    }
+    sort(events.begin(), events.end());
+
+    double down = 0, x = events[0].second;
+    for(int i=1;i<2*n;i++) {
+        double new_val = down + x*(events[i].first-events[i-1].first);
+        if(tot/2 - new_val > tol){
+            down = new_val;
+            x += events[i].second;
+        }
+        else return events[i-1].first + (tot/2-down)/x;
+    }
+
+    // dummy
+    return 0;
+}

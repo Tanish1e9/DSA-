@@ -1,0 +1,46 @@
+LC link: https://leetcode.com/problems/find-maximum-non-decreasing-array-length/
+
+// Dekh isme first baat to yahi realise krna h ki
+// length aur last element dono store krna padega for each idx i (considering 0..i elements)
+// uske bad transition soche to har kisi ko extend krke dekhna padega
+// first priority is length badhana next priority is last element minimise krna (taki extend aasani se ho sake)
+// to ab realise kro ki dp[i+1] >= dp[i] hi hoga... since i+1 ko i wale me merge to kr hi skte h
+// to rightmost valid j pe hi extend krke dekhna chahye (since isse last element bhi to minimise hoga)
+// (last element = pref[i] - pref[j] to j jitna rightmost hoga utna kam hoga ye)
+// to bas ab pref[j] + last_el <= pref[i] aise j's chahye hme
+// to ek tarah se monotonic stack wala aa gya na
+// ki socho agar aage ho and pref + last_el ka sum bhi chota ho to wo piche wale ko dominate kr dega
+// to bas aise hi kr do ho jayega
+// Achha one more thing ki hmesha i-1 me pehle merge kr hi do
+// uske bad we will check if it can extend 
+// since extend kr paya to i-1 jaha tk extend kr paaya tha i uske aage ka hi kuch krega
+// to hmesha fayde me hi hoga
+
+using ll = long long;
+int findMaximumLength(vector<int>& nums) {
+    int n = nums.size();
+    vector<ll> pref(n);
+    vector<pair<int,ll>> dp(n);
+
+    dp[0] = {1,nums[0]};
+    pref[0] = nums[0];
+    deque<int> dq;
+    dq.push_back(0);
+
+    for(int i=1;i<n;i++) {
+        pref[i] = pref[i-1] + nums[i];
+        dp[i].first = dp[i-1].first;
+        dp[i].second = dp[i-1].second + nums[i];
+
+        while(!dq.empty() && dp[dq.back()].second + pref[dq.back()] <= pref[i]) {
+            dp[i] = {dp[dq.back()].first + 1, pref[i] - pref[dq.back()]};
+            dq.pop_back();
+        }
+
+        while(!dq.empty() && dp[dq.front()].second + pref[dq.front()] >= 
+            dp[i].second + pref[i]) dq.pop_front();
+        dq.push_front(i);
+    }
+
+    return dp[n-1].first;
+}

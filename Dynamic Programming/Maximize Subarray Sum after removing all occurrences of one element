@@ -1,0 +1,116 @@
+LC link: https://leetcode.com/problems/maximize-subarray-sum-after-removing-all-occurrences-of-one-element/
+
+
+// Ye optimal solution h
+// max subarray sum ending at i = pre[i] - (pre[j] + (sum of x in j+1 to i-1))
+// dekh pre[x] denotes min over all j (pre[j] + (sum of x in j+1 to i-1) 
+// update krne ka soch (sirf negative number pe hi remove krne ka sochenge)
+// pre[0] denotes no deletions ka lowest prefix sum
+// ab pre[x] + nums[i] kr skte ek to update k lie
+// ya pre[0] + nums[i]
+// yaha soch rhe hoge ki pre[0] ke baad ekat nums[i] aur aa gya to
+// agar aisa hota to wo pehle hi aa jata na (unn nums[i] ke occurrences pe)
+
+using ll = long long;
+ll maxSubarraySum(vector<int>& nums) {
+    ll ans = -1e9, sum = 0, low = 0;
+    int n = nums.size();
+    unordered_map<int,ll> pre;
+    for(int i=0;i<n;i++) {
+        sum += nums[i];
+        if(nums[i] < 0) {
+            if(pre.count(nums[i])) pre[nums[i]] = min(pre[nums[i]], pre[0]) + nums[i];
+            else pre[nums[i]] = pre[0] + nums[i];
+        }
+
+        pre[0] = min(pre[0], sum);
+        ans = max(ans, sum - low);
+
+        low = min(low, pre[nums[i]]);
+    }
+    return ans;
+}
+
+
+
+// Ye ek simpler segment tree wala solution bhi h
+
+
+using ll = long long;
+class info{
+    public:
+    ll kd_max=-1e9, pref_max=-1e9, suf_max=-1e9, tot_sum=0;
+};
+class seg_tree{
+    #define L (ind<<1)+1
+    #define R (ind<<1)+2
+    public:
+    vector<info> seg;
+    seg_tree(auto &arr) {
+        int n = arr.size();
+        seg.resize(4*n);
+        build(0,0,n-1,arr);
+    }
+    void build(int ind, int low, int high, auto &arr) {
+        if(low==high) {
+            seg[ind].kd_max = seg[ind].pref_max = seg[ind].suf_max = seg[ind].tot_sum = arr[low];
+            return;
+        }
+        int mid = low + (high-low)/2;
+        build(L, low, mid, arr);
+        build(R, mid+1, high, arr);
+        seg[ind].pref_max = max(seg[L].pref_max, seg[L].tot_sum + seg[R].pref_max);
+        seg[ind].suf_max = max(seg[R].suf_max, seg[R].tot_sum + seg[L].suf_max);
+        seg[ind].kd_max = max({seg[L].kd_max, seg[R].kd_max, seg[L].suf_max + seg[R].pref_max});
+        seg[ind].tot_sum = seg[L].tot_sum + seg[R].tot_sum;
+    }
+    info query(int ind, int low, int high, int l, int r) {
+        if(r<low || high<l) return info();
+        if(l<=low && high<=r) return seg[ind];
+        int mid = low + (high-low)/2;
+        info left = query(L, low, mid, l, r);
+        info right = query(R, mid+1, high, l, r);
+        info ans;
+        ans.pref_max = max(left.pref_max, left.tot_sum + right.pref_max);
+        ans.suf_max = max(right.suf_max, right.tot_sum + left.suf_max);
+        ans.kd_max = max({left.kd_max, right.kd_max, left.suf_max + right.pref_max});
+        ans.tot_sum = left.tot_sum + right.tot_sum;
+        return ans;
+    }
+    #undef L
+    #undef R
+};
+class Solution {
+public:
+    long long maxSubarraySum(vector<int>& nums) {
+        seg_tree stree(nums);
+        unordered_map<int,pair<ll,int>> mpp;
+        int n = nums.size();
+        ll ans = stree.query(0,0,n-1,0,n-1).kd_max;
+        for(int i=0;i<n;i++) {
+            if(!mpp.count(nums[i])) {
+                if(i>=1) {
+                    info val = stree.query(0,0,n-1,0,i-1);
+                    mpp[nums[i]] = {val.suf_max, i};
+                    ans = max(ans, val.kd_max);
+                }
+            }
+            else {
+                info val = stree.query(0,0,n-1,mpp[nums[i]].second+1,i-1);
+                ans = max(ans, val.kd_max);
+                ans = max(ans, mpp[nums[i]].first + val.pref_max);
+                mpp[nums[i]].first = max(val.suf_max, mpp[nums[i]].first + val.tot_sum);
+                mpp[nums[i]].second = i;
+            }
+        }
+        for(auto el:mpp) {
+            info val = stree.query(0,0,n-1,el.second.second+1,n-1);
+            ans = max(ans, val.kd_max);
+            ans = max(ans, el.second.first+val.pref_max);
+        }
+        return ans;
+    }
+};
+
+
+

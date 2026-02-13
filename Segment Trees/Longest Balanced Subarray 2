@@ -1,0 +1,159 @@
+LC link: https://leetcode.com/problems/longest-balanced-subarray-ii/description/
+
+// Dekh isme key observation ya tha na
+// ki prefix sums 1 1 se hi change krenge
+// to agar max >0 aur min <0 h to 0 bhi hoga kahi na kahi
+// uske baad to dekho range update kr lie lazily aur
+// query hi kuch naye tarike ka h islie daale h iss question ko
+
+class seg_tree{
+    #define L (ind<<1) + 1
+    #define R (ind<<1) + 2
+    public:
+    vector<int> maxi, mini, lazy;
+    seg_tree(int n) {
+        maxi.assign(4*n,0);
+        mini.assign(4*n,0);
+        lazy.assign(4*n,0);
+    }
+    void propagate(int ind, int low, int high) {
+        if(lazy[ind]!=0) {
+            mini[ind] += lazy[ind];
+            maxi[ind] += lazy[ind];
+            if(low!=high) {
+                lazy[L] += lazy[ind];
+                lazy[R] += lazy[ind];
+            }
+            lazy[ind] = 0;
+        }
+    }
+    void range_update(int ind, int low, int high, int l, int r, int val) {
+        propagate(ind, low, high);
+        if(r<low || high<l) return;
+        if(l<=low && high<=r) {
+            maxi[ind] += val;
+            mini[ind] += val;
+            if(low != high) {
+                lazy[L] += val;
+                lazy[R] += val;
+            }
+            return;
+        }
+        int mid = low + (high-low)/2;
+        range_update(L, low, mid, l, r, val);
+        range_update(R, mid+1, high, l, r, val);
+        
+        maxi[ind] = max(maxi[L], maxi[R]);
+        mini[ind] = min(mini[L], mini[R]);
+    }
+    int query(int ind, int low, int high) {
+        propagate(ind, low, high);
+        if(maxi[ind]==0 || mini[ind]==0 || (maxi[ind]>0 && mini[ind]<0)) {
+            if(low==high) return low;
+            int mid = low + (high-low)/2;
+            // Yaha pe dono taraf recursion mat krna wrna exponential ho jayega na
+            // Kyunki yaha pe koi range to h nhi ki out of range pe turant return
+            // to depth tk jayega har bar
+            // islie aise krna jroori h
+            int left = query(L, low, mid);
+            if(left < 1e5) return left;
+            return query(R, mid+1, high);
+        }
+        return 1e5;
+    }
+    #undef L
+    #undef R
+};
+class Solution {
+public:
+    int longestBalanced(vector<int>& nums) {
+        int n = nums.size();
+        seg_tree stree(n);
+        vector<int> last(1e5+1, -1);
+        int ans = 0;
+        for(int i=0;i<n;i++) {
+            if(nums[i]&1) 
+                stree.range_update(0,0,n-1,last[nums[i]]+1,i,1);
+            else
+                stree.range_update(0,0,n-1,last[nums[i]]+1,i,-1);
+            
+            last[nums[i]] = i;
+            ans = max(ans, i-stree.query(0,0,n-1)+1);
+        }
+        return ans;
+    }
+};
+
+
+
+
+// M-2 (without lazy)
+// Isme dekho hmlog na suffix maximum aur minimum store krenge
+// seg me total sum hoga
+// to ab query krte waqt na right side ka sum bhi carry krenge (again new type of query)
+// to ho jayega
+
+
+class seg_tree{
+    #define L (ind<<1) + 1
+    #define R (ind<<1) + 2
+    public:
+    vector<int> maxi, mini, seg;
+    seg_tree(int n) {
+        maxi.assign(4*n,0);
+        mini.assign(4*n,0);
+        seg.assign(4*n,0);
+    }
+    void point_update(int ind, int low, int high, int k, int val) {
+        if(k<low || high<k) return;
+        if(low == high && low == k) {
+            seg[ind] = val;
+            maxi[ind] = val;
+            mini[ind] = val;
+            return;
+        }
+        int mid = low + (high-low)/2;
+        point_update(L, low, mid, k, val);
+        point_update(R, mid+1, high, k, val);
+        
+        seg[ind] = seg[L] + seg[R];
+        maxi[ind] = max(maxi[L]+seg[R], maxi[R]);
+        mini[ind] = min(mini[L]+seg[R], mini[R]);
+    }
+    int query(int ind, int low, int high, int sum) {
+        if(maxi[ind]+sum==0 || mini[ind]+sum==0 || (maxi[ind]+sum>0 && mini[ind]+sum<0)) {
+            if(low == high) return low;
+            int mid = low + (high-low)/2;
+            int left = query(L, low, mid, sum + seg[R]);
+            if(left < 1e5) return left;
+            return query(R, mid+1, high, sum); 
+        }
+        return 1e5;
+    }
+    #undef L
+    #undef R
+};
+class Solution {
+public:
+    int longestBalanced(vector<int>& nums) {
+        int n = nums.size();
+        seg_tree stree(n);
+        vector<int> last(1e5+1, -1);
+        int ans = 0;
+        for(int i=0;i<n;i++) {
+            if(last[nums[i]]!=-1) 
+                stree.point_update(0,0,n-1,last[nums[i]],0);
+            
+            if(nums[i]&1) 
+                stree.point_update(0,0,n-1,i,1);
+            else
+                stree.point_update(0,0,n-1,i,-1);
+            
+            last[nums[i]] = i;
+            ans = max(ans, i-stree.query(0,0,n-1,0)+1);
+        }
+        return ans;
+    }
+}; 
+
+

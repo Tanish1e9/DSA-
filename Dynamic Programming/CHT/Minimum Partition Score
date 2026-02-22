@@ -1,0 +1,76 @@
+LC link: https://leetcode.com/problems/minimum-partition-score/
+
+
+using ll = long long;
+class Point{
+    public:
+    ll num, den;
+    Point(ll num, ll den) : num(num), den(den) {
+        bool neg = (num<0 && den>0) || (num>0 && den<0);
+        ll g = __gcd<ll>(abs(num), abs(den));
+        this->num = abs(num) / g;
+        this->den = abs(den) / g;
+        if(neg) this->num *= -1;
+    }
+};
+class Line{
+    public:
+    ll m, c;
+    Line(ll m, ll c) : m(m), c(c) {}
+    ll evaluate(ll x) {return m*x + c;}
+    Point find_intersection(Line &l) {
+        return Point(l.c - this->c, this->m-l.m);
+    }
+};
+class CHT{
+    public:
+    deque<Line> lines;
+    deque<Point> points;
+    void insert(ll m, ll c, ll x) {
+        Line l(m, c);
+        if(lines.empty()) {
+            lines.push_back(l);
+            return;
+        }
+
+        Point p = lines.back().find_intersection(l);
+        while(!points.empty() && p.num * points.back().den <= points.back().num * p.den) {
+            lines.pop_back();
+            points.pop_back();
+            p = lines.back().find_intersection(l);
+        }
+        lines.push_back(l);
+        points.push_back(p);
+    }
+    ll get_minima(ll x) {
+        while(!points.empty() && points.front().num <= points.front().den * x) {
+            lines.pop_front();
+            points.pop_front();
+        }
+        return lines.front().evaluate(x);
+    }
+};
+class Solution {
+public:
+    const ll INF = 1e15;
+    ll minPartitionScore(vector<int>& nums, int K) {
+        int n = nums.size();
+        vector<ll> dp(n+1, INF);
+        dp[n] = 0;
+
+        for(int k=1;k<=K;k++) {
+            CHT cht;
+            ll sum = 0;
+            for(int i=0;i<n;i++) {
+                sum += nums[i];
+                cht.insert(-sum,dp[i+1]+sum*(sum+1)/2,sum);
+            }
+            sum = 0;
+            for(int i=0;i<n;i++) {
+                dp[i] = cht.get_minima(sum) + sum*(sum-1)/2;
+                sum += nums[i];
+            }
+        }
+        return dp[0];
+    }
+};

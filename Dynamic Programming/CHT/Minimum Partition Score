@@ -1,11 +1,19 @@
 LC link: https://leetcode.com/problems/minimum-partition-score/
 
+// Dekh aise to normal CHT hi laga h 
+// dp[k][i] >= dp[k][i+1] kyunki kam elements h aur utne hi subarrays 
+// to jada distribute honge
+// aur isme suffix sum pe khele h taaki increasing x coordinate mile piche se aage
+// jaane me. To dekh lo ki y-intercept jo h wo increase hi kr rha h
+// aur slope increasingly negative ho rha, to ekdum standard CHT hi ban gya
+// pehle prefix sum se krne me kuch confusion ho rha tha ye ekdum sahi h
+
 
 using ll = long long;
 class Point{
     public:
     ll num, den;
-    Point(ll num, ll den) : num(num), den(den) {
+    Point(ll num, ll den) {
         bool neg = (num<0 && den>0) || (num>0 && den<0);
         ll g = __gcd<ll>(abs(num), abs(den));
         this->num = abs(num) / g;
@@ -26,7 +34,7 @@ class CHT{
     public:
     deque<Line> lines;
     deque<Point> points;
-    void insert(ll m, ll c, ll x) {
+    void insert(ll m, ll c) {
         Line l(m, c);
         if(lines.empty()) {
             lines.push_back(l);
@@ -55,22 +63,18 @@ public:
     const ll INF = 1e15;
     ll minPartitionScore(vector<int>& nums, int K) {
         int n = nums.size();
-        vector<ll> dp(n+1, INF);
-        dp[n] = 0;
+        vector<vector<ll>> dp(2, vector<ll>(n+1, INF));
+        dp[0][n] = 0;
 
         for(int k=1;k<=K;k++) {
             CHT cht;
-            ll sum = 0;
-            for(int i=0;i<n;i++) {
+            ll sum = accumulate(nums.begin()+n-k+1, nums.end(), 0ll);
+            for(int i=n-k;i>=0;i--) {
+                cht.insert(-sum, sum*(sum-1)/2 + dp[(k-1)&1][i+1]);
                 sum += nums[i];
-                cht.insert(-sum,dp[i+1]+sum*(sum+1)/2,sum);
-            }
-            sum = 0;
-            for(int i=0;i<n;i++) {
-                dp[i] = cht.get_minima(sum) + sum*(sum-1)/2;
-                sum += nums[i];
+                dp[k&1][i] = cht.get_minima(sum) + sum*(sum+1)/2;
             }
         }
-        return dp[0];
+        return dp[K&1][0];
     }
 };

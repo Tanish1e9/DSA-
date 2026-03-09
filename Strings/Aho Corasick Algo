@@ -1,0 +1,104 @@
+CSES link: https://cses.fi/problemset/task/2102
+
+
+#include<bits/stdc++.h>
+using namespace std;
+#define int long long
+class TrieNode{
+    public:
+    TrieNode* arr[26];
+    TrieNode *suffix_link, *output_link;
+    int pat_index;
+    TrieNode() {
+        for(int i=0;i<26;i++) arr[i] = nullptr;
+        pat_index = -1;
+        suffix_link = output_link = nullptr;
+    }
+    void insert(auto &patterns) {
+        for(int i=0;i<patterns.size();i++) {
+            TrieNode* curr = this;
+            for(char c:patterns[i]) {
+                if(!curr->arr[c-'a']) curr->arr[c-'a'] = new TrieNode();
+                curr = curr->arr[c-'a'];
+            }
+            curr->pat_index = i;
+        }
+        build_suff_out();
+    }
+    void build_suff_out() {
+        // Here, "this" denotes root only
+        // root ka suffix link is itself
+        this->suffix_link = this;
+ 
+        queue<TrieNode*> q;
+        // root ke children ka suffix link is root
+        for(int i=0;i<26;i++) {
+            if(!this->arr[i]) continue;
+            this->arr[i]->suffix_link = this;
+            q.push(this->arr[i]);
+        }
+ 
+        while(!q.empty()) {
+            TrieNode* curr = q.front();
+            q.pop();
+ 
+            for(int i=0;i<26;i++) {
+                if(!curr->arr[i]) continue;
+                TrieNode* temp = curr->suffix_link;
+                while(!temp->arr[i] && temp!=this) temp = temp->suffix_link;
+                
+                if(temp->arr[i]) curr->arr[i]->suffix_link = temp->arr[i];
+                else curr->arr[i]->suffix_link = this;
+                q.push(curr->arr[i]);
+            }
+ 
+            if(curr->suffix_link->pat_index>=0) curr->output_link = curr->suffix_link;
+            else curr->output_link = curr->suffix_link->output_link;
+        }
+    }
+};
+signed main() {
+    ios::sync_with_stdio(false);
+    cin.tie(0);
+ 
+    string s;
+    cin >> s;
+    int k;
+    cin >> k;
+    vector<string> patterns(k);
+    for(int i=0;i<k;i++) cin >> patterns[i];
+ 
+    TrieNode* root = new TrieNode();
+    root->insert(patterns);
+ 
+    TrieNode* curr = root;
+    vector<bool> ans(k, false);
+    for(int i=0;i<s.size();i++) {
+        char c = s[i];
+        if(curr->arr[c-'a']) {
+            curr = curr->arr[c-'a'];
+ 
+            if(curr->pat_index >= 0) ans[curr->pat_index] = true;
+            TrieNode* temp = curr->output_link;
+            while(temp) {
+                ans[temp->pat_index] = true;
+                temp = temp->output_link;
+            }
+        }
+        else {
+            while(!curr->arr[c-'a'] && curr != root) curr = curr->suffix_link;
+            if(curr->arr[c-'a']) i--;
+        }
+    }
+ 
+    unordered_set<string> present;
+    for(int i=0;i<k;i++) {
+        if(ans[i]) present.insert(patterns[i]);
+    }
+ 
+    for(int i=0;i<k;i++) {
+        cout << ((present.count(patterns[i]))?"YES":"NO") << "\n";
+    }
+ 
+    return 0;
+}

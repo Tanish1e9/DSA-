@@ -37,7 +37,10 @@ class TrieNode{
             this->arr[i]->suffix_link = this;
             q.push(this->arr[i]);
         }
- 
+
+        // concept ye h ki soch for any node, uska longest proper suffix jo hoga trie me
+        // wo uske parent ke proper suffixes me hi ek character append krke aayega na
+        // Islie suffix link pe traverse krte gye jaha character mil gya usko bana die link
         while(!q.empty()) {
             TrieNode* curr = q.front();
             q.pop();
@@ -51,7 +54,11 @@ class TrieNode{
                 else curr->arr[i]->suffix_link = this;
                 q.push(curr->arr[i]);
             }
- 
+
+            // Output link me ye jo likha h thoda socho 
+            // Basically, agar curr ka koi proper suffix hoga
+            // to wo suffix link ka bhi output link hoga hi na
+            // Bas extra ye check h ki suffix link khud hi output link na banana pade
             if(curr->suffix_link->pat_index>=0) curr->output_link = curr->suffix_link;
             else curr->output_link = curr->suffix_link->output_link;
         }

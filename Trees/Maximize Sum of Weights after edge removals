@@ -1,0 +1,47 @@
+Prereq:
+LC link: https://leetcode.com/problems/mice-and-cheese/description/
+
+LC link: https://leetcode.com/problems/maximize-sum-of-weights-after-edge-removals/
+
+
+// Isme na ek bar Mice and Cheese wala problem kr lo fir kuch intuition aa jayega
+
+
+using ll = long long;
+ll miceAndCheese(auto &arr, int k) {
+    k = max(k, 0);
+    int n = arr.size();
+    sort(arr.begin(), arr.end(), [](auto &a, auto &b){
+        return a.first - a.second < b.first - b.second;
+    }); 
+    ll ans = 0;
+    for(int i=0;i<n;i++) {
+        ans += arr[i].second;
+        if(i<k) ans += arr[i].first - arr[i].second;
+        else if(arr[i].first - arr[i].second < 0) ans += arr[i].first - arr[i].second;
+    }
+    return ans;
+}  
+pair<ll,ll> helper(int node, int par, auto &adj, int k) {
+    vector<pair<ll,ll>> arr;
+    for(auto el:adj[node]) {
+        if(el.first == par) continue;
+        auto val = helper(el.first, node, adj, k);
+        arr.push_back({el.second + val.second, val.first});
+    }
+    int tobe_removed = adj[node].size() - k;
+
+    return {miceAndCheese(arr, tobe_removed), miceAndCheese(arr, tobe_removed-1)};
+}
+ll maximizeSumOfWeights(vector<vector<int>>& edges, int k) {
+    int n = edges.size() + 1;
+    vector<vector<pair<int,int>>> adj(n);
+    ll ans = 0;
+    for(auto &e:edges) {
+        adj[e[0]].push_back({e[1], e[2]});
+        adj[e[1]].push_back({e[0], e[2]});
+        ans += e[2];
+    }
+    return ans - helper(0, -1, adj, k).first;
+}
+

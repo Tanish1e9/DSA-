@@ -1,0 +1,43 @@
+LC link: https://leetcode.com/problems/least-operators-to-express-number/
+
+// Isme na socho ki x me hi polynomial hmlog bana skte h
+// ab agar base x me target ko represent kia jaaye, that is a unique way to get to target
+// (har coefficient ko <x rakhna h wrna >x pe to ek higher degree term extract kia ja skta h)
+// to islie suppose x^k ka coeff d aana h
+// to isko x-(x-d) bhi likh skte h jisse x^k+1 ka coefficient 1 se badh jayega
+// aur iska mtlb h x^k ka x se badh jaana to isko x-d jo ki <x h subtract krke counter kia ja skta h
+// but agar x^k+1 ka 2 se badh gya
+// to 2*x ko <x number subtract krke nahi counter kr skte
+// islie sirf ek hi carry ho skta h
+// and that's it, x^0 k lie thoda alag calculations hoga (x/x) krke
+// Also, ek se jada consecutive division ka koi sense nahi h wapas x hi aa ja rha
+
+int dp[2][31];
+int helper(int i, int extra, auto &freq, int x) {
+    if(i==freq.size()) {
+        // -1 islie return kie h since + ek extra count ho gya h
+        if(extra == 0) return -1;
+        // But agar extra daalna pade tab extra count nahi hua h islie i-1 multiplications ka bas
+        return i-1;
+    }
+    if(dp[extra][i]!=-1) return dp[extra][i];
+    int ans = 1e9, c = extra + freq[i];
+    if(i==0) {  
+        ans = 2*c + helper(i+1, 0, freq, x);
+        ans = min(ans, 2*(x-c) + helper(i+1, 1, freq, x));
+    }
+    else {
+        ans = i*c + helper(i+1, 0, freq, x);
+        ans = min(ans, i*(x-c) + helper(i+1, 1, freq, x));
+    }
+    return dp[extra][i] = ans;
+}
+int leastOpsExpressTarget(int x, int target) {
+    memset(dp, -1, sizeof(dp));
+    vector<int> freq;
+    while(target > 0) {
+        freq.push_back(target%x);
+        target /= x;
+    }
+    return helper(0,0,freq,x);
+}

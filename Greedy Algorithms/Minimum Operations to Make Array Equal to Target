@@ -1,0 +1,56 @@
+LC link: https://leetcode.com/problems/minimum-operations-to-make-array-equal-to-target/description/
+
+// Iska ek version jisme saare elements >= 0 ho wo to kr hi rakhe h ekdum similarly
+// ye krenge, kuch differences bata dete... Sabse pehle we need to avoid circular dependency
+// Jaise ki 2,3 ho to 3 soche ki 2 me 1 add krna h aur 2 soche ki 3 me ek ghatana h to 2 ops aa jayega
+// jabki ans 3 ops hona chahye
+// Iske lie bade sirf choto se hi reference lenge
+// ab diff[i] negative h agar to ye kaam ulte sense me krna h
+// islie usme greater elements dekhenge dono taraf
+// also ho skta h ki koi positive element ke dono taraf negative element aa jaye chote k taur pe
+// uss case me sirf uss element ko alag se krna bhi optimal ho skta h 
+// islie cost = abs(diff[curr]) se start kia h dono jagah
+
+// Again iska bhi ek O(1) space ka solution h baad me kabhi dekh lena
+
+using ll = long long;
+ll minimumOperations(vector<int>& nums, vector<int>& target) {
+    int n = nums.size();
+    vector<int> diff(n);
+    for(int i=0;i<n;i++) diff[i] = target[i] - nums[i];
+    
+    ll ans = 0;
+    stack<int> st;
+    for(int i=0;i<=n;i++) {
+        while(!st.empty() && (i==n || diff[st.top()] >= diff[i])) {
+            int curr = st.top();
+            st.pop();
+            int left = !st.empty()?st.top():-1;
+            if(diff[curr] >= 0) {
+                int cost = diff[curr];
+                if(left!=-1) cost = min(cost, abs(diff[left]-diff[curr]));
+                if(i!=n) cost = min(cost, abs(diff[i]-diff[curr]));
+                ans += cost;
+            }
+        }
+        if(i<n) st.push(i);
+    }
+
+    for(int i=0;i<=n;i++) {
+        while(!st.empty() && (i==n || diff[st.top()] <= diff[i])) {
+            int curr = st.top();
+            st.pop();
+            int left = !st.empty()?st.top():-1;
+            if(diff[curr] < 0) {
+                int cost = abs(diff[curr]);
+                if(left!=-1) cost = min(cost, abs(diff[left]-diff[curr]));
+                if(i!=n) cost = min(cost, abs(diff[i]-diff[curr]));
+                ans += cost;
+            }
+        }
+        if(i<n) st.push(i);
+    }
+
+    return ans;
+}
+

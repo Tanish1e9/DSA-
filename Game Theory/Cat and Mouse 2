@@ -1,0 +1,56 @@
+LC link: https://leetcode.com/problems/cat-and-mouse-ii/
+
+// Ye to simple DFS kr lo usme DP daal do
+// bas ek h ki mouse ko agar jitna hoga to 64*2 yani 128 me jiit jayega (64 max path length)
+// jitne k lie kabhi bhi koi position repeat ni krna padega
+// because repeat krna pada iska mtlb aapka choice optimal nahi tha
+
+class Solution {
+public:
+    using p = pair<int,int>;
+    int dx[4] = {-1,1,0,0};
+    int dy[4] = {0,0,-1,1};
+    int dp[8][8][8][8][128];
+    bool helper(p m, p c, int moves, auto &grid, int catJump, int mouseJump, p f) {
+        if(moves >= 128 || c==f || m==c) return false;
+        if(m==f) return true;
+        if(dp[m.first][m.second][c.first][c.second][moves]!=-1) 
+            return dp[m.first][m.second][c.first][c.second][moves];
+        
+        if(moves & 1) {
+            // cat's turn
+            for(int k=0;k<4;k++) {
+                for(int j=0;j<=catJump;j++) {
+                    int x = c.first + dx[k]*j, y = c.second + dy[k]*j;
+                    if(x<0 || y<0 || x>=grid.size() || y>=grid[0].size() || grid[x][y]=='#') break;
+                    if(!helper(m, {x,y}, moves+1, grid, catJump, mouseJump, f)) 
+                        return dp[m.first][m.second][c.first][c.second][moves] = false;
+                }
+            }
+            return dp[m.first][m.second][c.first][c.second][moves] = true;
+        }
+        
+        // mouse's turn
+        for(int k=0;k<4;k++) {
+            for(int j=0;j<=mouseJump;j++) {
+                int x = m.first + dx[k]*j, y = m.second + dy[k]*j;
+                if(x<0 || y<0 || x>=grid.size() || y>=grid[0].size() || grid[x][y]=='#') break;
+                if(helper({x,y}, c, moves+1, grid, catJump, mouseJump, f)) return dp[m.first][m.second][c.first][c.second][moves] = true;
+            }
+        }
+        return dp[m.first][m.second][c.first][c.second][moves] = false;
+    }
+    bool canMouseWin(vector<string>& grid, int catJump, int mouseJump) {
+        memset(dp, -1, sizeof(dp));
+        int rows = grid.size(), cols = grid[0].size();
+        p m, c, f;
+        for(int i=0;i<rows;i++) {
+            for(int j=0;j<cols;j++) {
+                if(grid[i][j] == 'M') m = {i,j};
+                else if(grid[i][j] == 'C') c = {i,j};
+                else if(grid[i][j] == 'F') f = {i,j};
+            }
+        }
+        return helper(m,c,0,grid,catJump,mouseJump,f);
+    }
+};

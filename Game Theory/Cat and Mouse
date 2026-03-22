@@ -1,0 +1,74 @@
+LC link: https://leetcode.com/problems/cat-and-mouse/
+
+// Ye na thoda alag type ka arbitrary graph ka game ho gya
+// (read about it on cp algo) 
+// to basically agar koi child state parent ko winning bana de to bana hi denge
+// par agar child losing ho gya parent k lie, to fir parent ka ek option kam hoga ek tarah se
+// agar option zero ho gya to parent losing state ban jayega wrna draw rhega
+
+
+int catMouseGame(vector<vector<int>>& adj) {
+    int n = adj.size();
+    vector<vector<vector<int>>> states(2, vector<vector<int>>(n, vector<int>(n, 0)));
+    vector<vector<vector<int>>> outdegree(2, vector<vector<int>>(n, vector<int>(n, 0)));
+
+    queue<vector<int>> q;
+    for(int i=0;i<n;i++) {
+        if(i!=0) {
+            states[0][i][i] = states[1][i][i] = 2;
+            q.push({0,i,i});
+            q.push({1,i,i});
+            states[1][0][i] = states[0][0][i] = 1;
+            q.push({1,0,i});
+            q.push({0,0,i});
+        }
+        for(int j=1;j<n;j++) {
+            outdegree[0][i][j] = adj[j].size();
+            if(find(adj[j].begin(), adj[j].end(), 0) != adj[j].end()) outdegree[0][i][j]--;
+            outdegree[1][i][j] = adj[i].size();
+        }
+    }
+
+    while(!q.empty()) {
+        auto curr = q.front();
+        q.pop();
+        int prev = !curr[0], i = curr[1], j = curr[2];
+        int res = states[curr[0]][i][j];
+        if(prev) {
+            // previous was Mouse turn
+            for(int el:adj[i]) {
+                if(states[prev][el][j]!=0) continue;
+                if(res == 1) {
+                    states[prev][el][j] = 1;
+                    q.push({prev, el, j, 1});
+                }
+                else {
+                    outdegree[prev][el][j]--;
+                    if(outdegree[prev][el][j]==0) {
+                        states[prev][el][j] = 2;
+                        q.push({prev, el, j, 2});
+                    }
+                }
+            }
+        }
+        else {
+            // previous was cat turn
+            for(int el:adj[j]) {
+                if(el == 0 || states[prev][i][el]!=0) continue;
+                if(res == 2) {
+                    states[prev][i][el] = 2;
+                    q.push({prev, i, el, 2});
+                }              
+                else {
+                    outdegree[prev][i][el]--;
+                    if(outdegree[prev][i][el]==0) {
+                        states[prev][i][el] = 1;
+                        q.push({prev, i, el, 1});
+                    }
+                }
+            }
+        }
+    }
+    return states[1][1][2];
+}
+

@@ -1,0 +1,99 @@
+LC link: https://leetcode.com/problems/divide-nodes-into-the-maximum-number-of-groups/description/
+
+// Dekh isme agar bipartite nahi h to -1 hoga ye to turant dikh gya tha
+// uske baad groups nikalne me dikkat hua 
+// mtlb ye thoda der k baad observe kr lie the ki BFS krke maximum depth nikalna h
+// Even cycles pe bhi ye kaam kr rha tha
+// but baat tha ki jis node se start kroge uspe answer depend krega to soche har ek node 
+// se kr denge... but fir ek component ka multiple baar count ho jayega
+// to hmko lag rha tha DSU lagana pad jayega aur jada ho jayega but yahi krna tha
+// Also har ek component ka individually nikalke sum krna h ye bhi observe kr lie the
+// hm degree k hisab se sort waghera krne me ghuse hue the, wohi galti tha
+
+
+class DSU{
+    public:
+    vector<int> parent, size;
+    DSU(int n) {
+        parent.resize(n);
+        iota(parent.begin(), parent.end(), 0);
+        size.assign(n, 1);
+    }
+    int find_par(int node) {
+        if(parent[node]==node) return node;
+        return parent[node] = find_par(parent[node]);
+    }
+    void union_by_size(int a, int b) {
+        int ult_a = find_par(a);
+        int ult_b = find_par(b);
+        if(ult_a == ult_b) return;
+        if(size[ult_a] > size[ult_b]) {
+            size[ult_a] += size[ult_b];
+            parent[ult_b] = ult_a;
+        }
+        else {
+            size[ult_b] += size[ult_a];
+            parent[ult_a] = ult_b;
+        }
+    }
+};
+class Solution {
+public:
+    bool dfs(int node, auto &adj, auto &colour, int col) {
+        colour[node] = col;
+        for(int el:adj[node]) {
+            if(colour[el]==-1) {
+                if(!dfs(el,adj,colour,(col+1)%2)) return false;
+            }
+            else if(colour[el]==col) return false;
+        }
+        return true;
+    }
+    int bfs(int node, auto &adj, int n) {
+        vector<bool> vis(n+1, false);
+        vis[node] = true;
+        queue<int> q;
+        q.push(node);
+        int level = 0;
+        while(!q.empty()) {
+            int level_size = q.size();
+            while(level_size--) {
+                int curr = q.front();
+                q.pop();
+                for(int el:adj[curr]) {
+                    if(vis[el]) continue;
+                    vis[el] = true;
+                    q.push(el);
+                }
+            }
+            level++;
+        }
+        return level;
+    }
+    int magnificentSets(int n, vector<vector<int>>& edges) {
+        vector<int> colour(n+1, -1);
+        vector<vector<int>> adj(n+1);
+        for(auto &e:edges) {
+            adj[e[0]].push_back(e[1]);
+            adj[e[1]].push_back(e[0]);
+        }
+        for(int i=1;i<=n;i++) {
+            if(colour[i]==-1) {
+                if(!dfs(i,adj,colour,0)) return -1;
+            }
+        }
+
+        DSU ds(n+1);
+        for(auto &e:edges) ds.union_by_size(e[0], e[1]);
+
+        vector<int> comp(n+1, 0);
+        int sum = 0;
+        for(int i=1;i<=n;i++) {
+            int c = ds.find_par(i);
+            sum -= comp[c];
+            comp[c] = max(comp[c], bfs(i, adj, n));
+            sum += comp[c];
+        }
+        return sum;
+    }
+};

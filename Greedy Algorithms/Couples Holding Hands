@@ -1,0 +1,30 @@
+LC link: https://leetcode.com/problems/couples-holding-hands/
+
+
+// Ye na thoda examples leke dekhne pe feel aaya
+// Like ye to ekdum sahi baat h ki jitne kam elements me cycle bana skte 
+// to jada cycles banenge
+// to swaps kam lagenge
+// islie single element ka cycles to banayenge hi
+// uske bad tum observe kro ki chahe first ko set kr de ya second ko koi fark
+// nahi padega
+int minSwapsCouples(vector<int>& row) {
+    int ans = 0;
+    int n = row.size();
+    int pos[61];
+    for(int i=0;i<n;i++) pos[row[i]] = i;
+    
+    for(int i=0;i<n;i+=2) {
+        int req = row[i] + ((row[i]&1)?-1:1);
+        if(req == row[i+1]) continue;
+        // Sirf aage req ke position pe row[i+1] write kr do
+        // and pos[row[i+1]] = pos[req] ho jayega na
+        // baki pos[req] = i+1 se kya fark padta aur kisi k lie req same nahi hoga
+        // aur row[i+1] = req se bhi kya fark padta waha jayenge hi nahi
+        row[pos[req]] = row[i+1];
+        pos[row[i+1]] = pos[req];
+
+        ans++;
+    }   
+    return ans;
+}

@@ -1,0 +1,73 @@
+LC link: https://leetcode.com/problems/modify-graph-edge-weights/description/
+
+class Solution {
+public:
+    // Ekdum initial thought jo aaya tha mereko
+    // ki dijkstra chalayenge 2 types ke distances store krenge, ek jisme atleast ek -1 wala edge
+    // (1 banke) use hua h, ek jisme saare fixed edges h
+    // ab fixed edges wala distance agar < target aaya to return {}
+    // ya -1 wala dist > target to return {}
+    // agar fixed wala == target then saare -1 ko INF banake return
+    // wrna jo ek index store kie h -1 wale distance me
+    // usko difference se replace kr denge
+    // aur wapas dijkstra chala denge (count of -1 edges jitni baar chalega ye dijkstra)
+    // Aur isse accept ho gya tha but niche 2 dijk runs me better method h ye
+
+    // Turn 0 jab chal rha to hmko -1 ko 1 maanke bas shortest distances nikal lene h (from dest)
+    // Ab check kro ki src tk ka distance agar target se jaada ho gya to impossible bcz kam ni kr skte
+    // Then turn 1 me src se chalega dijkstra, aur koi bhi -1 wala edge aaya
+    // to dusre end se dest tk ka shortest distance pata hi h
+    // remaining nikal kr ke utna set kr denge
+    // agar rem < 0 aa rha to simply 1 set kr dena h jisse kuch fark nahi padega
+    // Isme soch rhe ki agar -1 wala edge h wohi dusre end k shortest distance me involve hua to
+    // uss case me ye -1 wala case end answer me nahi hi aayega sochoge to islie ye sahi chalega
+    const int INF = 1e9;
+    void dijk(int src, auto &dist, auto &adj, int target, auto &ans, int turn) {
+        int n = adj.size();
+        dist[turn][src] = 0;
+        priority_queue<pair<int,int>,vector<pair<int,int>>,greater<pair<int,int>>> pq;
+        pq.push({0,src});
+
+        while(!pq.empty()) {
+            auto [d, node] = pq.top();
+            pq.pop();
+            if(d > dist[turn][node]) continue;
+
+            for(auto el:adj[node]) {
+                int weight = ans[el.second][2];
+                if(weight == -1) {
+                    if(turn == 1) {
+                        weight = max(target - d - dist[0][el.first], 1);
+                        ans[el.second][2] = weight;
+                    }
+                    else weight = 1;
+                }
+
+                if(dist[turn][el.first] > d + weight) {
+                    dist[turn][el.first] = d + weight;
+                    pq.push({dist[turn][el.first], el.first});
+                }
+            }
+        }
+    }
+    vector<vector<int>> modifiedGraphEdges(int n, vector<vector<int>>& edges, int source, int dest, int target) {
+        vector<vector<pair<int,int>>> adj(n);
+        for(int i=0;i<edges.size();i++) {
+            auto &e = edges[i];
+            adj[e[0]].push_back({e[1], i});
+            adj[e[1]].push_back({e[0], i});
+        }
+        vector<vector<int>> ans = edges;
+        
+        vector<int> dist[2];
+        dist[0] = dist[1] = vector<int>(n, INF);
+    
+        dijk(dest, dist, adj, target, ans, 0);
+        if(dist[0][source] > target) return {};
+        
+        dijk(source, dist, adj, target, ans, 1);
+        if(dist[1][dest] < target) return {};
+        
+        return ans;
+    }
+};

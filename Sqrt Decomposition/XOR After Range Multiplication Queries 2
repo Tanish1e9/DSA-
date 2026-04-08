@@ -1,0 +1,76 @@
+LC link: https://leetcode.com/problems/xor-after-range-multiplication-queries-ii/
+
+// Here B = root(n)
+// Crux h ye ki wo queries whose k >= B, unke lie brute force way me update kro
+// Time is n/k*q <= qroot(n)  which is acceptable
+// If k<B, inko k, l%k ke hisab se group kro jisme difference array wala approach lagayenge
+// say k1 k2 ... ki hai different k's available
+// har ek ki me different l%k ki values h (call the number of different l%k values as qi)
+// to n/ki update hoga aur qi baar krna padega (Jinka same l%k h unko to ek hi pass me group krke kr denge
+// through difference array)
+// to Sum over n/ki * qi Now qi<=ki hoga
+// to it becomes <= n Sum(1) over i
+// Ab kitne different ki ho skte such that ki < B obviously B
+// to n root (n) wala bound yaha bhi aa gya and this is done
+// Bhut accha thought h remember it, thoda sqrt decomposition se inspired h islie
+
+
+const int mod = 1e9+7;
+int bin_pow(int x, int n) {
+    int ans = 1;
+    while(n) {
+        if(n&1) {
+            ans = (1ll * ans * x)%mod;
+            n--;
+        }
+        else {
+            x = (1ll*x*x)%mod;
+            n >>= 1;
+        }
+    }
+    return ans;
+}
+int xorAfterQueries(vector<int>& nums, vector<vector<int>>& queries) {
+    int n = nums.size();
+    sort(queries.begin(), queries.end(), [](auto &a, auto &b){
+        if(a[2] != b[2]) return a[2] < b[2];
+        return a[0]%a[2] < b[0]%b[2];
+    });
+    int B = sqrt(n);
+    
+    vector<int> arr[B][B];
+    for(auto &q:queries) {
+        if(q[2] >= B) {
+            for(int i=q[0];i<=q[1];i+=q[2]) {
+                nums[i] = (1ll*nums[i]*q[3])%mod;
+            }
+        }
+        else {
+            int l = q[0], r = q[1], k = q[2], v = q[3];
+            auto &vec = arr[k][l%k];
+            if(vec.empty()) vec.assign((n+k-1)/k, 1);
+            
+            int left = l/k;
+            int right = (r - (l%k) + k)/k;
+            vec[left] = (1ll*vec[left]*v)%mod;
+            if(right < vec.size()) vec[right] = (1ll*vec[right]*bin_pow(v, mod-2))%mod;
+        }
+    }
+
+    for(int k=1;k<B;k++) {
+        for(int rem=0;rem<k;rem++) {
+            auto &vec = arr[k][rem];
+            int pre = 1;
+            for(int j=0;j<vec.size();j++) {
+                pre = (1ll*pre*vec[j])%mod;
+                int idx = j*k+rem;
+                if(idx < nums.size()) nums[idx] = (1ll*nums[idx]*pre)%mod;
+            }
+        }
+    }
+    int ans = 0;
+    for(int i:nums) {
+        ans ^= i;
+    }
+    return ans;
+}

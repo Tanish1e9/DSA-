@@ -1,0 +1,146 @@
+Spoj link: https://www.spoj.com/problems/QTREE/
+
+// Dekh ekdum template type ka HLD ka code le lie
+// bas ab node ke values k jagah jis edge ko traverse krke aaye wo likh die (-1 for starting edge since maxima nikalna h)
+// Aur bas ek dhyan rakhna same chain me aane k baad ek node down krna hoga (wrna ek extra edge consider ho jayega)
+// Heavy ko pair banana pada because uska wt kaise nikalta fir
+
+#include<bits/stdc++.h>
+using namespace std;
+
+struct SegTree {
+    int n;
+    vector<int> seg;
+
+    SegTree(vector<int> &a) {
+        n = a.size();
+        seg.resize(2*n);
+
+        for(int i = 0; i < n; i++) seg[n+i] = a[i];
+        for(int i = n-1; i > 0; i--)
+            seg[i] = max(seg[2*i], seg[2*i+1]);
+    }
+
+    void point_update(int pos, int val) {
+        pos += n;
+        seg[pos] = val;
+        for(pos /= 2; pos >= 1; pos /= 2)
+            seg[pos] = max(seg[2*pos], seg[2*pos+1]);
+    }
+
+    int query(int l, int r) { // inclusive
+        l += n; r += n;
+        int res = INT_MIN;
+        while(l <= r) {
+            if(l % 2 == 1) res = max(res, seg[l++]);
+            if(r % 2 == 0) res = max(res, seg[r--]);
+            l /= 2; r /= 2;
+        }
+        return res;
+    }
+};
+
+int dfs(int node, vector<vector<pair<int,int>>> &adj, vector<int> &parent, vector<pair<int,int>> &heavy, vector<int> &level) {
+    int maxi = 0, size = 1;
+    for(auto el:adj[node]) {
+        if(el.first == parent[node]) continue;
+        parent[el.first] = node;
+        level[el.first] = level[node]+1;
+        int sz = dfs(el.first, adj, parent, heavy, level);
+        size += sz;
+
+        if(sz > maxi) {
+            maxi = sz;
+            heavy[node] = make_pair(el.first,el.second);
+        }
+    }
+    return size;
+}
+
+void dfsHLD(int node, int wt, vector<vector<pair<int,int>>> &adj, vector<pair<int,int>> &heavy, vector<int> &chain, vector<int> &tour, vector<int> &node_pos, vector<int> &parent) {
+    node_pos[node] = tour.size();
+    tour.push_back(wt);
+    if(heavy[node].first!=-1) {
+        chain[heavy[node].first] = chain[node];
+        dfsHLD(heavy[node].first, heavy[node].second, adj, heavy, chain, tour, node_pos, parent);
+    }
+    for(auto el:adj[node]) {
+        if(el.first == parent[node] || el.first == heavy[node].first) continue;
+        dfsHLD(el.first, el.second, adj, heavy, chain, tour, node_pos, parent);
+    }
+}
+
+void solve() {
+    int n;
+    cin >> n;
+
+    vector<vector<pair<int,int>>> adj(n+1);
+    vector<array<int,3>> edges(n-1);
+
+    for(auto &e:edges) {
+        cin >> e[0] >> e[1] >> e[2];
+        
+        adj[e[0]].push_back(make_pair(e[1],e[2]));
+        adj[e[1]].push_back(make_pair(e[0],e[2]));
+    }
+    
+    vector<int> level(n+1,0), chain(n+1), parent(n+1, -1);
+    vector<pair<int,int>> heavy(n+1, make_pair(-1,-1));
+    iota(chain.begin(), chain.end(), 0);
+
+    dfs(1,adj,parent,heavy,level);
+    
+    vector<int> tour, node_pos(n+1);
+    dfsHLD(1,-1,adj,heavy,chain,tour,node_pos,parent);
+    SegTree stree(tour);
+
+    while(true) {
+        string type;
+        cin >> type;
+
+        if(type == "DONE") return;
+        if(type == "CHANGE") {
+            int idx, wt;
+            cin >> idx >> wt;
+            auto &e = edges[--idx];
+            e[2] = wt;
+
+            if(level[e[1]] < level[e[0]]) swap(e[0], e[1]);
+            stree.point_update(node_pos[e[1]],wt);
+            // Just updating aewaii, main to tour me jo h usi se kaam hoga
+            if(heavy[e[0]].first == e[1]) heavy[e[0]].second = wt;
+        }
+        else {
+            int a, b, ans = -1;
+            cin >> a >> b;
+            
+            while(chain[a] != chain[b]) {
+                if(level[chain[a]] > level[chain[b]]) {
+                    ans = max(ans, stree.query(node_pos[chain[a]],node_pos[a]));
+                    a = parent[chain[a]];
+                }
+                else {
+                    ans = max(ans, stree.query(node_pos[chain[b]],node_pos[b]));
+                    b = parent[chain[b]];
+                }
+            }
+            // Agar same chain me aa hi gya tab ek node aage tk ka hi rakhna wrna ek faltu edge add ho jayega
+            if(level[a] < level[b]) ans = max(ans, stree.query(node_pos[heavy[a].first],node_pos[b]));
+            else ans = max(ans, stree.query(node_pos[heavy[b].first],node_pos[a]));
+
+            cout << ans << "\n";
+        }
+    }
+}
+signed main() {
+    ios::sync_with_stdio(false);
+    cin.tie(0);
+ 
+    int t;
+    cin >> t;
+    while(t--) {
+        solve();
+    }
+
+    return 0;
+}

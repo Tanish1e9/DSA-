@@ -5,3 +5,4 @@
   * Simple block acceleration wala
   * Mo's Algorithm (Query ko order krna basically)
   * Query Buffer - root N updates ko jama krke ek saath krna
+  * Heavy light nodes in tree (based on degree <= B) - counting triangles or updating neighbours

@@ -4,3 +4,4 @@
 * Forms of SQRT
   * Simple block acceleration wala
   * Mo's Algorithm (Query ko order krna basically)
+  * Query Buffer - root N updates ko jama krke ek saath krna

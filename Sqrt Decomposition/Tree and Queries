@@ -1,0 +1,72 @@
+CF link: https://codeforces.com/contest/375/problem/D
+
+
+// M-1 O(n log(n)^2)
+// Dekh small to large merging h ye simple 
+// Key point ye h ki frequency bucket me piche wala bucket se current element ka contribution hatana nhi h
+// Because if an element's freq is f, then it contributes to all buckets from 1 to f
+// To bas aise hi prefix sum type ban jayega
+
+
+#include<bits/stdc++.h>
+using namespace std;
+
+void merge(auto &mpp_a, auto &mpp_b, auto &buck_a, auto &buck_b) {
+    if(mpp_a.size() < mpp_b.size()) {
+        swap(mpp_a, mpp_b);
+        swap(buck_a, buck_b);
+    }
+
+    for(auto el:mpp_b) {
+        for(int c=1;c<=el.second;c++) {
+            mpp_a[el.first]++;
+            buck_a[mpp_a[el.first]]++;
+        }
+    }
+}
+void dfs(int node, int par, auto &adj, auto &freq_map, auto &freq_bucket, auto &queries, auto &ans, auto &cols) {
+    freq_map[node][cols[node]]++;
+    freq_bucket[node][1]++;
+    for(int el:adj[node]) {
+        if(el == par) continue;
+        dfs(el, node, adj, freq_map, freq_bucket, queries, ans, cols);
+        merge(freq_map[node], freq_map[el], freq_bucket[node], freq_bucket[el]);
+    }
+
+    for(auto &q:queries[node]) {
+        ans[q.second] = freq_bucket[node][q.first];
+    }
+}
+signed main() {
+    ios::sync_with_stdio(false);
+    cin.tie(0);
+ 
+    int n, m;
+    cin >> n >> m;
+    vector<int> cols(n+1);
+    for(int i=1;i<=n;i++) cin >> cols[i];
+    vector<vector<int>> adj(n+1);
+
+    for(int i=0;i<n-1;i++) {
+        int a, b;
+        cin >> a >> b;
+        adj[a].push_back(b);
+        adj[b].push_back(a);
+    }
+
+    vector<int> ans(m);
+    vector<vector<pair<int,int>>> queries(n+1);
+    for(int i=0;i<m;i++) {
+        int v, k;
+        cin >> v >> k;
+        queries[v].push_back({k,i});
+    }
+    vector<map<int,int>> freq_map(n+1), freq_bucket(n+1);
+    dfs(1,-1,adj,freq_map,freq_bucket,queries,ans,cols);
+
+    for(int i:ans) {
+        cout << i << "\n";
+    }
+
+    return 0;
+}

@@ -1,0 +1,66 @@
+LC link: https://leetcode.com/problems/minimum-degree-of-a-connected-trio-in-a-graph/
+
+// Dekh iska na literally O(n^3) solution har possible trio k lie try kr lo
+// Wo bhut achhe runtime pe accept ho jayega since n <= 400 hi h
+// But better TC me kr skte wo bata rhe
+// Dekh heavy nodes (with degree > B) < B hi honge ( because jada hone se total nodes == n nahi rh payega)
+// To saare possible heavy nodes k triplet pe iterate krke check kr lo O(n root n) lagega time
+// ab baaki edges pe iterate kro jinka atleast ek light end ho hi
+// Uss light node ke neighbours pe iterate kro (root n se kam honge because light h) 
+// Aur dusre end se connectivity check kro (O m root n) laga
+// to total is O((n+m) root n) lag gya
+// Aur yahi niche code kie h
+// basically triangles can be HHH, HHL, HLL, LLL
+// to first wala heavy ke triplets se aa gya
+// aur baki edges ke light end se aa gya ye tarika dhyan rakhna
+
+int minTrioDegree(int n, vector<vector<int>>& edges) {
+    vector<vector<int>> adj(n+1, vector<int>(n+1, 0));
+    vector<vector<int>> adj_list(n+1);
+    vector<int> degree(n+1, 0);
+    for(auto &e:edges) {
+        adj[e[0]][e[1]] = 1;
+        adj[e[1]][e[0]] = 1;
+        adj_list[e[0]].push_back(e[1]);
+        adj_list[e[1]].push_back(e[0]);
+        degree[e[0]]++;
+        degree[e[1]]++;
+    }
+    const int B = ceil(sqrt(n));
+    int ans = 1e9;
+    for(auto &e:edges) {
+        if(degree[e[0]] <= B) {
+            for(int el:adj_list[e[0]]) {
+                if(adj[e[1]][el]) 
+                    ans = min(ans, degree[e[0]] + degree[e[1]] + degree[el] - 6);
+            }
+        }
+        else if(degree[e[1]] <= B) {
+            for(int el:adj_list[e[1]]) {
+                if(adj[e[0]][el]) 
+                    ans = min(ans, degree[e[0]] + degree[e[1]] + degree[el] - 6);
+            }
+        }
+    }
+
+    vector<int> heavy;
+    for(int i=1;i<=n;i++) {
+        if(degree[i] > B) heavy.push_back(i);
+    }
+    
+    int m = heavy.size();
+    for(int i=0;i<m;i++) {
+        for(int j=i+1;j<m;j++) {
+            for(int k=j+1;k<m;k++) {
+                int a = heavy[i], b = heavy[j], c = heavy[k];
+                if(adj[a][b] && adj[b][c] && adj[a][c]) {
+                    ans = min(ans, degree[a] + degree[b] + degree[c] - 6);
+                }
+            }
+        }
+    }
+
+    if(ans == 1e9) return -1;
+    return ans;
+}
+

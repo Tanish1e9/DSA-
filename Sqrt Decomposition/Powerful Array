@@ -1,2 +1,63 @@
 CF link: https://codeforces.com/contest/86/problem/D
 
+// Simple Mo's Algo laga die h
+// In case of add: ans += (freq[x]^2 - (freq[x]-1)^2)*x
+// In case of remove: ans -= ((freq[x]+1)^2 - freq[x]^2)*x
+
+#include<bits/stdc++.h>
+using namespace std;
+#define int long long
+
+void add(int x, auto &freq, int &ans) {
+    freq[x]++;
+    ans += (2*freq[x]-1)*x;
+}
+void remove(int x, auto &freq, int &ans) {
+    freq[x]--;
+    ans -= (2*freq[x]+1)*x;
+}
+signed main() {
+    ios::sync_with_stdio(false);
+    cin.tie(0);
+ 
+    int n, m;
+    cin >> n >> m;
+    vector<int> arr(n);
+    for(int i=0;i<n;i++) cin >> arr[i];
+
+    vector<vector<int>> queries(m, vector<int>(3));
+    for(int i=0;i<m;i++) { 
+        auto &q = queries[i];
+        cin >> q[0] >> q[1];
+        q[0]--;
+        q[1]--;
+        q[2] = i;
+    }
+
+    const int B = sqrt(n);
+    sort(queries.begin(), queries.end(), [B](auto &a, auto &b){
+        int ba = a[0]/B, bb = b[0]/B;
+        if(ba != bb) return ba < bb;
+        return (ba & 1) ? (a[1] > b[1]) : a[1] < b[1];
+    });
+
+    int l = 0, r = -1, answer = 0;
+    vector<int> freq(1000001);
+    vector<int> ans(m);
+    for(auto &q:queries) {
+        int L = q[0], R = q[1];
+        while(l > L) {l--;add(arr[l],freq,answer);}
+        while(r < R) {r++;add(arr[r],freq,answer);}
+        while(l < L) {remove(arr[l],freq,answer);l++;}
+        while(r > R) {remove(arr[r],freq,answer);r--;}
+
+        ans[q[2]] = answer;
+    }
+
+
+    for(int i:ans) {
+        cout << i << "\n";
+    }
+    
+    return 0;
+}

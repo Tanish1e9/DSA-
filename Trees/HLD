@@ -1,0 +1,144 @@
+CSES link: https://cses.fi/problemset/task/2134/
+
+// Bhut lamba code h par dekh concept samajh aaya to code kr loge
+// Chains banana and unko ek linear tour vector me arrange krna to aaram se samajh aaya
+// Fir finally lca nikalna ho chahe kuch bhi query krni ho directly a, b ko involve krke krna h
+// level[chain[a]] level[chain[b]] kro jo bhi jada ho usko upar move kro
+// End me jiska bhi lower level hoga wahi LCA hoga (because same chain me h na)
+// Iterative segment tree likhwana pada bcz CSES accept nahi kr rha tha
+
+#include<bits/stdc++.h>
+using namespace std;
+
+struct SegTree {
+    int n;
+    vector<int> seg;
+
+    SegTree(vector<int> &a) {
+        n = a.size();
+        seg.resize(2*n);
+
+        for(int i = 0; i < n; i++) seg[n+i] = a[i];
+        for(int i = n-1; i > 0; i--)
+            seg[i] = max(seg[2*i], seg[2*i+1]);
+    }
+
+    void point_update(int pos, int val) {
+        pos += n;
+        seg[pos] = val;
+        for(pos /= 2; pos >= 1; pos /= 2)
+            seg[pos] = max(seg[2*pos], seg[2*pos+1]);
+    }
+
+    int query(int l, int r) { // inclusive
+        l += n; r += n;
+        int res = INT_MIN;
+        while(l <= r) {
+            if(l % 2 == 1) res = max(res, seg[l++]);
+            if(r % 2 == 0) res = max(res, seg[r--]);
+            l /= 2; r /= 2;
+        }
+        return res;
+    }
+};
+
+int dfs(int node, int par, int lvl, vector<vector<int>> &adj, vector<int> &parent, vector<int> &heavy, vector<int> &level) {
+    parent[node] = par;
+    level[node] = lvl;
+
+    int maxi = 0, size = 1;
+    for(int el:adj[node]) {
+        if(el == par) continue;
+        int sz = dfs(el, node, lvl+1, adj, parent, heavy, level);
+        size += sz;
+
+        if(sz > maxi) {
+            maxi = sz;
+            heavy[node] = el;
+        }
+    }
+    return size;
+}
+
+void dfsHLD(int node, int par, vector<vector<int>> &adj, vector<int> &heavy, vector<int> &chain, vector<int> &tour, vector<int> &node_pos, vector<int> &vals) {
+    node_pos[node] = tour.size();
+    tour.push_back(vals[node]);
+    if(heavy[node]!=-1) {
+        chain[heavy[node]] = chain[node];
+        dfsHLD(heavy[node], node, adj, heavy, chain, tour, node_pos, vals);
+    }
+    for(int el:adj[node]) {
+        if(el == par || el == heavy[node]) continue;
+        dfsHLD(el, node, adj, heavy, chain, tour, node_pos, vals);
+    }
+}
+
+signed main() {
+    ios::sync_with_stdio(false);
+    cin.tie(0);
+ 
+    int n, m;
+    cin >> n >> m;
+    vector<int> vals(n+1);
+    for(int i=1;i<=n;i++) cin >> vals[i];
+    vector<vector<int>> adj(n+1);
+
+    for(int i=0;i<n-1;i++) {
+        int a, b;
+        cin >> a >> b;
+        adj[a].push_back(b);
+        adj[b].push_back(a);
+    }
+    
+    vector<int> level(n+1), chain(n+1), heavy(n+1, -1);
+    iota(chain.begin(), chain.end(), 0);
+    vector<int> parent(n+1, -1);
+
+    dfs(1,-1,0,adj,parent,heavy,level);
+    
+    vector<int> tour, node_pos(n+1);
+    dfsHLD(1,-1,adj,heavy,chain,tour,node_pos,vals);
+    // seg_tree stree(tour);
+    SegTree stree(tour);
+
+    for(int i=0;i<m;i++) {
+        int type;
+        cin >> type;
+        if(type == 1) {
+            int s, x;
+            cin >> s >> x;
+            // stree.point_update(0,0,n-1,node_pos[s],x);
+            stree.point_update(node_pos[s],x);
+        }
+        else {
+            int a, b, ans = -1;
+            cin >> a >> b;
+            
+            while(chain[a] != chain[b]) {
+                // chain heads ka level compare hota hmesha dhyan rakhna
+                if(level[chain[a]] > level[chain[b]]) {
+                    // ans = max(ans, stree.query(0,0,n-1,node_pos[chain[a]],node_pos[a]));
+                    ans = max(ans, stree.query(node_pos[chain[a]],node_pos[a]));
+                    a = parent[chain[a]];
+                }
+                else {
+                    // ans = max(ans, stree.query(0,0,n-1,node_pos[chain[b]],node_pos[b]));
+                    ans = max(ans, stree.query(node_pos[chain[b]],node_pos[b]));
+                    b = parent[chain[b]];
+                }
+            }
+            if(level[a] < level[b])
+                // ans = max(ans, stree.query(0,0,n-1,node_pos[a],node_pos[b]));
+                ans = max(ans, stree.query(node_pos[a],node_pos[b]));
+            else 
+                // ans = max(ans, stree.query(0,0,n-1,node_pos[b],node_pos[a]));
+            ans = max(ans, stree.query(node_pos[b],node_pos[a]));
+
+            cout << ans << " ";
+        }
+    }
+    cout << endl;
+
+    return 0;
+}
+

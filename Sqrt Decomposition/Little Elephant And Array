@@ -96,6 +96,8 @@ signed main() {
 // Aur Mo's order me sort krna (niche comparator dekh lo... ek Hilbert order bhi hota h kabhi padhna)
 // Ab isme socho to r hai wo atmost N move krega per block to O(N rootn) since root n is number of blocks
 // aur jo l h wo root n move krega within a block to O(Q rootn)
+// Isme bas ek chiz socho na jo elements n se bade h wo kabhi solution ho skte kya
+// To unko hata ke to vector hi bana do n tk ka rather than a frequency map (Bhut fast ho jayega)
 
 #include<bits/stdc++.h>
 using namespace std;

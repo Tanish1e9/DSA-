@@ -162,3 +162,99 @@ signed main() {
 }
 
 
+
+// M-2 Mo's Algorithm
+// Euler Tour + Mo's ka intuition to turant aaya
+// Bas ek key point ye h ki niche k buckets re remove mat kro contribution
+
+#include<bits/stdc++.h>
+using namespace std;
+
+void add(int el, auto &freq, auto &buck) {
+    freq[el]++;
+    // Dont remove el's contribution from lower buckets
+    buck[freq[el]]++;
+}
+void remove(int el, auto &freq, auto &buck) {
+    // Now since freq[el] is decreased then el's contri to old freq bucket should be removed
+    buck[freq[el]]--;
+    freq[el]--;
+}
+void dfs(int node, int par, auto &adj, auto &cols, auto &tour, auto &time_start, auto &time_end) {
+    time_start[node] = tour.size();
+    tour.push_back(cols[node]);
+    for(int el:adj[node]) {
+        if(el == par) continue;
+        dfs(el, node, adj, cols, tour, time_start, time_end);
+    }
+    time_end[node] = tour.size()-1;
+}
+signed main() {
+    ios::sync_with_stdio(false);
+    cin.tie(0);
+ 
+    int n, m;
+    cin >> n >> m;
+    vector<int> cols(n+1);
+    for(int i=1;i<=n;i++) cin >> cols[i];
+    vector<vector<int>> adj(n+1);
+
+    for(int i=0;i<n-1;i++) {
+        int a, b;
+        cin >> a >> b;
+        adj[a].push_back(b);
+        adj[b].push_back(a);
+    }
+    vector<int> tour, time_start(n+1), time_end(n+1);
+    dfs(1,-1,adj,cols,tour,time_start,time_end);
+
+    vector<vector<int>> queries(m, vector<int>(4));
+    for(int i=0;i<m;i++) {
+        int v, k;
+        cin >> v >> k;
+        queries[i][0] = time_start[v];
+        queries[i][1] = time_end[v];
+        queries[i][2] = k;
+        queries[i][3] = i;
+    }
+    
+    const int B = ceil(sqrt(n));
+    sort(queries.begin(), queries.end(), [B](auto &a, auto &b){
+        int b1 = a[0]/B, b2 = b[0]/B;
+        if(b1 != b2) return b1 < b2;
+        return (b1 & 1)?a[1]>b[1]:a[1]<b[1];
+    });
+    
+    vector<int> ans(m, 0);
+    vector<int> freq(100001,0);
+    vector<int> freq_bucket(n+1, 0);
+    int l=0, r=-1;
+    for(auto &q:queries) {
+        int L = q[0], R = q[1];
+        while(l > L) {
+            l--;
+            add(tour[l], freq, freq_bucket);
+        }
+        while(r < R) {
+            r++;
+            add(tour[r], freq, freq_bucket);
+        }
+        while(l < L) {
+            remove(tour[l], freq, freq_bucket);
+            l++;
+        }
+        while(r > R) {
+            remove(tour[r], freq, freq_bucket);
+            r--;
+        }
+        // Important maybe that q[2] > n, there ans should be 0
+        if(q[2] <= n) ans[q[3]] = freq_bucket[q[2]];
+    }
+    
+    for(int i:ans) {
+        cout << i << "\n";
+    }
+
+    return 0;
+}
+

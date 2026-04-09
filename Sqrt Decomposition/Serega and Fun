@@ -1,0 +1,246 @@
+CF link: https://codeforces.com/contest/455/problem/D
+
+
+// Method 1 - using deque
+// Dekh concept yaha pe simple hi h ki blocks me baant lena h
+// Then observe ki bich wale blocks pe sirf front and back pe ops krne h
+// To islie deque soch. Isse O(root n) me update ho jayega 
+// Aur fir answer find krte waqt bhi O(B) hi lagega time
+// Thode optimisations:- #define int long long hata die
+// B ko thoda tune kie h 1.5x times
+// Aur uint16_t type ka frequency table banaye because B se jada to freq nahi ho skta na
+// This finally gave a runtime of 1109 ms
+
+#include<bits/stdc++.h>
+using namespace std;
+
+signed main() {
+    ios::sync_with_stdio(false);
+    cin.tie(0);
+ 
+    int n, m;
+    cin >> n;
+    vector<int> arr(n);
+    for(int i=0;i<n;i++) cin >> arr[i];
+    cin >> m;
+
+    const int B = ceil(sqrt(n)*1.5);
+    int last_ans = 0;
+    vector<vector<uint16_t>> freq(B, vector<uint16_t>(n+1, 0));
+    vector<deque<int>> dq(B);
+    for(int i=0;i<n;i++) {
+        dq[i/B].push_back(arr[i]);
+        freq[i/B][arr[i]]++;
+    }
+
+    for(int i=0;i<m;i++) { 
+        int type, l, r, k;
+        cin >> type >> l >> r;
+        // 0 based me kr dia
+        l = (l+last_ans-1)%n;
+        r = (r+last_ans-1)%n;
+        if(l>r) swap(l, r);
+
+        int b1 = l/B, b2 = r/B;
+        if(type == 1) {
+            if(l == r) continue;
+            if(b1 == b2) {
+                int sz = dq[b1].size();
+                int temp;
+                for(int i=sz-1;i>=0;i--) {
+                    if(b1*B+i == r) temp = dq[b1].back();
+                    else if(b1*B+i == l) {
+                        dq[b1].push_front(dq[b1].back());
+                        dq[b1].push_front(temp);
+                    }
+                    else dq[b1].push_front(dq[b1].back());
+                    
+                    dq[b1].pop_back();
+                }
+            }
+            else {   
+                int temp;
+                int sz = dq[b2].size();
+                dq[b2].push_back(dq[b2-1].back());
+                freq[b2][dq[b2].back()]++;
+                for(int i=0;i<sz;i++) {
+                    if(b2*B + i == r) {
+                        temp = dq[b2].front();
+                        freq[b2][temp]--;
+                    }
+                    else dq[b2].push_back(dq[b2].front());
+                    
+                    dq[b2].pop_front();
+                }
+                for(int i=b2-1;i>=b1+1;i--) {
+                    freq[i][dq[i].back()]--;
+                    dq[i].pop_back();
+                    dq[i].push_front(dq[i-1].back());
+                    freq[i][dq[i].front()]++;
+                }
+                sz = dq[b1].size();
+                freq[b1][dq[b1].back()]--;
+                dq[b1].pop_back();
+                // sz ko Aise hi krna hoga because soch na agar l sz-1 pe hi hua
+                // to ek kam waale lene se to hoga hi nahi na
+                for(int i=0;i<sz;i++) {
+                    if(b1*B + i == l) {
+                        dq[b1].push_back(temp);
+                        freq[b1][temp]++;
+                        continue;
+                    }
+                    dq[b1].push_back(dq[b1].front());
+                    dq[b1].pop_front();
+                }
+            }
+        }
+        else {
+            cin >> k;
+            k = (k+last_ans-1)%n+1;
+            int ans = 0;
+            for(int i=b1+1;i<=b2-1;i++) {
+                ans += freq[i][k];
+            }
+            int sz = dq[b1].size();
+            for(int i=sz-1;i>=0;i--) {
+                if(b1*B+i >= l) ans += dq[b1].back()==k;
+                dq[b1].push_front(dq[b1].back());
+                dq[b1].pop_back();
+            }
+            
+            sz = dq[b2].size();
+            for(int i=0;i<sz;i++) {
+                if(b2*B+i <= r) ans += dq[b2].front()==k;
+                dq[b2].push_back(dq[b2].front());
+                dq[b2].pop_front();
+            }
+            // Socho na double counting ho gya hoga range ka plus pura block hi aa gya hoga
+            if(b1 == b2) ans -= freq[b1][k];
+            last_ans = ans;
+            cout << last_ans << "\n";
+        }
+    }
+    
+    return 0;
+}
+
+
+
+
+// Method 2 - using query buffer
+// Ye around 3000 ms le rha however there are optimised implementations that take around 300 ms
+// Isme simple vector hi use kia h
+// Aur agar blocks uneven size k ho rhe to hone de rha h ye
+// Har root n type 1 queries ke baad blocks ko wapas adjust kr de rha h
+
+
+
+#include<bits/stdc++.h>
+using namespace std;
+
+vector<vector<int>> arr;
+vector<vector<uint16_t>>freq;
+array<int,4> find_block(int l, int r, const int B) {
+    array<int,4> res;
+    int sum = 0;
+    for(int j=0;j<B;j++) {
+        if(sum <= l && sum + arr[j].size() - 1 >= l) {
+            res[0] = j;
+            res[1] = l-sum;
+        }
+        if(sum <= r && sum + arr[j].size() - 1 >= r) {
+            res[2] = j;
+            res[3] = r-sum;
+            break;
+        }
+
+        sum += arr[j].size();
+    }
+
+    // dummy
+    return res;
+}
+void adjust(int n, const int B) {
+    vector<int> temp;
+    temp.reserve(n);
+
+    for(auto &vec:arr) {
+        for(int el:vec) {
+            temp.push_back(el);
+        }
+        vec.clear();
+    }
+    for(int i=0;i<B;i++) {
+        fill(freq[i].begin(), freq[i].end(), 0);
+    }
+
+    for(int i=0;i<n;i++) {
+        arr[i/B].push_back(temp[i]);
+        freq[i/B][temp[i]]++;
+    }
+}
+signed main() {
+    ios::sync_with_stdio(false);
+    cin.tie(0);
+ 
+    int n, m;
+    cin >> n;
+    const int B = ceil(sqrt(n));
+    arr.resize(B);
+    freq.assign(B, vector<uint16_t>(n+1, 0));
+    for(int i=0;i<n;i++) {
+        int x;
+        cin >> x;
+        arr[i/B].push_back(x);
+        freq[i/B][x]++;
+    }
+    cin >> m;
+    
+    int last_ans = 0, buffer = 0;
+    for(int i=0;i<m;i++) { 
+        int type, l, r, k;
+        cin >> type >> l >> r;
+        // 0 based me kr dia
+        l = (l+last_ans-1)%n;
+        r = (r+last_ans-1)%n;
+        if(l>r) swap(l, r);
+
+        auto [l_block, l_pos,r_block, r_pos] = find_block(l, r, B);
+        if(type == 1) {
+            if(l == r) continue;
+            int temp = arr[r_block][r_pos];
+            arr[r_block].erase(arr[r_block].begin() + r_pos);
+            freq[r_block][temp]--;
+            arr[l_block].insert(arr[l_block].begin() + l_pos, temp);
+            freq[l_block][temp]++;
+
+            buffer++;
+            if(buffer == B) {
+                adjust(n, B);
+                buffer = 0;
+            }
+        }
+        else {
+            cin >> k;
+            k = (k+last_ans-1)%n+1;
+            int ans = 0;
+            
+            for(int i=l_block+1;i<=r_block-1;i++) {
+                ans += freq[i][k];
+            }
+            for(int i=l_pos;i<arr[l_block].size();i++) {
+                ans += arr[l_block][i] == k;
+            }
+            for(int i=0;i<=r_pos;i++) {
+                ans += arr[r_block][i] == k;
+            }
+            
+            // Socho na double counting ho gya hoga range ka plus pura block hi aa gya hoga
+            if(l_block == r_block) ans -= freq[l_block][k];
+            last_ans = ans;
+            cout << last_ans << "\n";
+        }
+    }
+    
+    return 0;
+}

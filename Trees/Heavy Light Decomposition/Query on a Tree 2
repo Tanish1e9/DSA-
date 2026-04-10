@@ -1,0 +1,221 @@
+Spoj link: https://www.spoj.com/problems/QTREE2/
+
+// Ye wala question to Binary lifting se bhi ho hi skta h
+// Because sum is an invertible operation plus koi bhi updates nahi h 
+// HLD ka key intuition yaad rakhna ki path pe kuch segment tree lagane ka mann kre tab use hoga
+
+
+// M-1 Binary lifting 
+#include<bits/stdc++.h>
+using namespace std;
+#define int long long
+
+const int N = 16;
+void dfs(int node, auto &adj, vector<int> &parent, vector<int> &level, vector<int> &pref) {
+    for(auto el:adj[node]) {
+        if(el.first == parent[node]) continue;
+        parent[el.first] = node;
+        level[el.first] = level[node]+1;
+        pref[el.first] = pref[node] + el.second;
+
+        dfs(el.first, adj, parent, level, pref);
+    }
+}
+
+void populate_parent(int n, auto &parent) {
+    int k = 1;
+    while((1<<k) < n) {
+        for(int i=1;i<=n;i++) {
+            int mid = parent[k-1][i];
+            if(mid!=-1) parent[k][i] = parent[k-1][mid];
+        }
+        k++;
+    }
+}
+int findKthAncestor(int node, int k, vector<int> &level, auto &parent) {
+    for(int j=N;j>=0;j--) {
+        if((1<<j) & k) node = parent[j][node];
+    }
+    return node;
+}
+
+int find_lca(int a, int b, vector<int> &level, auto &parent) {
+    if(level[a] > level[b]) return find_lca(b,a,level,parent);
+    int diff = level[b]-level[a];
+    for(int j=N;j>=0;j--) {
+        if((1<<j) & diff) b = parent[j][b];
+    }
+    if(a==b) return a;
+    for(int j=N;j>=0;j--) {
+        int ap = parent[j][a];
+        int bp = parent[j][b];
+        if(ap != bp) {
+            a = ap;
+            b = bp;
+        }
+    }
+    return parent[0][a];
+}
+void solve() {
+    int n;
+    cin >> n;
+
+    vector<vector<pair<int,int>>> adj(n+1);
+    for(int i=0;i<n-1;i++) {
+        int a, b, c;
+        cin >> a >> b >> c;
+        
+        adj[a].push_back(make_pair(b, c));
+        adj[b].push_back(make_pair(a, c));
+    }
+    
+    vector<vector<int>> parent(N+1, vector<int>(n+1, -1));
+    vector<int> level(n+1,0), pref(n+1,0);
+
+    dfs(1,adj,parent[0],level,pref);
+    populate_parent(n, parent);
+
+    while(true) {
+        string type;
+        cin >> type;
+
+        if(type == "DONE") return;
+        int ans, a, b;
+        cin >> a >> b;
+        int l = find_lca(a, b, level, parent);
+        int d = level[a]+level[b]-2*level[l];
+        if(type == "DIST") ans = pref[a] + pref[b] - 2*pref[l];
+        else {
+            int k;
+            cin >> k;
+            k--;
+            if(level[a]-level[l] >= k) ans = findKthAncestor(a, k, level, parent);
+            else ans = findKthAncestor(b, d-k, level, parent);
+        }
+        cout << ans << "\n";
+    }
+}
+signed main() {
+    ios::sync_with_stdio(false);
+    cin.tie(0);
+ 
+    int t;
+    cin >> t;
+    while(t--) {
+        solve();
+    }
+
+    return 0;
+}
+
+
+// M-2 HLD
+// Dekh ekdum simple h ki pehle LCA nikal ke decide kr lo ki kth node kis side hoga
+// fir uss side se kthAncestor function ki madad se answer nikal do
+// Iss function me simply agar same chain me lie kia apna ans to node_pos se kr denge
+// Wrna chain change krte rho
+
+
+#include<bits/stdc++.h>
+using namespace std;
+#define int long long
+int dfs(int node, vector<vector<pair<int,int>>> &adj, vector<int> &parent, vector<int> &heavy, vector<int> &level, vector<int> &pref) {
+    int maxi = 0, size = 1;
+    for(auto el:adj[node]) {
+        if(el.first == parent[node]) continue;
+        parent[el.first] = node;
+        level[el.first] = level[node]+1;
+        pref[el.first] = pref[node] + el.second;
+
+        int sz = dfs(el.first, adj, parent, heavy, level, pref);
+        size += sz;
+
+        if(sz > maxi) {
+            maxi = sz;
+            heavy[node] = el.first;
+        }
+    }
+    return size;
+}
+
+void dfsHLD(int node, vector<vector<pair<int,int>>> &adj, vector<int> &heavy, vector<int> &chain, vector<int> &tour, vector<int> &node_pos, vector<int> &parent) {
+    node_pos[node] = tour.size();
+    tour.push_back(node);
+    if(heavy[node]!=-1) {
+        chain[heavy[node]] = chain[node];
+        dfsHLD(heavy[node], adj, heavy, chain, tour, node_pos, parent);
+    }
+    for(auto el:adj[node]) {
+        if(el.first == parent[node] || el.first == heavy[node]) continue;
+        dfsHLD(el.first, adj, heavy, chain, tour, node_pos, parent);
+    }
+}
+int findKthAncestor(int node, int k, vector<int> &chain, vector<int> &level, vector<int> &tour, vector<int> &parent, vector<int> &node_pos) {
+    while(level[chain[node]] > level[node] - k) {
+        // Ek aur islie kyunki "parent" of chain[node] pe jaa rhe
+        k -= level[node] - level[chain[node]] + 1;
+        node = parent[chain[node]];
+    }
+    return tour[node_pos[node]-k];
+}
+
+int find_lca(int a, int b, vector<int> &chain, vector<int> &level, vector<int> &tour, vector<int> &parent) {
+    while(chain[a]!=chain[b]) {
+        if(level[chain[a]] > level[chain[b]]) a = parent[chain[a]];
+        else b = parent[chain[b]];
+    }
+    return level[a]<level[b]?a:b;
+}
+void solve() {
+    int n;
+    cin >> n;
+
+    vector<vector<pair<int,int>>> adj(n+1);
+    for(int i=0;i<n-1;i++) {
+        int a, b, c;
+        cin >> a >> b >> c;
+        
+        adj[a].push_back(make_pair(b, c));
+        adj[b].push_back(make_pair(a, c));
+    }
+    
+    vector<int> level(n+1,0), chain(n+1), parent(n+1, -1), heavy(n+1, -1), pref(n+1, 0);
+    iota(chain.begin(), chain.end(), 0);
+
+    dfs(1,adj,parent,heavy,level,pref);
+    
+    vector<int> tour, node_pos(n+1);
+    dfsHLD(1,adj,heavy,chain,tour,node_pos,parent);
+
+    while(true) {
+        string type;
+        cin >> type;
+
+        if(type == "DONE") return;
+        int ans, a, b;
+        cin >> a >> b;
+        int l = find_lca(a, b, chain, level, tour, parent);
+        int d = level[a]+level[b]-2*level[l];
+        if(type == "DIST") ans = pref[a] + pref[b] - 2*pref[l];
+        else {
+            int k;
+            cin >> k;
+            k--;
+            if(level[a]-level[l] >= k) ans = findKthAncestor(a, k, chain, level, tour, parent, node_pos);
+            else ans = findKthAncestor(b, d-k, chain, level, tour, parent, node_pos);
+        }
+        cout << ans << "\n";
+    }
+}
+signed main() {
+    ios::sync_with_stdio(false);
+    cin.tie(0);
+ 
+    int t;
+    cin >> t;
+    while(t--) {
+        solve();
+    }
+
+    return 0;
+}

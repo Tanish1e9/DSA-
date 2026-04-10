@@ -1,0 +1,120 @@
+Spoj link: https://www.spoj.com/problems/QTREE3/
+
+// Ekdum standard HLD type ka question h segment tree me minimum index store krte jao
+// Ans dete waqt yad rkhna ki ye tour ka idx hai balki node ka id nahi
+
+#include<bits/stdc++.h>
+using namespace std;
+
+const int INF = 1e9;
+class seg_tree{
+    #define L (ind<<1)+1
+    #define R (ind<<1)+2
+    public:
+    vector<int> seg;
+    seg_tree(int n) {
+        seg.assign(4*n, INF);
+    }
+
+    void point_update(int ind, int low, int high, int k) {
+        if(k < low || high < k) return;
+        if(low == high && low == k) {
+            if(seg[ind] == INF) seg[ind] = low;
+            else seg[ind] = INF;
+            return;
+        }
+        int mid = low + (high-low)/2;
+        point_update(L, low, mid, k);
+        point_update(R, mid+1, high, k);
+        seg[ind] = min(seg[L], seg[R]);
+    }
+
+    int query(int ind, int low, int high, int l, int r) {
+        if(r<low || high<l) return INF;
+        if(l<=low && high<=r) return seg[ind];
+        int mid = low + (high-low)/2;
+        int left = query(L, low, mid, l, r);
+        int right = query(R, mid+1, high, l, r);
+        return min(left, right);
+    }
+    #undef L
+    #undef R
+};
+
+int dfs(int node, auto &adj, vector<int> &parent, vector<int> &heavy, vector<int> &level) {
+    int maxi = 0, size = 1;
+    for(int el:adj[node]) {
+        if(el == parent[node]) continue;
+        parent[el] = node;
+        level[el] = level[node]+1;
+
+        int sz = dfs(el, adj, parent, heavy, level);
+        size += sz;
+
+        if(sz > maxi) {
+            maxi = sz;
+            heavy[node] = el;
+        }
+    }
+    return size;
+}
+
+void dfsHLD(int node, auto &adj, vector<int> &heavy, vector<int> &chain, vector<int> &tour, vector<int> &node_pos, vector<int> &parent) {
+    node_pos[node] = tour.size();
+    tour.push_back(node);
+    if(heavy[node]!=-1) {
+        chain[heavy[node]] = chain[node];
+        dfsHLD(heavy[node], adj, heavy, chain, tour, node_pos, parent);
+    }
+    for(int el:adj[node]) {
+        if(el == parent[node] || el == heavy[node]) continue;
+        dfsHLD(el, adj, heavy, chain, tour, node_pos, parent);
+    }
+}
+
+void solve() {
+    int n, q;
+    cin >> n >> q;
+
+    vector<vector<int>> adj(n+1);
+    for(int i=0;i<n-1;i++) {
+        int a, b;
+        cin >> a >> b;
+        
+        adj[a].push_back(b);
+        adj[b].push_back(a);
+    }
+    
+    vector<int> level(n+1,0), chain(n+1), parent(n+1, -1), heavy(n+1, -1);
+    iota(chain.begin(), chain.end(), 0);
+    dfs(1,adj,parent,heavy,level);
+    
+    vector<int> tour, node_pos(n+1);
+    dfsHLD(1,adj,heavy,chain,tour,node_pos,parent);
+    seg_tree stree(n);
+
+    while(q--) {
+        int type, node;
+        cin >> type >> node;
+        
+        if(type == 0) stree.point_update(0,0,n-1,node_pos[node]);
+        else {
+            int ans = INF;
+            while(chain[node] != chain[1]) {
+                ans = min(ans, stree.query(0,0,n-1,node_pos[chain[node]],node_pos[node]));
+                node = parent[chain[node]];
+            }
+            ans = min(ans, stree.query(0,0,n-1,node_pos[1],node_pos[node]));
+            if(ans == INF) cout << -1 << "\n";
+            else cout << tour[ans] << "\n";
+        }
+    }
+}
+signed main() {
+    ios::sync_with_stdio(false);
+    cin.tie(0);
+ 
+    solve();
+
+    return 0;
+}

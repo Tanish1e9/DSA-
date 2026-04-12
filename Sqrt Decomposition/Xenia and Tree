@@ -1,0 +1,110 @@
+CF link: https://codeforces.com/contest/342/problem/E
+
+
+// Ekdum standard problem h for learning query buffer form of Sqrt decomposition
+
+#include<bits/stdc++.h>
+using namespace std;
+#define int long long
+void dfs(int node, auto &level, auto &parent, auto &adj) {
+    for(int el:adj[node]) {
+        if(el == parent[node]) continue;
+        level[el] = level[node] + 1;
+        parent[el] = node;
+        dfs(el, level, parent, adj);
+    }
+}
+void populate_parent(int n, auto &parent) {
+    int k = 1;
+    while((1<<k) < n) {
+        for(int i=1;i<=n;i++) {
+            int mid = parent[k-1][i];
+            if(mid!=-1) parent[k][i] = parent[k-1][mid];
+        }
+        k++;
+    }
+}
+int find_lca(int a, int b, auto &level, auto &parent) {
+    if(level[a] > level[b]) swap(a, b);
+    int diff = level[b]-level[a];
+    for(int j=20;j>=0;j--) {
+        if(diff & (1<<j)) b = parent[j][b];
+    }
+    if(a == b) return a;
+    for(int j=20;j>=0;j--) {
+        int ap = parent[j][a];
+        int bp = parent[j][b];
+        if(ap != bp) {
+            a = ap;
+            b = bp;
+        }
+    }
+    return parent[0][a];
+}
+void empty_buffer(auto &buffer, auto &adj, auto &dist) {
+    queue<int> q;
+    while(!buffer.empty()) {
+        q.push(buffer.back());
+        dist[buffer.back()] = 0;
+        buffer.pop_back();
+    }
+    int level = 0;
+    while(!q.empty()) {
+        int level_size = q.size();
+        while(level_size--) {
+            int node = q.front();
+            q.pop();
+            for(int el:adj[node]) {
+                if(dist[el] > level + 1) {
+                    dist[el] = level + 1;
+                    q.push(el);
+                }
+            }
+        }
+        level++;
+    }
+}
+signed main() {
+    ios::sync_with_stdio(false);
+    cin.tie(0);
+    
+    int n, m;
+    cin >> n >> m;
+    vector<vector<int>> adj(n+1);
+    for(int i=0;i<n-1;i++) {
+        int a, b;
+        cin >> a >> b;
+        adj[a].push_back(b);
+        adj[b].push_back(a);
+    }
+    vector<int> level(n+1, 0);
+    vector<vector<int>> parent(21, vector<int>(n+1, -1));
+    dfs(1,level,parent[0],adj);
+    populate_parent(n, parent);
+
+    const int B = ceil(sqrt(n));
+    vector<int> buffer;
+    buffer.push_back(1);
+    vector<int> dist(n+1, 1e9);
+    while(m--) {
+        int t, v;
+        cin >> t >> v;
+        if(t == 1) {
+            buffer.push_back(v);
+            if(buffer.size() == B) {
+                empty_buffer(buffer, adj, dist);
+            }
+        }
+        else {
+            int ans = dist[v];
+            for(int i:buffer) {
+                int l = find_lca(v, i, level, parent);
+                ans = min(ans, level[v]+level[i]-2*level[l]);
+            }
+            cout << ans << "\n";
+        }
+    }
+    
+
+    return 0;
+}

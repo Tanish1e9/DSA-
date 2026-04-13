@@ -1,0 +1,119 @@
+CF link: https://codeforces.com/contest/348/problem/C
+
+// Key observation to yahi tha ki heavy and light sets me break kr lo and differently handle krna h unko
+// Ab kaise krna h uske lie kaise updates and query waghera krenge wahi sochna ek task tha
+// to intersection rakh lene se kaam ho jayega aisa samajh aya aur fir to implement kr hi dia h
+// Alag alag tarike se kr skte (like heavy ka lazy me dalne k sath khud ka sums bhi update kr do to query me ni krna hoga)
+// Uske heavy neighbours pe update kr do jaake to query me ni krna hoga 
+
+
+#include<bits/stdc++.h>
+using namespace std;
+#define int long long
+
+signed main() {
+    ios::sync_with_stdio(false);
+    cin.tie(0);
+    
+    int n, m, q;
+    cin >> n >> m >> q;
+    vector<int> arr(n);
+    for(int i=0;i<n;i++) cin >> arr[i];
+    
+    const int B = ceil(sqrt(n));
+    vector<vector<int>> subsets(m);
+    vector<vector<pair<int,int>>> heavy_intersections(m);
+    vector<int> sums(m,0), lazy(m,0);
+    vector<int> heavy;
+    for(int i=0;i<m;i++) {
+        int k;
+        cin >> k;
+        if(k > B) heavy.push_back(i);
+        for(int j=0;j<k;j++) {
+            int x;
+            cin >> x;
+            x--;
+            subsets[i].push_back(x);
+            sums[i] += arr[x];
+        }
+        sort(subsets[i].begin(), subsets[i].end());
+    }
+
+    for(int i=0;i<m;i++) {
+        auto &vec_a = subsets[i];
+        for(int j:heavy) {
+            if(j == i) continue;
+            auto &vec_b = subsets[j];
+            int a = 0, b = 0, num = 0;
+            while(a < vec_a.size() && b < vec_b.size()) {
+                if(vec_a[a] == vec_b[b]) {
+                    num++; 
+                    a++;
+                    b++;
+                }
+                else if(vec_a[a] < vec_b[b]) a++;
+                else b++;
+            }
+            heavy_intersections[i].push_back({j,num});
+        }
+    }
+
+    
+    while(q--) {
+        char t;
+        cin >> t;
+        if(t=='?') {
+            int k;
+            cin >> k;
+            k--;
+            int ans = 0;
+            if(subsets[k].size() > B) {
+                ans = sums[k] + lazy[k] * subsets[k].size();
+            }
+            else {
+                // Light ka sums array use ni hoga bcz wo updated nhi rhega
+                // Because light update hoga to wo sums ko thodi update kr dega
+                for(int i:subsets[k]) {
+                    ans += arr[i];
+                }
+                // Light walo ke hi heavy neighbours par jaake dekhenge
+                // ki sum ko kitna update krna h
+                for(auto el:heavy_intersections[k]) {
+                    ans += el.second * lazy[el.first];
+                }
+            }
+            
+            cout << ans << "\n";
+        }
+        else {
+            int k, x;
+            cin >> k >> x;
+            k--;
+            if(subsets[k].size() > B) {
+                // Agar heavy node h to wo khud k lazy me dalta
+                // (bcz light waale aake dekh sake ki unka kitna update hua h)
+                // Aur baki heavy walo ka directly sums update kr deta jisse unko sirf sums + apna lazy dekhna hota
+                lazy[k] += x;
+                for(auto el:heavy_intersections[k]) {
+                    sums[el.first] += el.second * x;
+                }
+            }
+            else {
+                // Agar light h to element wise kr hi denge for light nodes ke queries
+                for(int i:subsets[k]) {
+                    arr[i] += x;
+                }
+                // Aur heavy neighbours ke sums ko bhi update krna padega
+                // Yaha par dekho light walo ka sum update ni hua islie upar light k lie sums ni use krenge
+                // Aisa islie ki guarentee nahi h ki light neighbours approximately B hi honge
+                // But heavy sets to B hi h to wo guarenteed h
+                for(auto el:heavy_intersections[k]) {
+                    sums[el.first] += el.second * x;
+                }
+            }
+        }
+    }
+    
+
+    return 0;
+}

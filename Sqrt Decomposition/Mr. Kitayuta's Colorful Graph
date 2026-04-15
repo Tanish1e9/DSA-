@@ -1,0 +1,142 @@
+CF link: https://codeforces.com/contest/506/problem/D
+
+
+#include<bits/stdc++.h>
+using namespace std;
+class DSU{
+    public:
+    vector<int> parent, size;
+    DSU(int n) {
+        parent.resize(n);
+        iota(parent.begin(), parent.end(), 0);
+        size.assign(n, 1);
+    }
+    int find_par(int node) {
+        if(parent[node] == node) return node;
+        return parent[node] = find_par(parent[node]);
+    }
+    void union_by_size(int a, int b) {
+        int ult_a = find_par(a);
+        int ult_b = find_par(b);
+        if(ult_a == ult_b) return;
+        if(size[ult_a] > size[ult_b]) {
+            size[ult_a] += size[ult_b];
+            parent[ult_b] = ult_a;
+        }
+        else {
+            size[ult_b] += size[ult_a];
+            parent[ult_a] = ult_b;
+        }
+    }
+    void reset(int a) {
+        parent[a] = a;
+        size[a] = 1;
+    }
+};
+signed main() {
+    // Dekh thought process to aise hi shuru hua tha ki har colour ka DSU banayenge
+    // aur vector na banake map rakhenge, jis jis node ka edge aayega sirf usi ko instantiate krenge
+    // Aur fir har node ka dekhenge kitne colours me wo active h
+    // To heavy nodes jo ki B se jaada me active h aur light nodes B se kam wale
+    // ab query me jisme atleast ek light node h uska to B me ho jayega to O(qB)
+    // aur dono heavy ko precompute kr lenge to O(1) me answer hoga query
+    // Socho across all heavy nodes across all colours, total m se jaada hi ho skta
+    // Because har colour is due to an edge 
+    // aur m/B honge heavy nodes to m/B*m i.e O(m^2/B)
+    // Total is O(m^2/B + qB) yaha se B ka optimal value m/root(q) aata h
+
+    int n, m;
+    cin >> n >> m;
+    vector<vector<int>> edges(m, vector<int>(3));
+    for(int i=0;i<m;i++) {
+        for(int j=0;j<3;j++) {
+            cin >> edges[i][j];
+            edges[i][j]--;
+        }
+    }
+    sort(edges.begin(), edges.end(), [](auto &a, auto &b){
+        return a[2] < b[2];
+    });
+    
+    int q;
+    cin >> q;
+    
+    // Key yahi h ki DSU ko reuse kr die, aur vector<vector<>> comps hi banana
+    // vector<set> me ye TLE maar deta h
+    const int B = ceil(m/sqrt(q));
+    vector<vector<pair<int,int>>> comps(n);
+    DSU ds(n);
+    
+    for(int i=0;i<m;i++) {
+        set<int> nodes;
+        ds.union_by_size(edges[i][0], edges[i][1]);
+        nodes.insert(edges[i][0]);
+        nodes.insert(edges[i][1]);
+        while(i+1<m && edges[i+1][2] == edges[i][2]) {
+            i++;
+            ds.union_by_size(edges[i][0], edges[i][1]);
+            nodes.insert(edges[i][0]);
+            nodes.insert(edges[i][1]);
+        }
+        // Yaha par hi ek silly mistake hogya tha find_par krne ke bajay directly parent[node]
+        // likh de rhe the (actually in a older version jaha vector of DSUs bana reh the but anyway
+        // ye faster sol h and wo to TLE maar rha tha)
+        int c = edges[i][2];
+        for(int node:nodes) {
+            comps[node].push_back({c, ds.find_par(node)});
+        }
+        // Pehle saare nodes ka ultimate parent nikalwa le fir hi reset kroge na
+        // Wrna kisi ka intermediate parent reset ho gya to gadbad ho jayega na
+        for(int node:nodes) {
+            ds.reset(node);
+        }
+    }
+    
+    vector<int> heavy;
+    for(int i=0;i<n;i++) {
+        if(comps[i].size() > B) heavy.push_back(i);
+    }
+    
+    int p = heavy.size();
+    vector<vector<int>> heavy_pairs(p, vector<int>(p, 0));
+    for(int i=0;i<p;i++) {
+        for(int j=i+1;j<p;j++) {
+            int a = heavy[i], b = heavy[j];
+            for(auto el:comps[b]) {
+                auto it = lower_bound(comps[a].begin(), comps[a].end(), el);
+                if(it != comps[a].end() && *it == el) {
+                    heavy_pairs[i][j]++;
+                    heavy_pairs[j][i]++;
+                }
+            }
+        }
+    }
+
+    while(q--) {
+        int a, b;
+        cin >> a >> b;
+        a--;
+        b--;
+        int ans = 0;
+        if(comps[a].size() <= B) {
+            for(auto el:comps[a]) {
+                auto it = lower_bound(comps[b].begin(), comps[b].end(), el);
+                if(it != comps[b].end() && *it == el) ans++;
+            }
+        }
+        else if(comps[b].size() <= B) {
+            for(auto el:comps[b]) {
+                auto it = lower_bound(comps[a].begin(), comps[a].end(), el);
+                if(it != comps[a].end() && *it == el) ans++;
+            }
+        }
+        else {
+            int i1 = lower_bound(heavy.begin(), heavy.end(), a) - heavy.begin();
+            int i2 = lower_bound(heavy.begin(), heavy.end(), b) - heavy.begin();
+            if(i1 < p && i2 < p) ans = heavy_pairs[i1][i2];
+        }
+        cout << ans << "\n";
+    }
+
+    return 0;
+}

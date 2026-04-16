@@ -1,0 +1,113 @@
+CF link: https://codeforces.com/contest/444/problem/C
+
+// Iska ek segment tree solution bhi h thoda ajib sa lag rha kabhi dekh lena
+// Ye to SQRT decomposition h
+// key observation tha ki different elements across all queries milake nrootn ho skte
+// Because har query me atmost 2*rootn hi different elements produce ho rhe 
+// aur fir unn different ko track rakhne k lie vector banaye h
+// tobe denotes ki iss block me per element kitna update krna h colourfulness ko 
+// aur subtract prevents overcounting agar pehle hi different ko handle kia gya ho
+
+#include<bits/stdc++.h>
+using namespace std;
+#define int long long
+
+vector<int> colour, colourfulness, subtract;
+vector<int> latest_colour, block_colourfulness, tobe;
+vector<bool> is_different;
+vector<vector<int>> different;
+void process_single_index(int i, int x, const int B) {
+    if(is_different[i]) {
+        colourfulness[i] += abs(colour[i] - x);
+        block_colourfulness[i/B] += abs(colour[i] - x);
+    }
+    else {
+        colourfulness[i] += tobe[i/B] - subtract[i];
+        subtract[i] = tobe[i/B];
+        colourfulness[i] += abs(latest_colour[i/B] - x);
+        block_colourfulness[i/B] += abs(latest_colour[i/B] - x);
+        
+        is_different[i] = true;
+        different[i/B].push_back(i);
+    }
+    colour[i] = x;
+}
+signed main() {
+    ios::sync_with_stdio(false);
+    cin.tie(nullptr);
+
+    int n,m;
+    cin >> n >> m;    
+    colour.assign(n, 0);
+    colourfulness.assign(n, 0);
+    subtract.assign(n, 0);
+    iota(colour.begin(), colour.end(), 1);
+    const int B = ceil(sqrt(n));
+    
+    latest_colour.assign(B, 0);
+    block_colourfulness.assign(B, 0);
+    tobe.assign(B, 0);
+    
+    is_different.assign(n, true);
+    different.resize(B);
+
+    for(int i=0;i<n;i++)  different[i/B].push_back(i);
+
+    const int last_block = (n-1)/B;
+    const int last_size = n - ((n-1)/B)*B;
+
+    while(m--) {
+        int type, l, r;
+        cin >> type >> l >> r;
+        l--;r--;
+        int b1 = l/B, b2 = r/B;
+
+        if(type == 1) {
+            int x;
+            cin >> x;
+            if(b1 == b2) {
+                for(int i=l;i<=r;i++) process_single_index(i, x, B);
+            }
+            else {
+                for(int i=b1+1;i<=b2-1;i++) {
+                    int d = different[i].size();
+                    block_colourfulness[i] += (B-d) * abs(latest_colour[i] - x);
+                    tobe[i] += abs(latest_colour[i] - x);
+                    latest_colour[i] = x;
+
+                    for(int j:different[i]) {
+                        is_different[j] = false;
+                        colourfulness[j] += abs(colour[j] - x);
+                        block_colourfulness[i] += abs(colour[j] - x);
+                        subtract[j] = tobe[i];
+                        colour[j] = x;      // colour ko update krna is not necessary but kr dia
+                    }
+                    different[i].clear();
+                }
+
+                int sz = b1 == last_block ? last_size : B;
+                for(int i=l;i<b1*B+sz;i++) process_single_index(i, x, B);
+            
+                for(int i=b2*B;i<=r;i++) process_single_index(i, x, B);
+            }
+        }   
+        else {
+            int ans = 0;
+            for(int i=b1+1;i<=b2-1;i++) ans += block_colourfulness[i];
+            
+            int sz = b1 == last_block ? last_size : B;
+            for(int i=l;i<b1*B+sz;i++) {
+                ans += colourfulness[i];
+                if(!is_different[i]) ans += tobe[i/B] - subtract[i];
+            }
+            for(int i=b2*B;i<=r;i++) {
+                ans += colourfulness[i];
+                if(!is_different[i]) ans += tobe[i/B] - subtract[i];
+            }
+            if(b1 == b2) ans -= block_colourfulness[b1];
+            
+            cout << ans << "\n";
+        }
+    }
+    return 0;
+}

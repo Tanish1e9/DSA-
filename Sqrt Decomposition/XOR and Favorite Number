@@ -1,0 +1,79 @@
+CF link: https://codeforces.com/contest/617/problem/E
+
+#include<bits/stdc++.h>
+using namespace std;
+#define int long long
+
+// Isme Mo's to turant dikh gya tha but somehow realise ni ho rha tha ki solution ho jayega
+// Think of Mo's like a sliding window problem only
+// Sliding window me socho kaise kya update krke ans nikalte waise hi nikalenge
+signed main() {
+    ios::sync_with_stdio(false);
+    cin.tie(nullptr);
+
+    int n,m,k;
+    cin >> n >> m >> k;    
+    vector<int> arr(n);
+    for(int i=0;i<n;i++) cin >> arr[i];
+
+    vector<int> pref(n);
+    pref[0] = arr[0];
+    for(int i=1;i<n;i++) pref[i] = pref[i-1] ^ arr[i];
+    
+    vector<vector<int>> queries(m, vector<int>(3));
+    vector<int> curr(3);
+    for(int i=0;i<m;i++) {
+        for(int j=0;j<2;j++) {
+            cin >> queries[i][j];
+            queries[i][j]--;
+        }
+        queries[i][2] = i;
+    }
+
+    const int B = ceil(sqrt(n));
+    sort(queries.begin(), queries.end(), [B](auto &a, auto &b){
+        int b1 = a[0]/B, b2 = b[0]/B;
+        if(b1 != b2) return b1 < b2;
+        // Ye please bhut dhyan se likhna isme 0 likh die the
+        // uske chakkar me jo TLE se dimag kharab hua h mera
+        return (b1&1) ? a[1] > b[1] : a[1] < b[1];
+    });
+
+    // Dhyan dena 1<<20 tk krna padega na bcz xor waghera krne par 1<<20 tk jayega not 1e6
+    vector<int> res(m), mpp(1<<20);
+    int l = 0, r = -1, ans = 0;
+    for(auto &q:queries) {
+        int L = q[0], R = q[1];
+
+        while(l>L) {
+            l--;
+            ans += mpp[pref[l] ^ k];
+            mpp[pref[l]]++;
+        }
+        while(r<R) {
+            r++;
+            ans += mpp[pref[r] ^ k];
+            mpp[pref[r]]++;
+        }
+        while(l<L) {
+            // Agar add krte waqt pehle ans then mpp update kia tha
+            // to remove krte waqt uska ulta hi krna padega na
+            mpp[pref[l]]--;
+            ans -= mpp[pref[l] ^ k];
+            l++;
+        }
+        while(r>R) {
+            mpp[pref[r]]--;
+            ans -= mpp[pref[r] ^ k];
+            r--;
+        }
+
+        int p = (L>=1)?pref[L-1]:0;
+        res[q[2]] = ans + mpp[p ^ k];
+    }
+
+    for(int i:res) {
+        cout << i << "\n";
+    }
+    return 0;
+}

@@ -3,6 +3,6 @@
 * Pehle add kr lo dono (l>L and r<R) fir remove wale 2 loops likhna (Socho na jab l=0 h r=-1 hai and query [2,3] aa gya)
 * Forms of SQRT
   * Simple block acceleration wala
-  * Mo's Algorithm (Query ko order krna basically)
+  * Mo's Algorithm (Query ko order krna basically) - Isme think of it like a sliding window problem usse sochne me aasani hoga
   * Query Buffer - root N updates ko jama krke ek saath krna
   * Heavy light nodes in tree (based on degree <= B) - counting triangles or updating neighbours

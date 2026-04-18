@@ -1,5 +1,6 @@
 CF link: https://codeforces.com/contest/487/problem/D
 
+// Iske lie ek segment tree solution bhi exist krta h kabhi dekhna ho to dekh lena
 // Ye waisa hi question h Holes jaisa
 // interblock links maintain krenge jisse atmost rootN*10 updates ho and atmost rootN steps for query
 // Infinity can only occur as ><

@@ -1,0 +1,187 @@
+CF link: https://codeforces.com/contest/398/problem/D
+
+// Iss question ka thought process to ek set wala implementation kie the same hi idea ka
+// usse mil jayega
+// kul milake ye idea h ki Heavy nodes (jiska degree >= B) ho wo number of edges/B hi ho skte h
+// because adj list me har ek element is directly mapped to an edge
+
+#include<bits/stdc++.h>
+using namespace std;
+#define int long long
+
+// Ye question me ek accha tarika sikhoge bina vector<set> banaye edges ko add aur subtract kaise kre
+// Basically ek bar node adj me ghus gya to usko remove ni krte kabhi
+// instead we have a vector of maps jisme har ek edge ka index hota h (adj me wo neighbour ka idx)
+// aur status is represented by the sign of the neighbour
+// Yaha sochoge ki boolean map kyu nahi bana lie true false check krte rhte
+// This is because iterate krte waqt har node k lie map se query krna O(logn) to dalta hi h
+// but also poor cache locality jisse runtime bhut badh rha infact TLE ho ja rha
+// poor cache locality is the same reason jisse vector<set> wala solution bhi TLE maar dia
+
+vector<bool> isonline;
+vector<vector<int>> adj, heavy_neigh;
+vector<int> online;
+vector<map<int,int>> edges, heavy_edges;
+
+void add_edge(int u, int v, const int B, bool flag_actually_added = false) {
+    // online[u], online[u ke neighbours except v]
+    // heavy_neighbours[u ke neighbours including v]
+
+    if(flag_actually_added && adj[u].size() == B+1) {
+        // u abhi just heavy bana h
+        online[u] = 0;
+        for(int j:adj[u]) {
+            if(j < 0) continue;
+            
+            // flag_actually_added true h to map me nahi hi hoga
+            heavy_edges[j][u] = heavy_neigh[j].size();
+            heavy_neigh[j].push_back(u);    
+            
+            if(adj[j].size() <= B) online[u] += isonline[j];
+            // Ye ek crucial chiz h, v ke alawa baki saare heavy neighbours me
+            // u count ho rakha hoga na online me (bcz u light tha pehle)
+            // but ab heavy ho gya to nahi count hona chahye
+            // but v hi ek aisa node h jisme nahi count ho rakha hoga bcz edge hi abhi aya h
+            else if(j!=v) online[j] -= isonline[u];
+        }
+    }
+    else if(adj[u].size() > B) {
+        if(heavy_edges[v].count(u) == 0) {
+            heavy_edges[v][u] = heavy_neigh[v].size();
+            heavy_neigh[v].push_back(u);
+        }
+        else heavy_neigh[v][heavy_edges[v][u]] *= -1;
+        
+        if(adj[v].size() <= B) online[u] += isonline[v];
+    }
+}
+void remove_edge(int u, int v, const int B) {
+    // online[u], online[u ke neighbours except v]
+    // heavy_neighbours[u ke neighbours including v]
+
+    if(adj[u].size() > B) {
+        int idx = heavy_edges[v][u];
+        heavy_neigh[v][idx] *= -1;
+        // Yaha pe soch rhe hoge ki B+1 hona chahye nz bcz size to ek gir jayega
+        // But u ke online me v tabhi juda hua hoga agar wo light ho pehle se hi
+        // agar v abhi light banega iska mtlb juda hua hi nahi tha islie
+        if(adj[v].size() <= B) online[u] -= isonline[v];
+    }
+}
+signed main() {
+    ios::sync_with_stdio(false);
+    cin.tie(nullptr);
+
+    int n,m,q,o;
+    cin >> n >> m >> q >> o;
+
+    adj.resize(n+1);
+    heavy_neigh.resize(n+1);
+    isonline.assign(n+1, false);
+    online.assign(n+1, 0);
+    edges.resize(n+1);
+    heavy_edges.resize(n+1);
+
+    for(int i=0;i<o;i++) {
+        int x;
+        cin >> x;
+        isonline[x] = true;
+    }
+    for(int i=0;i<m;i++) {
+        int a, b;
+        cin >> a >> b;
+        edges[a][b] = adj[a].size();
+        adj[a].push_back(b);
+        edges[b][a] = adj[b].size();
+        adj[b].push_back(a);
+    }
+    const int B = ceil(sqrt(n));
+    // Light nodes ke lie online consider hi nahi krenge
+    // Aur heavy nodes ke lie sirf light neighbours honge
+    for(int i=1;i<=n;i++) {
+        for(int j:adj[i]) {
+            if(adj[j].size() > B) {
+                heavy_edges[i][j] = heavy_neigh[i].size();
+                heavy_neigh[i].push_back(j);
+            }
+            else if(adj[i].size() > B) online[i] += isonline[j];
+        }
+    }
+    for(int qq=0;qq<q;qq++) {
+        char t;
+        int u;
+        cin >> t >> u;
+        
+        if(t == 'O') {
+            isonline[u] = true;
+            if(adj[u].size() <= B) {
+                for(int j:heavy_neigh[u]) {
+                    if(j > 0) online[j]++;
+                }
+            }
+        }
+        else if(t == 'F') {
+            isonline[u] = false;
+            if(adj[u].size() <= B) {
+                for(int j:heavy_neigh[u]) {
+                    if(j > 0) online[j]--;
+                }
+            }
+        }
+        else if(t == 'A') {
+            int v;
+            cin >> v;
+            
+            // Ye cond_a/b wala kaam nahi bhi kroge to accept hoga
+            // because hm upar bina heavy_edges me check kie heavy_neigh me[j] me u daal de rhe
+            // Aisa islie kr rhe kyunki flag_actually_added true h to already checked h aisa maan ke
+            // But maan lo flag ko hmesha true kr de
+            // To bar bar add hote rhega and bar bar online[j] me se subtract bhi hota rhega
+            // islie end me sahi ans aa ja rha but iske pehle jab flag waghera nahi tha tab check krke daal rhe the
+            // uss case me to galat ho jayega
+            bool cond_a = false, cond_b = false;
+            if(edges[u].count(v) == 0) {
+                edges[u][v] = adj[u].size();
+                adj[u].push_back(v);
+                cond_a = true;
+            }
+            else adj[u][edges[u][v]] *= -1;
+
+            if(edges[v].count(u) == 0) {
+                edges[v][u] = adj[v].size();
+                adj[v].push_back(u);
+                cond_b = true;
+            }
+            else adj[v][edges[v][u]] *= -1;
+            
+            add_edge(u,v,B,cond_a);
+            add_edge(v,u,B,cond_b);
+        }
+        else if(t == 'D') {
+            int v;
+            cin >> v;
+            
+            remove_edge(v,u,B);
+            remove_edge(u,v,B);
+
+            adj[u][edges[u][v]] *= -1;
+            adj[v][edges[v][u]] *= -1;
+        }
+        else {
+            int ans = 0;
+            if(adj[u].size() <= B) {
+                for(int j:adj[u]) {
+                    if(j > 0) ans += isonline[j];
+                }
+            }
+            else {
+                ans = online[u];
+                for(int j:heavy_neigh[u]) {
+                    if(j > 0) ans += isonline[j];
+                }
+            }
+            cout << ans << "\n";
+        }
+    }
+    return 0;
+}

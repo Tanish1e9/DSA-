@@ -6,6 +6,8 @@ CF link: https://codeforces.com/contest/398/problem/D
 // because adj list me har ek element is directly mapped to an edge
 // To fir ab simple h ki light nodes ka update neighbours me iterate krke kr denge
 // whereas heavy nodes ka nahi krenge update, unke lie heavy neighbours rakha jayega
+// number of edges can be upper bounded at (2m+2q)
+// So B will be sqrt(2m+2q)
 
 #include<bits/stdc++.h>
 using namespace std;
@@ -97,7 +99,7 @@ signed main() {
         edges[b][a] = adj[b].size();
         adj[b].push_back(a);
     }
-    const int B = ceil(sqrt(n));
+    const int B = ceil(sqrt(2*m+2*q));
     // Light nodes ke lie online consider hi nahi krenge
     // Aur heavy nodes ke lie sirf light neighbours honge
     for(int i=1;i<=n;i++) {

@@ -13,7 +13,8 @@ LC link: https://leetcode.com/problems/jump-game-ix/
 // because it may happen that after reaching the rightmost index, we go a little left
 // we get bigger values that opens up even bigger values to the right (by having a smaller value after them)
 // that's why take ans and compute from right to left
-
+// Aur isme answer non-decreasing h tabhi na sirf rightmost wale ka answer le lie, to ye kyu h
+// iske lie niche proof die h
 
 vector<int> maxValue(vector<int>& nums) {
     int n = nums.size(); 
@@ -35,3 +36,50 @@ vector<int> maxValue(vector<int>& nums) {
     }
     return ans;
 }
+
+
+
+
+
+// Upar wala hi method h bas alag se arrays nahi banaye h
+class Solution {
+public:
+    // Isme first claim to ye hai ki ans array will be non-decreasing
+    // Kyunki socho agar nums[i] < nums[i-1] hua to i to i-1 chale jayenge
+    // aur fir uska ans to atleast aa hi jayega
+    // agar nums[i] == nums[i-1] hua to nums[i-1] ka path replicate krenge
+    // fir se atleast utna ans mil gya
+    // agar nums[i] > nums[i-1] hua to prefix me maxima tk to jaa hi rhe h
+    // to waha se aage jaha bhi smaller jump kia hoga wo to atleast i kr hi skta h
+    // Ab main thing h ki prefix maxima tk to answer me daal die
+    // uske bad uss prefix maxima se last smaller kaha tk ja skte h waha ka ans ko bas
+    // le lena h (because rightmost h to wohi maximum hoga) 
+    // aur wahi kr die h
+    const int INF = 1e9+1;
+    vector<int> maxValue(vector<int>& nums) {
+        int n = nums.size();
+        vector<int> ans = nums;
+        // ans me pref_maximas daalna
+        int maxi = 0;
+        for(int i=0;i<n;i++) {
+            maxi = max(maxi, nums[i]);
+            ans[i] = maxi;
+        }
+        // Fir for each index i, uska pref_maxima to already h hi ans[i] me
+        // ab iss ans[i] se chota rightmost element nikalna h
+        // Since prefix maxima decreases as we go left, to rightmost chota element
+        // bhi left ke taraf shift hota jayega
+        // to wahi krenge, aur fir rightmost chota element ka answer le lenge
+        int r = n, mini = INF;
+        for(int i=n-1;i>=0;i--) {
+            while(ans[i] <= mini && r>=i+1) {
+                r--;
+                mini = min(mini, nums[r]);
+            }
+            if(ans[i] > mini) ans[i] = ans[r];
+        }
+        return ans;
+    }
+};
+
+

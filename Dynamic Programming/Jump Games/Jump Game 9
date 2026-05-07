@@ -70,13 +70,13 @@ public:
         // Since prefix maxima decreases as we go left, to rightmost chota element
         // bhi left ke taraf shift hota jayega
         // to wahi krenge, aur fir rightmost chota element ka answer le lenge
-        int r = n, mini = INF;
+        // Socho na r hmesha rightmost smallest element pe hi stop hoga
+        // and r>=i ensured hoga hmesha
+
+        int r = n-1;
         for(int i=n-1;i>=0;i--) {
-            while(ans[i] <= mini && r>=i+1) {
-                r--;
-                mini = min(mini, nums[r]);
-            }
-            if(ans[i] > mini) ans[i] = ans[r];
+            while(r>i && ans[i] <= nums[r]) r--;
+            ans[i] = max(ans[i], ans[r]);
         }
         return ans;
     }

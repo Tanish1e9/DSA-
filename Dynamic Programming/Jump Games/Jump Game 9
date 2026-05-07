@@ -76,7 +76,7 @@ public:
         int r = n-1;
         for(int i=n-1;i>=0;i--) {
             while(r>i && ans[i] <= nums[r]) r--;
-            ans[i] = max(ans[i], ans[r]);
+            ans[i] = ans[r];
         }
         return ans;
     }

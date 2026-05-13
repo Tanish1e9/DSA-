@@ -69,6 +69,10 @@ M-2
 // To dekho difference array me bana dena h ki kaha se kaha tk 2 move lagega (to [x,y] h to diff[x]+=2, diff[y+1]-=2)
 // fir kaha se kaha tk 1 move lagega uske lie ek minus hi krenge because 2 me contained h hi
 // aur a+b pe ek minus krenge because wo dono ranges me contained h to 1 ho gya hoga -1 krne se 0 ho jayega
+// Isme dekho 2 se 2*limit me har jagah pahuchna possible h ya to 0 ya 1 ya 2 moves me
+// aur ye har pair ke lie filled h islie aisa kabhi nahi hoga ki kuch pairs consider hi nahi ho rhe
+// and ans le lia gya
+// Yahi thoda sa kr nahi pa rhe the Nice approach
 
 int minMoves(vector<int>& nums, int limit) {
     int n = nums.size();

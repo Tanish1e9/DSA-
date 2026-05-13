@@ -1,0 +1,94 @@
+LC link: https://leetcode.com/problems/minimum-moves-to-make-array-complementary/description/
+
+// M-1 
+// original jo dimag me aaya
+// Basically 5 levels maintain kr rhe
+// 0th -> 2 moves lagake increase krna
+// 1st -> 1 move lagake increase krna
+// 2nd -> 0 moves
+// 3rd -> 1 move lagake decrease krna
+// 4th -> 2 move lagake decrease krna
+// Thoda socho ki sab ek level upar hi jayenge atmax agar sum increase krega
+// to bas wahi thought ke sath 
+// This is not the optimal way
+int minMoves(vector<int>& nums, int limit) {
+    int n = nums.size();
+    vector<vector<int>> equals(2*limit+1);
+    for(int i=0;i<n/2;i++) {
+        if(nums[i] > nums[n-1-i]) swap(nums[i], nums[n-1-i]);
+        equals[nums[i] + nums[n-1-i]].push_back(i);
+    }
+    int a = 0;
+    auto comp2 = [&nums,n](int a, int b) {
+        return nums[n-1-a] > nums[n-1-b];
+    };
+    priority_queue<int,vector<int>,decltype(comp2)> pq2(comp2);  // min ka dec order
+    
+    int d = 0;
+    auto comp5 = [&nums,n](int a, int b) {
+        return nums[a] > nums[b];
+    };
+    priority_queue<int,vector<int>,decltype(comp5)> pq5(comp5);  // max ka dec order
+
+    int ans = 0;
+    for(int i=0;i<n/2;i++) {
+        if(nums[i] + nums[n-1-i] == 2) pq2.push(i);
+        else if(nums[i] == 1) {
+            d++;
+            ans += 1;
+        }
+        else {
+            pq5.push(i);
+            ans += 2;
+        }
+    }
+    
+    for(int sum = 3; sum <= 2*limit; sum++) {
+        d -= equals[sum].size();
+        while(!pq2.empty() && nums[n-1-pq2.top()]+limit < sum) {
+            a++;
+            pq2.pop();
+        }
+        while(!pq5.empty() && nums[pq5.top()]+1 <= sum) {
+            d++;
+            pq5.pop();
+        }
+        ans = min(ans,static_cast<int>(2*a + pq2.size() + d + pq5.size()*2));
+        for(int i:equals[sum]) pq2.push(i);
+    }
+    return ans;
+}
+
+
+
+M-2
+// Optimal way
+// Ye to samajh aa hi gya ki 0/1/2 moves lagega per pair
+// 1 move me a(<b) me [a+1,b+1] ye range bana skte
+// and 2 moves me [2,2*limit] tk bana skte
+// To dekho difference array me bana dena h ki kaha se kaha tk 2 move lagega (to [x,y] h to diff[x]+=2, diff[y+1]-=2)
+// fir kaha se kaha tk 1 move lagega uske lie ek minus hi krenge because 2 me contained h hi
+// aur a+b pe ek minus krenge because wo dono ranges me contained h to 1 ho gya hoga -1 krne se 0 ho jayega
+
+int minMoves(vector<int>& nums, int limit) {
+    int n = nums.size();
+    vector<int> diff(2*limit+2);
+    for(int i=0;i<n/2;i++) {
+        int a = min(nums[i], nums[n-1-i]);
+        int b = max(nums[i], nums[n-1-i]);
+        diff[2] += 2;
+        diff[a+b]--;
+        diff[a+b+1]++;
+        diff[a+1]--;
+        diff[b+limit+1]++;
+        diff[2*limit+1] -= 2;
+    }
+    int curr = 0, ans = n;
+    for(int c=2;c<=2*limit;c++) {
+        curr += diff[c];
+        ans = min(ans, curr);
+    }
+    return ans;
+}
+
+
